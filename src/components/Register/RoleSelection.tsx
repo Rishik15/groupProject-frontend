@@ -5,8 +5,8 @@ const RoleSelector = () => {
   const [selectedRole, setSelectedRole] = useState("coach");
 
   return (
-    <section className="flex flex-col pt-3">
-      <h4 className="text-sm mb-2">I want to...</h4>
+    <section className="flex flex-col pt-6">
+      <h4 className="text-sm mb-2 font-[525]">I want to...</h4>
 
       <div className="flex gap-4">
         <RoleCard
