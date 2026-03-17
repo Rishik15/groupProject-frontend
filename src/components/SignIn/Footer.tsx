@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 
-const SignFooter = () => {
+const SignFooter = ({ onSubmit }: { onSubmit: () => void }) => {
   return (
     <section className="pt-8 flex flex-col gap-3 items-center">
-      <button className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-gray-200 font-medium px-4 p-2 rounded-xl transition">
+      <button
+        onClick={onSubmit}
+        className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-gray-200 font-medium px-4 p-2 rounded-xl transition"
+      >
         Sign In
       </button>
 
