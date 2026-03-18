@@ -20,17 +20,17 @@ const Register = () => {
 
   const handleRegister = async () => {
     try {
+      if (!role) {
+        setModalMessage("Please select whether you are a coach or client.");
+        setShowModal(true);
+        return;
+      }
+
       const errors = validateRegister(name, email, password);
 
       if (Object.keys(errors).length > 0) {
         const message = Object.values(errors)[0];
         setModalMessage(message as string);
-        setShowModal(true);
-        return;
-      }
-
-      if (!role) {
-        setModalMessage("Please select whether you are a coach or client.");
         setShowModal(true);
         return;
       }

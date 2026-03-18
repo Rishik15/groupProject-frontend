@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Modal, Button } from "@heroui/react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -7,33 +8,45 @@ interface ModalProps {
   children: ReactNode;
 }
 
-const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
-  if (!isOpen) return null;
-
+const CustomModal = ({ isOpen, onClose, title, children }: ModalProps) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs px-4">
-      <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl">
-        <div className="p-8 space-y-5">
-          {title && (
-            <p className="font-primary text-[24px] font-semibold text-red-500">
-              {title}
-            </p>
-          )}
+    <Modal
+      isOpen={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
+      <Modal.Backdrop>
+        <Modal.Container>
+          <Modal.Dialog className="sm:max-w-105 p-6">
 
-          <p className="text-black font-primary text-[16px]">{children}</p>
-        </div>
+            <Modal.Header className="flex flex-col items-start gap-3">
+              <Modal.CloseTrigger />
 
-        <div className="flex justify-end px-8 pb-6">
-          <button
-            onClick={onClose}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2.5 rounded-lg transition"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
+              {title && (
+                <Modal.Heading className="text-2xl font-semibold text-foreground">
+                  {title}
+                </Modal.Heading>
+              )}
+
+              <p className="text-md text-muted leading-relaxed">{children}</p>
+            </Modal.Header>
+
+            <Modal.Footer className="mt-6">
+              <Button
+                fullWidth
+                size="lg"
+                slot="close"
+                className="bg-indigo-600 hover:bg-indigo-700 text-gray-200 font-semibold rounded-xl"
+              >
+                Close
+              </Button>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 };
 
-export default Modal;
+export default CustomModal;
