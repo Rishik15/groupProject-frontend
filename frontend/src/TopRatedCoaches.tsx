@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card, Skeleton, Link } from "@heroui/react";
+import axios from 'axios';
 
 export interface Coach {
   id: number;
@@ -13,8 +14,8 @@ export interface Coach {
 const BASE_URL = "http://localhost:8080";
 
 async function fetchTopCoaches(): Promise<Coach[]> {
-  const res = await fetch(`${BASE_URL}routes/topCoaches/init.py`);
-  return res.json();
+  const res = await axios.get(`${BASE_URL}/landing/topCoaches`);
+  return res.data;
 }
 
 
