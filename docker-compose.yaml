@@ -4,6 +4,8 @@ services:
   db:
     image: mysql:8.0
     container_name: betafit-db
+    ports:
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: exercise_app
@@ -44,10 +46,11 @@ services:
       - backend
     volumes:
       - ./frontend:/app
-      - /app/node_modules
+      - node_modules:/app/node_modules
     stdin_open: true
     tty: true
-    command: npm run dev --host
+    command: sh -c "npm install && npm run dev --host"
 
 volumes:
   mysql_data:
+  node_modules:
