@@ -1,1 +1,11 @@
 @import "tailwindcss";
+@import "@heroui/styles";
+
+@theme {
+  --font-primary: Inter, sans-serif;
+}
+
+body{
+  @apply font-primary;
+  background-color: #F8F8FB;
+}
