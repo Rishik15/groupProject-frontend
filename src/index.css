@@ -1,11 +1,13 @@
 @import "tailwindcss";
 @import "@heroui/styles";
 
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
+
 @theme {
-  --font-primary: Inter, sans-serif;
+  --font-primary: "Inter", sans-serif;
 }
 
-body{
+body {
   @apply font-primary;
-  background-color: #F8F8FB;
+  background-color: #f8f8fb;
 }
