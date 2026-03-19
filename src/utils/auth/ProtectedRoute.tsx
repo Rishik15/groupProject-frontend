@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import type { ReactNode } from "react";
 import { getAuth } from "../../services/auth/checkAuth";
 import CustomModal from "../../components/global/Modal";
+import { Spinner } from "@heroui/react";
 
 const ProtectedRoute = ({
   children,
@@ -12,10 +13,6 @@ const ProtectedRoute = ({
   allowedRoles?: string[];
 }) => {
   const [loading, setLoading] = useState(true);
-  const [isAuth, setIsAuth] = useState(false);
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const [role, setRole] = useState<string | null>(null);
-
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -28,50 +25,50 @@ const ProtectedRoute = ({
       if (!authenticated) {
         setMessage("You must be signed in to access this page.");
         setShowModal(true);
-        setIsAuth(false);
-        setIsAuthorized(false);
-      } else if (allowedRoles && role && !allowedRoles.includes(role)) {
-        setMessage("You are not authorized to access this page.");
-        setShowModal(true);
-        setIsAuth(true);
-        setIsAuthorized(false);
-      } else {
-        setIsAuth(true);
-        setIsAuthorized(true);
+        setLoading(false);
+
+        setTimeout(() => {
+          navigate("/signin");
+        }, 1500);
+
+        return;
       }
 
-      setRole(role);
+      if (allowedRoles && role && !allowedRoles.includes(role)) {
+        setMessage("You are not authorized to access this page.");
+        setShowModal(true);
+        setLoading(false);
+
+        setTimeout(() => {
+          if (role === "client") navigate("/client");
+          else if (role === "coach") navigate("/coach");
+          else navigate("/");
+        }, 1500);
+
+        return;
+      }
+
       setLoading(false);
     };
 
     verifyAuth();
-  }, [allowedRoles]);
+  }, [allowedRoles, navigate]);
 
-  const handleClose = () => {
-    setShowModal(false);
-
-    if (!isAuth) {
-      navigate("/signin");
-    } else if (!isAuthorized) {
-      if (role === "client") {
-        navigate("/client");
-      } else if (role === "coach") {
-        navigate("/coach");
-      } else {
-        navigate("/");
-      }
-    }
-  };
-
-  if (loading) return <div>Loading...</div>;
-
-  if (isAuth && isAuthorized) return <>{children}</>;
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <Spinner size="lg" color="accent" />
+      </div>
+    );
+  }
 
   return (
     <>
+      {children}
+
       <CustomModal
         isOpen={showModal}
-        onClose={handleClose}
+        onClose={() => setShowModal(false)}
         title="Access Denied"
       >
         {message}

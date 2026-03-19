@@ -1,6 +1,6 @@
 export interface NavbarInterface {
+  parent: string;
   name: string;
   email: string;
-  role: string;
   notification: number;
 }
