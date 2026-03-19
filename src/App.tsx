@@ -1,4 +1,4 @@
-import WellnessCheck from "./pages/Dashboard/WellnessCheck";
+import WellnessCheck from "./components/WellnessSurvey/WellnessCheck";
 
 function App() {
 
