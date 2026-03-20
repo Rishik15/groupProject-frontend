@@ -105,7 +105,7 @@ export default function Navbar({
                     route={`${parent}/profile`}
                   />
                   <DropdownItem label="Settings" route={`${parent}/settings`} />
-                  <DropdownItem label="Sign out" danger />
+                  <DropdownItem label="Sign out" danger type="logout" />
                 </div>
               </div>
             )}
