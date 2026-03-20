@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getAuth } from "../../services/auth/checkAuth";
 import { useNavigate } from "react-router-dom";
 import SignFooter from "../../components/SignIn/Footer";
 import SignHeader from "../../components/SignIn/Header";
@@ -15,6 +16,27 @@ const SignIn = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    let isActive = true;
+
+    const checkAuth = async () => {
+      const { authenticated, role } = await getAuth();
+
+      if (!isActive) return;
+
+      if (authenticated) {
+        if (role === "coach") navigate("/coach");
+        else if (role === "client") navigate("/client");
+      }
+    };
+
+    checkAuth();
+
+    return () => {
+      isActive = false;
+    };
+  }, [navigate]);
+
   const handleLogin = async () => {
     try {
       const errors = validateSignIn(email, password);
@@ -28,15 +50,28 @@ const SignIn = () => {
 
       const data = await login(email, password);
 
-      console.log("login success");
+      if (!data || data.error) {
+        setModalMessage(data?.error || "Invalid credentials");
+        setShowModal(true);
+        return;
+      }
 
       if (data.role === "coach") {
         navigate("/coach");
       } else {
         navigate("/client");
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      let message = "Something went wrong. Please try again.";
+
+      if (err?.response?.data?.error) {
+        message = err.response.data.error;
+      } else if (err?.message) {
+        message = err.message;
+      }
+
+      setModalMessage(message);
+      setShowModal(true);
     }
   };
 
