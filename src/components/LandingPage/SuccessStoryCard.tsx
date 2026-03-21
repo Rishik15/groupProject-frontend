@@ -7,7 +7,7 @@ type SuccessStoryCardProps = {
 
 const SuccessStoryCard = ({ story }: SuccessStoryCardProps) => {
   return (
-    <div className="rounded-[20px] border border-[#E6E6EE] bg-white p-8 h-[200px] flex flex-col justify-start">
+    <div className="rounded-[20px] border border-[#E6E6EE] bg-white p-8 h-50 flex flex-col justify-start">
       <div className="w-10 h-10 rounded-full border-2 border-[#5B5EF4] text-[#5B5EF4] flex items-center justify-center text-[18px] font-bold">
         ✓
       </div>
