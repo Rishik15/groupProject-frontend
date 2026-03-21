@@ -6,6 +6,10 @@ interface CoachSecondarySpecialtiesStepProps {
   onChange: (values: string[]) => void;
 }
 
+/**
+ * Secondary specialties exclude anything already chosen as a primary specialty.
+ * The page decides which options are available and passes them in here.
+ */
 function CoachSecondarySpecialtiesStep({
   options,
   selectedValues,

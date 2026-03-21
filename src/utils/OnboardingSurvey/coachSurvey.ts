@@ -1,15 +1,51 @@
 import type { SelectCardOption } from "../../components/OnboardingSurvey/SelectCardGroup";
 
-// Shared shape for the data collected on the credentials step.
-// Keeping this in the survey config file prevents duplicate local types in step components.
+export interface CoachCertificationValues {
+  cert_name: string;
+  provider_name: string;
+  description: string;
+  issued_date: string;
+  expires_date: string;
+}
+
+/**
+ * Shared shape for the coach credentials step.
+ * This is reused by the page, step components, and payload builder.
+ */
 export interface CoachCredentialsValues {
-  certifications: string;
+  certificationCount: number;
+  certifications: CoachCertificationValues[];
   yearsExperience: string;
   bio: string;
 }
 
-// Central step copy used by the coach onboarding page header.
-// An array keeps page lookup simple and avoids object key casts in the page file.
+export type CoachDayOfWeek =
+  | "monday"
+  | "tuesday"
+  | "wednesday"
+  | "thursday"
+  | "friday"
+  | "saturday"
+  | "sunday";
+
+export interface CoachAvailabilityBlock {
+  id: string;
+  dayOfWeek: CoachDayOfWeek;
+  startTime: string;
+  endTime: string;
+  recurring: true;
+  active: true;
+}
+
+export const createEmptyCoachCertification = (): CoachCertificationValues => ({
+  cert_name: "",
+  provider_name: "",
+  description: "",
+  issued_date: "",
+  expires_date: "",
+});
+
+// Step copy lives here so the page file can focus on flow logic.
 export const coachSteps = [
   {
     title: "Primary Specialties",
@@ -21,7 +57,7 @@ export const coachSteps = [
   },
   {
     title: "Who do you coach?",
-    subtitle: "Select the client types you prefer working with",
+    subtitle: "Select your client types, session format, and weekly availability",
   },
   {
     title: "Credentials",
@@ -35,8 +71,7 @@ export const coachSteps = [
 
 export const coachTotalSteps = coachSteps.length;
 
-// These options drive the reusable HeroUI SelectCardGroup for primary specialties.
-// The stored value stays stable for state and backend use, while the label is what the user sees.
+// These options drive the reusable selection card component.
 export const coachPrimarySpecialtyOptions: SelectCardOption[] = [
   {
     value: "strength_training",
@@ -80,8 +115,7 @@ export const coachPrimarySpecialtyOptions: SelectCardOption[] = [
   },
 ];
 
-// Label maps are used mainly by summary screens. They let components render readable text
-// without repeating option labels or depending on the full options array.
+// Label maps are mostly used by summary screens and profile-description text.
 export const coachSpecialtyLabelMap: Record<string, string> = {
   strength_training: "Strength Training",
   hiit_cardio: "HIIT & Cardio",
@@ -161,40 +195,150 @@ export const coachSessionFormatLabelMap: Record<string, string> = {
   async_programs: "Async Programs",
 };
 
-export const coachAvailabilityOptions: SelectCardOption[] = [
-  {
-    value: "mornings",
-    label: "Mornings",
-    description: "6am – 12pm",
-  },
-  {
-    value: "afternoons",
-    label: "Afternoons",
-    description: "12pm – 5pm",
-  },
-  {
-    value: "evenings",
-    label: "Evenings",
-    description: "5pm – 9pm",
-  },
-  {
-    value: "weekends",
-    label: "Weekends",
-    description: "Sat & Sun",
-  },
+export const coachDaysOfWeek: CoachDayOfWeek[] = [
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
 ];
 
-export const coachAvailabilityLabelMap: Record<string, string> = {
-  mornings: "Mornings",
-  afternoons: "Afternoons",
-  evenings: "Evenings",
-  weekends: "Weekends",
+export const coachDayLabelMap: Record<CoachDayOfWeek, string> = {
+  monday: "Monday",
+  tuesday: "Tuesday",
+  wednesday: "Wednesday",
+  thursday: "Thursday",
+  friday: "Friday",
+  saturday: "Saturday",
+  sunday: "Sunday",
 };
 
-// These defaults make the page state initialization easy to read and keep the
-// empty form shape in one place.
+let availabilityBlockCounter = 0;
+
+export const createEmptyAvailabilityBlock = (
+  dayOfWeek: CoachDayOfWeek
+): CoachAvailabilityBlock => {
+  availabilityBlockCounter += 1;
+
+  return {
+    id: `${dayOfWeek}-${availabilityBlockCounter}`,
+    dayOfWeek,
+    startTime: "09:00",
+    endTime: "10:00",
+    recurring: true,
+    active: true,
+  };
+};
+
+export const timeStringToMinutes = (value: string) => {
+  const [hours = "0", minutes = "0"] = value.split(":");
+
+  return Number(hours) * 60 + Number(minutes);
+};
+
+export const isAvailabilityBlockValid = (
+  block: Pick<CoachAvailabilityBlock, "startTime" | "endTime">
+) => timeStringToMinutes(block.endTime) > timeStringToMinutes(block.startTime);
+
+export const getOverlappingAvailabilityBlockIds = (
+  blocks: CoachAvailabilityBlock[]
+) => {
+  const overlappingIds = new Set<string>();
+
+  for (const day of coachDaysOfWeek) {
+    const validDayBlocks = blocks
+      .filter((block) => block.dayOfWeek === day)
+      .filter(isAvailabilityBlockValid)
+      .sort(
+        (left, right) =>
+          timeStringToMinutes(left.startTime) - timeStringToMinutes(right.startTime)
+      );
+
+    for (let index = 0; index < validDayBlocks.length - 1; index += 1) {
+      const currentBlock = validDayBlocks[index];
+      const nextBlock = validDayBlocks[index + 1];
+
+      if (
+        timeStringToMinutes(currentBlock.endTime) >
+        timeStringToMinutes(nextBlock.startTime)
+      ) {
+        overlappingIds.add(currentBlock.id);
+        overlappingIds.add(nextBlock.id);
+      }
+    }
+  }
+
+  return Array.from(overlappingIds);
+};
+
+export const hasOverlappingAvailabilityBlocks = (
+  blocks: CoachAvailabilityBlock[]
+) => getOverlappingAvailabilityBlockIds(blocks).length > 0;
+
+export const formatAvailabilityTime = (value: string) => {
+  const [hoursString = "0", minutesString = "00"] = value.split(":");
+  const hours = Number(hoursString);
+  const minutes = Number(minutesString);
+  const suffix = hours >= 12 ? "PM" : "AM";
+  const normalizedHours = hours % 12 === 0 ? 12 : hours % 12;
+
+  return `${normalizedHours}:${String(minutes).padStart(2, "0")} ${suffix}`;
+};
+
+export const formatAvailabilityRange = (block: CoachAvailabilityBlock) =>
+  `${formatAvailabilityTime(block.startTime)} - ${formatAvailabilityTime(block.endTime)}`;
+
+// Central empty state for the credentials portion of the coach form.
 export const coachInitialCredentials: CoachCredentialsValues = {
-  certifications: "",
+  certificationCount: 0,
+  certifications: [],
   yearsExperience: "",
   bio: "",
+};
+
+const formatCoachSelectionList = (
+  values: string[],
+  labelMap: Record<string, string>
+) => {
+  if (values.length === 0) {
+    return "None selected";
+  }
+
+  return values.map((value) => labelMap[value] ?? value).join(", ");
+};
+
+interface BuildCoachProfileDescriptionParams {
+  primarySpecialties: string[];
+  secondarySpecialties: string[];
+  clientTypes: string[];
+  sessionFormats: string[];
+  yearsExperience: string;
+  bio: string;
+}
+
+/**
+ * Builds the coach description preview shown in the UI and sent to the backend.
+ * Keeping the string formatting here avoids repeating it in page components.
+ */
+export const buildCoachProfileDescription = ({
+  primarySpecialties,
+  secondarySpecialties,
+  clientTypes,
+  sessionFormats,
+  yearsExperience,
+  bio,
+}: BuildCoachProfileDescriptionParams) => {
+  const trimmedBio = bio.trim();
+  const trimmedYearsExperience = yearsExperience.trim();
+
+  return [
+    `Primary Specialties: ${formatCoachSelectionList(primarySpecialties, coachSpecialtyLabelMap)}`,
+    `Secondary Specialties: ${formatCoachSelectionList(secondarySpecialties, coachSpecialtyLabelMap)}`,
+    `Who You Coach: ${formatCoachSelectionList(clientTypes, coachClientTypeLabelMap)}`,
+    `Session Format: ${formatCoachSelectionList(sessionFormats, coachSessionFormatLabelMap)}`,
+    `Years of Coaching Experience: ${trimmedYearsExperience || "Not provided"}`,
+    `Coaching Bio: ${trimmedBio || "Not provided"}`,
+  ].join("\n");
 };

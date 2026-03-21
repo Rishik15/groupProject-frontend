@@ -1,36 +1,43 @@
-import type { ChangeEvent } from "react";
 import { Input, TextArea } from "@heroui/react";
 
-import type { CoachCredentialsValues } from "../../../utils/OnboardingSurvey/coachSurvey";
+import type {
+  CoachCertificationValues,
+  CoachCredentialsValues,
+} from "../../../utils/OnboardingSurvey/coachSurvey";
 
 interface CoachCredentialsStepProps {
   values: CoachCredentialsValues;
-  onChange: (name: keyof CoachCredentialsValues, value: string) => void;
+  onFieldChange: (
+    name: Extract<keyof CoachCredentialsValues, "yearsExperience" | "bio">,
+    value: string
+  ) => void;
+  onCertificationCountChange: (count: number) => void;
+  onCertificationChange: (
+    index: number,
+    name: keyof CoachCertificationValues,
+    value: string
+  ) => void;
 }
 
-/**
- * Coach credentials form.
- * This step keeps the HeroUI field markup local to the component,
- * while the shared value shape stays in the survey utils file.
- */
 function CoachCredentialsStep({
   values,
-  onChange,
+  onFieldChange,
+  onCertificationCountChange,
+  onCertificationChange,
 }: CoachCredentialsStepProps) {
   const maxBioLength = 500;
   const bioCharacterCount = values.bio.length;
 
-  /**
-   * Years of experience should stay non-negative.
-   * Allow an empty string too so the user can still clear the field.
-   */
-  const handleYearsExperienceChange = (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = event.target.value;
+  const handleCertificationCountInput = (value: string) => {
+    if (value === "") {
+      onCertificationCountChange(0);
+      return;
+    }
 
-    if (value === "" || Number(value) >= 0) {
-      onChange("yearsExperience", value);
+    const parsedValue = Number(value);
+
+    if (Number.isFinite(parsedValue) && parsedValue >= 0) {
+      onCertificationCountChange(parsedValue);
     }
   };
 
@@ -38,17 +45,101 @@ function CoachCredentialsStep({
     <div className="space-y-6">
       <div>
         <label className="mb-2 block text-[15px] font-semibold">
-          Certifications (optional)
+          Number of Certifications (optional)
         </label>
         <Input
-          value={values.certifications}
-          placeholder="e.g., ACE, NASM, ISSA, CSCS"
-          onChange={(event) =>
-            onChange("certifications", event.target.value)
-          }
+          type="number"
+          min={0}
+          value={String(values.certificationCount)}
+          placeholder="0"
+          onChange={(event) => handleCertificationCountInput(event.target.value)}
           className="w-full"
         />
       </div>
+
+      {values.certifications.map((certification, index) => (
+        <div
+          key={index}
+          className="space-y-4 rounded-[20px] border border-[#E4E4EC] bg-[#FAFAFD] p-5"
+        >
+          <h3 className="text-[16px] font-semibold text-black">
+            Certification {index + 1}
+          </h3>
+
+          <div>
+            <label className="mb-2 block text-[15px] font-semibold">
+              Certification Name
+            </label>
+            <Input
+              value={certification.cert_name}
+              placeholder="e.g., NASM CPT"
+              onChange={(event) =>
+                onCertificationChange(index, "cert_name", event.target.value)
+              }
+              className="w-full"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-[15px] font-semibold">
+              Provider Name
+            </label>
+            <Input
+              value={certification.provider_name}
+              placeholder="e.g., National Academy of Sports Medicine"
+              onChange={(event) =>
+                onCertificationChange(index, "provider_name", event.target.value)
+              }
+              className="w-full"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-[15px] font-semibold">
+              Description
+            </label>
+            <TextArea
+              value={certification.description}
+              rows={4}
+              placeholder="Briefly describe the certification or focus area..."
+              onChange={(event) =>
+                onCertificationChange(index, "description", event.target.value)
+              }
+              className="w-full"
+            />
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-[15px] font-semibold">
+                Issued Date
+              </label>
+              <Input
+                type="date"
+                value={certification.issued_date}
+                onChange={(event) =>
+                  onCertificationChange(index, "issued_date", event.target.value)
+                }
+                className="w-full"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-[15px] font-semibold">
+                Expires Date
+              </label>
+              <Input
+                type="date"
+                value={certification.expires_date}
+                onChange={(event) =>
+                  onCertificationChange(index, "expires_date", event.target.value)
+                }
+                className="w-full"
+              />
+            </div>
+          </div>
+        </div>
+      ))}
 
       <div>
         <label className="mb-2 block text-[15px] font-semibold">
@@ -56,10 +147,10 @@ function CoachCredentialsStep({
         </label>
         <Input
           type="number"
+          min={0}
           value={values.yearsExperience}
           placeholder="e.g., 5"
-          min={0}
-          onChange={handleYearsExperienceChange}
+          onChange={(event) => onFieldChange("yearsExperience", event.target.value)}
           className="w-full"
         />
       </div>
@@ -73,7 +164,7 @@ function CoachCredentialsStep({
           rows={7}
           maxLength={maxBioLength}
           placeholder="Tell clients about your approach, philosophy, and what makes you unique..."
-          onChange={(event) => onChange("bio", event.target.value)}
+          onChange={(event) => onFieldChange("bio", event.target.value)}
           className="w-full"
         />
         <p className="mt-3 text-[14px] text-zinc-500">

@@ -19,15 +19,15 @@ function ClientInfoStep({
   onFieldChange,
   onFitnessLevelChange,
 }: ClientInfoStepProps) {
-  // Reuse one handler factory for all number inputs so the non-negative rule
-  // stays consistent without repeating the same check in every field.
+  // Reuse one handler factory for number inputs so the non-negative rule stays
+  // consistent without repeating the same check in every field.
   const handleNonNegativeChange =
-    (fieldName: keyof ClientInfoValues) =>
+    (fieldName: "height" | "weight" | "goalWeight") =>
     (event: ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;
 
-      // Block negative numbers at the input level so invalid values do not
-      // enter component state. An empty string is still allowed for editing.
+      // Allow an empty string while the user is editing, but block negatives
+      // from entering state.
       if (value === "" || Number(value) >= 0) {
         onFieldChange(fieldName, value);
       }
@@ -50,8 +50,7 @@ function ClientInfoStep({
                 type="button"
                 onClick={() => onFitnessLevelChange(option.value)}
                 className={[
-                  "rounded-[18px] border px-2 py-2 text-center transition-all",
-                  "min-h-[72px]",
+                  "min-h-[72px] rounded-[18px] border px-2 py-2 text-center transition-all",
                   isSelected
                     ? "border-[#5B5EF4] ring-2 ring-[#DCDDFE]"
                     : "border-[#E4E4EC]",
@@ -72,13 +71,13 @@ function ClientInfoStep({
       <div className="grid grid-cols-3 gap-4">
         <div>
           <label className="mb-2 block text-[14px] font-semibold text-black">
-            Age
+            Height (in)
           </label>
           <Input
             type="number"
-            value={values.age}
-            placeholder="28"
-            onChange={handleNonNegativeChange("age")}
+            value={values.height}
+            placeholder="68"
+            onChange={handleNonNegativeChange("height")}
             className="w-full"
           />
         </div>
@@ -98,16 +97,29 @@ function ClientInfoStep({
 
         <div>
           <label className="mb-2 block text-[14px] font-semibold text-black">
-            Height (in)
+            Weight Goal (lb)
+            <span className="ml-1 font-normal text-[#6E728C]">Optional</span>
           </label>
           <Input
             type="number"
-            value={values.height}
-            placeholder="68"
-            onChange={handleNonNegativeChange("height")}
+            value={values.goalWeight}
+            placeholder="145"
+            onChange={handleNonNegativeChange("goalWeight")}
             className="w-full"
           />
         </div>
+      </div>
+
+      <div>
+        <label className="mb-2 block text-[14px] font-semibold text-black">
+          Date of Birth
+        </label>
+        <Input
+          type="date"
+          value={values.dateOfBirth}
+          onChange={(event) => onFieldChange("dateOfBirth", event.target.value)}
+          className="w-full"
+        />
       </div>
     </div>
   );

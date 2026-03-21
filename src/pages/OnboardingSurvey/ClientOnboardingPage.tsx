@@ -1,9 +1,9 @@
 import { useState } from "react";
 
-import SurveyLayout from "../../components/OnboardingSurvey/SurveyLayout";
 import ClientGoalsStep from "../../components/OnboardingSurvey/Client/ClientGoalsStep";
 import ClientInfoStep from "../../components/OnboardingSurvey/Client/ClientInfoStep";
 import ClientSummaryStep from "../../components/OnboardingSurvey/Client/ClientSummaryStep";
+import SurveyLayout from "../../components/OnboardingSurvey/SurveyLayout";
 import {
   clientSteps,
   clientTotalSteps,
@@ -11,89 +11,92 @@ import {
   type ClientInfoValues,
 } from "../../utils/OnboardingSurvey/clientSurvey";
 
-function ClientOnboardingPage() {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
-  const [fitnessLevel, setFitnessLevel] = useState<ClientFitnessLevel | "">("");
-  const [clientInfo, setClientInfo] = useState<ClientInfoValues>({
-    age: "",
-    height: "",
-    weight: "",
-  });
+interface ClientOnboardingPageProps {
+  selectedGoals: string[];
+  fitnessLevel: ClientFitnessLevel | "";
+  clientInfo: ClientInfoValues;
+  onGoalsChange: (values: string[]) => void;
+  onFitnessLevelChange: (value: ClientFitnessLevel) => void;
+  onClientInfoChange: (name: keyof ClientInfoValues, value: string) => void;
+  onComplete: () => void;
+  isCoachFlow?: boolean;
+}
 
-  // Step titles and subtitles stay in the survey utils file so this page
-  // only controls flow and does not get bloated with display copy.
+function ClientOnboardingPage({
+  selectedGoals,
+  fitnessLevel,
+  clientInfo,
+  onGoalsChange,
+  onFitnessLevelChange,
+  onClientInfoChange,
+  onComplete,
+  isCoachFlow = false,
+}: ClientOnboardingPageProps) {
+  const [currentStep, setCurrentStep] = useState(1);
+
+  // Step titles and subtitles live in the survey utils file so this page only
+  // controls flow and rendering.
   const stepDetails = clientSteps[currentStep - 1];
 
   const handleNext = () => {
-    setCurrentStep((prevStep) => Math.min(prevStep + 1, clientTotalSteps));
+    if (currentStep < clientTotalSteps) {
+      setCurrentStep((previousStep) => previousStep + 1);
+      return;
+    }
+
+    onComplete();
   };
 
   const handleBack = () => {
-    setCurrentStep((prevStep) => Math.max(1, prevStep - 1));
+    setCurrentStep((previousStep) => Math.max(1, previousStep - 1));
   };
 
-  // Keep field updates in one handler so each input can stay simple.
-  // This also makes it easier to swap local state for API-backed state later.
-  const handleClientInfoChange = (
-    name: keyof ClientInfoValues,
-    value: string
-  ) => {
-    setClientInfo((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  // The footer button is disabled based on the requirements for the current step.
-  // This keeps validation rules in one place instead of scattering them across buttons.
   const isCurrentStepDisabled = () => {
-    if (currentStep === 1) {
-      return selectedGoals.length === 0;
-    }
+    switch (currentStep) {
+      case 1:
+        return selectedGoals.length === 0;
 
-    if (currentStep === 2) {
-      return (
-        !fitnessLevel ||
-        !clientInfo.age.trim() ||
-        !clientInfo.weight.trim() ||
-        !clientInfo.height.trim()
-      );
-    }
+      case 2:
+        return (
+          !fitnessLevel ||
+          !clientInfo.height.trim() ||
+          !clientInfo.weight.trim() ||
+          !clientInfo.dateOfBirth.trim()
+        );
 
-    return false;
+      default:
+        return false;
+    }
   };
 
-  // Render only the active step. Keeping this branching in one function makes
-  // the page easier to scan than mixing step conditions throughout the JSX.
+  // Keeping step rendering in one switch makes the page easier to scan than
+  // scattering step checks throughout the JSX.
   const renderStep = () => {
-    if (currentStep === 1) {
-      return (
-        <ClientGoalsStep
-          selectedGoals={selectedGoals}
-          onChange={setSelectedGoals}
-        />
-      );
-    }
+    switch (currentStep) {
+      case 1:
+        return (
+          <ClientGoalsStep selectedGoals={selectedGoals} onChange={onGoalsChange} />
+        );
 
-    if (currentStep === 2) {
-      return (
-        <ClientInfoStep
-          values={clientInfo}
-          fitnessLevel={fitnessLevel}
-          onFieldChange={handleClientInfoChange}
-          onFitnessLevelChange={setFitnessLevel}
-        />
-      );
-    }
+      case 2:
+        return (
+          <ClientInfoStep
+            values={clientInfo}
+            fitnessLevel={fitnessLevel}
+            onFieldChange={onClientInfoChange}
+            onFitnessLevelChange={onFitnessLevelChange}
+          />
+        );
 
-    return (
-      <ClientSummaryStep
-        goals={selectedGoals}
-        values={clientInfo}
-        fitnessLevel={fitnessLevel}
-      />
-    );
+      default:
+        return (
+          <ClientSummaryStep
+            goals={selectedGoals}
+            values={clientInfo}
+            fitnessLevel={fitnessLevel}
+          />
+        );
+    }
   };
 
   return (
@@ -106,7 +109,11 @@ function ClientOnboardingPage() {
       onBack={currentStep > 1 ? handleBack : undefined}
       onNext={handleNext}
       nextButtonLabel={
-        currentStep === clientTotalSteps ? "Get Started" : "Continue"
+        currentStep === clientTotalSteps
+          ? isCoachFlow
+            ? "Complete Onboarding"
+            : "Get Started"
+          : "Continue"
       }
       isNextDisabled={isCurrentStepDisabled()}
     >

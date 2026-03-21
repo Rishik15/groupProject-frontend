@@ -1,7 +1,5 @@
 import type { SelectCardOption } from "../../components/OnboardingSurvey/SelectCardGroup";
 
-// Goal options power the reusable SelectCardGroup UI on the client goals step.
-// Keeping labels and descriptions here keeps the TSX step component focused on layout.
 export const clientGoalOptions: SelectCardOption[] = [
   {
     value: "lose_weight",
@@ -35,20 +33,11 @@ export const clientGoalOptions: SelectCardOption[] = [
   },
 ];
 
-// Summary screens and any future API payload formatting can use this map to turn
-// stored option values back into human-readable labels without hardcoding strings in TSX.
-export const clientGoalLabelMap: Record<string, string> = {
-  lose_weight: "Lose Weight",
-  build_muscle: "Build Muscle",
-  improve_endurance: "Improve Endurance",
-  flexibility: "Flexibility",
-  general_fitness: "General Fitness",
-  sport_specific: "Sport-Specific",
-};
-
-// Centralize page copy for each step so the page component only has to look up the
-// current title and subtitle instead of keeping display text inline.
-// An array keeps step access simple with currentStep - 1 and avoids object key casts.
+/**
+ * Central step copy for the client flow.
+ * Keeping this outside the page component prevents the page from turning into
+ * a long mix of UI copy and state logic.
+ */
 export const clientSteps = [
   {
     title: "What are your goals?",
@@ -66,15 +55,17 @@ export const clientSteps = [
 
 export const clientTotalSteps = clientSteps.length;
 
-// Shared shape for the personal details collected during onboarding.
+/**
+ * Numeric fields stay as strings in component state.
+ * This keeps the inputs easy to edit until the final backend payload is built.
+ */
 export interface ClientInfoValues {
-  age: string;
   height: string;
   weight: string;
+  goalWeight: string;
+  dateOfBirth: string;
 }
 
-// Fitness level options are kept with the rest of the client survey config so the
-// step component can stay mostly structural and not own content data.
 export const clientFitnessOptions = [
   {
     value: "beginner",
@@ -93,7 +84,14 @@ export const clientFitnessOptions = [
   },
 ] as const;
 
-// Export the union type from the options array so all client onboarding files
-// share one source of truth for allowed fitness level values.
-export type ClientFitnessLevel =
-  (typeof clientFitnessOptions)[number]["value"];
+export type ClientFitnessLevel = (typeof clientFitnessOptions)[number]["value"];
+
+// Goal values are what we store in state. This map turns them back into labels.
+export const clientGoalLabelMap: Record<string, string> = {
+  lose_weight: "Lose Weight",
+  build_muscle: "Build Muscle",
+  improve_endurance: "Improve Endurance",
+  flexibility: "Flexibility",
+  general_fitness: "General Fitness",
+  sport_specific: "Sport-Specific",
+};

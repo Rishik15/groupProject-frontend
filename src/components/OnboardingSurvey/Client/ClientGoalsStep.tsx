@@ -6,6 +6,10 @@ interface ClientGoalsStepProps {
   onChange: (values: string[]) => void;
 }
 
+/**
+ * First client step.
+ * Lets the user pick one or more fitness goals.
+ */
 function ClientGoalsStep({
   selectedGoals,
   onChange,

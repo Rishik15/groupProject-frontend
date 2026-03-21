@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import SurveyHeader from "./SurveyHeader";
 import SurveyFooter from "./SurveyFooter";
+import SurveyHeader from "./SurveyHeader";
 
 interface SurveyLayoutProps {
   badgeLabel: string;
@@ -18,8 +18,8 @@ interface SurveyLayoutProps {
 }
 
 /**
- * Shared layout shell for all onboarding survey steps.
- * The page components pass step content into this wrapper through children.
+ * Shared page shell for all onboarding steps.
+ * Each survey page passes the step-specific content in through children.
  */
 function SurveyLayout({
   badgeLabel,
@@ -37,8 +37,9 @@ function SurveyLayout({
   return (
     <main className="min-h-screen bg-[#F4F4F7] px-4 py-5">
       <div className="mx-auto w-full max-w-[610px]">
-        <div className="mb-4 flex gap-2 items-center">
-          <div className="text-[10px] text-white font-bold w-7 h-7 flex items-center justify-center bg-[#5B5EF4] rounded-lg">
+        {/* Small product mark shown above the survey card. */}
+        <div className="mb-4 flex items-center gap-2">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#5B5EF4] text-[10px] font-bold text-white">
             βF
           </div>
           <div className="text-[15px] font-bold">βFit</div>

@@ -1,141 +1,204 @@
 import { useState } from "react";
 
-import SurveyLayout from "../../components/OnboardingSurvey/SurveyLayout";
+import CoachCredentialsStep from "../../components/OnboardingSurvey/Coach/CoachCredentialsStep";
+import CoachPreferencesStep from "../../components/OnboardingSurvey/Coach/CoachPreferencesStep";
 import CoachPrimarySpecialtiesStep from "../../components/OnboardingSurvey/Coach/CoachPrimarySpecialtiesStep";
 import CoachSecondarySpecialtiesStep from "../../components/OnboardingSurvey/Coach/CoachSecondarySpecialtiesStep";
 import CoachSummaryStep from "../../components/OnboardingSurvey/Coach/CoachSummaryStep";
-import CoachPreferencesStep from "../../components/OnboardingSurvey/Coach/CoachPreferencesStep";
-import CoachCredentialsStep from "../../components/OnboardingSurvey/Coach/CoachCredentialsStep";
+import SurveyLayout from "../../components/OnboardingSurvey/SurveyLayout";
+import type {
+  CoachAvailabilityBlock,
+  CoachCertificationValues,
+} from "../../utils/OnboardingSurvey/coachSurvey";
 import {
-  coachInitialCredentials,
+  buildCoachProfileDescription,
   coachPrimarySpecialtyOptions,
   coachSteps,
   coachTotalSteps,
+  hasOverlappingAvailabilityBlocks,
+  isAvailabilityBlockValid,
   type CoachCredentialsValues,
 } from "../../utils/OnboardingSurvey/coachSurvey";
 
-function CoachOnboardingPage() {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [primarySpecialties, setPrimarySpecialties] = useState<string[]>([]);
-  const [secondarySpecialties, setSecondarySpecialties] = useState<string[]>([]);
-  const [clientTypes, setClientTypes] = useState<string[]>([]);
-  const [availability, setAvailability] = useState<string[]>([]);
-  const [sessionFormats, setSessionFormats] = useState<string[]>([]);
-  const [credentials, setCredentials] =
-    useState<CoachCredentialsValues>(coachInitialCredentials);
+interface CoachOnboardingPageProps {
+  primarySpecialties: string[];
+  secondarySpecialties: string[];
+  clientTypes: string[];
+  availability: CoachAvailabilityBlock[];
+  sessionFormats: string[];
+  price: string;
+  credentials: CoachCredentialsValues;
+  onPrimarySpecialtiesChange: (values: string[]) => void;
+  onSecondarySpecialtiesChange: (values: string[]) => void;
+  onClientTypesChange: (values: string[]) => void;
+  onAvailabilityChange: (values: CoachAvailabilityBlock[]) => void;
+  onSessionFormatsChange: (values: string[]) => void;
+  onPriceChange: (value: string) => void;
+  onCredentialFieldChange: (
+    name: Extract<keyof CoachCredentialsValues, "yearsExperience" | "bio">,
+    value: string
+  ) => void;
+  onCertificationCountChange: (count: number) => void;
+  onCertificationChange: (
+    index: number,
+    name: keyof CoachCertificationValues,
+    value: string
+  ) => void;
+  onComplete: () => void;
+}
 
-  // Step titles and subtitles live in the utils file so this page can focus on
-  // state and navigation instead of becoming a large copy-heavy component.
+function isPriceValid(value: string) {
+  const trimmedValue = value.trim();
+
+  if (!trimmedValue) {
+    return false;
+  }
+
+  const parsedValue = Number(trimmedValue);
+  return !Number.isNaN(parsedValue) && parsedValue >= 0;
+}
+
+function CoachOnboardingPage({
+  primarySpecialties,
+  secondarySpecialties,
+  clientTypes,
+  availability,
+  sessionFormats,
+  price,
+  credentials,
+  onPrimarySpecialtiesChange,
+  onSecondarySpecialtiesChange,
+  onClientTypesChange,
+  onAvailabilityChange,
+  onSessionFormatsChange,
+  onPriceChange,
+  onCredentialFieldChange,
+  onCertificationCountChange,
+  onCertificationChange,
+  onComplete,
+}: CoachOnboardingPageProps) {
+  const [currentStep, setCurrentStep] = useState(1);
+
   const stepDetails = coachSteps[currentStep - 1];
 
-  // Secondary specialties should only show options that are not already chosen
-  // as primary specialties. This avoids duplicate selections across both steps.
+  // Secondary options should not show any specialty already chosen as primary.
   const availableSecondaryOptions = coachPrimarySpecialtyOptions.filter(
     (option) => !primarySpecialties.includes(option.value)
   );
 
-  // When a specialty becomes primary, remove it from secondary selections too.
-  // This keeps the two lists mutually exclusive without extra validation later.
-  const handlePrimarySpecialtiesChange = (values: string[]) => {
-    setPrimarySpecialties(values);
+  const coachProfileDescription = buildCoachProfileDescription({
+    primarySpecialties,
+    secondarySpecialties,
+    clientTypes,
+    sessionFormats,
+    yearsExperience: credentials.yearsExperience,
+    bio: credentials.bio,
+  });
 
-    setSecondarySpecialties((prev) =>
-      prev.filter((value) => !values.includes(value))
+  const handlePrimarySpecialtiesChange = (values: string[]) => {
+    onPrimarySpecialtiesChange(values);
+
+    // If a specialty becomes primary, remove it from secondary selections.
+    onSecondarySpecialtiesChange(
+      secondarySpecialties.filter((value) => !values.includes(value))
     );
   };
 
-  // Keep credential updates centralized so the step component can stay focused
-  // on rendering HeroUI inputs rather than state-shaping logic.
-  const handleCredentialsChange = (
-    name: keyof CoachCredentialsValues,
-    value: string
-  ) => {
-    setCredentials((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   const handleNext = () => {
-    setCurrentStep((prevStep) => Math.min(prevStep + 1, coachTotalSteps));
+    if (currentStep < coachTotalSteps) {
+      setCurrentStep((previousStep) => previousStep + 1);
+      return;
+    }
+
+    onComplete();
   };
 
   const handleBack = () => {
-    setCurrentStep((prevStep) => Math.max(1, prevStep - 1));
+    setCurrentStep((previousStep) => Math.max(1, previousStep - 1));
   };
 
-  // Each step has different completion rules.
-  // Keeping them here makes the continue button behavior easy to trace.
   const isCurrentStepDisabled = () => {
     if (currentStep === 1) {
       return primarySpecialties.length === 0;
     }
 
     if (currentStep === 3) {
+      const hasInvalidAvailabilityBlock = availability.some(
+        (block) => !isAvailabilityBlockValid(block)
+      );
+
       return (
         clientTypes.length === 0 ||
         sessionFormats.length === 0 ||
-        availability.length === 0
+        !isPriceValid(price) ||
+        availability.length === 0 ||
+        hasInvalidAvailabilityBlock ||
+        hasOverlappingAvailabilityBlocks(availability)
       );
     }
 
     return false;
   };
 
-  // Render the active step in one place so the overall coach flow is easy to follow.
   const renderStep = () => {
-    if (currentStep === 1) {
-      return (
-        <CoachPrimarySpecialtiesStep
-          selectedValues={primarySpecialties}
-          onChange={handlePrimarySpecialtiesChange}
-        />
-      );
-    }
+    switch (currentStep) {
+      case 1:
+        return (
+          <CoachPrimarySpecialtiesStep
+            selectedValues={primarySpecialties}
+            onChange={handlePrimarySpecialtiesChange}
+          />
+        );
 
-    if (currentStep === 2) {
-      return (
-        <CoachSecondarySpecialtiesStep
-          options={availableSecondaryOptions}
-          selectedValues={secondarySpecialties}
-          onChange={setSecondarySpecialties}
-        />
-      );
-    }
+      case 2:
+        return (
+          <CoachSecondarySpecialtiesStep
+            options={availableSecondaryOptions}
+            selectedValues={secondarySpecialties}
+            onChange={onSecondarySpecialtiesChange}
+          />
+        );
 
-    if (currentStep === 3) {
-      return (
-        <CoachPreferencesStep
-          clientTypes={clientTypes}
-          sessionFormats={sessionFormats}
-          availability={availability}
-          onClientTypesChange={setClientTypes}
-          onSessionFormatsChange={setSessionFormats}
-          onAvailabilityChange={setAvailability}
-        />
-      );
-    }
+      case 3:
+        return (
+          <CoachPreferencesStep
+            clientTypes={clientTypes}
+            sessionFormats={sessionFormats}
+            price={price}
+            availability={availability}
+            onClientTypesChange={onClientTypesChange}
+            onSessionFormatsChange={onSessionFormatsChange}
+            onPriceChange={onPriceChange}
+            onAvailabilityChange={onAvailabilityChange}
+          />
+        );
 
-    if (currentStep === 4) {
-      return (
-        <CoachCredentialsStep
-          values={credentials}
-          onChange={handleCredentialsChange}
-        />
-      );
-    }
+      case 4:
+        return (
+          <CoachCredentialsStep
+            values={credentials}
+            onFieldChange={onCredentialFieldChange}
+            onCertificationCountChange={onCertificationCountChange}
+            onCertificationChange={onCertificationChange}
+          />
+        );
 
-    return (
-      <CoachSummaryStep
-        primarySpecialties={primarySpecialties}
-        secondarySpecialties={secondarySpecialties}
-        clientTypes={clientTypes}
-        sessionFormats={sessionFormats}
-        availability={availability}
-        yearsExperience={credentials.yearsExperience}
-        certifications={credentials.certifications}
-      />
-    );
+      default:
+        return (
+          <CoachSummaryStep
+            primarySpecialties={primarySpecialties}
+            secondarySpecialties={secondarySpecialties}
+            clientTypes={clientTypes}
+            sessionFormats={sessionFormats}
+            availability={availability}
+            price={price}
+            yearsExperience={credentials.yearsExperience}
+            bio={credentials.bio}
+            certifications={credentials.certifications}
+            profileDescription={coachProfileDescription}
+          />
+        );
+    }
   };
 
   return (
@@ -149,7 +212,7 @@ function CoachOnboardingPage() {
       onNext={handleNext}
       nextButtonLabel={
         currentStep === coachTotalSteps
-          ? "Continue to Coach Dashboard"
+          ? "Continue to Personal Profile"
           : "Continue"
       }
       isNextDisabled={isCurrentStepDisabled()}

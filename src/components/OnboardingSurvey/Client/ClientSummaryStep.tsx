@@ -1,9 +1,9 @@
 import { Card, Chip } from "@heroui/react";
-import type {
-  ClientInfoValues,
-  ClientFitnessLevel,
+import {
+  clientGoalLabelMap,
+  type ClientFitnessLevel,
+  type ClientInfoValues,
 } from "../../../utils/OnboardingSurvey/clientSurvey";
-import { clientGoalLabelMap } from "../../../utils/OnboardingSurvey/clientSurvey";
 
 interface ClientSummaryStepProps {
   goals: string[];
@@ -20,9 +20,7 @@ function ClientSummaryStep({
   values,
   fitnessLevel = "",
 }: ClientSummaryStepProps) {
-  // Convert the stored enum-like value into a readable label for the summary.
-  // Keeping this tiny formatting step here avoids duplicating display-only labels
-  // inside form state.
+  // Convert the stored value into readable summary text.
   const formattedFitnessLevel = fitnessLevel
     ? `${fitnessLevel.charAt(0).toUpperCase()}${fitnessLevel.slice(1)}`
     : "Not provided";
@@ -47,16 +45,21 @@ function ClientSummaryStep({
 
             <div className="mt-3 flex flex-wrap gap-4 text-[14px] text-[#6E728C]">
               <span>
-                <span className="font-medium text-black">Age:</span>{" "}
-                {values.age || "—"}
+                <span className="font-medium text-black">Height:</span>{" "}
+                {values.height || "—"} in
               </span>
               <span>
                 <span className="font-medium text-black">Weight:</span>{" "}
                 {values.weight || "—"} lb
               </span>
               <span>
-                <span className="font-medium text-black">Height:</span>{" "}
-                {values.height || "—"} in
+                <span className="font-medium text-black">Weight Goal:</span>{" "}
+                {values.goalWeight || "—"}
+                {values.goalWeight ? " lb" : ""}
+              </span>
+              <span>
+                <span className="font-medium text-black">DOB:</span>{" "}
+                {values.dateOfBirth || "—"}
               </span>
             </div>
           </div>
@@ -69,11 +72,8 @@ function ClientSummaryStep({
         </h3>
 
         <div className="mt-4 flex flex-wrap gap-3">
-          {/*
-            Goals are stored as stable option values in state. The label map turns
-            those values back into user-facing text so this HeroUI chip list stays
-            simple and consistent with the selection step.
-          */}
+          {/* Goal values stay stable in state, and this label map converts them
+              back to friendly text for the summary UI. */}
           {goals.length > 0 ? (
             goals.map((goal) => (
               <Chip

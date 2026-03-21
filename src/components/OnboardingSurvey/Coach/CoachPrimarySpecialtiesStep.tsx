@@ -6,6 +6,10 @@ interface CoachPrimarySpecialtiesStepProps {
   onChange: (values: string[]) => void;
 }
 
+/**
+ * Step 1 for the coach flow.
+ * Lets the coach choose their main specialties.
+ */
 function CoachPrimarySpecialtiesStep({
   selectedValues,
   onChange,

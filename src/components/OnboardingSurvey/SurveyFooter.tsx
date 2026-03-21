@@ -9,8 +9,8 @@ interface SurveyFooterProps {
 }
 
 /**
- * Shared footer navigation for onboarding surveys.
- * Back is optional because the first step does not show it.
+ * Shared footer navigation for survey screens.
+ * The first step does not pass an onBack handler, so no back button is shown.
  */
 function SurveyFooter({
   onBack,
