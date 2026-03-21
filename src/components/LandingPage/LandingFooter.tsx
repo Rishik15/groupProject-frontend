@@ -1,11 +1,14 @@
+import { useNavigate } from "react-router-dom";
 import TemplateButton from "./TemplateButton";
 
 // Final landing page CTA plus legal/footer row.
-// Frontend: adjust spacing/copy here.
-// Fullstack: hook CTA action/route here.
-// Backend: only needed if footer content becomes configurable.
+// Register is a real route now.
 const LandingFooter = () => {
   const currentYear = new Date().getFullYear();
+  const navigate = useNavigate();
+
+  // Current working route.
+  const registerRoute = "/register";
 
   return (
     <section className="border-t border-[#E6E6EE]">
@@ -20,9 +23,15 @@ const LandingFooter = () => {
           </p>
 
           <div className="mt-10 flex justify-center">
+            {/*
+              REAL ROUTE:
+              This already goes to the register page.
+              If the register page path changes later, update registerRoute above.
+            */}
             <TemplateButton
               variant="primary"
               className="!bg-white !text-[#5B5EF4] hover:!bg-[#EFEEFE] hover:!text-[#5B5EF4] px-8 py-3"
+              onClick={() => navigate(registerRoute)}
             >
               Create free account
             </TemplateButton>

@@ -1,4 +1,4 @@
-import type { Feature } from "./types";
+import type { Feature } from "./Types";
 
 // Presentational feature card for the landing page marketing section.
 type FeatureCardProps = {

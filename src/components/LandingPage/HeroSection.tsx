@@ -1,10 +1,16 @@
+import { useNavigate } from "react-router-dom";
 import TemplateButton from "./TemplateButton";
 
 // Above-the-fold hero section.
-// Frontend: edit copy/layout here.
-// Fullstack: wire CTA handlers/routes here later.
-// Backend: no dependency here unless hero content becomes CMS-driven.
+// Register is a real route now.
+// Temporary buttons route back to the landing page until their screens exist.
 const HeroSection = () => {
+  const navigate = useNavigate();
+
+  // Current working routes.
+  const landingRoute = "/landing";
+  const registerRoute = "/register";
+
   return (
     <section className="max-w-7xl mx-auto px-8 py-16 grid grid-cols-2 gap-16 items-center">
       <div className="flex flex-col items-start text-left">
@@ -23,11 +29,24 @@ const HeroSection = () => {
         </p>
 
         <div className="mt-8 flex items-center gap-4">
-          <TemplateButton variant="primary">
+          {/*
+            REAL ROUTE:
+            This already goes to the register page.
+            If the register page path changes later, update registerRoute above.
+          */}
+          <TemplateButton variant="primary" onClick={() => navigate(registerRoute)}>
             Start free trial
           </TemplateButton>
 
-          <TemplateButton variant="outline">
+          {/*
+            TEMP PLACEHOLDER:
+            This routes back to the landing page for now so no new App route is needed.
+            Example future route once the page exists: navigate("/coaches")
+          */}
+          <TemplateButton
+            variant="outline"
+            onClick={() => navigate(landingRoute)}
+          >
             Browse coaches
           </TemplateButton>
         </div>

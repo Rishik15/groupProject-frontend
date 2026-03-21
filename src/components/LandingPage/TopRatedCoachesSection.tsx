@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import CoachCard from "./CoachCard";
 import TemplateButton from "./TemplateButton";
 import { fetchTopRatedCoaches } from "./landingMockData";
-import type { Coach } from "./types";
+import type { Coach } from "./Types";
 
 // Dynamic-looking section for coach data.
 // Frontend: safe place to style cards/layout.
 // Fullstack/backend: replace fetchTopRatedCoaches with a service/API call.
 const TopRatedCoachesSection = () => {
   const [coaches, setCoaches] = useState<Coach[]>([]);
+  const navigate = useNavigate();
+
+  // Current working route for temporary actions.
+  const landingRoute = "/landing";
 
   useEffect(() => {
     const loadCoaches = async () => {
@@ -32,7 +37,16 @@ const TopRatedCoachesSection = () => {
             </p>
           </div>
 
-          <TemplateButton variant="ghost" className="text-[18px]">
+          {/*
+            TEMP PLACEHOLDER:
+            This routes back to the landing page for now so no new App route is needed.
+            Example future route once the page exists: navigate("/coaches")
+          */}
+          <TemplateButton
+            variant="ghost"
+            className="text-[18px]"
+            onClick={() => navigate(landingRoute)}
+          >
             View all →
           </TemplateButton>
         </div>

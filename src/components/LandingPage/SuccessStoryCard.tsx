@@ -1,4 +1,4 @@
-import type { SuccessStory } from "./types";
+import type { SuccessStory } from "./Types";
 
 // Presentational success-story card for the testimonials/results section.
 type SuccessStoryCardProps = {

@@ -1,4 +1,4 @@
-import type { Coach, Feature, SuccessStory } from "./types";
+import type { Coach, Feature, SuccessStory } from "./Types";
 
 // Temporary landing page data used until backend integration is ready.
 // Frontend devs can safely style against this.

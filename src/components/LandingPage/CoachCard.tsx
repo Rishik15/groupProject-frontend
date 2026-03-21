@@ -1,5 +1,6 @@
+import { useNavigate } from "react-router-dom";
 import TemplateButton from "./TemplateButton";
-import type { Coach } from "./types";
+import type { Coach } from "./Types";
 
 // Presentational card used by the landing page coaches section.
 // Keep this file UI-only. Data loading should happen in the section/component above it.
@@ -8,6 +9,11 @@ type CoachCardProps = {
 };
 
 const CoachCard = ({ coach }: CoachCardProps) => {
+  const navigate = useNavigate();
+
+  // Current working route for temporary actions.
+  const landingRoute = "/landing";
+
   return (
     <div className="rounded-[18px] border border-[#E6E6EE] bg-white p-7 h-[180px] flex flex-col justify-between">
       <div className="flex items-center gap-4">
@@ -34,7 +40,16 @@ const CoachCard = ({ coach }: CoachCardProps) => {
           </span>
         </div>
 
-        <TemplateButton variant="ghost" className="text-[16px]">
+        {/*
+          TEMP PLACEHOLDER:
+          This routes back to the landing page for now so no new App route is needed.
+          Example future route once the page exists: navigate(`/coaches/${coach.id}`)
+        */}
+        <TemplateButton
+          variant="ghost"
+          className="text-[16px]"
+          onClick={() => navigate(landingRoute)}
+        >
           View Profile
         </TemplateButton>
       </div>
