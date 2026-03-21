@@ -14,9 +14,9 @@ const StickyHeader = () => {
 
   return (
     <header className="sticky top-0 h-14 z-100 bg-[#f8f8fb] border-b border-[#E6E6EE] shadow-sm">
-      <div className="w-full h-14 px-35 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto h-16 px-14 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <div className="text-white font-semibold w-7 h-7 flex items-center justify-center bg-[#5B5EF4] rounded-lg p-0">
+          <div className="text-white text-[12px] font-semibold w-7 h-7 flex items-center justify-center bg-[#5B5EF4] rounded-lg p-0">
             βF
           </div>
           <span className="text-[15px] font-semibold">βFit</span>
@@ -30,7 +30,7 @@ const StickyHeader = () => {
             */}
           <TemplateButton
             variant="ghost"
-            className="text-[15px]"
+            className="text-[14px]"
             onClick={() => navigate(landingRoute)}
           >
             Sign in
@@ -43,7 +43,7 @@ const StickyHeader = () => {
             */}
           <TemplateButton
             variant="primary"
-            className="text-[15px]"
+            className="text-[14px]"
             onClick={() => navigate(registerRoute)}
           >
             Get Started

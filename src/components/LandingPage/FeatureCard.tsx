@@ -6,17 +6,18 @@ type FeatureCardProps = {
 };
 
 const FeatureCard = ({ feature }: FeatureCardProps) => {
+  const Icon = feature.icon;
   return (
-    <div className="rounded-[18px] border border-[#E6E6EE] bg-white p-8 h-[240px] flex flex-col">
-      <div className="w-14 h-14 rounded-2xl bg-[#F2F2FA] flex items-center justify-center text-[#5B5EF4] text-2xl font-bold">
-        {feature.icon}
+    <div className="rounded-[18px] border border-[#E6E6EE] bg-white py-8 px-6 h-48 flex flex-col">
+      <div className="w-10 h-12 px-2 py-2.5 rounded-xl bg-[#F2F2FA] flex items-center justify-center text-[#5B5EF4] font-bold">
+        <Icon className="w-5 h-5 text-[#5B5EF4]" />
       </div>
 
-      <h3 className="mt-8 text-[24px] font-semibold text-black">
+      <h3 className="mt-4 text-[18px] font-semibold text-black">
         {feature.title}
       </h3>
 
-      <p className="mt-4 text-[18px] leading-[1.6] text-[#72728A] max-w-[320px]">
+      <p className="mt-3 text-[14px] leading-[1.6] text-[#72728A] max-w-[320px]">
         {feature.description}
       </p>
     </div>

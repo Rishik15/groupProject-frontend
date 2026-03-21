@@ -24,9 +24,9 @@ export default function Navbar({
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 border-b">
-      <div className="w-full h-14 px-36 flex items-center justify-between">
+      <div className="h-14 max-w-7xl mx-auto px-16 flex items-center justify-between">
         <Link to={parent} className="flex items-center gap-2">
-          <div className="text-[15px] text-white font-bold w-7 h-7 flex items-center justify-center bg-[#5B5EF4] rounded-lg p-0">
+          <div className="text-[12px] text-white font-bold w-7 h-7 flex items-center justify-center bg-[#5B5EF4] rounded-lg p-0">
             βF
           </div>
           <span className="text-[15px] font-semibold">βFit</span>

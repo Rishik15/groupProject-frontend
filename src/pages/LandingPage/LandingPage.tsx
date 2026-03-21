@@ -11,14 +11,14 @@ import LandingFooter from "../../components/LandingPage/LandingFooter";
 // If a new section is added later, import it here and place it in order.
 const LandingPage = () => {
   return (
-    <div className="min-h-screen bg-[#F8F8FB]">
+    <div>
       <StickyHeader />
-        <div className="relative z-0 bg-[#F8F8FB]">
+      <div className="relative z-0">
         <HeroSection />
         <FeaturesSection />
         <TopRatedCoachesSection />
         <SuccessStoriesSection />
-        </div>
+      </div>
       <LandingFooter />
     </div>
   );

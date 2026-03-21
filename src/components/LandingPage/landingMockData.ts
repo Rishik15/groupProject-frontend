@@ -1,4 +1,5 @@
 import type { Coach, Feature, SuccessStory } from "./Types";
+import { Users, TrendingUp, Award } from "lucide-react";
 
 // Temporary landing page data used until backend integration is ready.
 // Frontend devs can safely style against this.
@@ -7,21 +8,21 @@ import type { Coach, Feature, SuccessStory } from "./Types";
 export const features: Feature[] = [
   {
     id: 1,
-    icon: "⌘",
+    icon: Users,
     title: "Expert Coaches",
     description:
       "Connect with certified trainers matched to your goals and schedule.",
   },
   {
     id: 2,
-    icon: "↗",
+    icon: TrendingUp,
     title: "Track Progress",
     description:
       "Visual dashboards and trend charts to see exactly how far you've come.",
   },
   {
     id: 3,
-    icon: "★",
+    icon: Award,
     title: "Custom Plans",
     description:
       "Personalized workout and nutrition guidance built around your life.",
