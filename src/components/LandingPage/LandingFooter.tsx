@@ -13,7 +13,7 @@ const LandingFooter = () => {
   return (
     <section className="border-t border-[#E6E6EE]">
       <div className="max-w-7xl mx-auto px-8 py-20">
-        <div className="rounded-[32px] bg-[#5B5EF4] px-8 py-20 text-center">
+        <div className="rounded-4xl bg-[#5B5EF4] px-8 py-20 text-center">
           <h2 className="text-[56px] font-bold text-white">
             Ready to start your journey?
           </h2>

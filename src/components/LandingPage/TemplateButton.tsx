@@ -28,7 +28,7 @@ const TemplateButton = ({
   onClick,
 }: TemplateButtonProps) => {
   // Shared button base styles for all landing page actions.
-  const baseClasses = "rounded-lg font-semibold transition duration-200";
+  const baseClasses = "rounded-lg transition duration-200";
 
   // Variant intent:
   // primary = main CTA
@@ -36,19 +36,18 @@ const TemplateButton = ({
   // ghost = low-emphasis text button with hover fill
   const variantClasses =
     variant === "primary"
-      ? "bg-[#5B5EF4] text-white px-6 py-3 hover:bg-[#6A6DF5]"
+      ? "bg-[#5B5EF4] text-white px-3 py-1 hover:bg-[#6A6DF5]"
       : variant === "outline"
-        ? "bg-white text-black border border-[#DCDCE6] px-6 py-3 hover:bg-[#5B5EF4] hover:text-white hover:border-[#5B5EF4]"
-        : "bg-transparent text-black px-4 py-2 hover:bg-[#5B5EF4] hover:text-white";
+        ? "bg-white text-black border border-[#DCDCE6] px-2 py-1 hover:bg-[#5B5EF4] hover:text-white hover:border-[#5B5EF4]"
+        : "bg-transparent text-black hover:bg-[#5B5EF4] px-3 py-1 hover:text-white";
 
   return (
     <button
       type={type}
-
       // onClick is optional.
       // If no onClick is passed, the button still renders normally and can
       // still be used as a submit/reset button depending on the "type" prop.
-      // If an onClick is passed, it runs whatever action the parent provided.
+      // If an onClick is paRsed, it runs whatever action the parent provided.
       onClick={onClick}
       className={`${baseClasses} ${variantClasses} ${className}`}
     >

@@ -15,7 +15,7 @@ const CoachCard = ({ coach }: CoachCardProps) => {
   const landingRoute = "/landing";
 
   return (
-    <div className="rounded-[18px] border border-[#E6E6EE] bg-white p-7 h-[180px] flex flex-col justify-between">
+    <div className="rounded-[18px] border border-[#E6E6EE] bg-white p-7 h-45 flex flex-col justify-between">
       <div className="flex items-center gap-4">
         <div className="w-16 h-16 rounded-full bg-[#F2F2FA] flex items-center justify-center text-[#5B5EF4] text-[22px] font-semibold">
           {coach.initials}

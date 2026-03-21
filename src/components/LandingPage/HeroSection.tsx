@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import TemplateButton from "./TemplateButton";
+import 
 
 // Above-the-fold hero section.
 // Register is a real route now.
@@ -12,20 +13,18 @@ const HeroSection = () => {
   const registerRoute = "/register";
 
   return (
-    <section className="max-w-7xl mx-auto px-8 py-16 grid grid-cols-2 gap-16 items-center">
+    <section className="max-w-7xl mx-auto px-14 py-16 grid grid-cols-2 gap-16 items-center">
       <div className="flex flex-col items-start text-left">
-        <div className="leading-[0.98] tracking-[-0.03em]">
-          <h1 className="text-[72px] font-bold text-black">
-            Fitness coaching
-          </h1>
-          <h1 className="text-[72px] font-bold text-[#5B5EF4]">
+        <div className="leading-[0.98] tracking-[-0.03em] space-y-2">
+          <h1 className="text-[46px] font-semibold text-black">Fitness coaching</h1>
+          <h1 className="text-[46px] font-semibold text-[#5B5EF4]">
             that actually works
           </h1>
         </div>
 
-        <p className="mt-8 max-w-[620px] text-[20px] leading-[1.7] text-[#72728A]">
-          Connect with certified coaches, track every metric that matters,
-          and build habits that last — all in one minimal, powerful platform.
+        <p className="mt-8 max-w-100 text-[16px] leading-[1.7] text-[#72728A]">
+          Connect with certified coaches, track every metric that matters, and
+          build habits that last — all in one minimal, powerful platform.
         </p>
 
         <div className="mt-8 flex items-center gap-4">
@@ -34,8 +33,12 @@ const HeroSection = () => {
             This already goes to the register page.
             If the register page path changes later, update registerRoute above.
           */}
-          <TemplateButton variant="primary" onClick={() => navigate(registerRoute)}>
+          <TemplateButton
+            variant="primary"
+            onClick={() => navigate(registerRoute)}
+          >
             Start free trial
+
           </TemplateButton>
 
           {/*
@@ -59,9 +62,7 @@ const HeroSection = () => {
 
           <div>
             <div className="text-[26px] font-bold text-black">500+</div>
-            <div className="text-[16px] text-[#72728A]">
-              Certified Coaches
-            </div>
+            <div className="text-[16px] text-[#72728A]">Certified Coaches</div>
           </div>
 
           <div>
@@ -87,9 +88,7 @@ const HeroSection = () => {
             <div className="text-[20px] font-semibold text-black">
               5 of 6 sessions complete
             </div>
-            <div className="text-[18px] font-semibold text-[#5B5EF4]">
-              +83%
-            </div>
+            <div className="text-[18px] font-semibold text-[#5B5EF4]">+83%</div>
           </div>
 
           <div className="mt-4 h-2 w-full rounded-full bg-[#E9E9EF]">
