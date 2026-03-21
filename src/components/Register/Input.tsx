@@ -2,7 +2,23 @@ import { useState } from "react";
 import { InputGroup, Label, TextField, Button } from "@heroui/react";
 import { KeyRound, User, Mail, Eye, EyeOff } from "lucide-react";
 
-const RegisterInputs = () => {
+interface RegisterProps {
+  name: string;
+  setName: React.Dispatch<React.SetStateAction<string>>;
+  email: string;
+  setEmail: React.Dispatch<React.SetStateAction<string>>;
+  password: string;
+  setPassword: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const RegisterInputs = ({
+  name,
+  setName,
+  email,
+  setEmail,
+  password,
+  setPassword,
+}: RegisterProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   return (
@@ -15,7 +31,11 @@ const RegisterInputs = () => {
             <User className="size-4 text-muted" />
           </InputGroup.Prefix>
 
-          <InputGroup.Input placeholder="Enter your name" />
+          <InputGroup.Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter your name"
+          />
         </InputGroup>
       </TextField>
 
@@ -27,7 +47,11 @@ const RegisterInputs = () => {
             <Mail className="size-4 text-muted" />
           </InputGroup.Prefix>
 
-          <InputGroup.Input placeholder="name@email.com" />
+          <InputGroup.Input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="name@email.com"
+          />
         </InputGroup>
       </TextField>
 
@@ -41,6 +65,8 @@ const RegisterInputs = () => {
           <InputGroup.Input
             type={isVisible ? "text" : "password"}
             placeholder="Minimum 8 characters"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
 
           <InputGroup.Suffix className="pr-0">
@@ -62,6 +88,6 @@ const RegisterInputs = () => {
       </TextField>
     </div>
   );
-}
+};
 
 export default RegisterInputs;
