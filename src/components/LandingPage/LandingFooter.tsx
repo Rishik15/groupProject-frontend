@@ -1,7 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import TemplateButton from "./TemplateButton";
-import { Link } from "react-router-dom";
-
 // Final landing page CTA plus legal/footer row.
 // Register is a real route now.
 const LandingFooter = () => {
