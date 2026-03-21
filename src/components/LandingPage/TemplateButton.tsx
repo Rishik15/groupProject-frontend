@@ -28,7 +28,7 @@ const TemplateButton = ({
   onClick,
 }: TemplateButtonProps) => {
   // Shared button base styles for all landing page actions.
-  const baseClasses = "rounded-lg transition duration-200";
+  const baseClasses = "rounded-lg font-semibold transition duration-200";
 
   // Variant intent:
   // primary = main CTA

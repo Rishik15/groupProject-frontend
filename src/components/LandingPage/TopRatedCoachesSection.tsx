@@ -4,6 +4,7 @@ import CoachCard from "./CoachCard";
 import TemplateButton from "./TemplateButton";
 import { fetchTopRatedCoaches } from "./landingMockData";
 import type { Coach } from "./Types";
+import { ArrowRight } from "lucide-react";
 
 // Dynamic-looking section for coach data.
 // Frontend: safe place to style cards/layout.
@@ -26,13 +27,13 @@ const TopRatedCoachesSection = () => {
 
   return (
     <section className="border-t border-[#E6E6EE]">
-      <div className="max-w-7xl mx-auto px-8 py-20">
+      <div className="max-w-7xl mx-auto px-16 py-20">
         <div className="flex items-end justify-between">
           <div>
-            <h2 className="text-[48px] font-bold text-black">
+            <h2 className="text-[28px] font-bold text-black">
               Top-rated coaches
             </h2>
-            <p className="mt-3 text-[18px] text-[#72728A]">
+            <p className="mt-1.5 text-[16px] text-[#72728A]">
               Work with certified professionals
             </p>
           </div>
@@ -44,10 +45,11 @@ const TopRatedCoachesSection = () => {
           */}
           <TemplateButton
             variant="ghost"
-            className="text-[18px]"
+            className="text-[15px] flex items-center gap-0.5"
             onClick={() => navigate(landingRoute)}
           >
-            View all →
+            View all
+            <ArrowRight className="w-4 h-4" />
           </TemplateButton>
         </div>
 

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import TemplateButton from "./TemplateButton";
+import { Link } from "react-router-dom";
 
 // Final landing page CTA plus legal/footer row.
 // Register is a real route now.
@@ -11,18 +12,18 @@ const LandingFooter = () => {
   const registerRoute = "/register";
 
   return (
-    <section className="border-t border-[#E6E6EE]">
-      <div className="max-w-7xl mx-auto px-8 py-20">
-        <div className="rounded-4xl bg-[#5B5EF4] px-8 py-20 text-center">
-          <h2 className="text-[56px] font-bold text-white">
+    <section className="border-t border-[#E6E6EE] relative">
+      <div className="max-w-7xl mx-auto px-16 py-16 pb-30">
+        <div className="rounded-2xl bg-[#5B5EF4] px-8 py-8 text-center">
+          <h2 className="text-[28px] font-bold text-white">
             Ready to start your journey?
           </h2>
 
-          <p className="mt-5 text-[22px] text-white/90">
+          <p className="mt-2.5 text-[15px] text-white/90">
             Join 10,000+ people transforming their fitness with βFit
           </p>
 
-          <div className="mt-10 flex justify-center">
+          <div className="mt-4 flex justify-center">
             {/*
               REAL ROUTE:
               This already goes to the register page.
@@ -30,7 +31,7 @@ const LandingFooter = () => {
             */}
             <TemplateButton
               variant="primary"
-              className="!bg-white !text-[#5B5EF4] hover:!bg-[#EFEEFE] hover:!text-[#5B5EF4] px-8 py-3"
+              className="bg-white! text-[#5B5EF4]! hover:bg-[#EFEEFE]! hover:text-[#5B5EF4]! px-4 py-2 text-[14px]"
               onClick={() => navigate(registerRoute)}
             >
               Create free account
@@ -38,18 +39,12 @@ const LandingFooter = () => {
           </div>
         </div>
 
-        <div className="mt-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="text-[25px] text-white font-bold w-10 h-10 flex items-center justify-center bg-[#5B5EF4] rounded-lg">
-              βF
-            </div>
-
-            <div className="text-[25px] font-bold text-black">βFit</div>
+        <div className="absolute bottom-0 left-0 w-full border-t border-[#E6E6EE]">
+          <div className="max-w-7xl h-14 mx-auto px-16 py-2 flex items-center justify-end">
+            <p className="text-[12px] text-[#72728A]">
+              © {currentYear} βFit. All rights reserved.
+            </p>
           </div>
-
-          <p className="text-[18px] text-[#72728A]">
-            © {currentYear} βFit. All rights reserved.
-          </p>
         </div>
       </div>
     </section>

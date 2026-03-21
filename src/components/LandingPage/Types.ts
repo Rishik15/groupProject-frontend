@@ -2,9 +2,11 @@
 // Keep these separate from presentational components so multiple sections
 // can reuse the same shapes without importing from UI files.
 
+import type { LucideIcon } from "lucide-react";
+
 export type Feature = {
   id: number;
-  icon: string;
+  icon: LucideIcon;
   title: string;
   description: string;
 };
