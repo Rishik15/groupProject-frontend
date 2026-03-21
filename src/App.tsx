@@ -31,15 +31,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/onboarding/client"
+          element={<OnboardingSurveyPage surveyType="client" />}
+        />
+        <Route
+          path="/onboarding/coach"
+          element={<OnboardingSurveyPage surveyType="coach" />}
+        />
       </Routes>
-      <Route
-        path="/onboarding/client"
-        element={<OnboardingSurveyPage surveyType="client" />}
-      />
-      <Route
-        path="/onboarding/coach"
-        element={<OnboardingSurveyPage surveyType="coach" />}
-      />
     </Router>
   );
 }
