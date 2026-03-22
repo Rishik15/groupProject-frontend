@@ -1,9 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
 import { Input, Button, Chip } from "@heroui/react";
-import CoachCard, { SkeletonCard, type Coach } from "../../components/landingpage/CoachCard";
+import CoachCard, {
+  SkeletonCard,
+} from "../../components/LandingPage/CoachCard";
 import FilterPanel from "../../components/client/CoachFiltering/FilterPanel";
 import { searchCoaches } from "../../services/filtering/searchcoaches";
 import type { CoachQuery } from "../../utils/Interfaces/coachquery";
+import type { Coach } from "../../utils/Interfaces/coachquery";
 
 const MAX_PRICE_LIMIT = 300;
 
@@ -19,7 +22,6 @@ export default function BrowseCoaches() {
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // exact payload sent to backend on every filter change
   const query: CoachQuery = {
     name: nameSearch.trim(),
     tags: selectedTags,
@@ -29,22 +31,21 @@ export default function BrowseCoaches() {
     sort_by: "rating",
   };
 
-  // fires on every filter change
   const loadCoaches = useCallback(async () => {
     setLoading(true);
     const { coaches, count } = await searchCoaches(query);
     setCoaches(coaches);
     setCount(count);
     setLoading(false);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nameSearch, selectedTags, minRating, maxPrice, certifiedOnly]);
 
-  useEffect(() => { loadCoaches(); }, [loadCoaches]);
+  useEffect(() => {
+    loadCoaches();
+  }, [loadCoaches]);
 
-  // adds or removes a tag from the selected tags list when clicked
   function handleTagToggle(tag: string) {
     setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
     );
   }
 
@@ -64,37 +65,55 @@ export default function BrowseCoaches() {
 
   return (
     <div className="min-h-screen bg-default-100 px-8 py-8">
-      <h1 className="text-2xl font-bold text-foreground mb-5">Browse Expert Coaches</h1>
-    <div className="flex items-center gap-3 mb-6">
-      <div className="flex items-center gap-2 bg-white border border-default-200 rounded-xl px-3 py-2 max-w-lg flex-1">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-default-400 shrink-0">
-          <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
-        </svg>
-        <Input
-          placeholder="Search by name or specialty..."
-          value={nameSearch}
-          onChange={(e) => setNameSearch(e.target.value)}
-          className="border-none outline-none bg-transparent flex-1"
-        />
+      <h1 className="text-2xl font-bold text-foreground mb-5">
+        Browse Expert Coaches
+      </h1>
+      <div className="flex items-center gap-3 mb-6">
+        <div className="flex items-center gap-2 bg-white border border-default-200 rounded-xl px-3 py-2 max-w-lg flex-1">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="text-default-400 shrink-0"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+          <Input
+            placeholder="Search by name or specialty..."
+            value={nameSearch}
+            onChange={(e) => setNameSearch(e.target.value)}
+            className="border-none outline-none bg-transparent flex-1"
+          />
+        </div>
+        <Button
+          variant={showFilterPanel ? "primary" : "ghost"}
+          onPress={() => setShowFilterPanel((v) => !v)}
+          className="bg-white"
+        >
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="8" y1="12" x2="16" y2="12" />
+            <line x1="11" y1="18" x2="13" y2="18" />
+          </svg>
+          Filters
+          {activeFilterCount > 0 && (
+            <Chip size="sm" className="min-w-0 h-4 text-xs px-1">
+              {activeFilterCount}
+            </Chip>
+          )}
+        </Button>
       </div>
-      <Button
-        variant={showFilterPanel ? "primary" : "ghost"}
-        onPress={() => setShowFilterPanel((v) => !v)}
-        className="bg-white"
-      >
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <line x1="4" y1="6" x2="20" y2="6" />
-          <line x1="8" y1="12" x2="16" y2="12" />
-          <line x1="11" y1="18" x2="13" y2="18" />
-        </svg>
-        Filters
-        {activeFilterCount > 0 && (
-          <Chip size="sm" className="min-w-0 h-4 text-xs px-1">
-            {activeFilterCount}
-          </Chip>
-        )}
-      </Button>
-    </div>
 
       <div className="flex gap-6 items-start">
         {showFilterPanel && (
@@ -125,7 +144,9 @@ export default function BrowseCoaches() {
             ) : coaches.length === 0 ? (
               <p className="text-sm text-default-400">No coaches found.</p>
             ) : (
-              coaches.map((coach) => <CoachCard key={coach.id} coach={coach} />)
+              coaches.map((coach) => (
+                <CoachCard key={coach.coach_id} coach={coach} />
+              ))
             )}
           </div>
         </div>
