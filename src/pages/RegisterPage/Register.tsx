@@ -38,9 +38,9 @@ const Register = () => {
       const data = await register(name, email, password, role);
 
       if (data.role === "coach") {
-        navigate("/coach");
+        navigate("/onboarding/coach");
       } else {
-        navigate("/client");
+        navigate("/onboarding/client");
       }
     } catch (err: any) {
       setModalMessage(err.message || "Something went wrong");

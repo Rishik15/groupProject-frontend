@@ -12,6 +12,8 @@ import type {
   CombinedCoachOnboardingInput,
 } from "./onboardingTypes";
 
+const TEMP_PROFILE_PICTURE = "temp-profile-picture";
+
 function toNumberOrNull(value: string): number | null {
   const trimmedValue = value.trim();
 
@@ -86,7 +88,7 @@ export function buildClientOnboardingPayload(
 ): BackendClientOnboardingPayload {
   return {
     dob: toBackendDateTime(clientInfo.dateOfBirth),
-    profile_picture: "",
+    profile_picture: TEMP_PROFILE_PICTURE,
     weight: toRequiredNumber(clientInfo.weight),
     height: toRequiredNumber(clientInfo.height),
     goal_weight: toNumberOrNull(clientInfo.goalWeight),
