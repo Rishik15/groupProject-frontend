@@ -1,23 +1,40 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../services/auth/logout";
 
 const DropdownItem = ({
   label,
-  route = "/",
+  route,
   danger,
+  type = "link",
 }: {
   label: string;
   route?: string;
   danger?: boolean;
+  type?: "logout" | "link";
 }) => {
+  const navigate = useNavigate();
+
+  const handleClick = async () => {
+    if (type === "logout") {
+      await logout();
+      navigate("/");
+      return;
+    }
+
+    if (type === "link" && route) {
+      navigate(route);
+    }
+  };
+
   return (
-    <Link
-      to={route}
+    <button
+      onClick={handleClick}
       className={`w-full text-left px-3 py-2 rounded-md transition ${
         danger ? "text-red-400 hover:bg-red-500/10" : "hover:bg-[#d5d5f5]"
       }`}
     >
       {label}
-    </Link>
+    </button>
   );
 };
 
