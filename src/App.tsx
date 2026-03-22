@@ -5,6 +5,7 @@ import SignIn from "./pages/SignIn/Signin";
 import CoachLayout from "./pages/Coach/Coach";
 import ClientLayout from "./pages/Client/Client";
 import LandingPage from "./pages/LandingPage/LandingPage";
+import OnboardingSurveyPage from "./pages/OnboardingSurvey/OnboardingSurveyPage";
 
 function App() {
   return (
@@ -29,6 +30,14 @@ function App() {
               <ClientLayout />
             </ProtectedRoute>
           }
+        />
+        <Route
+          path="/onboarding/client"
+          element={<OnboardingSurveyPage surveyType="client" />}
+        />
+        <Route
+          path="/onboarding/coach"
+          element={<OnboardingSurveyPage surveyType="coach" />}
         />
       </Routes>
     </Router>
