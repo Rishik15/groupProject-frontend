@@ -16,10 +16,9 @@ const CustomModal = ({ isOpen, onClose, title, children }: ModalProps) => {
         if (!open) onClose();
       }}
     >
-      <Modal.Backdrop>
+      <Modal.Backdrop className="backdrop-blur-sm">
         <Modal.Container>
           <Modal.Dialog className="sm:max-w-105 p-6">
-
             <Modal.Header className="flex flex-col items-start gap-3">
               <Modal.CloseTrigger />
 
