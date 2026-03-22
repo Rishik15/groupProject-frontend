@@ -15,7 +15,8 @@ export const coachSteps = [
   },
   {
     title: "Who do you coach?",
-    subtitle: "Select your client types, session format, and weekly availability",
+    subtitle:
+      "Select your client types, session format, and weekly availability",
   },
   {
     title: "Credentials",

@@ -1,8 +1,6 @@
 import SelectCardGroup from "../SelectCardGroup";
 
-import {
-  clientGoalOptions,
-} from "../../../utils/OnboardingSurvey/clientConfig";
+import { clientGoalOptions } from "../../../utils/OnboardingSurvey/clientConfig";
 
 interface ClientGoalsStepProps {
   selectedGoals: string[];
@@ -13,10 +11,7 @@ interface ClientGoalsStepProps {
  * First client step.
  * Lets the user pick one or more fitness goals.
  */
-function ClientGoalsStep({
-  selectedGoals,
-  onChange,
-}: ClientGoalsStepProps) {
+function ClientGoalsStep({ selectedGoals, onChange }: ClientGoalsStepProps) {
   return (
     <SelectCardGroup
       options={clientGoalOptions}

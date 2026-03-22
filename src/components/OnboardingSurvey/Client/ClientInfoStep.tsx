@@ -1,4 +1,9 @@
 import { Input } from "@heroui/react";
+import { DatePicker, DateField, Calendar, FieldError } from "@heroui/react";
+
+import { getLocalTimeZone, today, parseDate } from "@internationalized/date";
+
+import type { DateValue } from "@internationalized/date";
 import type { ChangeEvent } from "react";
 
 import type {
@@ -6,9 +11,7 @@ import type {
   ClientInfoValues,
 } from "../../../utils/Interfaces/OnboardingSurvey/client";
 
-import {
-  clientFitnessOptions,
-} from "../../../utils/OnboardingSurvey/clientConfig";
+import { clientFitnessOptions } from "../../../utils/OnboardingSurvey/clientConfig";
 
 interface ClientInfoStepProps {
   values: ClientInfoValues;
@@ -27,15 +30,28 @@ function ClientInfoStep({
   // consistent without repeating the same check in every field.
   const handleNonNegativeChange =
     (fieldName: "height" | "weight" | "goalWeight") =>
-      (event: ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value;
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
 
-        // Allow an empty string while the user is editing, but block negatives
-        // from entering state.
-        if (value === "" || Number(value) >= 0) {
-          onFieldChange(fieldName, value);
-        }
-      };
+      // Allow an empty string while the user is editing, but block negatives
+      // from entering state.
+      if (value === "" || Number(value) >= 0) {
+        onFieldChange(fieldName, value);
+      }
+    };
+
+  const dateValue: DateValue | null = values.dateOfBirth
+    ? parseDate(values.dateOfBirth)
+    : null;
+
+  const handleDateChange = (value: DateValue | null) => {
+    if (!value) {
+      onFieldChange("dateOfBirth", "");
+      return;
+    }
+
+    onFieldChange("dateOfBirth", value.toString()); // YYYY-MM-DD
+  };
 
   return (
     <div className="space-y-4">
@@ -44,7 +60,7 @@ function ClientInfoStep({
           Current Fitness Level
         </h2>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-2">
           {clientFitnessOptions.map((option) => {
             const isSelected = fitnessLevel === option.value;
 
@@ -54,7 +70,7 @@ function ClientInfoStep({
                 type="button"
                 onClick={() => onFitnessLevelChange(option.value)}
                 className={[
-                  "min-h-[72px] rounded-[18px] border px-2 py-2 text-center transition-all",
+                  "min-h-16 rounded-[18px] border px-1 py-1 text-center transition-all",
                   isSelected
                     ? "border-[#5B5EF4] ring-2 ring-[#DCDDFE]"
                     : "border-[#E4E4EC]",
@@ -63,7 +79,7 @@ function ClientInfoStep({
                 <div className="text-[13.125px] font-semibold text-black">
                   {option.label}
                 </div>
-                <div className="mt-1.5 text-[11.25px] leading-4 text-[#6E728C]">
+                <div className="mt-1 text-[10px] leading-4 text-[#62657a]">
                   {option.description}
                 </div>
               </button>
@@ -102,8 +118,9 @@ function ClientInfoStep({
         <div>
           <label className="mb-2 block text-[13.125px] font-semibold text-black">
             Goal (lb)
-
-            <span className="ml-1 text-[11.25px] font-normal text-[#6E728C]">Optional</span>
+            <span className="ml-1 text-[11.25px] font-normal text-[#6E728C]">
+              Optional
+            </span>
           </label>
           <Input
             type="number"
@@ -116,15 +133,59 @@ function ClientInfoStep({
       </div>
 
       <div>
-        <label className="mb-2 block text-[13.125px] font-semibold text-black">
+        <label className="mb-4 block text-[13.125px] font-semibold text-black">
           Date of Birth
         </label>
-        <Input
-          type="date"
-          value={values.dateOfBirth}
-          onChange={(event) => onFieldChange("dateOfBirth", event.target.value)}
+
+        <DatePicker
           className="w-full"
-        />
+          value={dateValue}
+          onChange={handleDateChange}
+          maxValue={today(getLocalTimeZone())}
+        >
+          <DateField.Group fullWidth>
+            <DateField.Input>
+              {(segment) => <DateField.Segment segment={segment} />}
+            </DateField.Input>
+
+            <DateField.Suffix>
+              <DatePicker.Trigger>
+                <DatePicker.TriggerIndicator />
+              </DatePicker.Trigger>
+            </DateField.Suffix>
+          </DateField.Group>
+          <FieldError>Date must be today or in the future.</FieldError>
+
+          <DatePicker.Popover>
+            <Calendar aria-label="Date of birth">
+              <Calendar.Header>
+                <Calendar.YearPickerTrigger>
+                  <Calendar.YearPickerTriggerHeading />
+                  <Calendar.YearPickerTriggerIndicator />
+                </Calendar.YearPickerTrigger>
+
+                <Calendar.NavButton slot="previous" />
+                <Calendar.NavButton slot="next" />
+              </Calendar.Header>
+
+              <Calendar.Grid>
+                <Calendar.GridHeader>
+                  {(day) => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}
+                </Calendar.GridHeader>
+
+                <Calendar.GridBody>
+                  {(date) => <Calendar.Cell date={date} />}
+                </Calendar.GridBody>
+              </Calendar.Grid>
+
+              <Calendar.YearPickerGrid>
+                <Calendar.YearPickerGridBody>
+                  {({ year }) => <Calendar.YearPickerCell year={year} />}
+                </Calendar.YearPickerGridBody>
+              </Calendar.YearPickerGrid>
+            </Calendar>
+          </DatePicker.Popover>
+        </DatePicker>
       </div>
     </div>
   );

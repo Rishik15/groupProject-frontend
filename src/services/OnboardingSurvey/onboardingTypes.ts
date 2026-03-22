@@ -37,8 +37,7 @@ export interface BackendClientOnboardingPayload {
   goal_weight: number | null;
 }
 
-export interface BackendCoachOnboardingPayload
-  extends BackendClientOnboardingPayload {
+export interface BackendCoachOnboardingPayload extends BackendClientOnboardingPayload {
   coach_description: string;
   price: number;
   num_cert: number;

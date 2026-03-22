@@ -21,7 +21,7 @@ export const createEmptyCoachCertification = (): CoachCertificationValues => ({
 let availabilityBlockCounter = 0;
 
 export const createEmptyAvailabilityBlock = (
-  dayOfWeek: CoachDayOfWeek
+  dayOfWeek: CoachDayOfWeek,
 ): CoachAvailabilityBlock => {
   availabilityBlockCounter += 1;
 
@@ -42,11 +42,11 @@ export const timeStringToMinutes = (value: string) => {
 };
 
 export const isAvailabilityBlockValid = (
-  block: Pick<CoachAvailabilityBlock, "startTime" | "endTime">
+  block: Pick<CoachAvailabilityBlock, "startTime" | "endTime">,
 ) => timeStringToMinutes(block.endTime) > timeStringToMinutes(block.startTime);
 
 export const getOverlappingAvailabilityBlockIds = (
-  blocks: CoachAvailabilityBlock[]
+  blocks: CoachAvailabilityBlock[],
 ) => {
   const overlappingIds = new Set<string>();
 
@@ -57,7 +57,7 @@ export const getOverlappingAvailabilityBlockIds = (
       .sort(
         (left, right) =>
           timeStringToMinutes(left.startTime) -
-          timeStringToMinutes(right.startTime)
+          timeStringToMinutes(right.startTime),
       );
 
     for (let index = 0; index < validDayBlocks.length - 1; index += 1) {
@@ -78,7 +78,7 @@ export const getOverlappingAvailabilityBlockIds = (
 };
 
 export const hasOverlappingAvailabilityBlocks = (
-  blocks: CoachAvailabilityBlock[]
+  blocks: CoachAvailabilityBlock[],
 ) => getOverlappingAvailabilityBlockIds(blocks).length > 0;
 
 export const formatAvailabilityTime = (value: string) => {
@@ -96,7 +96,7 @@ export const formatAvailabilityRange = (block: CoachAvailabilityBlock) =>
 
 const formatCoachSelectionList = (
   values: string[],
-  labelMap: Record<string, string>
+  labelMap: Record<string, string>,
 ) => {
   if (values.length === 0) {
     return "None selected";

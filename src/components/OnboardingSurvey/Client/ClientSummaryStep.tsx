@@ -1,13 +1,11 @@
 import { Card, Chip } from "@heroui/react";
-
+import { Check } from "lucide-react";
 import type {
   ClientFitnessLevel,
   ClientInfoValues,
 } from "../../../utils/Interfaces/OnboardingSurvey/client";
 
-import {
-  clientGoalLabelMap,
-} from "../../../utils/OnboardingSurvey/clientConfig";
+import { clientGoalLabelMap } from "../../../utils/OnboardingSurvey/clientConfig";
 
 interface ClientSummaryStepProps {
   goals: string[];
@@ -33,8 +31,8 @@ function ClientSummaryStep({
     <div className="space-y-3">
       <Card className="rounded-[20px] border border-[#CFCFFE] bg-[#F7F7FF] px-6 py-3 shadow-none">
         <div className="flex items-start gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#E8E8FF] text-[18.75px] text-[#5B5EF4]">
-            ✓
+          <div className="flex w-10 h-10 items-center justify-center rounded-full bg-[#E8E8FF] text-[18.75px] text-[#5B5EF4]">
+            <Check className="w-5 h-5" />
           </div>
 
           <div className="flex-1">
@@ -47,7 +45,7 @@ function ClientSummaryStep({
               {formattedFitnessLevel} level
             </p>
 
-            <div className="mt-3 flex flex-wrap gap-4 text-[13.125px] text-[#6E728C]">
+            <div className="mt-4 flex flex-wrap gap-1 text-[13.125px] text-[#6E728C]">
               <span>
                 <span className="font-medium text-black">Height:</span>{" "}
                 {values.height || "—"} in
@@ -70,12 +68,12 @@ function ClientSummaryStep({
         </div>
       </Card>
 
-      <Card className="rounded-[20px] border border-[#E4E4EC] bg-[#FAFAFD] px-6 py-4 shadow-none">
+      <Card className="rounded-[20px] border border-[#E4E4EC] bg-[#FAFAFD] px-4 py-4 shadow-none">
         <h3 className="text-[13.125px] font-semibold text-black">
           Selected Goals
         </h3>
 
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2">
           {/* Goal values stay stable in state, and this label map converts them
               back to friendly text for the summary UI. */}
           {goals.length > 0 ? (

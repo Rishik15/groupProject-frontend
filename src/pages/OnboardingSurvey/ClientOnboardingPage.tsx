@@ -79,7 +79,10 @@ function ClientOnboardingPage({
     switch (currentStep) {
       case 1:
         return (
-          <ClientGoalsStep selectedGoals={selectedGoals} onChange={onGoalsChange} />
+          <ClientGoalsStep
+            selectedGoals={selectedGoals}
+            onChange={onGoalsChange}
+          />
         );
 
       case 2:

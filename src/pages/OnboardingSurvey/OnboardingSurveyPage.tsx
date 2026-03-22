@@ -15,9 +15,7 @@ import type {
   CoachCredentialsValues,
 } from "../../utils/Interfaces/OnboardingSurvey/coach";
 
-import {
-  coachInitialCredentials,
-} from "../../utils/OnboardingSurvey/coachConfig";
+import { coachInitialCredentials } from "../../utils/OnboardingSurvey/coachConfig";
 
 import {
   buildCoachProfileDescription,
@@ -73,29 +71,35 @@ function OnboardingSurveyPage({
   // 1. coach-specific onboarding
   // 2. client/personal onboarding
   const [activeFlow, setActiveFlow] = useState<ActiveFlow>(
-    surveyType === "coach" ? "coach" : "client"
+    surveyType === "coach" ? "coach" : "client",
   );
 
   // Client state
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [fitnessLevel, setFitnessLevel] = useState<ClientFitnessLevel | "">("");
-  const [clientInfo, setClientInfo] = useState<ClientInfoValues>(initialClientInfo);
+  const [clientInfo, setClientInfo] =
+    useState<ClientInfoValues>(initialClientInfo);
 
   // Coach state
   const [primarySpecialties, setPrimarySpecialties] = useState<string[]>([]);
-  const [secondarySpecialties, setSecondarySpecialties] = useState<string[]>([]);
+  const [secondarySpecialties, setSecondarySpecialties] = useState<string[]>(
+    [],
+  );
   const [clientTypes, setClientTypes] = useState<string[]>([]);
-  const [availability, setAvailability] = useState<CoachAvailabilityBlock[]>([]);
+  const [availability, setAvailability] = useState<CoachAvailabilityBlock[]>(
+    [],
+  );
   const [sessionFormats, setSessionFormats] = useState<string[]>([]);
   const [price, setPrice] = useState("");
-  const [credentials, setCredentials] =
-    useState<CoachCredentialsValues>(coachInitialCredentials);
+  const [credentials, setCredentials] = useState<CoachCredentialsValues>(
+    coachInitialCredentials,
+  );
 
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleClientInfoChange = (
     name: keyof ClientInfoValues,
-    value: string
+    value: string,
   ) => {
     setClientInfo((previousValues) => ({
       ...previousValues,
@@ -105,7 +109,7 @@ function OnboardingSurveyPage({
 
   const handleCredentialFieldChange = (
     name: Extract<keyof CoachCredentialsValues, "yearsExperience" | "bio">,
-    value: string
+    value: string,
   ) => {
     setCredentials((previousValues) => ({
       ...previousValues,
@@ -121,7 +125,7 @@ function OnboardingSurveyPage({
       if (normalizedCount > nextCertifications.length) {
         const certificationsToAdd = Array.from(
           { length: normalizedCount - nextCertifications.length },
-          () => createEmptyCoachCertification()
+          () => createEmptyCoachCertification(),
         );
 
         nextCertifications.push(...certificationsToAdd);
@@ -140,7 +144,7 @@ function OnboardingSurveyPage({
   const handleCertificationChange = (
     index: number,
     name: keyof CoachCertificationValues,
-    value: string
+    value: string,
   ) => {
     setCredentials((previousValues) => ({
       ...previousValues,
@@ -148,10 +152,10 @@ function OnboardingSurveyPage({
         (certification, currentIndex) =>
           currentIndex === index
             ? {
-              ...certification,
-              [name]: value,
-            }
-            : certification
+                ...certification,
+                [name]: value,
+              }
+            : certification,
       ),
     }));
   };
@@ -178,17 +182,17 @@ function OnboardingSurveyPage({
       },
       ...(surveyType === "coach"
         ? {
-          coach: {
-            primarySpecialties,
-            secondarySpecialties,
-            clientTypes,
-            availability,
-            sessionFormats,
-            price,
-            credentials,
-            profileDescription,
-          },
-        }
+            coach: {
+              primarySpecialties,
+              secondarySpecialties,
+              clientTypes,
+              availability,
+              sessionFormats,
+              price,
+              credentials,
+              profileDescription,
+            },
+          }
         : {}),
     };
 
@@ -216,7 +220,7 @@ function OnboardingSurveyPage({
       navigate("/client", { replace: true });
     } catch (error) {
       setSubmitError(
-        error instanceof Error ? error.message : "Failed to submit onboarding."
+        error instanceof Error ? error.message : "Failed to submit onboarding.",
       );
     }
   };

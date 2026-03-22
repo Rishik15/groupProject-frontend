@@ -43,7 +43,7 @@ function SelectCardGroup({
   };
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-5">
       {typeof maxSelections === "number" ? (
         <div className="text-[11.25px] flex items-center justify-between">
           <Chip className="text-[11.25px]">
@@ -65,7 +65,7 @@ function SelectCardGroup({
             >
               <Card
                 className={[
-                  "rounded-2xl border p-3 transition-all",
+                  "rounded-2xl border p-3 transition-all h-full",
                   "hover:shadow-md",
                   optionSelected
                     ? "border-[#5B5EF4] ring-2 ring-[#DCDDFE]"

@@ -9,13 +9,13 @@ interface CoachCredentialsStepProps {
   values: CoachCredentialsValues;
   onFieldChange: (
     name: Extract<keyof CoachCredentialsValues, "yearsExperience" | "bio">,
-    value: string
+    value: string,
   ) => void;
   onCertificationCountChange: (count: number) => void;
   onCertificationChange: (
     index: number,
     name: keyof CoachCertificationValues,
-    value: string
+    value: string,
   ) => void;
 }
 
@@ -52,7 +52,9 @@ function CoachCredentialsStep({
           min={0}
           value={String(values.certificationCount)}
           placeholder="0"
-          onChange={(event) => handleCertificationCountInput(event.target.value)}
+          onChange={(event) =>
+            handleCertificationCountInput(event.target.value)
+          }
           className="w-full h-[37.5px] text-[13.125px]"
         />
       </div>
@@ -76,7 +78,7 @@ function CoachCredentialsStep({
               onChange={(event) =>
                 onCertificationChange(index, "cert_name", event.target.value)
               }
-              className="w-full h-[37.5px] text-[13.125px] text-[#72728A]"
+              className="w-full h-[37.5px] text-[13.125px] text-gray-700"
             />
           </div>
 
@@ -88,9 +90,13 @@ function CoachCredentialsStep({
               value={certification.provider_name}
               placeholder="e.g., National Academy of Sports Medicine"
               onChange={(event) =>
-                onCertificationChange(index, "provider_name", event.target.value)
+                onCertificationChange(
+                  index,
+                  "provider_name",
+                  event.target.value,
+                )
               }
-              className="w-full h-[37.5px] text-[13.125px] text-[#72728A]"
+              className="w-full h-[37.5px] text-[13.125px] text-gray-700"
             />
           </div>
 
@@ -105,7 +111,7 @@ function CoachCredentialsStep({
               onChange={(event) =>
                 onCertificationChange(index, "description", event.target.value)
               }
-              className="w-full text-[13.125px] text-[#72728A]"
+              className="w-full text-[13.125px] text-gray-700"
             />
           </div>
 
@@ -118,9 +124,13 @@ function CoachCredentialsStep({
                 type="date"
                 value={certification.issued_date}
                 onChange={(event) =>
-                  onCertificationChange(index, "issued_date", event.target.value)
+                  onCertificationChange(
+                    index,
+                    "issued_date",
+                    event.target.value,
+                  )
                 }
-                className="w-full h-[37.5px] text-[13.125px] text-[#72728A]"
+                className="w-full h-[37.5px] text-[13.125px] text-gray-700"
               />
             </div>
 
@@ -132,9 +142,13 @@ function CoachCredentialsStep({
                 type="date"
                 value={certification.expires_date}
                 onChange={(event) =>
-                  onCertificationChange(index, "expires_date", event.target.value)
+                  onCertificationChange(
+                    index,
+                    "expires_date",
+                    event.target.value,
+                  )
                 }
-                className="w-full h-[37.5px] text-[13.125px] text-[#72728A]"
+                className="w-full h-[37.5px] text-[13.125px] text-gray-700"
               />
             </div>
           </div>
@@ -150,8 +164,10 @@ function CoachCredentialsStep({
           min={0}
           value={values.yearsExperience}
           placeholder="e.g., 5"
-          onChange={(event) => onFieldChange("yearsExperience", event.target.value)}
-          className="w-full h-[37.5px] text-[13.125px] text-[#72728A]"
+          onChange={(event) =>
+            onFieldChange("yearsExperience", event.target.value)
+          }
+          className="w-full h-[37.5px] text-[13.125px] text-gray-700"
         />
       </div>
 
@@ -165,7 +181,7 @@ function CoachCredentialsStep({
           maxLength={maxBioLength}
           placeholder="Tell clients about your approach, philosophy, and what makes you unique..."
           onChange={(event) => onFieldChange("bio", event.target.value)}
-          className="w-full text-[13.125px] text-[#72728A]"
+          className="w-full text-[13.125px] text-gray-700"
         />
         <p className="mt-3 text-[11.25px] text-[#72728A]">
           {bioCharacterCount} / {maxBioLength}

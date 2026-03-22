@@ -31,7 +31,11 @@ function SurveyHeader({
         </div>
       </div>
 
-      <ProgressBar aria-label="Survey progress" value={progressPercent} className="w-full">
+      <ProgressBar
+        aria-label="Survey progress"
+        value={progressPercent}
+        className="w-full"
+      >
         <ProgressBar.Track className="h-1.5 w-full rounded-full bg-[#DCDDFE]">
           <ProgressBar.Fill className="rounded-full bg-[#5B5EF4]" />
         </ProgressBar.Track>
