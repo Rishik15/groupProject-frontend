@@ -1,9 +1,20 @@
 import { Card, Button, Chip, Checkbox, Slider } from "@heroui/react";
 
 const SPECIALTIES = [
-  "Strength", "HIIT", "Cardio", "Yoga", "Calisthenics", "Boxing",
-  "Powerlifting", "Bodybuilding", "Weight Loss", "Flexibility",
-  "Bulking", "Endurance", "Beginner", "Advanced",
+  "Strength",
+  "HIIT",
+  "Cardio",
+  "Yoga",
+  "Calisthenics",
+  "Boxing",
+  "Powerlifting",
+  "Bodybuilding",
+  "Weight Loss",
+  "Flexibility",
+  "Bulking",
+  "Endurance",
+  "Beginner",
+  "Advanced",
 ];
 
 const MAX_PRICE_LIMIT = 300;
@@ -16,7 +27,6 @@ const RATINGS = [
   { label: "4.5+", value: 4.5 },
 ];
 
-// props passed down from BrowseCoaches to FilterPanel to read and update filter state
 export interface FilterPanelProps {
   selectedTags: string[];
   onTagToggle: (tag: string) => void;
@@ -30,31 +40,42 @@ export interface FilterPanelProps {
 }
 
 export default function FilterPanel({
-  selectedTags, onTagToggle,
-  minRating, onMinRatingChange,
-  maxPrice, onMaxPriceChange,
-  certifiedOnly, onCertifiedOnlyChange,
+  selectedTags,
+  onTagToggle,
+  minRating,
+  onMinRatingChange,
+  maxPrice,
+  onMaxPriceChange,
+  certifiedOnly,
+  onCertifiedOnlyChange,
   onClearAll,
 }: FilterPanelProps) {
   return (
     <Card className="p-5 flex flex-col gap-6 h-fit sticky top-6">
       <div className="flex items-center justify-between">
         <span className="text-sm font-semibold text-foreground">Filters</span>
-        <Button variant="light" size="sm" onPress={onClearAll} className="text-default-400 min-w-0 px-0">
+        <Button
+          variant="primary"
+          size="sm"
+          onPress={onClearAll}
+          className="text-default-400 min-w-0 px-0"
+        >
           Clear all
         </Button>
       </div>
 
       <div className="flex flex-col gap-3">
-        <span className="text-xs font-semibold text-default-500 uppercase tracking-wider">Specialty</span>
+        <span className="text-xs font-semibold text-default-500 uppercase tracking-wider">
+          Specialty
+        </span>
         <div className="flex flex-wrap gap-2">
           {SPECIALTIES.map((tag) => {
             const active = selectedTags.includes(tag);
             return (
               <Chip
                 key={tag}
-                variant={active ? "solid" : "bordered"}
-                color={active ? "primary" : "default"}
+                variant={active ? "primary" : "secondary"}
+                color="default"
                 size="sm"
                 className="cursor-pointer"
                 onClick={() => onTagToggle(tag)}
@@ -67,15 +88,17 @@ export default function FilterPanel({
       </div>
 
       <div className="flex flex-col gap-3">
-        <span className="text-xs font-semibold text-default-500 uppercase tracking-wider">Min Rating</span>
+        <span className="text-xs font-semibold text-default-500 uppercase tracking-wider">
+          Min Rating
+        </span>
         <div className="flex gap-2 flex-wrap">
           {RATINGS.map(({ label, value }) => {
             const active = minRating === value;
             return (
               <Chip
                 key={label}
-                variant={active ? "solid" : "bordered"}
-                color={active ? "primary" : "default"}
+                variant={active ? "primary" : "secondary"}
+                color="default"
                 size="sm"
                 className="cursor-pointer"
                 onClick={() => onMinRatingChange(value)}
@@ -88,7 +111,9 @@ export default function FilterPanel({
       </div>
 
       <div className="flex flex-col gap-3">
-        <span className="text-xs font-semibold text-default-500 uppercase tracking-wider">Max Price / Session</span>
+        <span className="text-xs font-semibold text-default-500 uppercase tracking-wider">
+          Max Price / Session
+        </span>
         <span className="text-xs text-default-400">
           {maxPrice === MAX_PRICE_LIMIT ? "Any price" : `Up to $${maxPrice}`}
         </span>
@@ -97,18 +122,18 @@ export default function FilterPanel({
           maxValue={MAX_PRICE_LIMIT}
           step={5}
           value={maxPrice}
-          onChange={(v: number) => onMaxPriceChange(Array.isArray(v) ? v[0] : v)}
-          color="primary"
-          size="sm"
+          onChange={(v) => onMaxPriceChange(Array.isArray(v) ? v[0] : v)}
         />
       </div>
 
-      <Checkbox
-        isSelected={certifiedOnly}
-        onValueChange={onCertifiedOnlyChange}
-        size="sm"
-      >
-        <span className="text-sm text-default-600">Certified only</span>
+      <Checkbox isSelected={certifiedOnly} onChange={onCertifiedOnlyChange}>
+        <Checkbox.Control>
+          <Checkbox.Indicator />
+        </Checkbox.Control>
+
+        <Checkbox.Content>
+          <span className="text-sm text-default-600">Certified only</span>
+        </Checkbox.Content>
       </Checkbox>
     </Card>
   );
