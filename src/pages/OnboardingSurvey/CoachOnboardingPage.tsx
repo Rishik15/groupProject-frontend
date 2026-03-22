@@ -41,13 +41,13 @@ interface CoachOnboardingPageProps {
   onPriceChange: (value: string) => void;
   onCredentialFieldChange: (
     name: Extract<keyof CoachCredentialsValues, "yearsExperience" | "bio">,
-    value: string
+    value: string,
   ) => void;
   onCertificationCountChange: (count: number) => void;
   onCertificationChange: (
     index: number,
     name: keyof CoachCertificationValues,
-    value: string
+    value: string,
   ) => void;
   onComplete: () => void;
 }
@@ -88,7 +88,7 @@ function CoachOnboardingPage({
 
   // Secondary options should not show any specialty already chosen as primary.
   const availableSecondaryOptions = coachPrimarySpecialtyOptions.filter(
-    (option) => !primarySpecialties.includes(option.value)
+    (option) => !primarySpecialties.includes(option.value),
   );
 
   const coachProfileDescription = buildCoachProfileDescription({
@@ -105,7 +105,7 @@ function CoachOnboardingPage({
 
     // If a specialty becomes primary, remove it from secondary selections.
     onSecondarySpecialtiesChange(
-      secondarySpecialties.filter((value) => !values.includes(value))
+      secondarySpecialties.filter((value) => !values.includes(value)),
     );
   };
 
@@ -128,7 +128,7 @@ function CoachOnboardingPage({
       !certification.provider_name.trim() ||
       !certification.description.trim() ||
       !certification.issued_date.trim() ||
-      !certification.expires_date.trim()
+      !certification.expires_date.trim(),
   );
 
   const isYearsExperienceMissing = !credentials.yearsExperience.trim();
@@ -140,7 +140,7 @@ function CoachOnboardingPage({
 
     if (currentStep === 3) {
       const hasInvalidAvailabilityBlock = availability.some(
-        (block) => !isAvailabilityBlockValid(block)
+        (block) => !isAvailabilityBlockValid(block),
       );
 
       return (

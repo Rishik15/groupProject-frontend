@@ -13,14 +13,14 @@ import type {
 const ONBOARDING_PATH = "/onboard/";
 
 async function postOnboarding(
-  payload: unknown
+  payload: unknown,
 ): Promise<OnboardingSuccessResponse> {
   console.log("Onboarding payload JSON:", JSON.stringify(payload, null, 2));
 
   try {
     const response = await apiClient.post<OnboardingSuccessResponse>(
       ONBOARDING_PATH,
-      payload
+      payload,
     );
 
     return response.data ?? { message: "Onboarding completed successfully." };
@@ -33,7 +33,7 @@ async function postOnboarding(
       }
 
       throw new Error(
-        `Onboarding request failed with status ${error.response?.status ?? "unknown"}.`
+        `Onboarding request failed with status ${error.response?.status ?? "unknown"}.`,
       );
     }
 
@@ -47,7 +47,7 @@ export async function submitClientOnboarding(clientInfo: ClientInfoValues) {
 }
 
 export async function submitCoachOnboarding(
-  data: CombinedCoachOnboardingInput
+  data: CombinedCoachOnboardingInput,
 ) {
   const payload = buildCoachOnboardingPayload(data);
   return postOnboarding(payload);

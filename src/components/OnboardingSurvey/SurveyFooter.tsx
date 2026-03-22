@@ -1,4 +1,6 @@
 import { Button } from "@heroui/react";
+import { ArrowLeft } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 interface SurveyFooterProps {
   onBack?: () => void;
@@ -25,9 +27,10 @@ function SurveyFooter({
         <Button
           variant="outline"
           onPress={onBack}
-          className="h-[37.5px] min-w-[110px] rounded-[14px] border-[#D9DCE8] bg-white text-black"
+          className="flex items-center h-[37.5px] px-4 rounded-[14px] border-[#D9DCE8] bg-white text-black"
         >
-          ← {backButtonLabel}
+          <ArrowLeft className="w-4 h-4" />
+          {backButtonLabel}
         </Button>
       ) : (
         <div />
@@ -37,9 +40,10 @@ function SurveyFooter({
         variant="primary"
         onPress={onNext}
         isDisabled={isNextDisabled}
-        className="h-[37.5px] min-w-[240px] rounded-[14px] bg-[#5B5EF4] text-white disabled:opacity-50"
+        className="h-[37.5px px-4 rounded-[14px] bg-[#5B5EF4] text-white disabled:opacity-50"
       >
-        {nextButtonLabel} →
+        {nextButtonLabel}
+        <ArrowRight className="w-4 h-4" />
       </Button>
     </footer>
   );

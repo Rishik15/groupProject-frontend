@@ -1,6 +1,5 @@
-import type {SelectCardOption} from "../../../utils/Interfaces/OnboardingSurvey/selectCard";
+import type { SelectCardOption } from "../../../utils/Interfaces/OnboardingSurvey/selectCard";
 import SelectCardGroup from "../SelectCardGroup";
-
 
 interface CoachSecondarySpecialtiesStepProps {
   options: SelectCardOption[];

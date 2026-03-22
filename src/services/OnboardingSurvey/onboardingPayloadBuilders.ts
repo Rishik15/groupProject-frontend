@@ -51,13 +51,13 @@ function toBackendTime(value: string): string {
 }
 
 function toBackendDayOfWeek(
-  dayOfWeek: CoachAvailabilityBlock["dayOfWeek"]
+  dayOfWeek: CoachAvailabilityBlock["dayOfWeek"],
 ): string {
   return dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1).toLowerCase();
 }
 
 function hasAnyCertificationValue(
-  certification: CoachCertificationValues
+  certification: CoachCertificationValues,
 ): boolean {
   return [
     certification.cert_name,
@@ -84,7 +84,7 @@ function buildCoachDescription(input: CoachPayloadInput): string {
 }
 
 export function buildClientOnboardingPayload(
-  clientInfo: ClientInfoValues
+  clientInfo: ClientInfoValues,
 ): BackendClientOnboardingPayload {
   return {
     dob: toBackendDateTime(clientInfo.dateOfBirth),
@@ -96,7 +96,7 @@ export function buildClientOnboardingPayload(
 }
 
 export function buildCoachOnboardingPayload(
-  data: CombinedCoachOnboardingInput
+  data: CombinedCoachOnboardingInput,
 ): BackendCoachOnboardingPayload {
   const certifications = data.coach.credentials.certifications
     .filter(hasAnyCertificationValue)
@@ -126,11 +126,17 @@ export function buildCoachOnboardingPayload(
     num_cert: certifications.length,
     cert_name: certifications.map((certification) => certification.cert_name),
     provider_name: certifications.map(
-      (certification) => certification.provider_name
+      (certification) => certification.provider_name,
     ),
-    description: certifications.map((certification) => certification.description),
-    issued_date: certifications.map((certification) => certification.issued_date),
-    expires_date: certifications.map((certification) => certification.expires_date),
+    description: certifications.map(
+      (certification) => certification.description,
+    ),
+    issued_date: certifications.map(
+      (certification) => certification.issued_date,
+    ),
+    expires_date: certifications.map(
+      (certification) => certification.expires_date,
+    ),
     num_days: availabilityBlocks.length,
     day_of_week: availabilityBlocks.map((block) => block.day_of_week),
     start_time: availabilityBlocks.map((block) => block.start_time),

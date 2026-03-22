@@ -56,22 +56,22 @@ export const clientFitnessOptions: Array<{
   label: string;
   description: string;
 }> = [
-    {
-      value: "beginner",
-      label: "Beginner",
-      description: "Just starting out",
-    },
-    {
-      value: "intermediate",
-      label: "Intermediate",
-      description: "Active 1–3 years",
-    },
-    {
-      value: "advanced",
-      label: "Advanced",
-      description: "Consistent 3+ years",
-    },
-  ];
+  {
+    value: "beginner",
+    label: "Beginner",
+    description: "Just starting out",
+  },
+  {
+    value: "intermediate",
+    label: "Intermediate",
+    description: "Active 1–3 years",
+  },
+  {
+    value: "advanced",
+    label: "Advanced",
+    description: "Consistent 3+ years",
+  },
+];
 
 export const clientGoalLabelMap: Record<string, string> = {
   lose_weight: "Lose Weight",

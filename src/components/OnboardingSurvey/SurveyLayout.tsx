@@ -35,10 +35,10 @@ function SurveyLayout({
   isNextDisabled = false,
 }: SurveyLayoutProps) {
   return (
-    <main className="min-h-screen bg-[#F4F4F7] px-4 py-5">
-      <div className="mx-auto w-full max-w-[418px]">
+    <main className="min-h-screen bg-[#F4F4F7] px-4 py-12 flex items-center justify-center">
+      <div className="mx-auto w-full max-w-104.5">
         {/* Small product mark shown above the survey card. */}
-        <div className="mb-4 flex items-center gap-2">
+        <div className="mb-6 flex items-center gap-2">
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#5B5EF4] text-[10px] font-bold text-white">
             βF
           </div>
@@ -53,17 +53,13 @@ function SurveyLayout({
           />
 
           <section className="px-8 py-6">
-            <h1 className="text-[18.75px] font-bold text-[#0F0F14]">
-              {title}
-            </h1>
+            <h1 className="text-[18.75px] font-bold text-[#0F0F14]">{title}</h1>
 
             {subtitle ? (
-              <p className="text-[13.25px] text-[#72728A]"
-                >{subtitle}
-              </p>
+              <p className="text-[13.25px] text-[#72728A]">{subtitle}</p>
             ) : null}
 
-            <div className="mt-8">{children}</div>
+            <div className="mt-5">{children}</div>
           </section>
 
           <SurveyFooter
