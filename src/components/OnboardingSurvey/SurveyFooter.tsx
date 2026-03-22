@@ -25,7 +25,7 @@ function SurveyFooter({
         <Button
           variant="outline"
           onPress={onBack}
-          className="h-12 min-w-[110px] rounded-[14px] border-[#D9DCE8] bg-white text-black"
+          className="h-[37.5px] min-w-[110px] rounded-[14px] border-[#D9DCE8] bg-white text-black"
         >
           ← {backButtonLabel}
         </Button>
@@ -37,7 +37,7 @@ function SurveyFooter({
         variant="primary"
         onPress={onNext}
         isDisabled={isNextDisabled}
-        className="h-12 min-w-[220px] rounded-[14px] bg-[#5B5EF4] text-white disabled:opacity-50"
+        className="h-[37.5px] min-w-[240px] rounded-[14px] bg-[#5B5EF4] text-white disabled:opacity-50"
       >
         {nextButtonLabel} →
       </Button>

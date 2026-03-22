@@ -36,7 +36,7 @@ function SurveyLayout({
 }: SurveyLayoutProps) {
   return (
     <main className="min-h-screen bg-[#F4F4F7] px-4 py-5">
-      <div className="mx-auto w-full max-w-[610px]">
+      <div className="mx-auto w-full max-w-[418px]">
         {/* Small product mark shown above the survey card. */}
         <div className="mb-4 flex items-center gap-2">
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#5B5EF4] text-[10px] font-bold text-white">
@@ -53,12 +53,14 @@ function SurveyLayout({
           />
 
           <section className="px-8 py-6">
-            <h1 className="text-[24px] font-bold leading-tight text-black">
+            <h1 className="text-[18.75px] font-bold text-[#0F0F14]">
               {title}
             </h1>
 
             {subtitle ? (
-              <p className="mt-2 text-[15px] text-[#6E728C]">{subtitle}</p>
+              <p className="text-[13.25px] text-[#72728A]"
+                >{subtitle}
+              </p>
             ) : null}
 
             <div className="mt-8">{children}</div>

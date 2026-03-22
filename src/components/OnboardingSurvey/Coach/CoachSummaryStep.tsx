@@ -1,14 +1,21 @@
 import { Card, Chip } from "@heroui/react";
+
+import type {
+  CoachAvailabilityBlock,
+  CoachCertificationValues,
+} from "../../../utils/Interfaces/OnboardingSurvey/coach";
+
 import {
   coachClientTypeLabelMap,
   coachDayLabelMap,
   coachDaysOfWeek,
   coachSessionFormatLabelMap,
   coachSpecialtyLabelMap,
+} from "../../../utils/OnboardingSurvey/coachConfig";
+
+import {
   formatAvailabilityRange,
-  type CoachAvailabilityBlock,
-  type CoachCertificationValues,
-} from "../../../utils/OnboardingSurvey/coachSurvey";
+} from "../../../utils/OnboardingSurvey/coachHelpers";
 
 interface CoachSummaryStepProps {
   primarySpecialties: string[];
@@ -27,10 +34,10 @@ const summaryCardClassName =
   "rounded-[20px] border border-[#E4E4EC] bg-[#FAFAFD] px-6 py-6 shadow-none";
 
 const primaryChipClassName =
-  "bg-[#E8E8FF] text-[14px] font-medium text-[#5B5EF4]";
+  "bg-[#E8E8FF] text-[13.125px] font-medium text-[#5B5EF4]";
 
 const neutralChipClassName =
-  "border border-[#E4E4EC] bg-white text-[14px] font-medium text-[#6E728C]";
+  "border border-[#E4E4EC] bg-white text-[13.125px] font-medium text-[#6E728C]";
 
 interface SummaryChipListProps {
   values: string[];
@@ -46,7 +53,7 @@ function SummaryChipList({
   chipClassName,
 }: SummaryChipListProps) {
   if (values.length === 0) {
-    return <p className="text-[14px] text-[#6E728C]">{emptyMessage}</p>;
+    return <p className="text-[13.125px] text-[#6E728C]">{emptyMessage}</p>;
   }
 
   return (
@@ -86,21 +93,21 @@ function CoachSummaryStep({
     <div className="space-y-5">
       <Card className="rounded-[20px] border border-[#CFCFFE] bg-[#F7F7FF] px-6 py-6 shadow-none">
         <div className="flex items-start gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#E8E8FF] text-[28px] text-[#5B5EF4]">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#E8E8FF] text-[18.75px] text-[#5B5EF4]">
             ✓
           </div>
 
           <div className="flex-1">
-            <h2 className="text-[18px] font-semibold text-black">
+            <h2 className="text-[13.125px] font-semibold text-black">
               Coach Profile Created
             </h2>
 
-            <p className="mt-1 text-[15px] text-[#6E728C]">
+            <p className="mt-1 text-[13.125px] text-[#6E728C]">
               {primarySpecialties.length} primary{" "}
               {primarySpecialties.length === 1 ? "specialty" : "specialties"} selected
             </p>
 
-            <div className="mt-3 flex flex-wrap gap-4 text-[14px] text-[#6E728C]">
+            <div className="mt-3 flex flex-wrap gap-4 text-[13.125px] text-[#6E728C]">
               <span>
                 <span className="font-medium text-black">Experience:</span>{" "}
                 {yearsExperience || "—"} {yearsExperience ? "years" : ""}
@@ -123,7 +130,7 @@ function CoachSummaryStep({
       </Card>
 
       <Card className={summaryCardClassName}>
-        <h3 className="text-[17px] font-semibold text-black">Primary Specialties</h3>
+        <h3 className="text-[13.125px] font-semibold text-black">Primary Specialties</h3>
         <div className="mt-4 flex flex-wrap gap-3">
           <SummaryChipList
             values={primarySpecialties}
@@ -135,7 +142,7 @@ function CoachSummaryStep({
       </Card>
 
       <Card className={summaryCardClassName}>
-        <h3 className="text-[17px] font-semibold text-black">Secondary Specialties</h3>
+        <h3 className="text-[13.125px] font-semibold text-black">Secondary Specialties</h3>
         <div className="mt-4 flex flex-wrap gap-3">
           <SummaryChipList
             values={secondarySpecialties}
@@ -147,11 +154,11 @@ function CoachSummaryStep({
       </Card>
 
       <Card className={summaryCardClassName}>
-        <h3 className="text-[17px] font-semibold text-black">Coaching Preferences</h3>
+        <h3 className="text-[13.125px] font-semibold text-black">Coaching Preferences</h3>
 
         <div className="mt-5 space-y-5">
           <div>
-            <p className="text-[14px] font-medium text-black">Who You Coach</p>
+            <p className="text-[13.125px] font-medium text-black">Who You Coach</p>
             <div className="mt-3 flex flex-wrap gap-3">
               <SummaryChipList
                 values={clientTypes}
@@ -163,7 +170,7 @@ function CoachSummaryStep({
           </div>
 
           <div>
-            <p className="text-[14px] font-medium text-black">Session Formats</p>
+            <p className="text-[13.125px] font-medium text-black">Session Formats</p>
             <div className="mt-3 flex flex-wrap gap-3">
               <SummaryChipList
                 values={sessionFormats}
@@ -175,27 +182,27 @@ function CoachSummaryStep({
           </div>
 
           <div>
-            <p className="text-[14px] font-medium text-black">Coaching Price</p>
-            <p className="mt-2 text-[14px] text-[#6E728C]">
+            <p className="text-[13.125px] font-medium text-black">Coaching Price</p>
+            <p className="mt-2 text-[13.125px] text-[#6E728C]">
               {price.trim() || "Not provided"}
             </p>
           </div>
 
           <div>
-            <p className="text-[14px] font-medium text-black">Weekly Availability</p>
-            <div className="mt-3 space-y-3">
+            <p className="text-[13.125px] font-medium text-black">Weekly Availability</p>
+            <div className="mt-3 space-y-2">
               {availabilityByDay.length > 0 ? (
                 availabilityByDay.map(({ dayOfWeek, blocks }) => (
                   <div
                     key={dayOfWeek}
-                    className="rounded-[16px] border border-[#E4E4EC] bg-white p-4"
+                    className="rounded-[13.125px] border border-[#E4E4EC] bg-white p-2"
                   >
-                    <p className="text-[15px] font-semibold text-black">
+                    <p className="text-[13.125px] font-semibold text-black">
                       {coachDayLabelMap[dayOfWeek]}
                     </p>
                     <div className="mt-2 space-y-2">
                       {blocks.map((block) => (
-                        <p key={block.id} className="text-[14px] text-[#6E728C]">
+                        <p key={block.id} className="text-[13.125px] text-[#6E728C]">
                           {formatAvailabilityRange(block)}
                         </p>
                       ))}
@@ -203,7 +210,7 @@ function CoachSummaryStep({
                   </div>
                 ))
               ) : (
-                <p className="text-[14px] text-[#6E728C]">No weekly availability added</p>
+                <p className="text-[13.125px] text-[#6E728C]">No weekly availability added</p>
               )}
             </div>
           </div>
@@ -211,77 +218,77 @@ function CoachSummaryStep({
       </Card>
 
       <Card className={summaryCardClassName}>
-        <h3 className="text-[17px] font-semibold text-black">Coaching Experience</h3>
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <div className="rounded-[16px] border border-[#E4E4EC] bg-white p-4">
-            <p className="text-[13px] font-medium uppercase tracking-wide text-[#6E728C]">
+        <h3 className="text-[13.125px] font-semibold text-black">Coaching Experience</h3>
+        <div className="grid gap-2 md:grid-cols-2">
+          <div className="rounded-[15px] border border-[#E4E4EC] bg-white p-2">
+            <p className="text-[11.25px] font-medium uppercase tracking-wide text-[#6E728C]">
               Years of Experience
             </p>
-            <p className="mt-2 text-[16px] font-semibold text-black">
+            <p className="mt-2 text-[11.25px] font-semibold text-black">
               {yearsExperience.trim() || "Not provided"}
             </p>
           </div>
 
-          <div className="rounded-[16px] border border-[#E4E4EC] bg-white p-4">
-            <p className="text-[13px] font-medium uppercase tracking-wide text-[#6E728C]">
+          <div className="rounded-[13.125px] border border-[#E4E4EC] bg-white p-2">
+            <p className="text-[11.25px] font-medium uppercase tracking-wide text-[#6E728C]">
               Coaching Bio
             </p>
-            <p className="mt-2 text-[14px] leading-7 text-[#6E728C]">
-              {bio.trim() || "No coaching bio provided"}
+            <p className="mt-2 text-[11.25px] leading-7 text-[#6E728C]">
+              {bio.trim() || "No bio provided"}
             </p>
           </div>
         </div>
       </Card>
 
       <Card className={summaryCardClassName}>
-        <h3 className="text-[17px] font-semibold text-black">Profile Description Preview</h3>
-        <p className="mt-4 whitespace-pre-wrap rounded-[16px] border border-[#E4E4EC] bg-white p-4 text-[14px] leading-7 text-[#6E728C]">
+        <h3 className="text-[13.125px] font-semibold text-black">Profile Description Preview</h3>
+        <p className="mt-4 whitespace-pre-wrap rounded-[16px] border border-[#E4E4EC] bg-white p-4 text-[11.25px] leading-7 text-[#6E728C]">
           {profileDescription}
         </p>
       </Card>
 
       <Card className={summaryCardClassName}>
-        <h3 className="text-[17px] font-semibold text-black">Certifications</h3>
+        <h3 className="text-[13.125px] font-semibold text-black">Certifications</h3>
         <div className="mt-4 space-y-4">
           {certifications.length > 0 ? (
             certifications.map((certification, index) => (
               <div
                 key={`${certification.cert_name}-${index}`}
-                className="rounded-[16px] border border-[#E4E4EC] bg-white p-4"
+                className="rounded-[13.125px] border border-[#E4E4EC] bg-white p-4"
               >
-                <p className="text-[15px] font-semibold text-black">
+                <p className="text-[13.125px] font-semibold text-black">
                   {certification.cert_name || `Certification ${index + 1}`}
                 </p>
-                <p className="mt-1 text-[14px] text-[#6E728C]">
+                <p className="mt-1 text-[13.125px] text-[#6E728C]">
                   {certification.provider_name || "No provider listed"}
                 </p>
-                <p className="mt-2 text-[14px] text-[#6E728C]">
+                <p className="mt-2 text-[13.125px] text-[#6E728C]">
                   {certification.description || "No description provided"}
                 </p>
-                <div className="mt-3 flex flex-wrap gap-4 text-[13px] text-[#6E728C]">
+                <div className="mt-3 flex flex-wrap gap-4 text-[13.125px] text-[#6E728C]">
                   <span>Issued: {certification.issued_date || "—"}</span>
                   <span>Expires: {certification.expires_date || "—"}</span>
                 </div>
               </div>
             ))
           ) : (
-            <p className="text-[14px] text-[#6E728C]">No certifications provided</p>
+            <p className="text-[13.125px] text-[#6E728C]">No certifications provided</p>
           )}
         </div>
       </Card>
 
       <Card className={summaryCardClassName}>
         <div className="flex items-start gap-4">
-          <div className="flex h-10 w-10 items-center justify-center text-[18px] text-[#6E728C]">
+          <div className="flex h-10 w-10 items-center justify-center text-[18.75px] text-[#6E728C]">
             ⛓
           </div>
 
           <div>
-            <h3 className="text-[18px] font-semibold text-black">
+            <h3 className="text-[13.125px] font-semibold text-black">
               Next: Personal Profile
             </h3>
 
-            <p className="mt-1 max-w-[520px] text-[15px] leading-7 text-[#6E728C]">
+            <p className="mt-1 max-w-[520px] text-[13.125px] leading-7 text-[#6E728C]">
               Your coaching details are saved. Continue to your personal profile
               so we can collect the shared information needed for onboarding.
             </p>

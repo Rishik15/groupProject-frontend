@@ -1,10 +1,14 @@
 import { Input } from "@heroui/react";
 import type { ChangeEvent } from "react";
+
+import type {
+  ClientFitnessLevel,
+  ClientInfoValues,
+} from "../../../utils/Interfaces/OnboardingSurvey/client";
+
 import {
   clientFitnessOptions,
-  type ClientFitnessLevel,
-  type ClientInfoValues,
-} from "../../../utils/OnboardingSurvey/clientSurvey";
+} from "../../../utils/OnboardingSurvey/clientConfig";
 
 interface ClientInfoStepProps {
   values: ClientInfoValues;
@@ -23,20 +27,20 @@ function ClientInfoStep({
   // consistent without repeating the same check in every field.
   const handleNonNegativeChange =
     (fieldName: "height" | "weight" | "goalWeight") =>
-    (event: ChangeEvent<HTMLInputElement>) => {
-      const value = event.target.value;
+      (event: ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
 
-      // Allow an empty string while the user is editing, but block negatives
-      // from entering state.
-      if (value === "" || Number(value) >= 0) {
-        onFieldChange(fieldName, value);
-      }
-    };
+        // Allow an empty string while the user is editing, but block negatives
+        // from entering state.
+        if (value === "" || Number(value) >= 0) {
+          onFieldChange(fieldName, value);
+        }
+      };
 
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="mb-3 text-[14px] font-semibold text-black">
+        <h2 className="mb-3 text-[13.125px] font-semibold text-black">
           Current Fitness Level
         </h2>
 
@@ -56,10 +60,10 @@ function ClientInfoStep({
                     : "border-[#E4E4EC]",
                 ].join(" ")}
               >
-                <div className="text-[16px] font-semibold text-black">
+                <div className="text-[13.125px] font-semibold text-black">
                   {option.label}
                 </div>
-                <div className="mt-1.5 text-[14px] leading-4 text-[#6E728C]">
+                <div className="mt-1.5 text-[11.25px] leading-4 text-[#6E728C]">
                   {option.description}
                 </div>
               </button>
@@ -70,7 +74,7 @@ function ClientInfoStep({
 
       <div className="grid grid-cols-3 gap-4">
         <div>
-          <label className="mb-2 block text-[14px] font-semibold text-black">
+          <label className="mb-2 block text-[13.125px] font-semibold text-black">
             Height (in)
           </label>
           <Input
@@ -83,7 +87,7 @@ function ClientInfoStep({
         </div>
 
         <div>
-          <label className="mb-2 block text-[14px] font-semibold text-black">
+          <label className="mb-2 block text-[13.125px] font-semibold text-black">
             Weight (lb)
           </label>
           <Input
@@ -96,9 +100,10 @@ function ClientInfoStep({
         </div>
 
         <div>
-          <label className="mb-2 block text-[14px] font-semibold text-black">
-            Weight Goal (lb)
-            <span className="ml-1 font-normal text-[#6E728C]">Optional</span>
+          <label className="mb-2 block text-[13.125px] font-semibold text-black">
+            Goal (lb)
+
+            <span className="ml-1 text-[11.25px] font-normal text-[#6E728C]">Optional</span>
           </label>
           <Input
             type="number"
@@ -111,7 +116,7 @@ function ClientInfoStep({
       </div>
 
       <div>
-        <label className="mb-2 block text-[14px] font-semibold text-black">
+        <label className="mb-2 block text-[13.125px] font-semibold text-black">
           Date of Birth
         </label>
         <Input

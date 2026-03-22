@@ -1,4 +1,5 @@
-import type { SelectCardOption } from "../../components/OnboardingSurvey/SelectCardGroup";
+import type { SelectCardOption } from "../Interfaces/OnboardingSurvey/selectCard";
+import type { ClientFitnessLevel } from "../Interfaces/OnboardingSurvey/client";
 
 export const clientGoalOptions: SelectCardOption[] = [
   {
@@ -33,11 +34,6 @@ export const clientGoalOptions: SelectCardOption[] = [
   },
 ];
 
-/**
- * Central step copy for the client flow.
- * Keeping this outside the page component prevents the page from turning into
- * a long mix of UI copy and state logic.
- */
 export const clientSteps = [
   {
     title: "What are your goals?",
@@ -55,38 +51,28 @@ export const clientSteps = [
 
 export const clientTotalSteps = clientSteps.length;
 
-/**
- * Numeric fields stay as strings in component state.
- * This keeps the inputs easy to edit until the final backend payload is built.
- */
-export interface ClientInfoValues {
-  height: string;
-  weight: string;
-  goalWeight: string;
-  dateOfBirth: string;
-}
+export const clientFitnessOptions: Array<{
+  value: ClientFitnessLevel;
+  label: string;
+  description: string;
+}> = [
+    {
+      value: "beginner",
+      label: "Beginner",
+      description: "Just starting out",
+    },
+    {
+      value: "intermediate",
+      label: "Intermediate",
+      description: "Active 1–3 years",
+    },
+    {
+      value: "advanced",
+      label: "Advanced",
+      description: "Consistent 3+ years",
+    },
+  ];
 
-export const clientFitnessOptions = [
-  {
-    value: "beginner",
-    label: "Beginner",
-    description: "Just starting out",
-  },
-  {
-    value: "intermediate",
-    label: "Intermediate",
-    description: "Active 1–3 years",
-  },
-  {
-    value: "advanced",
-    label: "Advanced",
-    description: "Consistent 3+ years",
-  },
-] as const;
-
-export type ClientFitnessLevel = (typeof clientFitnessOptions)[number]["value"];
-
-// Goal values are what we store in state. This map turns them back into labels.
 export const clientGoalLabelMap: Record<string, string> = {
   lose_weight: "Lose Weight",
   build_muscle: "Build Muscle",

@@ -1,5 +1,8 @@
 import SelectCardGroup from "../SelectCardGroup";
-import { clientGoalOptions } from "../../../utils/OnboardingSurvey/clientSurvey";
+
+import {
+  clientGoalOptions,
+} from "../../../utils/OnboardingSurvey/clientConfig";
 
 interface ClientGoalsStepProps {
   selectedGoals: string[];

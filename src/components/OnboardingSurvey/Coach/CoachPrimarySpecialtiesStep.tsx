@@ -1,5 +1,8 @@
 import SelectCardGroup from "../SelectCardGroup";
-import { coachPrimarySpecialtyOptions } from "../../../utils/OnboardingSurvey/coachSurvey";
+
+import {
+  coachPrimarySpecialtyOptions,
+} from "../../../utils/OnboardingSurvey/coachConfig";
 
 interface CoachPrimarySpecialtiesStepProps {
   selectedValues: string[];

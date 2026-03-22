@@ -3,7 +3,7 @@ import { Input, TextArea } from "@heroui/react";
 import type {
   CoachCertificationValues,
   CoachCredentialsValues,
-} from "../../../utils/OnboardingSurvey/coachSurvey";
+} from "../../../utils/Interfaces/OnboardingSurvey/coach";
 
 interface CoachCredentialsStepProps {
   values: CoachCredentialsValues;
@@ -44,7 +44,7 @@ function CoachCredentialsStep({
   return (
     <div className="space-y-6">
       <div>
-        <label className="mb-2 block text-[15px] font-semibold">
+        <label className="mb-2 block text-[13.125px] font-semibold">
           Number of Certifications (optional)
         </label>
         <Input
@@ -53,7 +53,7 @@ function CoachCredentialsStep({
           value={String(values.certificationCount)}
           placeholder="0"
           onChange={(event) => handleCertificationCountInput(event.target.value)}
-          className="w-full"
+          className="w-full h-[37.5px] text-[13.125px]"
         />
       </div>
 
@@ -62,12 +62,12 @@ function CoachCredentialsStep({
           key={index}
           className="space-y-4 rounded-[20px] border border-[#E4E4EC] bg-[#FAFAFD] p-5"
         >
-          <h3 className="text-[16px] font-semibold text-black">
+          <h3 className="text-[13.125px] text-[#0F0F14] font-semibold">
             Certification {index + 1}
           </h3>
 
           <div>
-            <label className="mb-2 block text-[15px] font-semibold">
+            <label className="mb-2 block text-[13.125px] text-[#0F0F14] font-semibold">
               Certification Name
             </label>
             <Input
@@ -76,12 +76,12 @@ function CoachCredentialsStep({
               onChange={(event) =>
                 onCertificationChange(index, "cert_name", event.target.value)
               }
-              className="w-full"
+              className="w-full h-[37.5px] text-[13.125px] text-[#72728A]"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-[15px] font-semibold">
+            <label className="mb-2 block text-[13.125px] text-[#0F0F14] font-semibold">
               Provider Name
             </label>
             <Input
@@ -90,12 +90,12 @@ function CoachCredentialsStep({
               onChange={(event) =>
                 onCertificationChange(index, "provider_name", event.target.value)
               }
-              className="w-full"
+              className="w-full h-[37.5px] text-[13.125px] text-[#72728A]"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-[15px] font-semibold">
+            <label className="mb-2 block text-[13.125px] text-[#0F0F14] font-semibold">
               Description
             </label>
             <TextArea
@@ -105,13 +105,13 @@ function CoachCredentialsStep({
               onChange={(event) =>
                 onCertificationChange(index, "description", event.target.value)
               }
-              className="w-full"
+              className="w-full text-[13.125px] text-[#72728A]"
             />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-2 block text-[15px] font-semibold">
+              <label className="mb-2 block text-[13.125px] text-[#0F0F14] font-semibold">
                 Issued Date
               </label>
               <Input
@@ -120,12 +120,12 @@ function CoachCredentialsStep({
                 onChange={(event) =>
                   onCertificationChange(index, "issued_date", event.target.value)
                 }
-                className="w-full"
+                className="w-full h-[37.5px] text-[13.125px] text-[#72728A]"
               />
             </div>
 
             <div>
-              <label className="mb-2 block text-[15px] font-semibold">
+              <label className="mb-2 block text-[13.125px] text-[#0F0F14] font-semibold">
                 Expires Date
               </label>
               <Input
@@ -134,7 +134,7 @@ function CoachCredentialsStep({
                 onChange={(event) =>
                   onCertificationChange(index, "expires_date", event.target.value)
                 }
-                className="w-full"
+                className="w-full h-[37.5px] text-[13.125px] text-[#72728A]"
               />
             </div>
           </div>
@@ -142,7 +142,7 @@ function CoachCredentialsStep({
       ))}
 
       <div>
-        <label className="mb-2 block text-[15px] font-semibold">
+        <label className="mb-2 block text-[13.125px] text-[#0F0F14] font-semibold">
           Years of Coaching Experience
         </label>
         <Input
@@ -151,12 +151,12 @@ function CoachCredentialsStep({
           value={values.yearsExperience}
           placeholder="e.g., 5"
           onChange={(event) => onFieldChange("yearsExperience", event.target.value)}
-          className="w-full"
+          className="w-full h-[37.5px] text-[13.125px] text-[#72728A]"
         />
       </div>
 
       <div>
-        <label className="mb-2 block text-[15px] font-semibold">
+        <label className="mb-2 block text-[13.125px] text-[#0F0F14] font-semibold">
           Coaching Bio (optional)
         </label>
         <TextArea
@@ -165,9 +165,9 @@ function CoachCredentialsStep({
           maxLength={maxBioLength}
           placeholder="Tell clients about your approach, philosophy, and what makes you unique..."
           onChange={(event) => onFieldChange("bio", event.target.value)}
-          className="w-full"
+          className="w-full text-[13.125px] text-[#72728A]"
         />
-        <p className="mt-3 text-[14px] text-zinc-500">
+        <p className="mt-3 text-[11.25px] text-[#72728A]">
           {bioCharacterCount} / {maxBioLength}
         </p>
       </div>

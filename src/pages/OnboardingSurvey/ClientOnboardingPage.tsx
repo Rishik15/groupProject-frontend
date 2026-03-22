@@ -4,12 +4,16 @@ import ClientGoalsStep from "../../components/OnboardingSurvey/Client/ClientGoal
 import ClientInfoStep from "../../components/OnboardingSurvey/Client/ClientInfoStep";
 import ClientSummaryStep from "../../components/OnboardingSurvey/Client/ClientSummaryStep";
 import SurveyLayout from "../../components/OnboardingSurvey/SurveyLayout";
+
+import type {
+  ClientFitnessLevel,
+  ClientInfoValues,
+} from "../../utils/Interfaces/OnboardingSurvey/client";
+
 import {
   clientSteps,
   clientTotalSteps,
-  type ClientFitnessLevel,
-  type ClientInfoValues,
-} from "../../utils/OnboardingSurvey/clientSurvey";
+} from "../../utils/OnboardingSurvey/clientConfig";
 
 interface ClientOnboardingPageProps {
   selectedGoals: string[];
