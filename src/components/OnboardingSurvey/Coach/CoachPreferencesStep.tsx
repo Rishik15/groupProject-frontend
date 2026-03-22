@@ -1,14 +1,21 @@
 import SelectCardGroup from "../SelectCardGroup";
+
+import type {
+  CoachAvailabilityBlock,
+} from "../../../utils/Interfaces/OnboardingSurvey/coach";
+
 import {
   coachClientTypeOptions,
   coachDayLabelMap,
   coachDaysOfWeek,
   coachSessionFormatOptions,
+} from "../../../utils/OnboardingSurvey/coachConfig";
+
+import {
   createEmptyAvailabilityBlock,
   getOverlappingAvailabilityBlockIds,
   isAvailabilityBlockValid,
-  type CoachAvailabilityBlock,
-} from "../../../utils/OnboardingSurvey/coachSurvey";
+} from "../../../utils/OnboardingSurvey/coachHelpers";
 
 interface CoachPreferencesStepProps {
   clientTypes: string[];
@@ -89,7 +96,7 @@ function CoachPreferencesStep({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="mb-4 text-[15px] font-semibold">Who do you coach?</h2>
+        <h2 className="mb-4 text-[13.125px] text-[#0F0F14] font-semibold">Prefered Client Skill Level</h2>
 
         {/* Reuse the shared card picker here so this section matches the other
             survey steps and avoids duplicate card-selection markup. */}
@@ -101,7 +108,7 @@ function CoachPreferencesStep({
       </div>
 
       <div>
-        <h2 className="mb-4 text-[15px] font-semibold">Session Format</h2>
+        <h2 className="mb-4 text-[13.125px] text-[#0F0F14] font-semibold">Session Format</h2>
 
         <div className="grid grid-cols-2 gap-4">
           {coachSessionFormatOptions.map((option) => {
@@ -115,13 +122,13 @@ function CoachPreferencesStep({
                   onSessionFormatsChange(toggleValue(sessionFormats, option.value))
                 }
                 className={[
-                  "w-full rounded-2xl border px-3 py-2.5 text-center transition-all",
+                  "w-full h-[39.5px] rounded-2xl border px-3 py-2.5 transition-all",
                   isSelected
                     ? "border-[#5B5EF4] ring-2 ring-[#DCDDFE] text-[#5B5EF4]"
                     : "border-[#E4E4EC]",
                 ].join(" ")}
               >
-                <span className="text-sm font-semibold">{option.label}</span>
+                <span className="text-[13.125px] text-[#0F0F14] font-semibold">{option.label}</span>
               </button>
             );
           })}
@@ -129,14 +136,14 @@ function CoachPreferencesStep({
       </div>
 
       <div>
-        <h2 className="text-[15px] font-semibold">Coaching Price</h2>
-        <p className="mt-1 text-sm text-zinc-500">
+        <h2 className="text-[13.125px] text-[#0F0F14] font-semibold">Coaching Price</h2>
+        <p className="mt-1 text-[11.25px] text-[#72728A]">
           Enter numbers only. Do not include a dollar sign.
         </p>
 
         <div className="mt-4 max-w-sm">
           <label className="block">
-            <span className="mb-1 block text-sm font-medium text-black">
+            <span className="mb-1 block text-[13.125px] text-[#0F0F14] font-medium">
               Price
             </span>
             <input
@@ -147,7 +154,7 @@ function CoachPreferencesStep({
               onChange={(event) =>
                 onPriceChange(normalizePriceInput(event.target.value))
               }
-              className="block min-h-11 w-full rounded-xl border border-[#E4E4EC] bg-white px-3 py-2 text-base text-black outline-none transition focus:border-[#5B5EF4]"
+              className="block h-[37.5] w-[373px] rounded-xl border border-[#E4E4EC] bg-white px-3 py-2 text-[13.125px] text-[#0F0F14] outline-none transition focus:border-[#5B5EF4]"
             />
           </label>
         </div>
@@ -156,8 +163,8 @@ function CoachPreferencesStep({
       <div>
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h2 className="text-[15px] font-semibold">Weekly Availability</h2>
-            <p className="mt-1 text-sm text-zinc-500">
+            <h2 className="text-[13.125px] text-[#0F0F14] font-semibold">Weekly Availability</h2>
+            <p className="mt-1 text-[11.25px] text-[#72728A]">
               Add one or more weekly time blocks for each day. Blocks on the same
               day cannot overlap.
             </p>
@@ -177,22 +184,21 @@ function CoachPreferencesStep({
               >
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <h3 className="text-base font-semibold text-black">
+                    <h3 className="text-[13.125px] text-[#0F0F14] font-semibold">
                       {coachDayLabelMap[dayOfWeek]}
                     </h3>
-                    <p className="text-sm text-zinc-500">
+                    <p className="text-[11.25px] text-[#72728A]">
                       {dayBlocks.length === 0
                         ? "No blocks added yet"
-                        : `${dayBlocks.length} ${
-                            dayBlocks.length === 1 ? "block" : "blocks"
-                          } added`}
+                        : `${dayBlocks.length} ${dayBlocks.length === 1 ? "block" : "blocks"
+                        } added`}
                     </p>
                   </div>
 
                   <button
                     type="button"
                     onClick={() => addAvailabilityBlock(dayOfWeek)}
-                    className="rounded-xl border border-[#DCDDFE] bg-white px-3 py-1.5 text-sm font-medium text-[#5B5EF4] transition hover:bg-[#F7F7FF]"
+                    className="rounded-xl border border-[#DCDDFE] bg-white px-3 py-1.5 text-[13.125px] font-medium text-[#5B5EF4] transition hover:bg-[#F7F7FF]"
                   >
                     Add Block
                   </button>
@@ -215,14 +221,14 @@ function CoachPreferencesStep({
                           ].join(" ")}
                         >
                           <div className="mb-2.5 flex items-center justify-between gap-3">
-                            <p className="text-sm font-medium text-black">
+                            <p className="text-[13.125px] text-[#0F0F14]font-medium">
                               Block {index + 1}
                             </p>
 
                             <button
                               type="button"
                               onClick={() => removeAvailabilityBlock(block.id)}
-                              className="text-sm font-medium text-red-500 transition hover:text-red-600"
+                              className="text-[13.125px] font-medium text-red-500 transition hover:text-red-600"
                             >
                               Remove
                             </button>
@@ -230,7 +236,7 @@ function CoachPreferencesStep({
 
                           <div className="grid grid-cols-1 gap-2.5 2xl:grid-cols-2 2xl:gap-4">
                             <label className="block min-w-0">
-                              <span className="mb-1 block text-sm font-medium text-black">
+                              <span className="mb-1 block text-[13.125px] text-[#0F0F14] font-medium">
                                 Start time
                               </span>
                               <input
@@ -244,12 +250,12 @@ function CoachPreferencesStep({
                                     event.target.value
                                   )
                                 }
-                                className="block min-h-11 w-full min-w-0 rounded-xl border border-[#E4E4EC] bg-white px-3 py-2 text-base text-black outline-none transition focus:border-[#5B5EF4]"
+                                className="block h-[37.5px] w-full min-w-0 rounded-xl border border-[#E4E4EC] bg-white px-3 py-2 text-[13.125px] text-[#0F0F14] outline-none transition focus:border-[#5B5EF4]"
                               />
                             </label>
 
                             <label className="block min-w-0">
-                              <span className="mb-1 block text-sm font-medium text-black">
+                              <span className="mb-1 block text-[13.125px] text-[#0F0F14]-medium">
                                 End time
                               </span>
                               <input
@@ -263,19 +269,19 @@ function CoachPreferencesStep({
                                     event.target.value
                                   )
                                 }
-                                className="block min-h-11 w-full min-w-0 rounded-xl border border-[#E4E4EC] bg-white px-3 py-2 text-base text-black outline-none transition focus:border-[#5B5EF4]"
+                                className="block h-[37.5px] w-full min-w-0 rounded-xl border border-[#E4E4EC] bg-white px-3 py-2 text-[13.125px] text-[#0F0F14] outline-none transition focus:border-[#5B5EF4]"
                               />
                             </label>
                           </div>
 
                           {isInvalid ? (
-                            <p className="mt-2.5 text-sm text-red-500">
+                            <p className="mt-2.5 text-[13.125px] text-red-500">
                               End time must be later than start time.
                             </p>
                           ) : null}
 
                           {!isInvalid && isOverlapping ? (
-                            <p className="mt-2.5 text-sm text-red-500">
+                            <p className="mt-2.5 text-[13.125px] text-red-500">
                               This block overlaps another block on the same day.
                             </p>
                           ) : null}
@@ -290,7 +296,7 @@ function CoachPreferencesStep({
         </div>
 
         {hasInvalidBlock || hasOverlappingBlocks ? (
-          <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+          <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13.125px] text-red-600">
             {hasInvalidBlock
               ? "Fix any block where the end time is earlier than the start time."
               : "Remove overlapping blocks on the same day before continuing."}

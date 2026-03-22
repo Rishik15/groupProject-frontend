@@ -2,22 +2,31 @@ import { useState } from "react";
 
 import ClientOnboardingPage from "./ClientOnboardingPage";
 import CoachOnboardingPage from "./CoachOnboardingPage";
+
 import type {
   ClientFitnessLevel,
   ClientInfoValues,
-} from "../../utils/OnboardingSurvey/clientSurvey";
+} from "../../utils/Interfaces/OnboardingSurvey/client";
+
+import type {
+  CoachAvailabilityBlock,
+  CoachCertificationValues,
+  CoachCredentialsValues,
+} from "../../utils/Interfaces/OnboardingSurvey/coach";
+
+import {
+  coachInitialCredentials,
+} from "../../utils/OnboardingSurvey/coachConfig";
+
 import {
   buildCoachProfileDescription,
-  coachInitialCredentials,
   createEmptyCoachCertification,
-  type CoachAvailabilityBlock,
-  type CoachCertificationValues,
-  type CoachCredentialsValues,
-} from "../../utils/OnboardingSurvey/coachSurvey";
+} from "../../utils/OnboardingSurvey/coachHelpers";
+
 import {
   submitClientOnboarding,
   submitCoachOnboarding,
-} from "../../utils/OnboardingSurvey/onboardingService";
+} from "../../services/OnboardingSurvey/onboardingService";
 
 type SurveyType = "client" | "coach";
 type ActiveFlow = "coach" | "client";

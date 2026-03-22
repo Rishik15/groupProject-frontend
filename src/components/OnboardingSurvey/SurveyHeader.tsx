@@ -22,11 +22,11 @@ function SurveyHeader({
   return (
     <div className="border-b border-[#E4E4EC] px-8 py-6">
       <div className="mb-4 flex items-center justify-between">
-        <div className="rounded-full bg-[#EEF0FF] px-4 py-2 text-[14px] font-medium text-[#5B5EF4]">
+        <div className="rounded-full bg-[#EEF0FF] px-4 py-2 text-[11.25px] font-medium text-[#5B5EF4]">
           {badgeLabel}
         </div>
 
-        <div className="text-[14px] font-medium text-[#6E728C]">
+        <div className="text-[11.25px] font-medium text-[#72728A]">
           {currentStep} / {totalSteps}
         </div>
       </div>

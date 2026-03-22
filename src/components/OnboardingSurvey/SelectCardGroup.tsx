@@ -1,10 +1,5 @@
 import { Card, Chip } from "@heroui/react";
-
-export interface SelectCardOption {
-  value: string;
-  label: string;
-  description?: string;
-}
+import type { SelectCardOption } from "../../utils/Interfaces/OnboardingSurvey/selectCard";
 
 interface SelectCardGroupProps {
   options: SelectCardOption[];
@@ -48,12 +43,10 @@ function SelectCardGroup({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-1">
       {typeof maxSelections === "number" ? (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-zinc-500">Select up to {maxSelections}</p>
-
-          <Chip>
+        <div className="text-[11.25px] flex items-center justify-between">
+          <Chip className="text-[11.25px]">
             {selectedCount} / {maxSelections}
           </Chip>
         </div>
@@ -79,11 +72,13 @@ function SelectCardGroup({
                     : "border-[#E4E4EC]",
                 ].join(" ")}
               >
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold">{option.label}</h3>
+                <div className="space-y-1">
+                  <h3 className="text-[13.125px] font-semibold text-[#0F0F14]">
+                    {option.label}
+                  </h3>
 
                   {option.description ? (
-                    <p className="text-sm text-zinc-500">
+                    <p className="text-[11.25px] font-medium text-[#72728A]">
                       {option.description}
                     </p>
                   ) : null}

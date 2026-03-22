@@ -6,19 +6,24 @@ import CoachPrimarySpecialtiesStep from "../../components/OnboardingSurvey/Coach
 import CoachSecondarySpecialtiesStep from "../../components/OnboardingSurvey/Coach/CoachSecondarySpecialtiesStep";
 import CoachSummaryStep from "../../components/OnboardingSurvey/Coach/CoachSummaryStep";
 import SurveyLayout from "../../components/OnboardingSurvey/SurveyLayout";
+
 import type {
   CoachAvailabilityBlock,
   CoachCertificationValues,
-} from "../../utils/OnboardingSurvey/coachSurvey";
+  CoachCredentialsValues,
+} from "../../utils/Interfaces/OnboardingSurvey/coach";
+
 import {
-  buildCoachProfileDescription,
   coachPrimarySpecialtyOptions,
   coachSteps,
   coachTotalSteps,
+} from "../../utils/OnboardingSurvey/coachConfig";
+
+import {
+  buildCoachProfileDescription,
   hasOverlappingAvailabilityBlocks,
   isAvailabilityBlockValid,
-  type CoachCredentialsValues,
-} from "../../utils/OnboardingSurvey/coachSurvey";
+} from "../../utils/OnboardingSurvey/coachHelpers";
 
 interface CoachOnboardingPageProps {
   primarySpecialties: string[];
@@ -117,6 +122,17 @@ function CoachOnboardingPage({
     setCurrentStep((previousStep) => Math.max(1, previousStep - 1));
   };
 
+  const hasIncompleteCertification = credentials.certifications.some(
+    (certification) =>
+      !certification.cert_name.trim() ||
+      !certification.provider_name.trim() ||
+      !certification.description.trim() ||
+      !certification.issued_date.trim() ||
+      !certification.expires_date.trim()
+  );
+
+  const isYearsExperienceMissing = !credentials.yearsExperience.trim();
+
   const isCurrentStepDisabled = () => {
     if (currentStep === 1) {
       return primarySpecialties.length === 0;
@@ -135,6 +151,10 @@ function CoachOnboardingPage({
         hasInvalidAvailabilityBlock ||
         hasOverlappingAvailabilityBlocks(availability)
       );
+    }
+
+    if (currentStep === 4) {
+      return isYearsExperienceMissing || hasIncompleteCertification;
     }
 
     return false;
