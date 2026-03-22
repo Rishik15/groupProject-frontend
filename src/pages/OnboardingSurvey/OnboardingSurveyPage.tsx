@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import ClientOnboardingPage from "./ClientOnboardingPage";
 import CoachOnboardingPage from "./CoachOnboardingPage";
@@ -58,6 +59,7 @@ const initialClientInfo: ClientInfoValues = {
   height: "",
   weight: "",
   goalWeight: "",
+  profilePicture: "",
   dateOfBirth: "",
 };
 
@@ -65,6 +67,8 @@ function OnboardingSurveyPage({
   surveyType = "client",
   onComplete,
 }: OnboardingSurveyPageProps) {
+  const navigate = useNavigate();
+
   // A coach completes two phases:
   // 1. coach-specific onboarding
   // 2. client/personal onboarding
@@ -144,9 +148,9 @@ function OnboardingSurveyPage({
         (certification, currentIndex) =>
           currentIndex === index
             ? {
-                ...certification,
-                [name]: value,
-              }
+              ...certification,
+              [name]: value,
+            }
             : certification
       ),
     }));
@@ -174,17 +178,17 @@ function OnboardingSurveyPage({
       },
       ...(surveyType === "coach"
         ? {
-            coach: {
-              primarySpecialties,
-              secondarySpecialties,
-              clientTypes,
-              availability,
-              sessionFormats,
-              price,
-              credentials,
-              profileDescription,
-            },
-          }
+          coach: {
+            primarySpecialties,
+            secondarySpecialties,
+            clientTypes,
+            availability,
+            sessionFormats,
+            price,
+            credentials,
+            profileDescription,
+          },
+        }
         : {}),
     };
 
@@ -203,11 +207,13 @@ function OnboardingSurveyPage({
         });
 
         console.log("Coach onboarding saved:", response);
+        navigate("/coach", { replace: true });
         return;
       }
 
       const response = await submitClientOnboarding(combinedData.client.info);
       console.log("Client onboarding saved:", response);
+      navigate("/client", { replace: true });
     } catch (error) {
       setSubmitError(
         error instanceof Error ? error.message : "Failed to submit onboarding."

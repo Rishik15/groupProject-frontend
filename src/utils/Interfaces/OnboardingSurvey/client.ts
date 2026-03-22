@@ -3,6 +3,7 @@ export interface ClientInfoValues {
   weight: string;
   goalWeight: string;
   dateOfBirth: string;
+  profilePicture: string;
 }
 
 export type ClientFitnessLevel =
