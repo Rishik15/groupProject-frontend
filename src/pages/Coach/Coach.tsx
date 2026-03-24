@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
+import Nutrition from "../Nutrition/Nutrition";
 
 import CoachDashBoard from "./DashBoard";
 
@@ -16,6 +17,7 @@ const CoachLayout = () => {
       <div className="pt-14">
         <Routes>
           <Route index element={<CoachDashBoard />} />
+          <Route path="nutrition" element={<Nutrition />} />
         </Routes>
       </div>
     </section>
