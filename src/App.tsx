@@ -5,6 +5,7 @@ import SignIn from "./pages/SignIn/Signin";
 import CoachLayout from "./pages/Coach/Coach";
 import ClientLayout from "./pages/Client/Client";
 import LandingPage from "./pages/LandingPage/LandingPage";
+import Workouts from "./pages/Workouts/Workouts";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/workouts" element={<Workouts />} />
         <Route
           path="/coach/*"
           element={
