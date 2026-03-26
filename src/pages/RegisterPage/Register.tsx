@@ -7,20 +7,23 @@ import RoleSelector from "../../components/Register/RoleSelection";
 import { register } from "../../services/auth/register";
 import { validateRegister } from "../../utils/auth/validateInputs";
 import Modal from "../../components/global/Modal";
+import { useAuth } from "../../utils/auth/AuthContext";
 
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<string | null>(null);
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
   const navigate = useNavigate();
 
+  const { refreshAuth } = useAuth();
+
   const handleRegister = async () => {
     try {
-      if (!role) {
+      if (!selectedRole) {
         setModalMessage("Please select whether you are a coach or client.");
         setShowModal(true);
         return;
@@ -35,7 +38,9 @@ const Register = () => {
         return;
       }
 
-      const data = await register(name, email, password, role);
+      const data = await register(name, email, password, selectedRole);
+
+      await refreshAuth();
 
       if (data.role === "coach") {
         navigate("/onboarding/coach");
@@ -54,7 +59,7 @@ const Register = () => {
         <section className="w-auto">
           <RegHeader />
 
-          <RoleSelector role={role} setRole={setRole} />
+          <RoleSelector role={selectedRole} setRole={setSelectedRole} />
 
           <RegInput
             name={name}
