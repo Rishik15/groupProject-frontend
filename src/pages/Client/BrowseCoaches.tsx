@@ -22,17 +22,18 @@ export default function BrowseCoaches() {
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const query: CoachQuery = {
-    name: nameSearch.trim(),
-    tags: selectedTags,
-    certified: certifiedOnly,
-    max_price: maxPrice,
-    rating: minRating,
-    sort_by: "rating",
-  };
+  
 
   const loadCoaches = useCallback(async () => {
     setLoading(true);
+    const query: CoachQuery = {
+    name: nameSearch.trim(),
+    filters: selectedTags,
+    is_certified: certifiedOnly,
+    max_price: maxPrice,
+    min_rating: minRating,
+    sort_by: "rating",
+  };
     const { coaches, count } = await searchCoaches(query);
     setCoaches(coaches);
     setCount(count);
@@ -44,6 +45,7 @@ export default function BrowseCoaches() {
   }, [loadCoaches]);
 
   function handleTagToggle(tag: string) {
+    console.log("toggling tag:", tag);
     setSelectedTags((prev) =>
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
     );
@@ -140,12 +142,12 @@ export default function BrowseCoaches() {
           )}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {loading ? (
-              Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+              [0, 1, 2, 3, 4, 5].map((i) => <SkeletonCard key={i} />)
             ) : coaches.length === 0 ? (
               <p className="text-sm text-default-400">No coaches found.</p>
             ) : (
-              coaches.map((coach) => (
-                <CoachCard key={coach.coach_id} coach={coach} />
+              coaches.map((coach, i) => (
+                <CoachCard key={coach.coach_id ?? i} coach={coach} />
               ))
             )}
           </div>
