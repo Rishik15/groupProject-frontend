@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import CoachReviewsSection from "../../components/CoachProfile/CoachReviewSection";
 import CoachProfileTabs, {
@@ -46,13 +47,14 @@ export function CoachProfilePage() {
             <button
                 type="button"
                 onClick={() => navigate("/client/coaches")}
-                className="w-fit bg-transparent"
+                className="w-fit bg-transparent flex items-center gap-1"
                 style={{
                     color: coachReviewTheme.colors.secondaryText,
                     fontSize: coachReviewTheme.fontSizes.label,
                 }}
             >
-                ← Back to coaches
+                <ArrowLeft className="w-4 h-4" />
+                 Back to coaches
             </button>
 
             <div
