@@ -1,4 +1,5 @@
 import { Card, Chip } from "@heroui/react";
+import { Check } from "lucide-react";
 
 import type {
   CoachAvailabilityBlock,
@@ -92,7 +93,7 @@ function CoachSummaryStep({
       <Card className="rounded-[20px] border border-[#CFCFFE] bg-[#F7F7FF] px-6 py-6 shadow-none">
         <div className="flex items-start gap-4">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#E8E8FF] text-[18.75px] text-[#5B5EF4]">
-            ✓
+            <Check className="w-7 h-7" />
           </div>
 
           <div className="flex-1">

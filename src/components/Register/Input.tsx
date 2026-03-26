@@ -34,7 +34,7 @@ const RegisterInputs = ({
           <InputGroup.Input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Enter your name"
+            placeholder="First and last name"
           />
         </InputGroup>
       </TextField>

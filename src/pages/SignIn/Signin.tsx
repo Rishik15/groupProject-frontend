@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { getAuth } from "../../services/auth/checkAuth";
 import { useNavigate } from "react-router-dom";
 import SignFooter from "../../components/SignIn/Footer";
 import SignHeader from "../../components/SignIn/Header";
@@ -7,6 +6,7 @@ import SignInputs from "../../components/SignIn/Input";
 import { login } from "../../services/auth/login";
 import { validateSignIn } from "../../utils/auth/validateInputs";
 import Modal from "../../components/global/Modal";
+import { useAuth } from "../../utils/auth/AuthContext";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -16,27 +16,16 @@ const SignIn = () => {
 
   const navigate = useNavigate();
 
+  const { refreshAuth, authenticated, role, loading } = useAuth();
+
   useEffect(() => {
-    let isActive = true;
+    if (loading) return; 
 
-    const checkAuth = async () => {
-      const { authenticated, role } = await getAuth();
-
-      if (!isActive) return;
-
-      if (authenticated) {
-        if (role === "coach") navigate("/coach");
-        else if (role === "client") navigate("/client");
-      }
-    };
-
-    checkAuth();
-
-    return () => {
-      isActive = false;
-    };
-  }, [navigate]);
-
+    if (authenticated) {
+      if (role === "coach") navigate("/coach");
+      else if (role === "client") navigate("/client");
+    }
+  }, [authenticated, role, loading, navigate]);
   const handleLogin = async () => {
     try {
       const errors = validateSignIn(email, password);
@@ -56,11 +45,7 @@ const SignIn = () => {
         return;
       }
 
-      if (data.role === "coach") {
-        navigate("/coach");
-      } else {
-        navigate("/client");
-      }
+      await refreshAuth();
     } catch (err: any) {
       let message = "Something went wrong. Please try again.";
 
