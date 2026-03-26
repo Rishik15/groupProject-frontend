@@ -1,9 +1,9 @@
 export interface CoachQuery {
   name: string;
-  tags: string[];
-  certified: boolean;
+  filters: string[];
+  is_certified: boolean;
   max_price: number;
-  rating: number;
+  min_rating: number;
   sort_by: string;
 }
 

@@ -8,8 +8,9 @@ const BASE_URL = "http://localhost:8080";
 export async function searchCoaches(
   query: CoachQuery,
 ): Promise<{ coaches: Coach[]; count: number }> {
+  console.log("sending to backend:", query);
   const { data } = await axios.post(
-    `${BASE_URL}/routes/coach/searchCoaches.py`,
+    `${BASE_URL}/coach/search`,
     query,
     {
       withCredentials: true,
@@ -18,3 +19,12 @@ export async function searchCoaches(
   );
   return data;
 }
+
+/*
+
+const { data } = await axios.post(`${BASE_URL}/coach/search`, query, {
+  withCredentials: true,
+  headers: { "Content-Type": "application/json" },
+});
+
+*/
