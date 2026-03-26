@@ -9,6 +9,7 @@ export async function getAuth() {
     return {
       authenticated: true,
       role: data.role,
+      user: data.user,
     };
   } catch {
     return {
