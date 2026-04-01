@@ -26,7 +26,7 @@ const DropdownItem = ({
         socket.disconnect();
       }
 
-      navigate("/signin");
+      navigate("/");
       return;
     }
 
