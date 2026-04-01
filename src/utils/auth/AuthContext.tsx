@@ -41,6 +41,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const clearAuth = () => {
+    if (socket.connected) {
+      socket.disconnect();
+      console.log("Socket disconnected on logout");
+    }
+
     setUser(null);
     setRole(null);
     setAuthenticated(false);
