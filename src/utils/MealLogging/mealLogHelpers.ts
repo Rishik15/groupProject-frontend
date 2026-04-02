@@ -1,3 +1,8 @@
+import {
+    getLocalTimeZone,
+    Time,
+    toCalendarDateTime,
+} from "@internationalized/date";
 import type {
     CreateMealLogPayload,
     FoodItemDraft,
@@ -6,9 +11,6 @@ import type {
     MealTotals,
 } from "../Interfaces/MealLogging/mealLog";
 
-/**
- * Create an empty editable row for a brand new custom food item.
- */
 export const createEmptyFoodItemDraft = (): FoodItemDraft => ({
     clientId: crypto.randomUUID(),
     name: "",
@@ -17,12 +19,11 @@ export const createEmptyFoodItemDraft = (): FoodItemDraft => ({
     carbs: "",
     fats: "",
     imageUrl: "",
+    imageFile: null,
+    imagePreviewUrl: "",
     isCustom: true,
 });
 
-/**
- * Convert a saved backend food item into the local editable row shape.
- */
 export const mapSuggestionToDraft = (
     item: FoodItemSuggestion,
 ): FoodItemDraft => ({
@@ -34,21 +35,16 @@ export const mapSuggestionToDraft = (
     carbs: String(item.carbs),
     fats: String(item.fats),
     imageUrl: item.image_url ?? "",
+    imageFile: null,
+    imagePreviewUrl: item.image_url ?? "",
     isCustom: false,
 });
 
-/**
- * Keep nutrition parsing forgiving for form input:
- * empty, invalid, or negative values are treated as 0.
- */
 export const parseNutritionValue = (value: string): number => {
     const parsed = Number(value);
     return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
 };
 
-/**
- * Sum the nutrition values from every food item row to build the meal totals.
- */
 export const calculateMealTotals = (foodItems: FoodItemDraft[]): MealTotals =>
     foodItems.reduce(
         (totals, item) => ({
@@ -65,14 +61,6 @@ export const calculateMealTotals = (foodItems: FoodItemDraft[]): MealTotals =>
         },
     );
 
-/**
- * Keep validation simple:
- * - meal needs a name
- * - at least one food item is required
- * - every food item needs a name
- * - eaten time is required
- * - servings must be greater than 0
- */
 export const validateMealLogForm = (
     values: MealLogFormValues,
 ): string | null => {
@@ -91,8 +79,12 @@ export const validateMealLogForm = (
         return "Each food item needs a name.";
     }
 
-    if (!values.eatenAt) {
-        return "Please select when the meal was eaten.";
+    if (!values.eatenOn) {
+        return "Please select the meal date.";
+    }
+
+    if (!values.eatenTime) {
+        return "Please select the meal time.";
     }
 
     const servings = Number(values.servings);
@@ -103,10 +95,22 @@ export const validateMealLogForm = (
     return null;
 };
 
-/**
- * Convert the modal form state into the payload shape used by the service layer.
- * The backend still resolves custom food items into real ids later in the service.
- */
+const buildEatenAtIso = (values: MealLogFormValues): string => {
+    if (!values.eatenOn || !values.eatenTime) {
+        return new Date().toISOString();
+    }
+
+    const time = new Time(
+        values.eatenTime.hour,
+        values.eatenTime.minute,
+        values.eatenTime.second ?? 0,
+    );
+
+    const calendarDateTime = toCalendarDateTime(values.eatenOn, time);
+
+    return calendarDateTime.toDate(getLocalTimeZone()).toISOString();
+};
+
 export const buildMealLogPayload = (
     values: MealLogFormValues,
     photoUrl: string,
@@ -123,7 +127,7 @@ export const buildMealLogPayload = (
             fats: totals.fats,
         },
         meal_log: {
-            eaten_at: new Date(values.eatenAt).toISOString(),
+            eaten_at: buildEatenAtIso(values),
             servings: Number(values.servings),
             notes: values.notes.trim(),
             photo_url: photoUrl,
@@ -135,6 +139,10 @@ export const buildMealLogPayload = (
             protein: parseNutritionValue(item.protein),
             carbs: parseNutritionValue(item.carbs),
             fats: parseNutritionValue(item.fats),
+
+            // Same open question as the meal photo:
+            // local upload can preview in the UI, but without a real upload endpoint
+            // this still needs to fall back to url text or a placeholder on submit.
             image_url: item.imageUrl.trim(),
             is_custom: item.isCustom,
         })),

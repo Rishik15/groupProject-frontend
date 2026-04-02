@@ -2,8 +2,8 @@ import type { CoachReview } from "../../utils/Interfaces/CoachReview/coachReview
 import {
     formatRelativeDate,
     formatReviewerName,
-    renderStars,
 } from "../../utils/CoachReview/coachReviewHelper";
+import StarRating from "./StarRating";
 import { coachReviewTheme } from "../../utils/CoachReview/coachReviewTheme";
 
 interface CoachReviewCardProps {
@@ -43,14 +43,7 @@ export default function CoachReviewCard({ review }: CoachReviewCardProps) {
                     </p>
                 </div>
 
-                <p
-                    style={{
-                        color: coachReviewTheme.colors.star,
-                        fontSize: coachReviewTheme.fontSizes.title,
-                    }}
-                >
-                    {renderStars(review.rating)}
-                </p>
+                <StarRating rating={review.rating} />
             </div>
 
             <p

@@ -1,3 +1,6 @@
+import type { DateValue } from "@internationalized/date";
+import type { TimeValue } from "@heroui/react";
+
 export type MealType = "breakfast" | "lunch" | "snack" | "dinner";
 
 export interface MealTotals {
@@ -25,7 +28,14 @@ export interface FoodItemDraft {
     protein: string;
     carbs: string;
     fats: string;
+
+    // Keep the backend-facing url field for now.
     imageUrl: string;
+
+    // Local upload support for the UI, same idea as the meal photo.
+    imageFile: File | null;
+    imagePreviewUrl: string;
+
     isCustom: boolean;
 }
 
@@ -33,7 +43,11 @@ export interface MealLogFormValues {
     mealType: MealType;
     mealName: string;
     foodItems: FoodItemDraft[];
-    eatenAt: string;
+
+    // Split date and time so HeroUI can manage each field cleanly.
+    eatenOn: DateValue | null;
+    eatenTime: TimeValue | null;
+
     servings: string;
     notes: string;
     photoFile: File | null;
@@ -41,7 +55,6 @@ export interface MealLogFormValues {
 }
 
 export interface CreateMealLogPayload {
-    user_id?: number;
     meal_type: MealType;
     meal: {
         name: string;
