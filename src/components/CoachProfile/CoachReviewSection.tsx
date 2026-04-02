@@ -5,10 +5,7 @@ import {
     getCoachReviews,
     leaveCoachReview,
 } from "../../services/CoachReview/coachReviewService";
-import {
-    buildRatingBreakdown,
-    renderStars,
-} from "../../utils/CoachReview/coachReviewHelper";
+import { buildRatingBreakdown } from "../../utils/CoachReview/coachReviewHelper";
 import { coachReviewTheme } from "../../utils/CoachReview/coachReviewTheme";
 import CoachReviewSummary from "./CoachReviewSummary";
 import CoachReviewCard from "./CoachReviewCard";
@@ -147,9 +144,9 @@ export default function CoachReviewsSection({
             <div className="flex flex-col gap-6">
                 <CoachReviewSummary
                     averageRating={averageRating}
+                    averageRatingValue={reviewData?.coach_avg_rating ?? 0}
                     reviewCount={reviews.length}
                     breakdown={breakdown}
-                    starsText={renderStars(Math.round(reviewData?.coach_avg_rating ?? 0))}
                     onWriteReview={openModal}
                 />
 

@@ -6,6 +6,7 @@ import CoachProfileTabs, {
 } from "../../components/CoachProfile/CoachProfileTabs";
 import CoachPlaceholderSection from "../../components/CoachProfile/CoachPlaceholderSection";
 import { coachReviewTheme } from "../../utils/CoachReview/coachReviewTheme";
+import { ArrowLeft } from "lucide-react";
 
 export function CoachProfilePage() {
     const navigate = useNavigate();
@@ -52,7 +53,10 @@ export function CoachProfilePage() {
                     fontSize: coachReviewTheme.fontSizes.label,
                 }}
             >
-                ← Back to coaches
+                <div className="flex items-center gap-2">
+                    <ArrowLeft size={16} />
+                    <span>Back to coaches</span>
+                </div>
             </button>
 
             <div
