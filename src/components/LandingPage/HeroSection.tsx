@@ -10,7 +10,7 @@ const HeroSection = () => {
   const navigate = useNavigate();
 
   // Current working routes.
-  const landingRoute = "/landing";
+  const landingRoute = "/coaches";
   const registerRoute = "/register";
 
   return (
