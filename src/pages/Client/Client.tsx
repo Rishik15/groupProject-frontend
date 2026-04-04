@@ -6,6 +6,7 @@ import { CoachProfilePage } from "../FindCoaches/CoachProfilePage";
 
 
 import ClientDashBoard from "./Dashboard";
+import BrowseCoaches from "./BrowseCoaches";
 
 const ClientLayout = () => {
   return (
@@ -23,6 +24,7 @@ const ClientLayout = () => {
           <Route path="nutrition" element={<Nutrition />} />
           <Route path="coaches" element={<FindCoaches />} />
           <Route path="coaches/:coachId" element={<CoachProfilePage />} />
+          <Route path="/coaches" element={<BrowseCoaches />} />
         </Routes>
       </div>
     </section>
