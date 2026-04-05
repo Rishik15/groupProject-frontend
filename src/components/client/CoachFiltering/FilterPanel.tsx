@@ -54,14 +54,12 @@ export default function FilterPanel({
     <Card className="p-5 flex flex-col gap-6 h-fit sticky top-6">
       <div className="flex items-center justify-between">
         <span className="text-sm font-semibold text-foreground">Filters</span>
-        <Button
-          variant="primary"
-          size="sm"
-          onPress={onClearAll}
-          className="text-default-400 min-w-0 px-0"
+        <button
+          onClick={onClearAll}
+          className="text-xs text-default-400 hover:text-foreground transition-colors"
         >
           Clear all
-        </Button>
+        </button>
       </div>
 
       <div className="flex flex-col gap-3">

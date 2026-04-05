@@ -9,9 +9,6 @@ import { coachReviewTheme } from "../../utils/CoachReview/coachReviewTheme";
 interface CoachReviewCardProps {
     review: CoachReview;
 }
-
-// Card for one individual review.
-// Keeping it separate prevents the review container from becoming a giant JSX
 export default function CoachReviewCard({ review }: CoachReviewCardProps) {
     return (
         <div

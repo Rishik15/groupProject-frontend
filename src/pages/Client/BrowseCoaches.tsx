@@ -67,9 +67,8 @@ export default function BrowseCoaches() {
 
   return (
     <div className="min-h-screen bg-default-100 px-8 py-8">
-      <h1 className="text-2xl font-bold text-foreground mb-5">
-        Browse Expert Coaches
-      </h1>
+      <h1 className="text-2xl font-bold text-foreground mb-1">Browse Expert Coaches</h1>
+      <p className="text-sm text-[#72728A] mb-5">Find the perfect coach for your fitness journey</p>
       <div className="flex items-center gap-3 mb-6">
         <div className="flex items-center gap-2 bg-white border border-default-200 rounded-xl px-3 py-2 max-w-lg flex-1">
           <svg

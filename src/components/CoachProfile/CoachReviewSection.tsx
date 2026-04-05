@@ -50,7 +50,6 @@ export default function CoachReviewsSection({
         }
     }, [coachId]);
 
-    // Load the reviews on coach profile open or coach id change
     useEffect(() => {
         if (!Number.isFinite(coachId) || coachId <= 0) {
             setLoadError("Invalid coach id.");
@@ -69,7 +68,6 @@ export default function CoachReviewsSection({
             : reviewData.coach_avg_rating.toFixed(1);
 
     const openModal = () => {
-        // Reset form state so each new review starts in default state
         setSubmitError("");
         setRating(5);
         setReviewText("");
@@ -77,7 +75,6 @@ export default function CoachReviewsSection({
     };
 
     const closeModal = () => {
-        // Prevent closing mid submit
         if (!isSubmitting) {
             setIsModalOpen(false);
             setSubmitError("");
@@ -99,7 +96,7 @@ export default function CoachReviewsSection({
             setRating(5);
             setReviewText("");
 
-            // Refresh the list of reviews so new review appears immediately
+            // refresh the list of reviews so new review appears immediately
             await fetchReviews();
         } catch (error) {
             if (axios.isAxiosError(error)) {

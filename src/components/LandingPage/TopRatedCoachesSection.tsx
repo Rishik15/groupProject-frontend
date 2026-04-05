@@ -6,9 +6,7 @@ import { top5 } from "../../services/landing/top5";
 import type { Coach } from "../../utils/Interfaces/coachquery";
 import { ArrowRight } from "lucide-react";
 
-// Dynamic-looking section for coach data.
-// Frontend: safe place to style cards/layout.
-// Fullstack/backend: replace fetchTopRatedCoaches with a service/API call.
+
 const TopRatedCoachesSection = () => {
   const [coaches, setCoaches] = useState<Coach[]>([]);
   const navigate = useNavigate();
@@ -42,11 +40,7 @@ const TopRatedCoachesSection = () => {
             </p>
           </div>
 
-          {/*
-            TEMP PLACEHOLDER:
-            This routes back to the landing page for now so no new App route is needed.
-            Example future route once the page exists: navigate("/coaches")
-          */}
+    
           <TemplateButton
             variant="ghost"
             className="text-[15px] flex items-center gap-0.5"
@@ -57,7 +51,7 @@ const TopRatedCoachesSection = () => {
           </TemplateButton>
         </div>
 
-        <div className="mt-14 grid grid-cols-5 gap-8 items-stretch">
+        <div className="mt-14 grid grid-cols-3 gap-8 items-stretch">
           {coaches.map((coach) => (
             <CoachCard key={coach.coach_id} coach={coach} />
           ))}
