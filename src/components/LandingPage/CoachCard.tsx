@@ -43,25 +43,28 @@ export default function CoachCard({ coach }: { coach: Coach }) {
   const navigate = useNavigate();
 
   return (
-    <Card className="p-6 flex flex-col shadow-sm h-full min-h-28">
-      <div className="mb-1">
-        <span className="text-sm font-semibold text-foreground">
-          {coach.first_name} {coach.last_name}
-        </span>
+    <Card className="p-6 flex flex-col gap-4 shadow-sm h-full min-h-28">
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-[#5B5EF4]/10 flex items-center justify-center shrink-0">
+            <span className="text-sm font-semibold text-[#5B5EF4]">
+              {coach.first_name[0]}{coach.last_name[0]}
+            </span>
+          </div>
+          <div>
+            <span className="text-sm font-semibold text-foreground">
+              {coach.first_name} {coach.last_name}
+            </span>
+            <p className="text-xs text-default-400">{coach.coach_description}</p>
+            <StarRating rating={coach.avg_rating} reviewCount={coach.review_count} />
+          </div>
+        </div>
+        <div className="text-right shrink-0">
+          <p className="text-sm font-bold text-[#5B5EF4]">${coach.price}</p>
+          <p className="text-xs text-default-400">per session</p>
+        </div>
       </div>
-
-      <div className="flex-1">
-        <span className="text-sm text-default-400 line-clamp-3">
-          {coach.coach_description}
-        </span>
-      </div>
-
-      <div className="flex items-center justify-between mt-3">
-        <StarRating
-          rating={coach.avg_rating}
-          reviewCount={coach.review_count}
-        />
-
+      <div className="flex items-center justify-between">
         <span
           onClick={() => navigate(`/coaches/${coach.coach_id}`)}
           className="text-[12px] font-medium text-foreground hover:underline cursor-pointer"

@@ -11,7 +11,7 @@ interface CoachReviewSummaryProps {
     onWriteReview: () => void;
 }
 
-// Summary card shown above the review list
+
 export default function CoachReviewSummary({
     averageRating,
     averageRatingValue,

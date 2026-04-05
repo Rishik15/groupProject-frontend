@@ -1,24 +1,48 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import ProfileHeader from "../../components/CoachProfile/ProfileHeader";
 import ProfileTabs, { type Tab } from "../../components/CoachProfile/ProfileTabs";
 import AboutTab from "../../components/CoachProfile/AboutTab";
 import ReviewsTab from "../../components/CoachProfile/ReviewsTab";
 import SuccessStoriesTab from "../../components/CoachProfile/SuccessStoriesTab";
-
-// when backend route is ready, this will be the impor i use.
-// import { getCoachProfile, getCoachReviews, getCoachSuccessStories } from "../../services/coach/requestcontracts";
+import { getCoachProfile, type CoachProfile as CoachProfileType } from "../../services/contract/requestcontracts.ts";
 
 export default function CoachProfile() {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [activeTab, setActiveTab] = useState<Tab>("about");
+  const [coach, setCoach] = useState<CoachProfileType | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // when backend is ready:
-  // const { id } = useParams();
-  // useEffect(() => { getCoachProfile(Number(id)).then(setCoach) }, [id]);
+  useEffect(() => {
+    async function load() {
+      if (!id) return;
+      const data = await getCoachProfile(Number(id));
+      setCoach(data);
+      setLoading(false);
+    }
+    load();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-default-100 flex items-center justify-center">
+        <p className="text-sm text-default-400">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!coach) {
+    return (
+      <div className="min-h-screen bg-default-100 flex items-center justify-center">
+        <p className="text-sm text-default-400">Coach not found.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-default-100 px-8 py-8 max-w-3xl mx-auto">
+      {/* Back link */}
       <button
         onClick={() => navigate(-1)}
         className="flex items-center gap-1.5 text-sm text-default-400 hover:text-foreground mb-6 transition-colors"
@@ -28,34 +52,21 @@ export default function CoachProfile() {
         </svg>
         Back to coaches
       </button>
+
+      {/* Header */}
       <div className="mb-6">
-        <ProfileHeader
-          first_name=""
-          last_name=""
-          coach_description=""
-          avg_rating={0}
-          review_count={0}
-          price_per_session={0}
-          years_exp={0}
-        />
+        <ProfileHeader coach={coach} />
       </div>
 
+      {/* Tabs */}
       <div className="mb-5">
         <ProfileTabs activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
 
-      {activeTab === "about" && (
-        <AboutTab
-          bio=""
-          certifications={[]}
-          specialties={[]}
-          availability=""
-          active_clients={0}
-          success_rate={0}
-        />
-      )}
-      {activeTab === "reviews" && <ReviewsTab reviews={[]} />}
-      {activeTab === "stories" && <SuccessStoriesTab stories={[]} />}
+      {/* Tab content */}
+      {activeTab === "about" && <AboutTab coach={coach} />}
+      {activeTab === "reviews" && <ReviewsTab reviews={coach.reviews} />}
+      {activeTab === "stories" && <SuccessStoriesTab reviews={coach.reviews} />}
     </div>
   );
 }
