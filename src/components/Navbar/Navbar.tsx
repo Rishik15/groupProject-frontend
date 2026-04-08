@@ -86,7 +86,7 @@ export default function Navbar({
             <button className="mt-0.5" onClick={() => setOpen(!open)}>
               <Avatar className="w-8 h-8">
                 <Avatar.Image src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg" />
-                <Avatar.Fallback className="bg-[#5B5EF4] font-semibold text-white">
+                <Avatar.Fallback className="bg-[#a9aaff] font-semibold text-[#444566]">
                   {name.charAt(0)}
                 </Avatar.Fallback>
               </Avatar>
