@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import { useAuth } from "../../utils/auth/AuthContext";
 import ClientDashBoard from "./Dashboard";
+import Settings from "./Settings";
 
 const ClientLayout = () => {
   const { user } = useAuth();
@@ -18,6 +19,7 @@ const ClientLayout = () => {
       <div className="pt-14">
         <Routes>
           <Route index element={<ClientDashBoard />} />
+          <Route path="settings" element={<Settings />} />
         </Routes>
       </div>
     </section>
