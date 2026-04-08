@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { Card, Avatar, Tabs, Button } from "@heroui/react";
 import { getAuth } from "../../services/auth/checkAuth";
 import { InfoTab } from "./InfoTab";
+import { Save } from 'lucide-react';
+import { Pencil } from 'lucide-react';
+import { LogOut } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
+import { Image } from 'lucide-react';
 
 const Settings = () => {
     const [user, setUser] = useState<any>(null);
@@ -29,7 +34,19 @@ const Settings = () => {
                         className="bg-white text-black hover:bg-indigo-500 hover:text-white rounded-lg"
                         onClick={() => setEdit(!edit)}
                     >
-                        {edit ? "Save" : "Edit"}
+
+
+                        {edit ? (
+                            <>
+                                <Save />
+                                Save
+                            </>
+                        ) : (
+                            <>
+                                <Pencil className="mr-1" />
+                                Edit
+                            </>
+                        )}
                     </Button>
                 </div>
             </div>
@@ -67,7 +84,7 @@ const Settings = () => {
                             >
                                 <Tabs.Tab
                                     id="overview"
-                                    className="rounded-full px-2 py-2 text-sm font-medium text-black whitespace-nowrap"
+                                    className="font-normal rounded-full px-2 py-2 text-sm font-medium text-black whitespace-nowrap"
                                 >
                                     Info
                                     <Tabs.Indicator />
@@ -75,7 +92,7 @@ const Settings = () => {
 
                                 <Tabs.Tab
                                     id="analytics"
-                                    className="rounded-full px-3 py-2 text-sm font-medium text-black whitespace-nowrap"
+                                    className="font-normal rounded-full px-3 py-2 text-sm font-medium text-black whitespace-nowrap"
                                 >
                                     Progress Photos
                                     <Tabs.Indicator />
@@ -83,7 +100,7 @@ const Settings = () => {
 
                                 <Tabs.Tab
                                     id="reports"
-                                    className="rounded-full px-2 py-2 text-sm font-medium text-black whitespace-nowrap"
+                                    className="font-normal rounded-full px-2 py-2 text-sm font-medium text-black whitespace-nowrap"
                                 >
                                     Settings
                                     <Tabs.Indicator />
@@ -95,10 +112,21 @@ const Settings = () => {
                             <InfoTab />
                         </Tabs.Panel>
                         <Tabs.Panel className="pt-4" id="analytics">
-                            <p>Track your metrics and analyze performance data.</p>
+                            <Button className="w-full rounded-md bg-indigo-500 text-sm font-normal">
+                                <Image />
+                                Upload Progress Photo
+                            </Button>
                         </Tabs.Panel>
                         <Tabs.Panel className="pt-4" id="reports">
-                            <p>Generate and download detailed reports.</p>
+                            <div className="flex flex-col gap-2">
+                                <Button className="w-full rounded-md bg-transparent border border-gray-300">
+                                    <LogOut className="text-black" /> <p className="text-black">Sign Out</p>
+                                </Button>
+                                <Button className="w-full rounded-md bg-transparent border border-red-300">
+                                    <Trash2 className="text-red-500" />
+                                    <p className="text-red-500">Delete Account</p>
+                                </Button>
+                            </div>
                         </Tabs.Panel>
                     </Tabs>
                 </div>
