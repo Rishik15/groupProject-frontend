@@ -1,0 +1,96 @@
+import { useEffect, useState } from "react";
+import { Card, Avatar, Tabs, Button } from "@heroui/react";
+import { getAuth } from "../../services/auth/checkAuth";
+import { InfoTab } from "./InfoTab";
+
+const Settings = () => {
+    const [user, setUser] = useState<any>(null);
+    const [edit, setEdit] = useState<boolean>(true);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const auth = await getAuth();
+            if (auth.authenticated) {
+                setUser(auth.user);
+            }
+        };
+
+        fetchUser();
+    }, []);
+
+    if (!user) return <p>Loading...</p>;
+
+    return (
+        <div className="bg-gray-100 min-h-screen">
+            <div className="w-full bg-white border-b py-6">
+                <div className="max-w-[700px] mx-auto px-6 flex items-center justify-between">
+                    <p className="text-2xl font-semibold">Profile</p>
+                    <Button
+                        className="bg-white text-black hover:bg-indigo-500 hover:text-white rounded-lg"
+                        onClick={() => setEdit(!edit)}
+                    >
+                        {edit ? "Save" : "Edit"}
+                    </Button>
+                </div>
+            </div>
+
+            <div className="max-w-[700px] mx-auto w-full px-6 py-6 flex flex-col gap-4">
+                <Card className="w-full rounded-2xl border shadow-sm bg-white">
+                    <Card.Header className="p-0">
+                        <div className="flex items-center gap-3 px-5 py-3">
+                            <Avatar className="w-14 h-14 shrink-0">
+                                <Avatar.Image
+                                    alt="Blue"
+                                    src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg"
+                                />
+                                <Avatar.Fallback>B</Avatar.Fallback>
+                            </Avatar>
+
+                            <div className="flex flex-col justify-center">
+                                <p className="text-lg font-semibold leading-none">
+                                    {user.first_name} {user.last_name}
+                                </p>
+                                <p className="text-sm text-gray-500 leading-tight mt-1">
+                                    {user.email}
+                                </p>
+                            </div>
+                        </div>
+                    </Card.Header>
+                </Card>
+
+                <div className="w-full flex justify-center">
+                    <Tabs className="w-full">
+                        <Tabs.ListContainer>
+                            <Tabs.List aria-label="Options">
+                                <Tabs.Tab id="overview">
+                                    Info
+                                    <Tabs.Indicator />
+                                </Tabs.Tab>
+                                <Tabs.Tab id="analytics">
+                                    Progress Photos
+                                    <Tabs.Indicator />
+                                </Tabs.Tab>
+                                <Tabs.Tab id="reports">
+                                    Settings
+                                    <Tabs.Indicator />
+                                </Tabs.Tab>
+                            </Tabs.List>
+                        </Tabs.ListContainer>
+
+                        <Tabs.Panel className="pt-0 pl-0 pr-0 mt-5" id="overview">
+                            <InfoTab />
+                        </Tabs.Panel>
+                        <Tabs.Panel className="pt-4" id="analytics">
+                            <p>Track your metrics and analyze performance data.</p>
+                        </Tabs.Panel>
+                        <Tabs.Panel className="pt-4" id="reports">
+                            <p>Generate and download detailed reports.</p>
+                        </Tabs.Panel>
+                    </Tabs>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Settings;
