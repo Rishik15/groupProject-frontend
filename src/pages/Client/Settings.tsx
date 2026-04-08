@@ -61,16 +61,30 @@ const Settings = () => {
                 <div className="w-full flex justify-center">
                     <Tabs className="w-full">
                         <Tabs.ListContainer>
-                            <Tabs.List aria-label="Options">
-                                <Tabs.Tab id="overview">
+                            <Tabs.List
+                                aria-label="Options"
+                                className="inline-flex items-center gap-1 rounded-full bg-transparent p-0 w-fit"
+                            >
+                                <Tabs.Tab
+                                    id="overview"
+                                    className="rounded-full px-2 py-2 text-sm font-medium text-black whitespace-nowrap"
+                                >
                                     Info
                                     <Tabs.Indicator />
                                 </Tabs.Tab>
-                                <Tabs.Tab id="analytics">
+
+                                <Tabs.Tab
+                                    id="analytics"
+                                    className="rounded-full px-3 py-2 text-sm font-medium text-black whitespace-nowrap"
+                                >
                                     Progress Photos
                                     <Tabs.Indicator />
                                 </Tabs.Tab>
-                                <Tabs.Tab id="reports">
+
+                                <Tabs.Tab
+                                    id="reports"
+                                    className="rounded-full px-2 py-2 text-sm font-medium text-black whitespace-nowrap"
+                                >
                                     Settings
                                     <Tabs.Indicator />
                                 </Tabs.Tab>
