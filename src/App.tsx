@@ -15,6 +15,7 @@ import CoachProfile from "./pages/Coach/CoachProfile";
 <Route path="/coaches/:id" element={<CoachProfile />} />
 
 */
+import Workouts from "./pages/Workouts/Workouts";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/coaches" element={<BrowseCoaches/>} />
           <Route path="/coaches/:id" element={<CoachProfile />} />
+        <Route path="/workouts" element={<Workouts />} />
         <Route
             path="/coach/*"
             element={
