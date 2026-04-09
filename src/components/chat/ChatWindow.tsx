@@ -12,13 +12,22 @@ const ChatWindow = ({
     type: "sent" | "received";
   }[];
 }) => {
+  const isOnline = user.status === "online";
+
   return (
     <section className="flex flex-col bg-white rounded-3xl w-140 h-165 mx-auto">
       <div className="border-b py-3 px-6 flex flex-col">
         <div className="font-semibold text-[14px]">{user.fullName}</div>
-        <div className="text-[12px] flex items-center gap-1 text-gray-500">
-          <div className="w-2 h-2 bg-red-500 rounded-full" />
-          Offline
+
+        <div className="text-[12px] flex items-center gap-1">
+          <div
+            className={`w-2 h-2 rounded-full ${
+              isOnline ? "bg-green-500" : "bg-red-500"
+            }`}
+          />
+          <span className="text-gray-500">
+            {isOnline ? "Online" : "Offline"}
+          </span>
         </div>
       </div>
 
