@@ -79,10 +79,3 @@ export function buildRatingBreakdown(
             total === 0 ? 0 : (counts[star as 1 | 2 | 3 | 4 | 5] / total) * 100,
     }));
 }
-
-// Render visual star string
-export function renderStars(rating: number): string {
-    return Array.from({ length: 5 }, (_, index) =>
-        index < rating ? "★" : "☆"
-    ).join("");
-}

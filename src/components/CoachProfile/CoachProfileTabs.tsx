@@ -14,7 +14,7 @@ const tabs: { key: CoachProfileTab; label: string }[] = [
     { key: "success-stories", label: "Success Stories" },
 ];
 
-// The tab row is broken into its own component so the page stays small.
+// the tab row is broken into its own component so the page stays small.
 export default function CoachProfileTabs({
     selectedTab,
     onTabChange,

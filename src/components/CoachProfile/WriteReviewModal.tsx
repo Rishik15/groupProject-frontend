@@ -1,5 +1,7 @@
 import { Button } from "@heroui/react";
 import { coachReviewTheme } from "../../utils/CoachReview/coachReviewTheme";
+import { X } from "lucide-react";
+import StarRating from "./StarRating";
 
 interface WriteReviewModalProps {
     isOpen: boolean;
@@ -76,7 +78,7 @@ export default function WriteReviewModal({
                             fontSize: coachReviewTheme.fontSizes.label,
                         }}
                     >
-                        ✕
+                        <X size={16} />
                     </button>
                 </div>
 
@@ -91,25 +93,7 @@ export default function WriteReviewModal({
                         Rating
                     </p>
 
-                    <div className="flex gap-2">
-                        {[1, 2, 3, 4, 5].map((starValue) => (
-                            <button
-                                key={starValue}
-                                type="button"
-                                onClick={() => onRatingChange(starValue)}
-                                className="bg-transparent"
-                                style={{
-                                    color:
-                                        starValue <= rating
-                                            ? coachReviewTheme.colors.star
-                                            : coachReviewTheme.colors.secondaryText,
-                                    fontSize: coachReviewTheme.fontSizes.title,
-                                }}
-                            >
-                                ★
-                            </button>
-                        ))}
-                    </div>
+                    <StarRating rating={rating} onChange={onRatingChange} size={20} />
                 </div>
 
                 <div className="mb-5">

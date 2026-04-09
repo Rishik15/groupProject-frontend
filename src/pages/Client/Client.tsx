@@ -28,6 +28,7 @@ const ClientLayout = () => {
           <Route path="nutrition" element={<Nutrition />} />
           <Route path="coaches" element={<FindCoaches />} />
           <Route path="coaches/:coachId" element={<CoachProfilePage />} />
+          <Route path="/coaches" element={<BrowseCoaches />} />
         </Routes>
       </div>
     </section>
