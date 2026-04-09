@@ -2,8 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import { useAuth } from "../../utils/auth/AuthContext";
 import Nutrition from "../Nutrition/Nutrition";
-import { FindCoaches } from "../FindCoaches/FindCoaches";
-import { CoachProfilePage } from "../FindCoaches/CoachProfilePage";
+import BrowseCoaches from "./BrowseCoaches";
 
 
 import ClientDashBoard from "./Dashboard";
@@ -26,8 +25,6 @@ const ClientLayout = () => {
           <Route index element={<ClientDashBoard />} />
           <Route path="chat" element={<Chat />} />
           <Route path="nutrition" element={<Nutrition />} />
-          <Route path="coaches" element={<FindCoaches />} />
-          <Route path="coaches/:coachId" element={<CoachProfilePage />} />
           <Route path="/coaches" element={<BrowseCoaches />} />
         </Routes>
       </div>
