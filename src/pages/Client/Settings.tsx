@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, Avatar, Tabs, Button } from "@heroui/react";
 import { InfoTab } from "./InfoTab";
-import { Save, Pencil, LogOut, Trash2, Image, MessageCircle, UserRound, CreditCard, Bell, Shield, Smartphone, HelpCircle, ChevronRight } from "lucide-react";
+import { Save, Pencil, LogOut, Trash2, MessageCircle, UserRound, CreditCard, Bell, Shield, HelpCircle, ChevronRight } from "lucide-react";
 import axios from "axios";
 import ProgressPhoto from "./ProgressPhoto";
 import { logout } from "../../services/auth/logout";
@@ -15,6 +15,7 @@ type User = {
     height?: string | number;
     goal_weight?: string | number;
     bio?: string;
+    role?: string;
 };
 
 const Settings = () => {
@@ -22,6 +23,7 @@ const Settings = () => {
     const [form, setForm] = useState<User | null>(null);
     const [edit, setEdit] = useState<boolean>(false);
 
+    console.log(user)
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -90,6 +92,17 @@ const Settings = () => {
                                 </p>
                                 <p className="text-sm text-gray-500 leading-tight mt-1">
                                     {form?.email}
+                                </p>
+                                <p className="text-indigo-500 text-xs mt-1">
+                                    {form?.role === "client"
+                                    ? "Client"
+                                    : form?.role === "admin"
+                                    ? "Admin"
+                                    : form?.role === "coach"
+                                    ? "Coach"
+                                    : ""}
+                                </p>
+                                <p>
                                 </p>
                             </div>
                         </div>
@@ -167,14 +180,6 @@ const Settings = () => {
                                         <div className="flex items-center gap-4">
                                             <Shield className="w-5 h-5 text-gray-500" />
                                             <span className="text-base font-normal text-black">Privacy</span>
-                                        </div>
-                                        <ChevronRight className="w-5 h-5 text-gray-400" />
-                                    </Button>
-
-                                    <Button className="w-full h-[50px] px-6 flex items-center justify-between bg-transparent hover:bg-[#f9fafb] border-b border-[#e5e7eb] rounded-none">
-                                        <div className="flex items-center gap-4">
-                                            <Smartphone className="w-5 h-5 text-gray-500" />
-                                            <span className="text-base font-normal text-black">Connected Devices</span>
                                         </div>
                                         <ChevronRight className="w-5 h-5 text-gray-400" />
                                     </Button>
