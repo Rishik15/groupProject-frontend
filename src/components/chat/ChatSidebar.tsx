@@ -16,6 +16,7 @@ const ChatSidebar = ({
   );
 
   return (
+
     <section className=" flex flex-col gap-4 w-84">
       <h1 className="font-bold text-[20px]">Messages</h1>
 
@@ -39,8 +40,16 @@ const ChatSidebar = ({
             onClick={() => onSelectUser(user)}
             className="flex gap-2 items-center min-w-0"
           >
-            <div className="w-11 h-10 rounded-4xl bg-[#a9aaff] flex items-center justify-center text-[15px] font-semibold p-2 text-[#444566]">
-              {user.initial}
+            <div className="relative w-11 h-10">
+              <div className="w-full h-full rounded-4xl bg-[#a9aaff] flex items-center justify-center text-[15px] font-semibold text-[#444566]">
+                {user.initial}
+              </div>
+
+              <div
+                className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
+                  user.status === "online" ? "bg-green-500" : "bg-red-600"
+                }`}
+              />
             </div>
             <div className="flex items-center justify-between w-full p-2 pr-4 min-w-0 gap-8">
               <div className="min-w-0 flex flex-col py-1">

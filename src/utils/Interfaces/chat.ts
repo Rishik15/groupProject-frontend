@@ -4,4 +4,5 @@ export type ChatUser = {
   initial: string;
   lastMessage?: string;
   unreadCount?: number;
+  status: "offline" | "online";
 };

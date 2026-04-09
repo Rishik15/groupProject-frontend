@@ -1,30 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ChatMessages from "../../components/chat/ChatMessage";
 import ChatSidebar from "../../components/chat/ChatSidebar";
 import ChatWindow from "../../components/chat/ChatWindow";
-
-const users = [
-  {
-    id: 1,
-    fullName: "Rishik Yesgari",
-    initial: "R",
-    lastMessage: "How are you?",
-    unreadCount: 2,
-  },
-  {
-    id: 2,
-    fullName: "John Doe",
-    initial: "J",
-    unreadCount: 0,
-  },
-  {
-    id: 3,
-    fullName: "Sarah Smith",
-    initial: "S",
-    lastMessage: "Are you working on the new routine? Are you doing it well?",
-    unreadCount: 5,
-  },
-];
+import { get_users } from "../../services/chat/get_user";
+import { socket } from "../../services/sockets/socket";
 
 type Message = {
   id: number;
@@ -56,6 +35,77 @@ const messages: Message[] = [
 
 const Chat = () => {
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [users, setUsers] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const data = await get_users();
+      console.log("FULL DATA:", data);
+      setUsers(data);
+    };
+
+    fetchUsers();
+  }, []);
+
+  useEffect(() => {
+    const handleConnect = () => {
+      console.log(" socket ready in Chat");
+
+      socket.emit("join_chat_presence");
+    };
+
+    if (socket.connected) {
+      handleConnect();
+    } else {
+      socket.on("connect", handleConnect);
+    }
+
+    return () => {
+      socket.emit("leave_chat_presence");
+      socket.off("connect", handleConnect);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (users.length === 0) return;
+
+    const sendSubscribe = () => {
+      socket.emit("subscribe_presence", {
+        userIds: users.map((u) => u.id),
+      });
+    };
+
+    if (socket.connected) {
+      sendSubscribe();
+    } else {
+      socket.on("connect", sendSubscribe);
+    }
+
+    return () => {
+      socket.off("connect", sendSubscribe);
+    };
+  }, [users]);
+
+  useEffect(() => {
+    socket.on("presence_change", ({ userId, status }) => {
+      console.log(" presence_change RECEIVED:", userId, status);
+
+      setUsers((prev) =>
+        prev.map((u) => {
+          if (u.id !== userId) return u;
+
+          return {
+            ...u,
+            status: status === "chat_online" ? "online" : "offline",
+          };
+        }),
+      );
+    });
+
+    return () => {
+      socket.off("presence_change");
+    };
+  }, []);
 
   return (
     <main className="mt-16 flex items-center justify-center px-36">
