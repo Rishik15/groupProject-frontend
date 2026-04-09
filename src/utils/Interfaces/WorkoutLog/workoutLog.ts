@@ -1,5 +1,20 @@
 export type WorkoutActivityType = "strength" | "cardio";
 
+export type WorkoutScheduleKind =
+    | "strength"
+    | "cardio"
+    | "yoga"
+    | "rest"
+    | "nutrition"
+    | "other";
+
+export type WorkoutScheduleStatus =
+    | "scheduled"
+    | "active"
+    | "complete"
+    | "done"
+    | "missed";
+
 export interface WorkoutSessionSummary {
     session_id: number;
     user_id?: number;
@@ -84,4 +99,29 @@ export interface ActiveWorkoutSessionResponse {
     session: WorkoutSessionSummary | null;
     sets?: WorkoutSetEntry[];
     cardio?: WorkoutCardioEntry[];
+}
+
+export interface WorkoutCalendarEvent {
+    id: string;
+    title: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+    kind: WorkoutScheduleKind;
+    status: WorkoutScheduleStatus;
+    notes?: string;
+    source: "database" | "local" | "active-session";
+    sessionId?: number;
+    workoutPlanId?: number;
+}
+
+export interface CreateWorkoutCalendarEventInput {
+    title: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+    kind: WorkoutScheduleKind;
+    status: WorkoutScheduleStatus;
+    notes?: string;
+    workoutPlanId?: number | null;
 }

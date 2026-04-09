@@ -33,6 +33,8 @@ export default function WorkoutSessionSection({
               placeholder="Optional"
               value={workoutPlanId}
               onValueChange={onWorkoutPlanIdChange}
+              type="number"
+              min={1}
             />
 
             <div className="space-y-2">
@@ -52,14 +54,21 @@ export default function WorkoutSessionSection({
               <Button
                 variant="primary"
                 onPress={onStartWorkout}
-                className="bg-blue-600 text-[11.25px] font-semibold text-white"
+                className="text-[11.25px] font-semibold text-white"
+                style={{ backgroundColor: "#5E5EF4" }}
               >
                 Start Workout Session
               </Button>
             </div>
           </>
         ) : (
-          <div className="rounded-xl border border-blue-600/30 bg-blue-50 px-4 py-3 text-[11.25px] text-[#72728A]">
+          <div
+            className="rounded-xl px-4 py-3 text-[11.25px] text-[#72728A]"
+            style={{
+              border: "1px solid rgba(94, 94, 244, 0.3)",
+              backgroundColor: "rgba(94, 94, 244, 0.08)",
+            }}
+          >
             A workout session is already active. You can log strength or cardio
             activity below.
           </div>

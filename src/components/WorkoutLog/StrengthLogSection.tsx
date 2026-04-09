@@ -27,7 +27,13 @@ export default function StrengthLogSection({
     >
       <div className="space-y-4">
         {!hasActiveSession ? (
-          <div className="rounded-xl border border-blue-600/30 bg-blue-50 px-4 py-3 text-[11.25px] text-[#72728A]">
+          <div
+            className="rounded-xl px-4 py-3 text-[11.25px] text-[#72728A]"
+            style={{
+              border: "1px solid rgba(94, 94, 244, 0.3)",
+              backgroundColor: "rgba(94, 94, 244, 0.08)",
+            }}
+          >
             Start a workout session first so the modal can attach a session_id
             to the strength payload.
           </div>
@@ -39,6 +45,8 @@ export default function StrengthLogSection({
             placeholder="e.g. 12"
             value={values.exercise_id}
             onValueChange={(value) => onFieldChange("exercise_id", value)}
+            type="number"
+            min={1}
           />
 
           <WorkoutLogField
@@ -46,6 +54,8 @@ export default function StrengthLogSection({
             placeholder="e.g. 1"
             value={values.set_number}
             onValueChange={(value) => onFieldChange("set_number", value)}
+            type="number"
+            min={1}
           />
 
           <WorkoutLogField
@@ -53,6 +63,8 @@ export default function StrengthLogSection({
             placeholder="Optional"
             value={values.reps}
             onValueChange={(value) => onFieldChange("reps", value)}
+            type="number"
+            min={0}
           />
 
           <WorkoutLogField
@@ -60,6 +72,9 @@ export default function StrengthLogSection({
             placeholder="Optional"
             value={values.weight}
             onValueChange={(value) => onFieldChange("weight", value)}
+            type="number"
+            min={0}
+            step="0.01"
           />
 
           <WorkoutLogField
@@ -67,15 +82,17 @@ export default function StrengthLogSection({
             placeholder="Optional"
             value={values.rpe}
             onValueChange={(value) => onFieldChange("rpe", value)}
+            type="number"
+            min={0}
+            step="0.1"
           />
 
           <WorkoutLogField
             label="Finished At"
-            placeholder="Optional ISO time"
+            placeholder=""
             value={values.datetimeFinished}
-            onValueChange={(value) =>
-              onFieldChange("datetimeFinished", value)
-            }
+            onValueChange={(value) => onFieldChange("datetimeFinished", value)}
+            type="datetime-local"
           />
         </div>
 
@@ -84,7 +101,8 @@ export default function StrengthLogSection({
             variant="primary"
             onPress={onLogStrength}
             isDisabled={!hasActiveSession}
-            className="bg-blue-600 text-[11.25px] font-semibold text-white"
+            className="text-[11.25px] font-semibold text-white"
+            style={{ backgroundColor: "#5E5EF4" }}
           >
             Log Strength Set
           </Button>

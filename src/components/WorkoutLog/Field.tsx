@@ -1,4 +1,5 @@
 import { Input } from "@heroui/react";
+import type { HTMLInputTypeAttribute } from "react";
 
 interface WorkoutLogFieldProps {
   label: string;
@@ -6,6 +7,9 @@ interface WorkoutLogFieldProps {
   value: string;
   onValueChange: (value: string) => void;
   className?: string;
+  type?: HTMLInputTypeAttribute;
+  min?: number | string;
+  step?: number | string;
 }
 
 export default function WorkoutLogField({
@@ -14,6 +18,9 @@ export default function WorkoutLogField({
   value,
   onValueChange,
   className = "",
+  type = "text",
+  min,
+  step,
 }: WorkoutLogFieldProps) {
   return (
     <div className={`min-w-0 space-y-2 ${className}`}>
@@ -22,6 +29,9 @@ export default function WorkoutLogField({
       </label>
 
       <Input
+        type={type}
+        min={min}
+        step={step}
         placeholder={placeholder}
         value={value}
         onChange={(event) => onValueChange(event.currentTarget.value)}

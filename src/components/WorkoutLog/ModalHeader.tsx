@@ -6,7 +6,10 @@ export default function WorkoutLogModalHeader({
     onClose,
 }: WorkoutLogModalHeaderProps) {
     return (
-        <div className="border-b border-blue-600/30 bg-white px-5 py-5">
+        <div
+            className="bg-white px-5 py-5"
+            style={{ borderBottom: "1px solid rgba(94, 94, 244, 0.3)" }}
+        >
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <p className="text-[11.25px] font-medium text-[#72728A]">
@@ -25,7 +28,8 @@ export default function WorkoutLogModalHeader({
 
                 <button
                     type="button"
-                    className="rounded-xl border border-blue-600/40 px-3 py-2 text-[11.25px] font-semibold text-[#0F0F14] transition hover:bg-blue-50"
+                    className="rounded-xl px-3 py-2 text-[11.25px] font-semibold text-[#0F0F14] transition"
+                    style={{ border: "1px solid rgba(94, 94, 244, 0.4)" }}
                     onClick={onClose}
                 >
                     Close

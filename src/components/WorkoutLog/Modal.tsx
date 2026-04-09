@@ -57,7 +57,8 @@ export default function WorkoutLogModal({
                 >
                     <Modal.Dialog
                         aria-label="Log workout activity"
-                        className="w-full max-w-[720px] overflow-hidden rounded-3xl border border-blue-600/30 bg-white"
+                        className="w-full max-w-[720px] overflow-hidden rounded-3xl bg-white"
+                        style={{ border: "1px solid rgba(94, 94, 244, 0.3)" }}
                     >
                         <WorkoutLogModalHeader onClose={handleClose} />
 

@@ -12,11 +12,15 @@ export default function WorkoutLogModalFooter({
     onFinish,
 }: WorkoutLogModalFooterProps) {
     return (
-        <div className="flex flex-wrap justify-end gap-3 border-t border-blue-600/30 bg-white px-5 py-4">
+        <div
+            className="flex flex-wrap justify-end gap-3 bg-white px-5 py-4"
+            style={{ borderTop: "1px solid rgba(94, 94, 244, 0.3)" }}
+        >
             <Button
                 variant="ghost"
                 onPress={onCancel}
-                className="border border-blue-600/40 text-[11.25px] font-semibold text-[#0F0F14]"
+                className="text-[11.25px] font-semibold text-[#0F0F14]"
+                style={{ border: "1px solid rgba(94, 94, 244, 0.4)" }}
             >
                 Cancel
             </Button>
@@ -25,7 +29,8 @@ export default function WorkoutLogModalFooter({
                 variant="primary"
                 onPress={onFinish}
                 isDisabled={!hasActiveSession}
-                className="bg-blue-600 text-[11.25px] font-semibold text-white"
+                className="text-[11.25px] font-semibold text-white"
+                style={{ backgroundColor: "#5E5EF4" }}
             >
                 Finish Workout
             </Button>
