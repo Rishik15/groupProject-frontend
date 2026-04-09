@@ -8,6 +8,7 @@ import Workouts from "../Workouts/Workouts";
 
 import ClientDashBoard from "./Dashboard";
 import Chat from "../Chat/Chat";
+import Settings from "./Settings";
 
 const ClientLayout = () => {
   const { user } = useAuth();
@@ -28,6 +29,7 @@ const ClientLayout = () => {
           <Route path="nutrition" element={<Nutrition />} />
           <Route path="/coaches" element={<BrowseCoaches />} />
           <Route path="/workouts" element={<Workouts />} />
+          <Route path="settings" element={<Settings />} />
         </Routes>
       </div>
     </section>
