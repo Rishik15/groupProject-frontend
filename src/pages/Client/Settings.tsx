@@ -5,6 +5,7 @@ import { Save, Pencil, LogOut, Trash2, MessageCircle, UserRound, CreditCard, Bel
 import axios from "axios";
 import ProgressPhoto from "./ProgressPhoto";
 import { logout } from "../../services/auth/logout";
+import { AccountDeletion } from "./AccountDeletion";
 
 type User = {
     first_name?: string;
@@ -95,12 +96,12 @@ const Settings = () => {
                                 </p>
                                 <p className="text-indigo-500 text-xs mt-1">
                                     {form?.role === "client"
-                                    ? "Client"
-                                    : form?.role === "admin"
-                                    ? "Admin"
-                                    : form?.role === "coach"
-                                    ? "Coach"
-                                    : ""}
+                                        ? "Client"
+                                        : form?.role === "admin"
+                                            ? "Admin"
+                                            : form?.role === "coach"
+                                                ? "Coach"
+                                                : ""}
                                 </p>
                                 <p>
                                 </p>
@@ -205,10 +206,7 @@ const Settings = () => {
                                     </p>
                                 </Button>
 
-                                <Button className="w-full rounded-md bg-transparent border border-red-300">
-                                    <Trash2 className="text-red-500" />
-                                    <p className="text-red-500">Delete Account</p>
-                                </Button>
+                                <AccountDeletion />
                             </div>
                         </Tabs.Panel>
                     </Tabs>
