@@ -4,7 +4,7 @@ interface CoachPlaceholderSectionProps {
     message: string;
 }
 
-// Reusable card for empty states, loading states, and placeholders.
+// a reusable card for empty states, loading states, and placeholders.
 export default function CoachPlaceholderSection({
     message,
 }: CoachPlaceholderSectionProps) {

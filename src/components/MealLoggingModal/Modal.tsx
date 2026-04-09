@@ -1,5 +1,17 @@
 import { useMemo, useState } from "react";
-import { Button, Input, Modal, TextArea } from "@heroui/react";
+import {
+    Button,
+    Calendar,
+    DateField,
+    DatePicker,
+    Input,
+    Label,
+    Modal,
+    TextArea,
+    TimeField,
+} from "@heroui/react";
+import { getLocalTimeZone, today } from "@internationalized/date";
+
 import type {
     FoodItemDraft,
     MealLogFormValues,
@@ -13,6 +25,7 @@ import {
     calculateMealTotals,
     validateMealLogForm,
 } from "../../utils/MealLogging/mealLogHelpers";
+
 import FoodItemsSection from "./FoodItemsSection";
 import Footer from "./Footer";
 import Header from "./Header";
@@ -25,12 +38,13 @@ interface MealLoggingModalProps {
     onSuccess?: () => void;
 }
 
-// Keep the initial form state in one place so reset logic stays simple.
+// Keep the starting form values in one place so reset logic stays simple.
 const getInitialValues = (): MealLogFormValues => ({
     mealType: "breakfast",
     mealName: "",
     foodItems: [],
-    eatenAt: "",
+    eatenOn: null,
+    eatenTime: null,
     servings: "1",
     notes: "",
     photoFile: null,
@@ -47,7 +61,7 @@ export default function MealLoggingModal({
     );
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Recalculate totals any time the list of food items changes.
+    // Recalculate meal totals whenever the food item list changes.
     const totals = useMemo(
         () => calculateMealTotals(formValues.foodItems),
         [formValues.foodItems],
@@ -57,7 +71,7 @@ export default function MealLoggingModal({
         setFormValues(getInitialValues());
     };
 
-    // Generic form field updater for the top-level modal state.
+    // Generic updater for top-level modal form fields.
     const updateField = <K extends keyof MealLogFormValues>(
         field: K,
         value: MealLogFormValues[K],
@@ -95,6 +109,34 @@ export default function MealLoggingModal({
         }));
     };
 
+    // Store a local uploaded image for an individual food item.
+    // This gives the user preview support even though the backend still expects a URL later.
+    const handleFoodItemPhotoChange = (clientId: string, file: File | null) => {
+        setFormValues((prev) => ({
+            ...prev,
+            foodItems: prev.foodItems.map((item) => {
+                if (item.clientId !== clientId) {
+                    return item;
+                }
+
+                if (!file) {
+                    return {
+                        ...item,
+                        imageFile: null,
+                        imagePreviewUrl: "",
+                    };
+                }
+
+                return {
+                    ...item,
+                    imageFile: file,
+                    imagePreviewUrl: URL.createObjectURL(file),
+                };
+            }),
+        }));
+    };
+
+    // Store a local uploaded image for the overall meal photo.
     const handlePhotoChange = (file: File | null) => {
         if (!file) {
             updateField("photoFile", null);
@@ -102,7 +144,6 @@ export default function MealLoggingModal({
             return;
         }
 
-        // Store the local file and a local preview URL for the UI.
         updateField("photoFile", file);
         updateField("photoPreviewUrl", URL.createObjectURL(file));
     };
@@ -118,8 +159,8 @@ export default function MealLoggingModal({
         try {
             setIsSubmitting(true);
 
-            // The backend currently expects a photo URL string, so for now we send
-            // the default placeholder URL until real upload support is added.
+            // Backend still expects a photo_url string, so keep using the default placeholder
+            // until real upload-to-URL support is added.
             const photoUrl = getDefaultMealPhotoUrl();
 
             const payload = buildMealLogPayload(formValues, photoUrl);
@@ -155,8 +196,8 @@ export default function MealLoggingModal({
                                     <Header />
                                 </Modal.Header>
 
-                                {/* Remove padding from the scrollable body itself so the scrollbar
-                    sits flush with the right edge. Put the spacing on the inner wrapper. */}
+                                {/* Keep padding off the scrollable body itself so the scrollbar
+                    stays flush with the modal edge. */}
                                 <Modal.Body className="p-0">
                                     <div className="space-y-6 px-6 py-2">
                                         <MealTypeSelector
@@ -183,6 +224,7 @@ export default function MealLoggingModal({
                                             onChangeItem={handleFoodItemChange}
                                             onRemoveItem={handleRemoveFoodItem}
                                             onAddItem={handleAddFoodItem}
+                                            onFoodItemPhotoChange={handleFoodItemPhotoChange}
                                         />
 
                                         <SummaryCard totals={totals} />
@@ -192,31 +234,108 @@ export default function MealLoggingModal({
                                                 Meal Log Details
                                             </p>
 
-                                            <div className="grid grid-cols-[2fr_0.9fr] gap-x-3 gap-y-3">
-                                                <div className="min-w-0 space-y-1">
-                                                    <label className="block text-[13.125px] font-medium text-[#0F0F14]">
-                                                        Eaten At
-                                                    </label>
-                                                    <Input
-                                                        type="datetime-local"
-                                                        value={formValues.eatenAt}
-                                                        onChange={(event) => updateField("eatenAt", event.target.value)}
-                                                        className="w-full text-[13.125px]"
-                                                    />
-                                                </div>
+                                            <div className="grid grid-cols-[1.2fr_0.9fr] gap-x-3 gap-y-3">
+                                                <DatePicker
+                                                    className="w-full"
+                                                    value={formValues.eatenOn}
+                                                    onChange={(value) => updateField("eatenOn", value)}
+                                                    maxValue={today(getLocalTimeZone())}
+                                                >
+                                                    <Label className="text-[13.125px] font-medium text-[#0F0F14]">
+                                                        Date
+                                                    </Label>
 
-                                                <div className="min-w-0 space-y-1">
-                                                    <label className="block text-[13.125px] font-medium text-[#0F0F14]">
-                                                        Servings
-                                                    </label>
-                                                    <Input
-                                                        type="number"
-                                                        min={1}
-                                                        value={formValues.servings}
-                                                        onChange={(event) => updateField("servings", event.target.value)}
-                                                        className="w-full text-[13.125px]"
-                                                    />
-                                                </div>
+                                                    <DateField.Group
+                                                        className="rounded-xl border border-default-200 bg-white"
+                                                        fullWidth
+                                                        variant="secondary"
+                                                    >
+                                                        <DateField.Input className="px-3 text-[13.125px]">
+                                                            {(segment) => (
+                                                                <DateField.Segment segment={segment} />
+                                                            )}
+                                                        </DateField.Input>
+
+                                                        <DateField.Suffix>
+                                                            <DatePicker.Trigger className="px-3">
+                                                                <DatePicker.TriggerIndicator />
+                                                            </DatePicker.Trigger>
+                                                        </DateField.Suffix>
+                                                    </DateField.Group>
+
+                                                    <DatePicker.Popover className="rounded-xl p-2">
+                                                        <Calendar aria-label="Meal date">
+                                                            <Calendar.Header>
+                                                                <Calendar.YearPickerTrigger>
+                                                                    <Calendar.YearPickerTriggerHeading />
+                                                                    <Calendar.YearPickerTriggerIndicator />
+                                                                </Calendar.YearPickerTrigger>
+
+                                                                <Calendar.NavButton slot="previous" />
+                                                                <Calendar.NavButton slot="next" />
+                                                            </Calendar.Header>
+
+                                                            <Calendar.Grid>
+                                                                <Calendar.GridHeader>
+                                                                    {(day) => (
+                                                                        <Calendar.HeaderCell>{day}</Calendar.HeaderCell>
+                                                                    )}
+                                                                </Calendar.GridHeader>
+
+                                                                <Calendar.GridBody>
+                                                                    {(date) => <Calendar.Cell date={date} />}
+                                                                </Calendar.GridBody>
+                                                            </Calendar.Grid>
+
+                                                            <Calendar.YearPickerGrid>
+                                                                <Calendar.YearPickerGridBody>
+                                                                    {({ year }) => (
+                                                                        <Calendar.YearPickerCell year={year} />
+                                                                    )}
+                                                                </Calendar.YearPickerGridBody>
+                                                            </Calendar.YearPickerGrid>
+                                                        </Calendar>
+                                                    </DatePicker.Popover>
+                                                </DatePicker>
+
+                                                <TimeField
+                                                    className="w-full"
+                                                    value={formValues.eatenTime}
+                                                    onChange={(value) => updateField("eatenTime", value)}
+                                                    granularity="minute"
+                                                    hourCycle={12}
+                                                >
+                                                    <Label className="text-[13.125px] font-medium text-[#0F0F14]">
+                                                        Time
+                                                    </Label>
+
+                                                    <TimeField.Group
+                                                        className="rounded-xl border border-default-200 bg-white"
+                                                        fullWidth
+                                                        variant="secondary"
+                                                    >
+                                                        <TimeField.Input className="px-3 text-[13.125px]">
+                                                            {(segment) => (
+                                                                <TimeField.Segment segment={segment} />
+                                                            )}
+                                                        </TimeField.Input>
+                                                    </TimeField.Group>
+                                                </TimeField>
+                                            </div>
+
+                                            <div className="space-y-1">
+                                                <label className="block text-[13.125px] font-medium text-[#0F0F14]">
+                                                    Servings
+                                                </label>
+                                                <Input
+                                                    type="number"
+                                                    min={1}
+                                                    value={formValues.servings}
+                                                    onChange={(event) =>
+                                                        updateField("servings", event.target.value)
+                                                    }
+                                                    className="w-full text-[13.125px]"
+                                                />
                                             </div>
 
                                             <div className="space-y-1">

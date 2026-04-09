@@ -1,21 +1,22 @@
 import { Button } from "@heroui/react";
 import type { RatingBreakdownRow } from "../../utils/Interfaces/CoachReview/coachReview";
 import { coachReviewTheme } from "../../utils/CoachReview/coachReviewTheme";
+import StarRating from "./StarRating";
 
 interface CoachReviewSummaryProps {
     averageRating: string;
+    averageRatingValue: number;
     reviewCount: number;
     breakdown: RatingBreakdownRow[];
-    starsText: string;
     onWriteReview: () => void;
 }
 
-// Summary card shown above the review list
+
 export default function CoachReviewSummary({
     averageRating,
+    averageRatingValue,
     reviewCount,
     breakdown,
-    starsText,
     onWriteReview,
 }: CoachReviewSummaryProps) {
     return (
@@ -40,14 +41,7 @@ export default function CoachReviewSummary({
                         </h2>
 
                         <div>
-                            <p
-                                style={{
-                                    color: coachReviewTheme.colors.star,
-                                    fontSize: coachReviewTheme.fontSizes.title,
-                                }}
-                            >
-                                {starsText}
-                            </p>
+                            <StarRating rating={Math.round(averageRatingValue)} />
 
                             <p
                                 style={{
@@ -83,7 +77,7 @@ export default function CoachReviewSummary({
                                 fontSize: coachReviewTheme.fontSizes.label,
                             }}
                         >
-                            {row.star}★
+                            {row.star}
                         </span>
 
                         <div

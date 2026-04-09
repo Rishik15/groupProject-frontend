@@ -1,5 +1,6 @@
 import axios from "axios";
 import type {
+    CoachInfoResponse,
     CoachReviewResponse,
     LeaveCoachReviewPayload,
 } from "../../utils/Interfaces/CoachReview/coachReview";
@@ -7,6 +8,21 @@ import type {
 const API_BASE =
     import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ||
     "http://localhost:8080";
+
+// Fetch the main coach profile info for the header/body card.
+export async function getCoachInfo(
+    coachId: number
+): Promise<CoachInfoResponse> {
+    const response = await axios.get<CoachInfoResponse>(
+        `${API_BASE}/coach/get_coach_info`,
+        {
+            params: { coach_id: coachId },
+            withCredentials: true,
+        }
+    );
+
+    return response.data;
+}
 
 // Fetch all reviews and the average rating for one coach.
 export async function getCoachReviews(

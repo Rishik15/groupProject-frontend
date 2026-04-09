@@ -19,6 +19,7 @@ interface FoodItemsSectionProps {
     ) => void;
     onRemoveItem: (clientId: string) => void;
     onAddItem: (item: FoodItemDraft) => void;
+    onFoodItemPhotoChange: (clientId: string, file: File | null) => void;
 }
 
 export default function FoodItemsSection({
@@ -26,14 +27,13 @@ export default function FoodItemsSection({
     onChangeItem,
     onRemoveItem,
     onAddItem,
+    onFoodItemPhotoChange,
 }: FoodItemsSectionProps) {
     const handleSelectLibraryItem = (item: FoodItemSuggestion) => {
-        // Convert a saved backend food item into the editable shape the modal uses.
         onAddItem(mapSuggestionToDraft(item));
     };
 
     const handleAddCustomItem = () => {
-        // Add an empty row so the user can type a brand new custom food item.
         onAddItem(createEmptyFoodItemDraft());
     };
 
@@ -65,6 +65,7 @@ export default function FoodItemsSection({
                         item={item}
                         onChange={onChangeItem}
                         onRemove={onRemoveItem}
+                        onPhotoChange={onFoodItemPhotoChange}
                     />
                 ))}
             </div>

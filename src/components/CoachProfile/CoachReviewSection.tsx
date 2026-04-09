@@ -5,10 +5,7 @@ import {
     getCoachReviews,
     leaveCoachReview,
 } from "../../services/CoachReview/coachReviewService";
-import {
-    buildRatingBreakdown,
-    renderStars,
-} from "../../utils/CoachReview/coachReviewHelper";
+import { buildRatingBreakdown } from "../../utils/CoachReview/coachReviewHelper";
 import { coachReviewTheme } from "../../utils/CoachReview/coachReviewTheme";
 import CoachReviewSummary from "./CoachReviewSummary";
 import CoachReviewCard from "./CoachReviewCard";
@@ -53,7 +50,6 @@ export default function CoachReviewsSection({
         }
     }, [coachId]);
 
-    // Load the reviews on coach profile open or coach id change
     useEffect(() => {
         if (!Number.isFinite(coachId) || coachId <= 0) {
             setLoadError("Invalid coach id.");
@@ -72,7 +68,6 @@ export default function CoachReviewsSection({
             : reviewData.coach_avg_rating.toFixed(1);
 
     const openModal = () => {
-        // Reset form state so each new review starts in default state
         setSubmitError("");
         setRating(5);
         setReviewText("");
@@ -80,7 +75,6 @@ export default function CoachReviewsSection({
     };
 
     const closeModal = () => {
-        // Prevent closing mid submit
         if (!isSubmitting) {
             setIsModalOpen(false);
             setSubmitError("");
@@ -102,7 +96,7 @@ export default function CoachReviewsSection({
             setRating(5);
             setReviewText("");
 
-            // Refresh the list of reviews so new review appears immediately
+            // refresh the list of reviews so new review appears immediately
             await fetchReviews();
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -147,9 +141,9 @@ export default function CoachReviewsSection({
             <div className="flex flex-col gap-6">
                 <CoachReviewSummary
                     averageRating={averageRating}
+                    averageRatingValue={reviewData?.coach_avg_rating ?? 0}
                     reviewCount={reviews.length}
                     breakdown={breakdown}
-                    starsText={renderStars(Math.round(reviewData?.coach_avg_rating ?? 0))}
                     onWriteReview={openModal}
                 />
 
