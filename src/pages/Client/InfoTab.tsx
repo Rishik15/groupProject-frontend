@@ -1,5 +1,7 @@
 import { Card, Input, Label, TextArea } from "@heroui/react";
 import type { Dispatch, SetStateAction } from "react";
+import { Calendar, DateField, DatePicker } from "@heroui/react";
+import { parseDate } from "@internationalized/date";
 
 type User = {
     first_name?: string;
@@ -19,27 +21,10 @@ type InfoTabProps = {
 };
 
 export function InfoTab({ form, setForm, edit }: InfoTabProps) {
-    function getAge(dob: string) {
-        const birthDate = new Date(dob);
-        const today = new Date();
-
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDiff = today.getMonth() - birthDate.getMonth();
-
-        if (
-            monthDiff < 0 ||
-            (monthDiff === 0 && today.getDate() < birthDate.getDate())
-        ) {
-            age--;
-        }
-
-        return age;
-    }
 
     const fullName = `${form?.first_name ?? ""} ${form?.last_name ?? ""}`.trim();
 
     if (!form) return null;
-
     return (
       <Card className="w-auto rounded-xl border border-[#E8E8EF]">
           <Card.Footer className="flex flex-col items-start gap-4 pt-2 pl-2 pr-2">
@@ -74,56 +59,87 @@ export function InfoTab({ form, setForm, edit }: InfoTabProps) {
                       }
                       className="bg-gray-100 rounded-md"
                   />
-              </div>
+                </div>
+                <div className="flex flex-col gap-2 w-full ">
+                    <DatePicker className="w-full" name="date" value={
+                        form.dob
+                            ? parseDate(new Date(form.dob).toISOString().split("T")[0])
+                            : null
+                    }>
+                        <Label>Date of Birth</Label>
+                        <DateField.Group fullWidth className="bg-gray-100">
+                            <DateField.Input>{(segment) => <DateField.Segment segment={segment} />}</DateField.Input>
+                            <DateField.Suffix>
+                                <DatePicker.Trigger>
+                                    <DatePicker.TriggerIndicator />
+                                </DatePicker.Trigger>
+                            </DateField.Suffix>
+                        </DateField.Group>
+                        <DatePicker.Popover>
+                            <Calendar aria-label="Event date">
+                                <Calendar.Header>
+                                    <Calendar.YearPickerTrigger>
+                                        <Calendar.YearPickerTriggerHeading />
+                                        <Calendar.YearPickerTriggerIndicator />
+                                    </Calendar.YearPickerTrigger>
+                                    <Calendar.NavButton slot="previous" />
+                                    <Calendar.NavButton slot="next" />
+                                </Calendar.Header>
+                                <Calendar.Grid>
+                                    <Calendar.GridHeader>
+                                        {(day) => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}
+                                    </Calendar.GridHeader>
+                                    <Calendar.GridBody>{(date) => <Calendar.Cell date={date} />}</Calendar.GridBody>
+                                </Calendar.Grid>
+                                <Calendar.YearPickerGrid>
+                                    <Calendar.YearPickerGridBody>
+                                        {({ year }) => <Calendar.YearPickerCell year={year} />}
+                                    </Calendar.YearPickerGridBody>
+                                </Calendar.YearPickerGrid>
+                            </Calendar>
+                        </DatePicker.Popover>
+                    </DatePicker>
+                </div>
 
-              <div className="grid grid-cols-3 w-full gap-4">
+                <div className="grid grid-cols-3 w-full gap-4">
                   <div className="flex flex-col gap-2">
-                      <Label>Age</Label>
+                        <Label>Weight</Label>
                       <Input
-                          value={form.dob ? String(getAge(form.dob)) : ""}
-                          readOnly
+                            value={form.weight != null ? String(form.weight) : ""}
+                            readOnly={!edit}
+                            onChange={(e) =>
+                                setForm((prev) => (prev ? { ...prev, weight: e.target.value } : prev))
+                            }
                           className="bg-gray-100 rounded-md"
                       />
                   </div>
+                    <div className="flex flex-col w-full gap-2">
+                        <Label>Goal Weight</Label>
+                        <Input
+                            value={form.goal_weight != null ? String(form.goal_weight) : ""}
+                            readOnly={!edit}
+                            onChange={(e) =>
+                                setForm((prev) =>
+                                    prev ? { ...prev, goal_weight: e.target.value } : prev
+                                )
+                            }
+                            className="bg-gray-100 rounded-md"
+                        />
+                    </div>
 
-                  <div className="flex flex-col gap-2">
-                      <Label>Weight</Label>
-                      <Input
-                          value={form.weight != null ? String(form.weight) : ""}
-                          readOnly={!edit}
-                          onChange={(e) =>
-                              setForm((prev) => (prev ? { ...prev, weight: e.target.value } : prev))
-                          }
-                          className="bg-gray-100 rounded-md"
-                      />
-                  </div>
-
-                  <div className="flex flex-col gap-2">
-                      <Label>Height</Label>
-                      <Input
-                          value={form.height != null ? String(form.height) : ""}
-                          readOnly={!edit}
-                          onChange={(e) =>
-                              setForm((prev) => (prev ? { ...prev, height: e.target.value } : prev))
-                          }
-                          className="bg-gray-100 rounded-md"
-                      />
-                  </div>
+                    <div className="flex flex-col gap-2">
+                        <Label>Height</Label>
+                        <Input
+                            value={form.height != null ? String(form.height) : ""}
+                            readOnly={!edit}
+                            onChange={(e) =>
+                                setForm((prev) => (prev ? { ...prev, height: e.target.value } : prev))
+                            }
+                            className="bg-gray-100 rounded-md"
+                        />
+                    </div>
               </div>
 
-              <div className="flex flex-col w-full gap-2">
-                  <Label>Goal Weight</Label>
-                  <Input
-                      value={form.goal_weight != null ? String(form.goal_weight) : ""}
-                      readOnly={!edit}
-                      onChange={(e) =>
-                          setForm((prev) =>
-                              prev ? { ...prev, goal_weight: e.target.value } : prev
-                          )
-                      }
-                      className="bg-gray-100 rounded-md"
-                  />
-              </div>
 
               <div className="flex flex-col w-full gap-2">
                   <Label>Bio</Label>
