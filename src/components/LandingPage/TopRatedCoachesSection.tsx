@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CoachCard from "./CoachCard";
 import TemplateButton from "./TemplateButton";
-import { fetchTopRatedCoaches } from "./landingMockData";
-import type { Coach } from "./Types";
+import { top5 } from "../../services/landing/top5";
+import type { Coach } from "../../utils/Interfaces/coachquery";
 import { ArrowRight } from "lucide-react";
 
 // Dynamic-looking section for coach data.
@@ -18,8 +18,12 @@ const TopRatedCoachesSection = () => {
 
   useEffect(() => {
     const loadCoaches = async () => {
-      const data = await fetchTopRatedCoaches();
-      setCoaches(data);
+      try {
+        const data = await top5();
+        setCoaches(data);
+      } catch (err) {
+        console.error("Failed to load coaches", err);
+      }
     };
 
     loadCoaches();
@@ -53,9 +57,9 @@ const TopRatedCoachesSection = () => {
           </TemplateButton>
         </div>
 
-        <div className="mt-14 grid grid-cols-3 gap-8 items-stretch">
+        <div className="mt-14 grid grid-cols-5 gap-8 items-stretch">
           {coaches.map((coach) => (
-            <CoachCard key={coach.id} coach={coach} />
+            <CoachCard key={coach.coach_id} coach={coach} />
           ))}
         </div>
       </div>
