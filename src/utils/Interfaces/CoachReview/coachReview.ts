@@ -25,6 +25,17 @@ export interface LeaveCoachReviewPayload {
   review_text: string;
 }
 
+// New backend response for the coach profile header/body info.
+export interface CoachInfoResponse {
+  first_name: string;
+  last_name: string;
+  price: number;
+  coach_description: string | null;
+  profile_picture: string | null;
+  weight: number | null;
+  height: number | null;
+}
+
 // Small UI-only helper type for the rating bars shown in the review summary.
 export interface RatingBreakdownRow {
   star: number;

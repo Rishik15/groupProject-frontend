@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import CoachReviewsSection from "../../components/CoachProfile/CoachReviewSection";
 import CoachProfileTabs, {
@@ -7,6 +7,8 @@ import CoachProfileTabs, {
 import CoachPlaceholderSection from "../../components/CoachProfile/CoachPlaceholderSection";
 import { coachReviewTheme } from "../../utils/CoachReview/coachReviewTheme";
 import { ArrowLeft } from "lucide-react";
+import type { CoachInfoResponse } from "../../utils/Interfaces/CoachReview/coachReview";
+import { getCoachInfo } from "../../services/CoachReview/coachReviewService";
 
 export function CoachProfilePage() {
     const navigate = useNavigate();
@@ -14,6 +16,10 @@ export function CoachProfilePage() {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const numericCoachId = Number(coachId);
+
+    const [coachInfo, setCoachInfo] = useState<CoachInfoResponse | null>(null);
+    const [isCoachInfoLoading, setIsCoachInfoLoading] = useState(true);
+    const [coachInfoError, setCoachInfoError] = useState("");
 
     const selectedTab = useMemo<CoachProfileTab>(() => {
         const tab = searchParams.get("tab");
@@ -26,6 +32,30 @@ export function CoachProfilePage() {
     const handleTabChange = (tab: CoachProfileTab) => {
         setSearchParams({ tab });
     };
+
+    useEffect(() => {
+        const fetchCoachInfo = async () => {
+            try {
+                setIsCoachInfoLoading(true);
+                setCoachInfoError("");
+
+                const data = await getCoachInfo(numericCoachId);
+                setCoachInfo(data);
+            } catch {
+                setCoachInfoError("Failed to load coach info.");
+            } finally {
+                setIsCoachInfoLoading(false);
+            }
+        };
+
+        if (!Number.isFinite(numericCoachId) || numericCoachId <= 0) {
+            setCoachInfoError("Invalid coach id.");
+            setIsCoachInfoLoading(false);
+            return;
+        }
+
+        void fetchCoachInfo();
+    }, [numericCoachId]);
 
     if (!Number.isFinite(numericCoachId) || numericCoachId <= 0) {
         return (
@@ -66,25 +96,107 @@ export function CoachProfilePage() {
                     backgroundColor: coachReviewTheme.colors.white,
                 }}
             >
-                <h1
-                    className="font-semibold"
-                    style={{
-                        color: coachReviewTheme.colors.heading,
-                        fontSize: coachReviewTheme.fontSizes.title,
-                    }}
-                >
-                    Coach Profile
-                </h1>
+                {isCoachInfoLoading ? (
+                    <p
+                        style={{
+                            color: coachReviewTheme.colors.secondaryText,
+                            fontSize: coachReviewTheme.fontSizes.label,
+                        }}
+                    >
+                        Loading coach profile...
+                    </p>
+                ) : coachInfoError ? (
+                    <p
+                        style={{
+                            color: coachReviewTheme.colors.danger,
+                            fontSize: coachReviewTheme.fontSizes.label,
+                        }}
+                    >
+                        {coachInfoError}
+                    </p>
+                ) : (
+                    <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                        <div className="flex flex-col gap-3">
+                            <div>
+                                <h1
+                                    className="font-semibold"
+                                    style={{
+                                        color: coachReviewTheme.colors.heading,
+                                        fontSize: coachReviewTheme.fontSizes.title,
+                                    }}
+                                >
+                                    {coachInfo?.first_name} {coachInfo?.last_name}
+                                </h1>
 
-                <p
-                    className="mt-2"
-                    style={{
-                        color: coachReviewTheme.colors.secondaryText,
-                        fontSize: coachReviewTheme.fontSizes.label,
-                    }}
-                >
-                    Coach ID: {numericCoachId}
-                </p>
+                                <p
+                                    className="mt-2"
+                                    style={{
+                                        color: coachReviewTheme.colors.secondaryText,
+                                        fontSize: coachReviewTheme.fontSizes.label,
+                                    }}
+                                >
+                                    Coach ID: {numericCoachId}
+                                </p>
+                            </div>
+
+                            {coachInfo?.coach_description ? (
+                                <p
+                                    style={{
+                                        color: coachReviewTheme.colors.secondaryText,
+                                        fontSize: coachReviewTheme.fontSizes.body,
+                                    }}
+                                >
+                                    {coachInfo.coach_description}
+                                </p>
+                            ) : null}
+
+                            <div className="flex flex-wrap gap-4">
+                                {coachInfo?.height !== null && coachInfo?.height !== undefined ? (
+                                    <p
+                                        style={{
+                                            color: coachReviewTheme.colors.secondaryText,
+                                            fontSize: coachReviewTheme.fontSizes.label,
+                                        }}
+                                    >
+                                        Height: {coachInfo.height}
+                                    </p>
+                                ) : null}
+
+                                {coachInfo?.weight !== null && coachInfo?.weight !== undefined ? (
+                                    <p
+                                        style={{
+                                            color: coachReviewTheme.colors.secondaryText,
+                                            fontSize: coachReviewTheme.fontSizes.label,
+                                        }}
+                                    >
+                                        Weight: {coachInfo.weight}
+                                    </p>
+                                ) : null}
+                            </div>
+                        </div>
+
+                        <div className="md:text-right">
+                            <p
+                                className="font-semibold"
+                                style={{
+                                    color: coachReviewTheme.colors.primary,
+                                    fontSize: coachReviewTheme.fontSizes.title,
+                                }}
+                            >
+                                ${coachInfo?.price ?? 0}
+                            </p>
+
+                            <p
+                                style={{
+                                    color: coachReviewTheme.colors.secondaryText,
+                                    fontSize: coachReviewTheme.fontSizes.label,
+                                }}
+                            >
+                                per session
+                            </p>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <CoachProfileTabs
