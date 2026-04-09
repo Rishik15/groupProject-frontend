@@ -7,6 +7,7 @@ import CoachLayout from "./pages/Coach/Coach";
 import ClientLayout from "./pages/Client/Client";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import OnboardingSurveyPage from "./pages/OnboardingSurvey/OnboardingSurveyPage";
+import BrowseCoaches from "./pages/Client/BrowseCoaches";
 
 function App() {
   return (
