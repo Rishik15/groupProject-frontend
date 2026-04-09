@@ -1,25 +1,27 @@
-import { useState } from "react";
-import WorkoutLogModal from "../../components/WorkoutLog/Modal";
+import WorkoutScheduleSection from "../../components/WorkoutSchedule/WorkoutScheduleSection";
 
 export default function Workouts() {
-    const [isWorkoutModalOpen, setIsWorkoutModalOpen] = useState(false);
-
     return (
-        <main className="min-h-screen bg-white p-8">
-            <h1 className="mb-6 text-3xl font-bold text-black">Workouts Test Page</h1>
+        <main className="min-h-screen bg-white px-8 py-8">
+            <div className="mx-auto w-full max-w-[1400px] space-y-6">
+                <div>
+                    <p className="text-[11.25px] font-medium text-[#72728A]">
+                        Workout Tracker
+                    </p>
 
-            <button
-                type="button"
-                className="rounded-2xl bg-blue-600 px-8 py-4 text-2xl font-semibold text-white"
-                onClick={() => setIsWorkoutModalOpen(true)}
-            >
-                + Add Session
-            </button>
+                    <h1 className="mt-1 text-[18.75px] font-semibold text-[#0F0F14]">
+                        Workouts
+                    </h1>
 
-            <WorkoutLogModal
-                isOpen={isWorkoutModalOpen}
-                onOpenChange={setIsWorkoutModalOpen}
-            />
+                    <p className="mt-2 max-w-3xl text-[11.25px] text-[#72728A]">
+                        View your weekly workout schedule, add session blocks to the
+                        calendar, and open the workout logger for completed strength
+                        sets or cardio activity.
+                    </p>
+                </div>
+
+                <WorkoutScheduleSection />
+            </div>
         </main>
     );
 }

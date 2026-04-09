@@ -48,6 +48,16 @@ function toOptionalNumber(value: string) {
     return Number(value);
 }
 
+function hasAtLeastOneCardioMetric(values: CardioLogFormValues) {
+    return [
+        values.steps,
+        values.distance_km,
+        values.duration_min,
+        values.calories,
+        values.avg_hr,
+    ].some((value) => value.trim() !== "");
+}
+
 export default function useWorkoutLogModal({
     isOpen,
     onOpenChange,
@@ -152,15 +162,20 @@ export default function useWorkoutLogModal({
     }
 
     async function handleStartWorkout() {
-        const payload = {
-            workout_plan_id:
-                workoutPlanId.trim() === "" ? undefined : Number(workoutPlanId),
-            notes: notes.trim() || undefined,
-        };
+        try {
+            const payload = {
+                workout_plan_id:
+                    workoutPlanId.trim() === "" ? undefined : Number(workoutPlanId),
+                notes: notes.trim() || undefined,
+            };
 
-        console.log("[Workout Log Modal] start payload copy", payload);
-        await startWorkoutSession(payload);
-        await loadActiveWorkoutSession();
+            console.log("[Workout Log Modal] start payload copy", payload);
+            await startWorkoutSession(payload);
+            await loadActiveWorkoutSession();
+        } catch (error) {
+            console.error("[Workout Log Modal] Failed to start workout", error);
+            setActiveSessionError("Failed to start the workout session.");
+        }
     }
 
     async function handleLogStrength() {
@@ -168,19 +183,39 @@ export default function useWorkoutLogModal({
             return;
         }
 
-        const payload = {
-            session_id: activeSession.session_id,
-            exercise_id: Number(strengthValues.exercise_id),
-            set_number: Number(strengthValues.set_number),
-            reps: toOptionalNumber(strengthValues.reps),
-            weight: toOptionalNumber(strengthValues.weight),
-            rpe: toOptionalNumber(strengthValues.rpe),
-            datetimeFinished: strengthValues.datetimeFinished || undefined,
-        };
+        const exerciseId = Number(strengthValues.exercise_id);
+        const setNumber = Number(strengthValues.set_number);
 
-        console.log("[Workout Log Modal] strength payload copy", payload);
-        await logStrengthSet(payload);
-        await loadActiveWorkoutSession();
+        if (!Number.isFinite(exerciseId) || exerciseId <= 0) {
+            setActiveSessionError("Exercise ID is required and must be greater than 0.");
+            return;
+        }
+
+        if (!Number.isFinite(setNumber) || setNumber <= 0) {
+            setActiveSessionError("Set Number is required and must be greater than 0.");
+            return;
+        }
+
+        try {
+            setActiveSessionError(null);
+
+            const payload = {
+                session_id: activeSession.session_id,
+                exercise_id: exerciseId,
+                set_number: setNumber,
+                reps: toOptionalNumber(strengthValues.reps),
+                weight: toOptionalNumber(strengthValues.weight),
+                rpe: toOptionalNumber(strengthValues.rpe),
+                datetimeFinished: strengthValues.datetimeFinished || undefined,
+            };
+
+            console.log("[Workout Log Modal] strength payload copy", payload);
+            await logStrengthSet(payload);
+            await loadActiveWorkoutSession();
+        } catch (error) {
+            console.error("[Workout Log Modal] Failed to log strength", error);
+            setActiveSessionError("Failed to log the strength set.");
+        }
     }
 
     async function handleLogCardio() {
@@ -188,19 +223,33 @@ export default function useWorkoutLogModal({
             return;
         }
 
-        const payload = {
-            session_id: activeSession.session_id,
-            performed_at: cardioValues.performed_at || undefined,
-            steps: toOptionalNumber(cardioValues.steps),
-            distance_km: toOptionalNumber(cardioValues.distance_km),
-            duration_min: toOptionalNumber(cardioValues.duration_min),
-            calories: toOptionalNumber(cardioValues.calories),
-            avg_hr: toOptionalNumber(cardioValues.avg_hr),
-        };
+        if (!hasAtLeastOneCardioMetric(cardioValues)) {
+            setActiveSessionError(
+                "Enter at least one cardio metric: steps, distance, duration, calories, or average heart rate.",
+            );
+            return;
+        }
 
-        console.log("[Workout Log Modal] cardio payload copy", payload);
-        await logCardioActivity(payload);
-        await loadActiveWorkoutSession();
+        try {
+            setActiveSessionError(null);
+
+            const payload = {
+                session_id: activeSession.session_id,
+                performed_at: cardioValues.performed_at || undefined,
+                steps: toOptionalNumber(cardioValues.steps),
+                distance_km: toOptionalNumber(cardioValues.distance_km),
+                duration_min: toOptionalNumber(cardioValues.duration_min),
+                calories: toOptionalNumber(cardioValues.calories),
+                avg_hr: toOptionalNumber(cardioValues.avg_hr),
+            };
+
+            console.log("[Workout Log Modal] cardio payload copy", payload);
+            await logCardioActivity(payload);
+            await loadActiveWorkoutSession();
+        } catch (error) {
+            console.error("[Workout Log Modal] Failed to log cardio", error);
+            setActiveSessionError("Failed to log the cardio activity.");
+        }
     }
 
     async function handleFinishWorkout() {
@@ -208,13 +257,20 @@ export default function useWorkoutLogModal({
             return;
         }
 
-        const payload = {
-            session_id: activeSession.session_id,
-        };
+        try {
+            setActiveSessionError(null);
 
-        console.log("[Workout Log Modal] finish payload copy", payload);
-        await finishWorkoutSession(payload);
-        handleClose();
+            const payload = {
+                session_id: activeSession.session_id,
+            };
+
+            console.log("[Workout Log Modal] finish payload copy", payload);
+            await finishWorkoutSession(payload);
+            handleClose();
+        } catch (error) {
+            console.error("[Workout Log Modal] Failed to finish workout", error);
+            setActiveSessionError("Failed to finish the workout session.");
+        }
     }
 
     return {

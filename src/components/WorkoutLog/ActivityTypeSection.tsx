@@ -16,13 +16,18 @@ export default function ActivityTypeSection({
       title="Activity Type"
       description="Switch between the strength logger and the cardio logger."
     >
-      <div className="inline-flex rounded-2xl border border-blue-600/30 bg-white p-1">
+      <div
+        className="inline-flex rounded-2xl bg-white p-1"
+        style={{ border: "1px solid rgba(94, 94, 244, 0.3)" }}
+      >
         <button
           type="button"
-          className={`rounded-xl px-4 py-2 text-[11.25px] font-semibold transition ${activeActivity === "strength"
-            ? "bg-blue-600 text-white"
-            : "text-[#72728A] hover:bg-blue-50"
-            }`}
+          className="rounded-xl px-4 py-2 text-[11.25px] font-semibold transition"
+          style={{
+            backgroundColor:
+              activeActivity === "strength" ? "#5E5EF4" : "transparent",
+            color: activeActivity === "strength" ? "#FFFFFF" : "#72728A",
+          }}
           onClick={() => onActivityChange("strength")}
         >
           Strength
@@ -30,10 +35,12 @@ export default function ActivityTypeSection({
 
         <button
           type="button"
-          className={`rounded-xl px-4 py-2 text-[11.25px] font-semibold transition ${activeActivity === "cardio"
-            ? "bg-blue-600 text-white"
-            : "text-[#72728A] hover:bg-blue-50"
-            }`}
+          className="rounded-xl px-4 py-2 text-[11.25px] font-semibold transition"
+          style={{
+            backgroundColor:
+              activeActivity === "cardio" ? "#5E5EF4" : "transparent",
+            color: activeActivity === "cardio" ? "#FFFFFF" : "#72728A",
+          }}
           onClick={() => onActivityChange("cardio")}
         >
           Cardio
