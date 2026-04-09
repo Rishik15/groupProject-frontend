@@ -5,7 +5,6 @@ import {
   Save,
   Pencil,
   LogOut,
-  Trash2,
   MessageCircle,
   UserRound,
   CreditCard,
@@ -62,7 +61,7 @@ const Settings = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
       <div className="w-full bg-white border-b py-6">
-        <div className="max-w-[700px] mx-auto px-6 flex items-center justify-between">
+        <div className="max-w-175 mx-auto px-6 flex items-center justify-between">
           <p className="text-2xl font-semibold">Profile</p>
           <Button
             className="bg-white text-black hover:bg-indigo-500 hover:text-white rounded-lg"
@@ -83,7 +82,7 @@ const Settings = () => {
         </div>
       </div>
 
-      <div className="max-w-[700px] mx-auto w-full px-6 py-6 flex flex-col gap-4">
+      <div className="max-w-175 mx-auto w-full px-6 py-6 flex flex-col gap-4">
         <Card className="w-full rounded-2xl border shadow-sm bg-white">
           <Card.Header className="p-0">
             <div className="flex items-center gap-3 px-5 py-3">
@@ -126,7 +125,7 @@ const Settings = () => {
               >
                 <Tabs.Tab
                   id="overview"
-                  className="font-normal rounded-full px-2 py-2 text-sm font-medium text-black whitespace-nowrap"
+                  className="rounded-full px-2 py-2 text-sm font-medium text-black whitespace-nowrap"
                 >
                   Info
                   <Tabs.Indicator />
@@ -134,7 +133,7 @@ const Settings = () => {
 
                 <Tabs.Tab
                   id="analytics"
-                  className="font-normal rounded-full px-3 py-2 text-sm font-medium text-black whitespace-nowrap"
+                  className="rounded-full px-3 py-2 text-sm font-medium text-black whitespace-nowrap"
                 >
                   Progress Photos
                   <Tabs.Indicator />
@@ -142,7 +141,7 @@ const Settings = () => {
 
                 <Tabs.Tab
                   id="reports"
-                  className="font-normal rounded-full px-2 py-2 text-sm font-medium text-black whitespace-nowrap"
+                  className="rounded-full px-2 py-2 text-sm font-medium text-black whitespace-nowrap"
                 >
                   Settings
                   <Tabs.Indicator />
@@ -161,7 +160,7 @@ const Settings = () => {
             <Tabs.Panel className="pt-0 pl-0 pr-0 mt-5" id="reports">
               <div className="flex flex-col gap-3">
                 <div className="overflow-hidden rounded-[28px] border border-[#d9dbe3] bg-white">
-                  <Button className="w-full h-[50px] px-6 flex items-center justify-between bg-transparent hover:bg-[#f9fafb] border-b border-[#e5e7eb] rounded-none">
+                  <Button className="w-full h-12.5 px-6 flex items-center justify-between bg-transparent hover:bg-[#f9fafb] border-b border-[#e5e7eb] rounded-none">
                     <div className="flex items-center gap-4">
                       <MessageCircle className="w-5 h-5 text-gray-500" />
                       <span className="text-base font-normal text-black">
@@ -171,7 +170,7 @@ const Settings = () => {
                     <ChevronRight className="w-5 h-5 text-gray-400" />
                   </Button>
 
-                  <Button className="w-full h-[50px] px-6 flex items-center justify-between bg-transparent hover:bg-[#f9fafb] border-b border-[#e5e7eb] rounded-none">
+                  <Button className="w-full h-12.5 px-6 flex items-center justify-between bg-transparent hover:bg-[#f9fafb] border-b border-[#e5e7eb] rounded-none">
                     <div className="flex items-center gap-4">
                       <UserRound className="w-5 h-5 text-gray-500" />
                       <span className="text-base font-normal text-black">
@@ -181,7 +180,7 @@ const Settings = () => {
                     <ChevronRight className="w-5 h-5 text-gray-400" />
                   </Button>
 
-                  <Button className="w-full h-[50px] px-6 flex items-center justify-between bg-transparent hover:bg-[#f9fafb] border-b border-[#e5e7eb] rounded-none">
+                  <Button className="w-full h-12.5 px-6 flex items-center justify-between bg-transparent hover:bg-[#f9fafb] border-b border-[#e5e7eb] rounded-none">
                     <div className="flex items-center gap-4">
                       <CreditCard className="w-5 h-5 text-gray-500" />
                       <span className="text-base font-normal text-black">
@@ -191,7 +190,7 @@ const Settings = () => {
                     <ChevronRight className="w-5 h-5 text-gray-400" />
                   </Button>
 
-                  <Button className="w-full h-[50px] px-6 flex items-center justify-between bg-transparent hover:bg-[#f9fafb] border-b border-[#e5e7eb] rounded-none">
+                  <Button className="w-full h-12.5 px-6 flex items-center justify-between bg-transparent hover:bg-[#f9fafb] border-b border-[#e5e7eb] rounded-none">
                     <div className="flex items-center gap-4">
                       <Bell className="w-5 h-5 text-gray-500" />
                       <span className="text-base font-normal text-black">
@@ -201,7 +200,7 @@ const Settings = () => {
                     <ChevronRight className="w-5 h-5 text-gray-400" />
                   </Button>
 
-                  <Button className="w-full h-[50px] px-6 flex items-center justify-between bg-transparent hover:bg-[#f9fafb] border-b border-[#e5e7eb] rounded-none">
+                  <Button className="w-full h-12.5 px-6 flex items-center justify-between bg-transparent hover:bg-[#f9fafb] border-b border-[#e5e7eb] rounded-none">
                     <div className="flex items-center gap-4">
                       <Shield className="w-5 h-5 text-gray-500" />
                       <span className="text-base font-normal text-black">
@@ -211,7 +210,7 @@ const Settings = () => {
                     <ChevronRight className="w-5 h-5 text-gray-400" />
                   </Button>
 
-                  <Button className="w-full h-[50px] px-6 flex items-center justify-between bg-transparent hover:bg-[#f9fafb] rounded-none">
+                  <Button className="w-full h-12.5 px-6 flex items-center justify-between bg-transparent hover:bg-[#f9fafb] rounded-none">
                     <div className="flex items-center gap-4">
                       <HelpCircle className="w-5 h-5 text-gray-500" />
                       <span className="text-base font-normal text-black">
