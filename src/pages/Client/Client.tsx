@@ -4,6 +4,7 @@ import { useAuth } from "../../utils/auth/AuthContext";
 import Nutrition from "../Nutrition/Nutrition";
 import BrowseCoaches from "./BrowseCoaches";
 
+import Workouts from "../Workouts/Workouts";
 
 import ClientDashBoard from "./Dashboard";
 import Chat from "../Chat/Chat";
@@ -26,6 +27,7 @@ const ClientLayout = () => {
           <Route path="chat" element={<Chat />} />
           <Route path="nutrition" element={<Nutrition />} />
           <Route path="/coaches" element={<BrowseCoaches />} />
+          <Route path="/workouts" element={<Workouts />} />
         </Routes>
       </div>
     </section>
