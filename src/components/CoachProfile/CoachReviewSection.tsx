@@ -8,9 +8,9 @@ import {
 import { buildRatingBreakdown } from "../../utils/CoachReview/coachReviewHelper";
 import { coachReviewTheme } from "../../utils/CoachReview/coachReviewTheme";
 import CoachReviewSummary from "./CoachReviewSummary";
-import CoachReviewCard from "./CoachReviewCard";
 import WriteReviewModal from "./WriteReviewModal";
 import CoachPlaceholderSection from "./CoachPlaceholderSection";
+import ReviewsTab from "./ReviewsTab";
 
 interface CoachReviewsSectionProps {
     coachId: number;
@@ -31,7 +31,6 @@ export default function CoachReviewsSection({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState("");
 
-    // useCallback so the same fetch can be reused after submit.
     const fetchReviews = useCallback(async () => {
         try {
             setIsLoading(true);
@@ -96,7 +95,6 @@ export default function CoachReviewsSection({
             setRating(5);
             setReviewText("");
 
-            // refresh the list of reviews so new review appears immediately
             await fetchReviews();
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -150,9 +148,7 @@ export default function CoachReviewsSection({
                 {reviews.length === 0 ? (
                     <CoachPlaceholderSection message="No reviews yet." />
                 ) : (
-                    reviews.map((review) => (
-                        <CoachReviewCard key={review.review_id} review={review} />
-                    ))
+                    <ReviewsTab reviews={reviews} />
                 )}
             </div>
 

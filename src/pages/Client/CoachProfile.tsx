@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ProfileHeader from "../../components/CoachProfile/ProfileHeader";
 import ProfileTabs, { type Tab } from "../../components/CoachProfile/ProfileTabs";
 import AboutTab from "../../components/CoachProfile/AboutTab";
-import ReviewsTab from "../../components/CoachProfile/ReviewsTab";
+import CoachReviewsSection from "../../components/CoachProfile/CoachReviewSection";
 import SuccessStoriesTab from "../../components/CoachProfile/SuccessStoriesTab";
 import { getCoachProfile, type CoachProfile as CoachProfileType } from "../../services/contract/requestcontracts.ts";
 
@@ -65,7 +65,7 @@ export default function CoachProfile() {
 
       {/* Tab content */}
       {activeTab === "about" && <AboutTab coach={coach} />}
-      {activeTab === "reviews" && <ReviewsTab reviews={coach.reviews} />}
+      {activeTab === "reviews" && id && <CoachReviewsSection coachId={Number(id)} />}
       {activeTab === "stories" && <SuccessStoriesTab reviews={coach.reviews} />}
     </div>
   );
