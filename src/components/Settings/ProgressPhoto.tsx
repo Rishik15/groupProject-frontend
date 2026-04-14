@@ -4,7 +4,7 @@ import { Image } from "lucide-react";
 const ProgressPhoto = () => {
   return (
     <div>
-      <Button className="w-auto mx-auto rounded-md bg-indigo-500 text-sm font-normal">
+      <Button className="w-165 mx-auto rounded-md bg-indigo-500 text-sm font-normal mt-3">
         <Image />
         Upload Progress Photo
       </Button>

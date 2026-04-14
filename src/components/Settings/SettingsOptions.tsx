@@ -22,7 +22,7 @@ const SettingOptions = ({ options, onLogout }: Props) => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col gap-8 w-165">
+    <div className="flex flex-col gap-10 w-165">
       <div className="overflow-hidden rounded-[28px] border border-[#d9dbe3] bg-white">
         {options.map((option, index) => {
           const Icon = option.icon;
@@ -45,7 +45,7 @@ const SettingOptions = ({ options, onLogout }: Props) => {
         })}
       </div>
 
-        <div className="flex gap-2">
+         <div className="flex gap-3 items-center justify-center">
       <Button
         className="w-f rounded-md bg-transparent border border-gray-300"
         onClick={() => {
