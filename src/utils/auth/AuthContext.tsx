@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { getAuth } from "../../services/auth/checkAuth";
+import { socket } from "../../services/sockets/socket";
 
 type User = {
   first_name: string;
@@ -65,6 +66,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     refreshAuth();
   }, []);
+
+  useEffect(() => {
+    if (authenticated && user) {
+      if (!socket.connected) {
+        socket.connect();
+      }
+
+      socket.on("connect", () => {
+        console.log("Socket connected:", socket.id);
+      });
+
+      return () => {
+        socket.off("connect");
+      };
+    }
+  }, [authenticated, user]);
 
   return (
     <AuthContext.Provider
