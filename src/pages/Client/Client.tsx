@@ -19,7 +19,7 @@ const ClientLayout = () => {
       <div className="pt-14">
         <Routes>
           <Route index element={<ClientDashBoard />} />
-          <Route path="settings" element={<Settings />} />
+          <Route path="settings" element={<Settings role="client" />} />
         </Routes>
       </div>
     </section>
