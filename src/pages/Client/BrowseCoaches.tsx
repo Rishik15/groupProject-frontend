@@ -8,7 +8,7 @@ import { searchCoaches } from "../../services/filtering/searchcoaches";
 import type { CoachQuery } from "../../utils/Interfaces/coachquery";
 import type { Coach } from "../../utils/Interfaces/coachquery";
 
-const MAX_PRICE_LIMIT = 300;
+const MAX_PRICE_LIMIT = Number.MAX_SAFE_INTEGER;
 
 export default function BrowseCoaches() {
   const [nameSearch, setNameSearch] = useState("");
