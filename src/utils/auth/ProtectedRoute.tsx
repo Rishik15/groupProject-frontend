@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { ReactNode } from "react";
-import { getAuth } from "../../services/auth/checkAuth";
 import CustomModal from "../../components/global/Modal";
 import { Spinner } from "@heroui/react";
-
-type RedirectPath = string | null;
+import { useAuth } from "./AuthContext";
+import { useEffect, useState } from "react";
 
 const ProtectedRoute = ({
   children,
@@ -14,57 +12,44 @@ const ProtectedRoute = ({
   children: ReactNode;
   allowedRoles?: string[];
 }) => {
-  const [loading, setLoading] = useState(true);
+  const { authenticated, role, loading } = useAuth();
+
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
-  const [redirectPath, setRedirectPath] = useState<RedirectPath>(null);
+  const [redirectPath, setRedirectPath] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    let isActive = true;
+    if (loading) return;
 
-    const verifyAuth = async () => {
-      const { authenticated, role } = await getAuth();
+    console.log("CHECKING ACCESS...");
 
-      if (!isActive) return;
+    if (!authenticated) {
+      console.log("NOT AUTHENTICATED");
+      setMessage("You must be signed in to access this page.");
+      setRedirectPath("/signin");
+      setShowModal(true);
+      return;
+    }
 
-      if (!authenticated) {
-        setMessage("You must be signed in to access this page.");
-        setRedirectPath("/signin");
-        setShowModal(true);
-        setLoading(false);
-        return;
-      }
+    if (allowedRoles && role && !allowedRoles.includes(role)) {
+      console.log("ROLE NOT ALLOWED:", role);
+      setMessage("You are not authorized to access this page.");
 
-      if (allowedRoles && role && !allowedRoles.includes(role)) {
-        setMessage("You are not authorized to access this page.");
+      if (role === "client") setRedirectPath("/client");
+      else if (role === "coach") setRedirectPath("/coach");
+      else setRedirectPath("/");
 
-        if (role === "client") setRedirectPath("/client");
-        else if (role === "coach") setRedirectPath("/coach");
-        else setRedirectPath("/");
-
-        setShowModal(true);
-        setLoading(false);
-        return;
-      }
-
-      setLoading(false);
-    };
-
-    verifyAuth();
-
-    return () => {
-      isActive = false;
-    };
-  }, [allowedRoles]);
+      setShowModal(true);
+    } else {
+      console.log("ACCESS GRANTED");
+    }
+  }, [loading, authenticated, role, allowedRoles]);
 
   const handleModalClose = () => {
     setShowModal(false);
-
-    if (redirectPath) {
-      navigate(redirectPath);
-    }
+    if (redirectPath) navigate(redirectPath);
   };
 
   if (loading) {
