@@ -24,7 +24,7 @@ const CoachDashBoard = () => {
 
   return (
     <section className="px-6 py-8 md:px-10">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-7xl px-[36px]">
         <ViewCoachingContractsCard pendingCount={pending.length} />
       </div>
     </section>

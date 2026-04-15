@@ -94,10 +94,10 @@ const CoachContractsPage = () => {
     };
 
     return (
-        <section className="px-6 py-8 md:px-10">
-            <div className="mx-auto flex max-w-7xl flex-col gap-8">
-                <CoachContractsHeader pendingCount={groupedContracts.pending.length} />
+        <section className="py-8">
+            <CoachContractsHeader pendingCount={groupedContracts.pending.length} />
 
+            <div className="mx-auto flex flex-col gap-8 px-36 pt-8">
                 <CoachContractsTabs
                     selectedKey={selectedTab}
                     pendingCount={groupedContracts.pending.length}
