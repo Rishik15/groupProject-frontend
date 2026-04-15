@@ -8,11 +8,14 @@ import type { WorkoutCalendarEvent } from "../../utils/Interfaces/WorkoutLog/wor
 import useWorkoutSchedule, { toDateString } from "../../utils/WorkoutLog/useWorkoutSchedule";
 import useWorkoutScheduleView from "../../utils/WorkoutLog/useWorkoutScheduleView";
 import { ROW_HEIGHT } from "./constants";
+import { useNavigate } from "react-router-dom";
 
 interface WeeklyWorkoutScheduleProps {
     refreshToken?: number;
     onOpenWorkoutLog: (event?: WorkoutCalendarEvent | null) => void;
 }
+
+
 
 export default function WeeklyWorkoutSchedule({
     refreshToken = 0,
@@ -35,10 +38,13 @@ export default function WeeklyWorkoutSchedule({
         goToPreviousWeek,
         goToNextWeek,
         jumpToNow,
+        
     } = useWorkoutScheduleView();
 
     const weekStartString = toDateString(weekDays[0]);
     const weekEndString = toDateString(weekDays[6]);
+    const navigate = useNavigate();
+
 
     const {
         events,
@@ -152,6 +158,7 @@ export default function WeeklyWorkoutSchedule({
                 onPreviousWeek={goToPreviousWeek}
                 onNextWeek={goToNextWeek}
                 onJumpToNow={jumpToNow}
+                onCreateWorkout={() => navigate("/client/create-workout")}
             />
 
             <ScheduleLegend />

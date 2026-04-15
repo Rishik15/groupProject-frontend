@@ -10,6 +10,7 @@ import OnboardingSurveyPage from "./pages/OnboardingSurvey/OnboardingSurveyPage"
 import BrowseCoaches from "./pages/Client/BrowseCoaches";
 import CoachProfile from "./pages/Client/CoachProfile";
 
+
 /*
 import CoachProfile from "./pages/Coach/CoachProfile";
 <Route path="/coaches/:id" element={<CoachProfile />} />
@@ -27,6 +28,7 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/coaches" element={<BrowseCoaches/>} />
           <Route path="/coaches/:id" element={<CoachProfile />} />
+          
         <Route path="/workouts" element={<Workouts />} />
         <Route
             path="/coach/*"

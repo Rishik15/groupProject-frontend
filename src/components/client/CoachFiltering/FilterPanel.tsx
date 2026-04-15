@@ -108,21 +108,23 @@ export default function FilterPanel({
         </div>
       </div>
 
-      <div className="flex flex-col gap-3">
-        <span className="text-xs font-semibold text-default-500 uppercase tracking-wider">
-          Max Price / Session
-        </span>
-        <span className="text-xs text-default-400">
-          {maxPrice === MAX_PRICE_LIMIT ? "Any price" : `Up to $${maxPrice}`}
-        </span>
-        <Slider
-          minValue={0}
-          maxValue={MAX_PRICE_LIMIT}
-          step={5}
-          value={maxPrice}
-          onChange={(v) => onMaxPriceChange(Array.isArray(v) ? v[0] : v)}
-        />
-      </div>
+    <div className="flex flex-col gap-3">
+      <span className="text-xs font-semibold text-default-500 uppercase tracking-wider">
+        Max Price / Session
+      </span>
+      <span className="text-xs text-default-400">
+        {maxPrice === MAX_PRICE_LIMIT ? "Any price" : `Up to $${maxPrice}`}
+      </span>
+      <input
+        type="range"
+        min={0}
+        max={MAX_PRICE_LIMIT}
+        step={5}
+        value={maxPrice}
+        onChange={(e) => onMaxPriceChange(Number(e.target.value))}
+        className="w-full accent-[#5B5EF4]"
+      />
+    </div>
 
       <Checkbox isSelected={certifiedOnly} onChange={onCertifiedOnlyChange}>
         <Checkbox.Control>

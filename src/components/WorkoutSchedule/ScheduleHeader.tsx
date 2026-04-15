@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Dumbbell, Plus } from "lucide-react";
 import type { WorkoutCalendarEvent } from "../../utils/Interfaces/WorkoutLog/workoutLog";
 import { formatWeekRange } from "./calendarUtils";
 
+
 interface ScheduleHeaderProps {
     weekStart: Date;
     weekEnd: Date;
@@ -13,7 +14,10 @@ interface ScheduleHeaderProps {
     onPreviousWeek: () => void;
     onNextWeek: () => void;
     onJumpToNow: () => void;
+    onCreateWorkout: () => void;
+
 }
+
 
 export default function ScheduleHeader({
     weekStart,
@@ -24,6 +28,7 @@ export default function ScheduleHeader({
     onPreviousWeek,
     onNextWeek,
     onJumpToNow,
+    onCreateWorkout,
 }: ScheduleHeaderProps) {
     return (
         <>
@@ -52,6 +57,19 @@ export default function ScheduleHeader({
                             <span>Add Session</span>
                         </span>
                     </Button>
+                    <Button
+                        variant="ghost"
+                        onPress={onCreateWorkout}
+                        className="text-[11.25px] font-semibold text-[#0F0F14]"
+                        style={{ border: "1px solid #5E5EF466" }}
+                    >
+                        <span className="inline-flex items-center gap-2">
+                            <Plus className="h-4 w-4" />
+                            <span>Create Workout</span>
+                        </span>
+                    </Button>
+                    
+                                    
 
                     {activeEvent ? (
                         <Button
