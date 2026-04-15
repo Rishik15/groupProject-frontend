@@ -39,23 +39,23 @@ const CoachContractCard = ({
 
     return (
         <Card className="rounded-3xl border border-[#E7E7EE] shadow-none">
-            <div className="p-5 md:p-6">
-                <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-                    <div className="flex gap-4">
-                        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#F1F1FF]">
+            <div className="p-4 md:p-4">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                    <div className="flex gap-3">
+                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#F1F1FF]">
                             <span
                                 className="font-medium"
-                                style={{ fontSize: "18.75px", color: "#5E5EF4" }}
+                                style={{ fontSize: "16px", color: "#5E5EF4" }}
                             >
                                 {initials}
                             </span>
                         </div>
 
-                        <div className="space-y-3">
-                            <div className="flex flex-wrap items-center gap-3">
+                        <div className="space-y-2">
+                            <div className="flex flex-wrap items-center gap-2">
                                 <h2
-                                    className="font-semibold leading-none"
-                                    style={{ fontSize: "18.75px", color: "#0F0F14" }}
+                                    className="font-semibold leading-tight"
+                                    style={{ fontSize: "17px", color: "#0F0F14" }}
                                 >
                                     {clientName}
                                 </h2>
@@ -63,8 +63,8 @@ const CoachContractCard = ({
                                 {view === "pending" && (
                                     <Chip
                                         variant="soft"
-                                        className="border border-[#F2C86B] bg-[#FFF8E8] text-[#C98A00]"
-                                        style={{ fontSize: "13.125px" }}
+                                        className="border border-[#F2C86B] bg-[#FFF8E8] px-2 py-0 text-[#C98A00]"
+                                        style={{ fontSize: "12px" }}
                                     >
                                         Pending
                                     </Chip>
@@ -73,8 +73,8 @@ const CoachContractCard = ({
                                 {view === "active" && (
                                     <Chip
                                         variant="soft"
-                                        className="border border-[#81D9A3] bg-[#EBFFF1] text-[#18A34A]"
-                                        style={{ fontSize: "13.125px" }}
+                                        className="border border-[#81D9A3] bg-[#EBFFF1] px-2 py-0 text-[#18A34A]"
+                                        style={{ fontSize: "12px" }}
                                     >
                                         Active
                                     </Chip>
@@ -83,25 +83,25 @@ const CoachContractCard = ({
                                 {view === "history" && (
                                     <Chip
                                         variant="soft"
-                                        className="border border-[#E7E7EE] bg-[#F8F8FB] text-[#72728A]"
-                                        style={{ fontSize: "13.125px" }}
+                                        className="border border-[#E7E7EE] bg-[#F8F8FB] px-2 py-0 text-[#72728A]"
+                                        style={{ fontSize: "12px" }}
                                     >
                                         Closed
                                     </Chip>
                                 )}
                             </div>
 
-                            <div className="flex flex-wrap items-center gap-5">
-                                <div className="flex items-center gap-2">
-                                    <DollarSign size={18} color="#72728A" />
-                                    <span style={{ fontSize: "13.125px", color: "#72728A" }}>
-                                        {price}/month
+                            <div className="flex flex-wrap items-center gap-4">
+                                <div className="flex items-center gap-1.5">
+                                    <DollarSign size={16} color="#72728A" />
+                                    <span style={{ fontSize: "12px", color: "#72728A" }}>
+                                        {price}/session
                                     </span>
                                 </div>
 
-                                <div className="flex items-center gap-2">
-                                    <CalendarDays size={18} color="#72728A" />
-                                    <span style={{ fontSize: "13.125px", color: "#72728A" }}>
+                                <div className="flex items-center gap-1.5">
+                                    <CalendarDays size={16} color="#72728A" />
+                                    <span style={{ fontSize: "12px", color: "#72728A" }}>
                                         {durationLabel}
                                     </span>
                                 </div>
@@ -109,26 +109,26 @@ const CoachContractCard = ({
 
                             {contract.contract_text && (
                                 <p
-                                    className="max-w-3xl leading-relaxed"
-                                    style={{ fontSize: "13.125px", color: "#0F0F14" }}
+                                    className="max-w-3xl line-clamp-2 leading-snug"
+                                    style={{ fontSize: "12px", color: "#0F0F14" }}
                                 >
                                     {contract.contract_text}
                                 </p>
                             )}
 
-                            <div className="flex flex-wrap items-center gap-4">
-                                <span style={{ fontSize: "11.25px", color: "#72728A" }}>
+                            <div className="flex flex-wrap items-center gap-3">
+                                <span style={{ fontSize: "11px", color: "#72728A" }}>
                                     Requested: {formatDisplayDate(contract.created_at)}
                                 </span>
 
                                 {view === "active" && (
-                                    <span style={{ fontSize: "11.25px", color: "#72728A" }}>
+                                    <span style={{ fontSize: "11px", color: "#72728A" }}>
                                         Accepted: {formatDisplayDate(contract.start_date)}
                                     </span>
                                 )}
 
                                 {view === "history" && (
-                                    <span style={{ fontSize: "11.25px", color: "#72728A" }}>
+                                    <span style={{ fontSize: "11px", color: "#72728A" }}>
                                         Ended: {formatDisplayDate(contract.end_date)}
                                     </span>
                                 )}
@@ -137,28 +137,28 @@ const CoachContractCard = ({
                     </div>
 
                     {view === "pending" && (
-                        <div className="flex shrink-0 flex-col gap-3 lg:min-w-[160px]">
+                        <div className="flex shrink-0 flex-col gap-2 lg:min-w-[150px]">
                             <Button
-                                className="bg-[#5E5EF4] text-white"
-                                style={{ fontSize: "13.125px" }}
+                                className="min-h-0 bg-[#5E5EF4] px-4 py-2 text-white"
+                                style={{ fontSize: "12px" }}
                                 isDisabled={isLoading}
                                 onPress={() => onAccept?.(contract.contract_id)}
                             >
-                                <span className="flex items-center gap-2">
-                                    <Check size={18} />
+                                <span className="flex items-center gap-1.5">
+                                    <Check size={16} />
                                     Accept
                                 </span>
                             </Button>
 
                             <Button
                                 variant="outline"
-                                className="border-[#F0B6B6] text-[#E03B3B]"
-                                style={{ fontSize: "13.125px" }}
+                                className="min-h-0 border-[#F0B6B6] px-4 py-2 text-[#E03B3B]"
+                                style={{ fontSize: "12px" }}
                                 isDisabled={isLoading}
                                 onPress={() => onDecline?.(contract.contract_id)}
                             >
-                                <span className="flex items-center gap-2">
-                                    <X size={18} />
+                                <span className="flex items-center gap-1.5">
+                                    <X size={16} />
                                     Decline
                                 </span>
                             </Button>
@@ -166,16 +166,16 @@ const CoachContractCard = ({
                     )}
 
                     {view === "active" && (
-                        <div className="flex shrink-0 lg:min-w-[180px]">
+                        <div className="flex shrink-0 lg:min-w-[170px]">
                             <Button
                                 variant="outline"
-                                className="border-[#F0B6B6] text-[#E03B3B]"
-                                style={{ fontSize: "13.125px" }}
+                                className="min-h-0 border-[#F0B6B6] px-4 py-2 text-[#E03B3B]"
+                                style={{ fontSize: "12px" }}
                                 isDisabled={isLoading}
                                 onPress={() => onTerminate?.(contract.contract_id)}
                             >
-                                <span className="flex items-center gap-2">
-                                    <UserRoundX size={18} />
+                                <span className="flex items-center gap-1.5">
+                                    <UserRoundX size={16} />
                                     Terminate
                                 </span>
                             </Button>
