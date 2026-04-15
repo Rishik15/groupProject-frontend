@@ -23,7 +23,7 @@ const CoachContractsHeader = ({
             </div>
 
             {pendingCount > 0 && (
-                <div className="px-8 py-6">
+                <div className="px-38 py-6">
                     <div className="rounded-3xl border border-[#DCDCF4] bg-[#F7F7FF] px-6 py-5">
                         <div className="flex items-start gap-4">
                             <div className="mt-1">
