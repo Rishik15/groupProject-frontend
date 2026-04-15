@@ -1,13 +1,26 @@
-import { Card, Avatar, Tabs, Button } from "@heroui/react";
+import { useRef } from "react";
+import { Button } from "@heroui/react";
 import { Image } from "lucide-react";
 
 const ProgressPhoto = () => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   return (
-    <div>
-      <Button className="w-165 mx-auto rounded-md bg-indigo-500 text-sm font-normal mt-3">
+    <div className="w-165 flex justify-center">
+      <Button
+        className="w-auto mx-auto rounded-md bg-indigo-500 text-sm font-normal"
+        onClick={() => fileInputRef.current?.click()}
+      >
         <Image />
         Upload Progress Photo
       </Button>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+      />
     </div>
   );
 };
