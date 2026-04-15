@@ -1,4 +1,4 @@
-import { Tabs, Button } from "@heroui/react";
+import { Tabs } from "@heroui/react";
 import { InfoTab } from "./InfoTab";
 import ProgressPhoto from "./ProgressPhoto";
 import SettingOptions from "./SettingsOptions";
@@ -7,7 +7,6 @@ import {
   UserRound,
   CreditCard,
   Bell,
-  Shield,
   HelpCircle,
 } from "lucide-react";
 import { logout } from "../../services/auth/logout";
@@ -18,6 +17,8 @@ type Props = {
   setForm: any;
   edit: boolean;
   setEdit: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedTab: string;
+  setSelectedTab: React.Dispatch<React.SetStateAction<string>>;
 };
 
 type TabItem = {
@@ -27,6 +28,14 @@ type TabItem = {
 };
 
 const clientOptions = [
+  { label: "Messages", icon: MessageCircle, route: "/client/messages" },
+  { label: "Browse Coaches", icon: UserRound, route: "/client/coaches" },
+  { label: "Payments & Billing", icon: CreditCard, route: "/billing" },
+  { label: "Notifications", icon: Bell, route: "/notifications" },
+  { label: "Help & Support", icon: HelpCircle, route: "/help" },
+];
+
+const coachOptions = [
   { label: "Messages", icon: MessageCircle, route: "/messages" },
   { label: "Browse Coaches", icon: UserRound, route: "/coaches" },
   { label: "Payments & Billing", icon: CreditCard, route: "/billing" },
@@ -34,13 +43,20 @@ const clientOptions = [
   { label: "Help & Support", icon: HelpCircle, route: "/help" },
 ];
 
-const SettingTab = ({ role, form, setForm, edit }: Props) => {
+const SettingTab = ({
+  role,
+  form,
+  setForm,
+  edit,
+  selectedTab,
+  setSelectedTab,
+}: Props) => {
   const tabsConfig: Record<string, TabItem[]> = {
     client: [
       {
         id: "info",
         label: "Info",
-        component: <InfoTab form={form} setForm={setForm} edit={edit} />,
+        component: <InfoTab role="client" form={form} setForm={setForm} edit={edit} />,
       },
       {
         id: "photos",
@@ -57,7 +73,12 @@ const SettingTab = ({ role, form, setForm, edit }: Props) => {
       {
         id: "info",
         label: "Info",
-        component: <InfoTab form={form} setForm={setForm} edit={edit} />,
+        component: <InfoTab role="coach" form={form} setForm={setForm} edit={edit} />,
+      },
+      {
+        id: "settings",
+        label: "Settings",
+        component: <SettingOptions options={coachOptions} onLogout={logout} />,
       },
     ],
     admin: [
@@ -72,31 +93,32 @@ const SettingTab = ({ role, form, setForm, edit }: Props) => {
   const tabs = tabsConfig[role];
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="w-165 flex items-center">
-        <Tabs className="">
-          <div className="flex- justify-start">
-            <Tabs.List className="w-60 flex p-0 bg-transparent">
-              {tabs.map((tab) => (
-                <Tabs.Tab
-                  key={tab.id}
-                  id={tab.id}
-                  className="whitespace-nowrap"
-                >
-                  {tab.label}
-                  <Tabs.Indicator />
-                </Tabs.Tab>
-              ))}
-            </Tabs.List>
-          </div>
-
-          {tabs.map((tab: TabItem) => (
-            <Tabs.Panel key={tab.id} id={tab.id}>
-              {tab.component}
-            </Tabs.Panel>
+    <div className="w-full flex">
+      <Tabs
+        selectedKey={selectedTab}
+        onSelectionChange={(key) => setSelectedTab(String(key))}
+      >
+        <Tabs.List className="flex w-fit p-0 bg-transparent gap-4">
+          {tabs.map((tabItem) => (
+            <Tabs.Tab
+              key={tabItem.id}
+              id={tabItem.id}
+              className="whitespace-nowrap px-4"
+            >
+              {tabItem.label}
+              <Tabs.Indicator />
+            </Tabs.Tab>
           ))}
-        </Tabs>
-      </div>
+        </Tabs.List>
+
+        {tabs.map((tabItem) => (
+          <Tabs.Panel key={tabItem.id} id={tabItem.id}>
+            <div className="w-full max-w-3xl mx-auto mt-4 flex justify-center">
+              {tabItem.component}
+            </div>
+          </Tabs.Panel>
+        ))}
+      </Tabs>
     </div>
   );
 };
