@@ -7,7 +7,7 @@ const Nutrition = () => {
     const [isMealModalOpen, setIsMealModalOpen] = useState(false);
 
     return (
-        <section className="min-h-screen bg-[#F7F7FB]">
+        <section className="bg-[#F7F7FB]">
             <NutritionHeader onLogMeal={() => setIsMealModalOpen(true)} />
 
             <div className="px-36 py-6">
