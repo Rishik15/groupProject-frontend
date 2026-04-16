@@ -1,11 +1,12 @@
 import { Routes, Route } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Nutrition from "./Nutrition";
-
 import ClientDashBoard from "./Dashboard";
 import Chat from "../Chat/Chat";
 import Settings from "./Settings";
 import CreateWorkoutPlan from "./CreateWorkoutPlan";
+import BrowseCoaches from "./BrowseCoaches";
+import Workouts from "../Workouts/Workouts";
 
 const ClientLayout = () => {
   return (
@@ -21,6 +22,11 @@ const ClientLayout = () => {
         <Routes>
           <Route index element={<ClientDashBoard />} />
           <Route path="nutrition" element={<Nutrition />} />
+          <Route path="chat" element={<Chat />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="coaches" element={<BrowseCoaches />} />
+          <Route path="workouts" element={<Workouts />} />
+          <Route path="create-workout" element={<CreateWorkoutPlan />} />
         </Routes>
       </div>
     </section>
