@@ -6,7 +6,7 @@ import type {
   PredefinedPlansRequest,
   WorkoutPlan,
 } from "./types";
-import { fetchPredefinedPlans } from "./api";
+import { fetchPredefinedPlans, assignPlan } from "./api";
 import { Button } from "@heroui/react";
 import { Award } from "lucide-react";
 
@@ -48,9 +48,14 @@ function WorkoutFlow() {
     }
   };
 
-  const handleAssign = (planId: number) => {
-    setAssignedPlanId(planId);
-  };
+const handleAssign = async (planId: number) => {
+  try {
+    await assignPlan(planId);
+    setAssignedPlanId(planId); 
+  } catch (err) {
+    console.error("Failed to assign plan:", err);
+  }
+};
 
   return (
     <div className="min-h-[calc(100vh-56px)] bg-gray-50 flex justify-center pt-16">
