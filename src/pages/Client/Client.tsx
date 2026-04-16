@@ -5,7 +5,7 @@ import BrowseCoaches from "./BrowseCoaches";
 import Workouts from "../Workouts/Workouts";
 import ClientDashBoard from "./Dashboard";
 import Chat from "../Chat/Chat";
-import Settings from "./Settings";
+import Settings from "../Settings/Settings";
 import CreateWorkoutPlan from "./CreateWorkoutPlan";
 import { useAuth } from "../../utils/auth/AuthContext";
 
@@ -28,7 +28,8 @@ const ClientLayout = () => {
           <Route path="nutrition" element={<Nutrition />} />
           <Route path="/coaches" element={<BrowseCoaches />} />
           <Route path="/workouts" element={<Workouts />} />
-          <Route path="settings" element={<Settings />} />
+          <Route path="settings" element={<Settings role="client" tab="settings" />} />
+          <Route path="profile" element={<Settings role="client" tab="info" />} />
           <Route path="createWorkout" element={<CreateWorkoutPlan />} />
         </Routes>
       </div>
