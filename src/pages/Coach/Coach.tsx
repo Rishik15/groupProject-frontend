@@ -5,7 +5,7 @@ import { useAuth } from "../../utils/auth/AuthContext";import Nutrition from "..
 import CoachDashBoard from "./DashBoard";
 import Chat from "../Chat/Chat";
 import CoachContractsPage from "./CoachContractsPage";
-import CoachContractsPage from "./Contracts";
+// import CoachContractsPage from "./Contracts";
 
 const CoachLayout = () => {
   const { user } = useAuth();
