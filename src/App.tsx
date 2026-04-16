@@ -7,10 +7,12 @@ import CoachLayout from "./pages/Coach/Coach";
 import ClientLayout from "./pages/Client/Client";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import OnboardingSurveyPage from "./pages/OnboardingSurvey/OnboardingSurveyPage";
+import { Toast } from "@heroui/react";
 
 function App() {
   return (
     <AuthProvider>
+      <Toast.Provider placement="top end" />
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />

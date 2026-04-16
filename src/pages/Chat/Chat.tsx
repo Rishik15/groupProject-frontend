@@ -97,6 +97,54 @@ const Chat = () => {
     };
   }, [selectedUser]);
 
+  useEffect(() => {
+  const handleNewMessage = (message: any) => {
+    if (selectedUser?.conversationId !== message.conversation_id) return;
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: message.message_id,
+        text: message.content,
+        timestamp: message.sent_at,
+        type: message.sender_user_id === selectedUser.id ? "received" : "sent",
+      },
+    ]);
+  };
+
+  socket.on("new_message", handleNewMessage);
+
+  return () => {
+    socket.off("new_message", handleNewMessage);
+  };
+}, [selectedUser]);
+
+useEffect(() => {
+  const handleConversationUpdate = (data: any) => {
+    const { conversationId, message } = data;
+
+    setUsers((prev) =>
+      prev.map((u) => {
+        if (u.conversationId !== conversationId) return u;
+
+        const isActive = selectedUser?.conversationId === conversationId;
+
+        return {
+          ...u,
+          lastMessage: message.content,
+          unreadCount: isActive ? 0 : (u.unreadCount || 0) + 1,
+        };
+      }),
+    );
+  };
+
+  socket.on("conversation_update", handleConversationUpdate);
+
+  return () => {
+    socket.off("conversation_update", handleConversationUpdate);
+  };
+}, [selectedUser]);
+
   return (
     <main className="mt-16 flex items-center justify-center px-36">
       <div className="flex max-w-5xl w-full">
