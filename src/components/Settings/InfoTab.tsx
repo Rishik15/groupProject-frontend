@@ -1,20 +1,28 @@
 import { Card, Input, Label } from "@heroui/react";
 import type { Dispatch, SetStateAction, ChangeEvent } from "react";
 
+type AvailabilitySlot = {
+  day_of_week: string;
+  start_time: string;
+  end_time: string;
+};
+
 type User = {
   first_name?: string;
   last_name?: string;
   email?: string;
   dob?: string;
-  weight?: string | number;
+
+  weight?: string | number; 
   height?: string | number;
   goal_weight?: string | number;
-  bio?: string;
+
   price?: string | number;
   coach_description?: string;
-  experience_years?: string | number;
-  specialties?: string;
-  certifications?: string;
+  avg_rating?: number | null;
+  reviews?: unknown[];
+  active_clients?: number;
+  availability?: AvailabilitySlot[];
 };
 
 type InfoTabProps = {
@@ -81,117 +89,145 @@ export function InfoTab({ form, setForm, edit, role }: InfoTabProps) {
           />
         </div>
 
-        <div className="flex w-full flex-col gap-2">
-          <Label>Date of Birth</Label>
-          <Input
-            value={form.dob ?? ""}
-            readOnly
-            className={getInputClass(false)}
-          />
-        </div>
+        {role !== "coach" && (
+          <>
+            <div className="flex w-full flex-col gap-2">
+              <Label>Date of Birth</Label>
+              <Input
+                value={form.dob ?? ""}
+                readOnly
+                className={getInputClass(false)}
+              />
+            </div>
 
-        <div className="grid w-full grid-cols-3 gap-4">
-          <div className="flex flex-col gap-2">
-            <Label>Weight</Label>
-            <Input
-              type="number"
-              step="0.1"
-              min="0"
-              value={form.weight != null ? String(form.weight) : ""}
-              readOnly={!edit}
-              onChange={updateNumberField("weight")}
-              className={getInputClass(edit)}
-            />
-          </div>
+            <div className="grid w-full grid-cols-3 gap-4">
+              <div className="flex flex-col gap-2">
+                <Label>Weight</Label>
+                <Input
+                  type="number"
+                  value={form.weight != null ? String(form.weight) : ""}
+                  readOnly={!edit}
+                  onChange={updateNumberField("weight")}
+                  className={getInputClass(edit)}
+                />
+              </div>
 
-          <div className="flex w-full flex-col gap-2">
-            <Label>Goal Weight</Label>
-            <Input
-              type="number"
-              step="0.1"
-              min="0"
-              value={form.goal_weight != null ? String(form.goal_weight) : ""}
-              readOnly={!edit}
-              onChange={updateNumberField("goal_weight")}
-              className={getInputClass(edit)}
-            />
-          </div>
+              <div className="flex flex-col gap-2">
+                <Label>Goal Weight</Label>
+                <Input
+                  type="number"
+                  value={form.goal_weight != null ? String(form.goal_weight) : ""}
+                  readOnly={!edit}
+                  onChange={updateNumberField("goal_weight")}
+                  className={getInputClass(edit)}
+                />
+              </div>
 
-          <div className="flex flex-col gap-2">
-            <Label>Height</Label>
-            <Input
-              type="number"
-              step="0.1"
-              min="0"
-              value={form.height != null ? String(form.height) : ""}
-              readOnly={!edit}
-              onChange={updateNumberField("height")}
-              className={getInputClass(edit)}
-            />
-          </div>
-        </div>
+              <div className="flex flex-col gap-2">
+                <Label>Height</Label>
+                <Input
+                  type="number"
+                  value={form.height != null ? String(form.height) : ""}
+                  readOnly={!edit}
+                  onChange={updateNumberField("height")}
+                  className={getInputClass(edit)}
+                />
+              </div>
+            </div>
+          </>
+        )}
 
         {role === "coach" && (
           <>
-            <div className="grid w-full grid-cols-2 gap-4">
-              <div className="flex flex-col gap-2">
-                <Label>Price</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={form.price != null ? String(form.price) : ""}
-                  readOnly={!edit}
-                  onChange={updateNumberField("price")}
-                  className={getInputClass(edit)}
-                />
-              </div>
+            <div className="flex w-full flex-col gap-2">
+              <Label>Price</Label>
+              <Input
+                type="number"
+                step="0.01"
+                min="0"
+                value={form.price != null ? String(form.price) : ""}
+                readOnly={!edit}
+                onChange={updateNumberField("price")}
+                className={getInputClass(edit)}
+              />
+            </div>
 
+            <div className="grid w-full grid-cols-3 gap-4">
               <div className="flex flex-col gap-2">
-                <Label>Experience Years</Label>
+                <Label>Rating</Label>
                 <Input
-                  type="number"
-                  step="1"
-                  min="0"
                   value={
-                    form.experience_years != null
-                      ? String(form.experience_years)
-                      : ""
+                    form.avg_rating != null ? `${form.avg_rating} ★` : "N/A"
                   }
-                  readOnly={!edit}
-                  onChange={updateNumberField("experience_years")}
-                  className={getInputClass(edit)}
+                  readOnly
+                  className={getInputClass(false)}
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label>Reviews</Label>
+                <Input
+                  value={String(form.reviews?.length ?? 0)}
+                  readOnly
+                  className={getInputClass(false)}
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label>Active Clients</Label>
+                <Input
+                  value={String(form.active_clients ?? 0)}
+                  readOnly
+                  className={getInputClass(false)}
                 />
               </div>
             </div>
 
             <div className="flex w-full flex-col gap-2">
-              <Label>Specialties</Label>
-              <Input
-                value={form.specialties ?? ""}
-                readOnly={!edit}
-                onChange={updateTextField("specialties")}
-                className={getInputClass(edit)}
-              />
-            </div>
-
-            <div className="flex w-full flex-col gap-2">
-              <Label>Certifications</Label>
-              <Input
-                value={form.certifications ?? ""}
-                readOnly={!edit}
-                onChange={updateTextField("certifications")}
-                className={getInputClass(edit)}
-              />
+              <Label>Availability</Label>
+              <div className="flex w-full flex-col gap-2">
+                {form.availability && form.availability.length > 0 ? (
+                  form.availability.map((slot, index) => (
+                    <div
+                      key={`${slot.day_of_week}-${slot.start_time}-${slot.end_time}-${index}`}
+                      className="flex items-center justify-between rounded-md bg-gray-100 px-3 py-3 text-sm"
+                    >
+                      <span className="font-medium text-gray-700">
+                        {slot.day_of_week}
+                      </span>
+                      <span className="text-gray-600">
+                        {slot.start_time} - {slot.end_time}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="rounded-md bg-gray-100 px-3 py-3 text-sm text-gray-500">
+                    No availability set
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="flex w-full flex-col gap-2">
               <Label>Coach Description</Label>
-              <Input
+              <textarea
                 value={form.coach_description ?? ""}
                 readOnly={!edit}
-                onChange={updateTextField("coach_description")}
-                className={getInputClass(edit)}
+                onChange={(e) =>
+                  setForm((prev) =>
+                    prev
+                      ? {
+                          ...prev,
+                          coach_description: e.target.value,
+                        }
+                      : prev
+                  )
+                }
+                className={`min-h-32 w-full resize-none rounded-md px-3 py-3 text-sm outline-none ${
+                  edit
+                    ? "bg-white border border-gray-200"
+                    : "bg-gray-100 border border-transparent"
+                }`}
               />
             </div>
           </>
