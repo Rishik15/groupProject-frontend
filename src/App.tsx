@@ -7,7 +7,7 @@ import CoachLayout from "./pages/Coach/Coach";
 import ClientLayout from "./pages/Client/Client";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import OnboardingSurveyPage from "./pages/OnboardingSurvey/OnboardingSurveyPage";
-
+import ExerciseLibrary from "./pages/ExerciseLibrary/ExerciseLibrary"
 function App() {
   return (
     <AuthProvider>
@@ -36,6 +36,10 @@ function App() {
           <Route
             path="/onboarding/client"
             element={<OnboardingSurveyPage surveyType="client" />}
+          />
+          <Route
+            path="/exercises"
+            element={<ExerciseLibrary/>}
           />
           <Route
             path="/onboarding/coach"
