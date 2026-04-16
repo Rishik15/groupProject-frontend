@@ -7,7 +7,8 @@ import CoachLayout from "./pages/Coach/Coach";
 import ClientLayout from "./pages/Client/Client";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import OnboardingSurveyPage from "./pages/OnboardingSurvey/OnboardingSurveyPage";
-import ExerciseLibrary from "./pages/ExerciseLibrary/ExerciseLibrary"import BrowseCoaches from "./pages/Client/BrowseCoaches";
+import ExerciseLibrary from "./pages/ExerciseLibrary/ExerciseLibrary";
+import BrowseCoaches from "./pages/Client/BrowseCoaches";
 import CoachProfile from "./pages/Client/CoachProfile";
 
 /*
