@@ -5,6 +5,8 @@ import ExerciseCard, { type Exercise } from "../../components/CreateWorkoutPlan/
 import SelectedExerciseList, { type SelectedExercise } from "../../components/CreateWorkoutPlan/SelectedExerciseList";
 import PlanSummary from "../../components/CreateWorkoutPlan/PlanSummary";
 import { getExercises } from "../../services/workout/getExercises";
+import ExerciseModal from "../../components/CreateWorkoutPlan/ExerciseModal";
+
 
 export default function CreateWorkoutPlan() {
   const navigate = useNavigate();
@@ -14,6 +16,7 @@ export default function CreateWorkoutPlan() {
   const [search, setSearch] = useState("");
   const [selectedExercises, setSelectedExercises] = useState<SelectedExercise[]>([]);
   const [planName, setPlanName] = useState("");
+  const [previewExercise, setPreviewExercise] = useState<Exercise | null>(null);
 
   // fetch exercises from backend on mount
   useEffect(() => {
@@ -26,30 +29,31 @@ export default function CreateWorkoutPlan() {
 
   // filter exercises by category and search
   const filteredExercises = exercises.filter((ex) => {
-    const matchesCategory = selectedCategory === "All" || ex.category === selectedCategory;
-    const matchesSearch = ex.name.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = selectedCategory === "All" || ex.equipment === selectedCategory;
+    const matchesSearch = ex.exercise_name.toLowerCase().includes(search.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
-  const addedIds = new Set(selectedExercises.map((s) => s.exercise.id));
+  
 
   function handleAdd(exercise: Exercise) {
     setSelectedExercises((prev) => [...prev, { exercise, sets: 3, reps: 10 }]);
   }
 
+  const addedIds = new Set(selectedExercises.map((s) => s.exercise.exercise_id));
   function handleRemove(id: number) {
-    setSelectedExercises((prev) => prev.filter((s) => s.exercise.id !== id));
+    setSelectedExercises((prev) => prev.filter((s) => s.exercise.exercise_id !== id));
   }
 
   function handleUpdateSets(id: number, sets: number) {
     setSelectedExercises((prev) =>
-      prev.map((s) => s.exercise.id === id ? { ...s, sets } : s)
+      prev.map((s) => s.exercise.exercise_id === id ? { ...s, sets } : s)
     );
   }
 
   function handleUpdateReps(id: number, reps: number) {
     setSelectedExercises((prev) =>
-      prev.map((s) => s.exercise.id === id ? { ...s, reps } : s)
+      prev.map((s) => s.exercise.exercise_id === id ? { ...s, reps } : s)
     );
   }
 
@@ -88,9 +92,8 @@ export default function CreateWorkoutPlan() {
 
       <div className="flex gap-6 items-start">
 
-        {/* Left — exercise browser */}
         <div className="flex-1 min-w-0 flex flex-col gap-4">
-          {/* Search */}
+
           <div className="flex items-center gap-2 bg-white border border-[#E6E6EE] rounded-xl px-3 py-2.5 focus-within:border-[#5B5EF4] transition-colors">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" className="shrink-0">
               <circle cx="11" cy="11" r="8" />
@@ -104,27 +107,25 @@ export default function CreateWorkoutPlan() {
             />
           </div>
 
-          {/* Category filter */}
           <CategoryFilter selected={selectedCategory} onSelect={setSelectedCategory} />
-
-          {/* Exercise grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {filteredExercises.length === 0 ? (
               <p className="text-sm text-[#72728A]">No exercises found.</p>
             ) : (
               filteredExercises.map((exercise) => (
                 <ExerciseCard
-                  key={exercise.id}
+                  key={exercise.exercise_id}
                   exercise={exercise}
                   onAdd={handleAdd}
-                  isAdded={addedIds.has(exercise.id)}
+                  isAdded={addedIds.has(exercise.exercise_id)}
+                  onPreview={setPreviewExercise}
                 />
               ))
             )}
           </div>
         </div>
 
-        {/* Right — plan builder */}
+
         <div className="w-80 shrink-0 bg-white border border-[#E6E6EE] rounded-2xl p-5 flex flex-col gap-4 sticky top-6">
           <div>
             <p className="text-base font-semibold text-black">Your Plan</p>
@@ -148,8 +149,13 @@ export default function CreateWorkoutPlan() {
             onPlanNameChange={setPlanName}
             onSave={handleSave}
           />
+          
         </div>
       </div>
+      <ExerciseModal
+            exercise={previewExercise}
+            onClose={() => setPreviewExercise(null)}
+      />
     </div>
   );
 }
