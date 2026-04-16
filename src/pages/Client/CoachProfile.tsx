@@ -32,17 +32,17 @@ export default function CoachProfile() {
     );
   }
 
-  if (!coach) {
+  if (!coach || !id) {
     return (
       <div className="min-h-screen bg-default-100 flex items-center justify-center">
         <p className="text-sm text-default-400">Coach not found.</p>
       </div>
     );
   }
+  const coachId = Number(id);
 
   return (
     <div className="min-h-screen bg-default-100 px-8 py-8 max-w-3xl mx-auto">
-      {/* Back link */}
       <button
         onClick={() => navigate(-1)}
         className="flex items-center gap-1.5 text-sm text-default-400 hover:text-foreground mb-6 transition-colors"
@@ -53,19 +53,16 @@ export default function CoachProfile() {
         Back to coaches
       </button>
 
-      {/* Header */}
       <div className="mb-6">
-        <ProfileHeader coach={coach} />
+        <ProfileHeader coach={coach} coachId={coachId} />
       </div>
 
-      {/* Tabs */}
       <div className="mb-5">
         <ProfileTabs activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
 
-      {/* Tab content */}
       {activeTab === "about" && <AboutTab coach={coach} />}
-      {activeTab === "reviews" && id && <CoachReviewsSection coachId={Number(id)} />}
+      {activeTab === "reviews" && <CoachReviewsSection coachId={coachId} />}
       {activeTab === "stories" && <SuccessStoriesTab reviews={coach.reviews} />}
     </div>
   );
