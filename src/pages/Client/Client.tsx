@@ -26,7 +26,7 @@ const ClientLayout = () => {
           <Route path="settings" element={<Settings />} />
           <Route path="coaches" element={<BrowseCoaches />} />
           <Route path="workouts" element={<Workouts />} />
-          <Route path="create-workout" element={<CreateWorkoutPlan />} />
+          <Route path="createWorkout" element={<CreateWorkoutPlan />} />
         </Routes>
       </div>
     </section>
