@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import { useAuth } from "../../utils/auth/AuthContext";
 import ClientDashBoard from "./Dashboard";
-import WorkoutFlow from "../../components/client/RecommendedExercises/WorkoutFlow";
+import WorkoutFlow from "../../components/Client/RecommendedExercises/WorkoutFlow";
 
 const ClientLayout = () => {
   const { user } = useAuth();

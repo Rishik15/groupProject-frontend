@@ -1,8 +1,8 @@
 import { Button } from "@heroui/react";
 import { useAuth } from "../../utils/auth/AuthContext";
 import { Plus, Search } from "lucide-react";
-import WellnessCheck from "../client/WellnessCheck/WellnessCheck";
-import WellnessComplete from "../client/WellnessCheck/WellnessComplete";
+import WellnessCheck from "../Client/WellnessCheck/WellnessCheck";
+import WellnessComplete from "../Client/WellnessCheck/WellnessComplete";
 
 const DashboardHeader = () => {
   const { user } = useAuth();
