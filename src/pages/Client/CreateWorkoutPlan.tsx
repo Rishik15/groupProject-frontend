@@ -10,7 +10,6 @@ import ExerciseModal from "../../components/CreateWorkoutPlan/ExerciseModal";
 
 export default function CreateWorkoutPlan() {
   const navigate = useNavigate();
-
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [search, setSearch] = useState("");
