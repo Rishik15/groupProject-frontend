@@ -3,6 +3,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import Nutrition from "./Nutrition";
 
 import ClientDashBoard from "./Dashboard";
+import CreateWorkoutPlan from "./CreateWorkoutPlan";
 
 const ClientLayout = () => {
   return (
@@ -18,6 +19,7 @@ const ClientLayout = () => {
         <Routes>
           <Route index element={<ClientDashBoard />} />
           <Route path="nutrition" element={<Nutrition />} />
+          <Route path="createWorkout" element={<CreateWorkoutPlan />} />
         </Routes>
       </div>
     </section>
