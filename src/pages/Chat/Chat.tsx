@@ -154,7 +154,7 @@ useEffect(() => {
           {!selectedUser ? (
             <ChatMessages />
           ) : (
-            <ChatWindow user={selectedUser} messages={messages} />
+            <ChatWindow user={selectedUser} messages={messages} setMessages={setMessages} />
           )}
         </div>
       </div>
