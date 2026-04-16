@@ -133,7 +133,7 @@ const MetricPlots = () => {
 
         <div className="flex items-center gap-0.5 px-3 h-8 mx-auto text-[12px] font-semibold bg-gray-200 text-gray-600 cursor-pointer rounded-lg  hover:bg-[#5B5EF4] hover:text-white">
           View Details
-            <ArrowRight className="w-3 h-3 font-semibold" />
+          <ArrowRight className="w-3 h-3 font-semibold" />
         </div>
       </div>
     </section>

@@ -114,7 +114,9 @@ export default function Navbar({
               <Avatar className="w-8 h-8">
                 <Avatar.Image src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg" />
                 <Avatar.Fallback className="bg-[#a9aaff] font-semibold text-[#444566]">
-                  {name.charAt(0)}
+                  <Avatar.Fallback className="bg-[#a9aaff] font-semibold text-[#444566]">
+                    {name.charAt(0)}
+                  </Avatar.Fallback>
                 </Avatar.Fallback>
               </Avatar>
             </button>

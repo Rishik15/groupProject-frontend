@@ -1,5 +1,5 @@
 import { Flame } from "lucide-react";
-import { Activity, Dumbbell, Target} from "lucide-react";
+import { Activity, Dumbbell, Target } from "lucide-react";
 
 const MetricRow = () => {
   return (

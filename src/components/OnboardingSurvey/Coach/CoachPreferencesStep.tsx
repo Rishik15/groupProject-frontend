@@ -200,9 +200,8 @@ function CoachPreferencesStep({
                     <p className="text-[9px] text-[#72728A]">
                       {dayBlocks.length === 0
                         ? "No blocks added yet"
-                        : `${dayBlocks.length} ${
-                            dayBlocks.length === 1 ? "block" : "blocks"
-                          } added`}
+                        : `${dayBlocks.length} ${dayBlocks.length === 1 ? "block" : "blocks"
+                        } added`}
                     </p>
                   </div>
 

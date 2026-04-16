@@ -25,8 +25,8 @@ const calorieData = [
   { day: "Tue", actual: 1800 },
   { day: "Wed", actual: 2200 },
   { day: "Thu", actual: 1900 },
-  { day: "Fri", actual: 1800},
-  { day: "Sat", actual: 2300},
+  { day: "Fri", actual: 1800 },
+  { day: "Sat", actual: 2300 },
   { day: "Sun", actual: 1450 },
 ];
 
@@ -72,9 +72,9 @@ const CaloriesTooltip = ({ active, payload, label }: any) => {
 const MetricPlots2 = () => {
   return (
     <section className="flex gap-6 px-38 mt-6">
-      
+
       <div className="bg-white px-6 py-4 rounded-3xl flex flex-col gap-4 w-full">
-        
+
         <div className="flex justify-between items-center">
           <div className="font-semibold text-[14px]">
             Session Completion
@@ -86,7 +86,7 @@ const MetricPlots2 = () => {
 
         <ResponsiveContainer width="100%" height={160}>
           <BarChart data={sessionData}>
-            
+
             <CartesianGrid
               strokeDasharray="3 3"
               vertical={false}
@@ -107,7 +107,7 @@ const MetricPlots2 = () => {
               tick={{ fill: "#6b7280", fontSize: 12 }}
             />
 
-            <Tooltip content={SessionTooltip}/>
+            <Tooltip content={SessionTooltip} />
 
             <Bar
               dataKey="planned"
@@ -136,14 +136,14 @@ const MetricPlots2 = () => {
       </div>
 
       <div className="bg-white py-4 px-6 rounded-3xl flex flex-col gap-4 w-full">
-        
+
         <div className="font-semibold text-[14px]">
           Weekly Calories
         </div>
 
         <ResponsiveContainer width="100%" height={160}>
           <LineChart data={calorieData}>
-            
+
             <CartesianGrid
               strokeDasharray="3 3"
               vertical={false}
@@ -159,13 +159,13 @@ const MetricPlots2 = () => {
             />
 
             <YAxis
-            domain={["dataMin - 100", "dataMax + 100"]}
+              domain={["dataMin - 100", "dataMax + 100"]}
               axisLine={false}
               tickLine={false}
               tick={{ fill: "#6b7280", fontSize: 12 }}
             />
 
-            <Tooltip content={CaloriesTooltip}/>
+            <Tooltip content={CaloriesTooltip} />
 
             <Line
               type="monotone"

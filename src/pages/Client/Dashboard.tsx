@@ -1,3 +1,4 @@
+import WorkoutFlow from "../../components/Client/RecommendedExercises/WorkoutFlow";
 import DashboardHeader from "../../components/ClientDashboard/Header";
 import MetricPlots from "../../components/ClientDashboard/MetricPlots";
 import MetricPlots2 from "../../components/ClientDashboard/MetricPlots2";
