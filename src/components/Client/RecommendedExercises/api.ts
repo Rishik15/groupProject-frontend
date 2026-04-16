@@ -20,3 +20,22 @@ export async function fetchPredefinedPlans(
 
   return res.json();
 }
+
+export async function assignPlan(planId: number) {
+  const res = await fetch("http://localhost:8080/workouts/predefined/assign", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({
+      plan_id: planId,
+    }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Assign failed: ${res.status}`);
+  }
+
+  return res.json();
+}
