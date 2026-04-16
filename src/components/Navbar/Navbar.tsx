@@ -3,7 +3,6 @@ import { Avatar, Badge } from "@heroui/react";
 import type { NavbarInterface } from "../../utils/Interfaces/navbar";
 import NavLink from "./Navlink";
 import DropdownItem from "./Dropdown";
-import { toast } from "@heroui/react";
 import { House } from "lucide-react";
 import { Dumbbell } from "lucide-react";
 import { Refrigerator } from "lucide-react";
