@@ -1,5 +1,13 @@
 import { Button } from "@heroui/react";
-import { ChevronLeft, ChevronRight, Dumbbell, Plus } from "lucide-react";
+import {
+    ChevronLeft,
+    ChevronRight,
+    Dumbbell,
+    Plus,
+    Sparkles,
+    ClipboardPlus,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import type { WorkoutCalendarEvent } from "../../utils/Interfaces/WorkoutLog/workoutLog";
 import { formatWeekRange } from "./calendarUtils";
@@ -25,6 +33,8 @@ export default function ScheduleHeader({
     onNextWeek,
     onJumpToNow,
 }: ScheduleHeaderProps) {
+    const navigate = useNavigate();
+
     return (
         <>
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -50,6 +60,30 @@ export default function ScheduleHeader({
                         <span className="inline-flex items-center gap-2">
                             <Plus className="h-4 w-4" />
                             <span>Add Session</span>
+                        </span>
+                    </Button>
+
+                    <Button
+                        variant="ghost"
+                        onPress={() => navigate("/client/createWorkout")}
+                        className="text-[11.25px] font-semibold text-[#0F0F14]"
+                        style={{ border: "1px solid #5E5EF466" }}
+                    >
+                        <span className="inline-flex items-center gap-2">
+                            <ClipboardPlus className="h-4 w-4" />
+                            <span>View Workout Library</span>
+                        </span>
+                    </Button>
+
+                    <Button
+                        variant="ghost"
+                        onPress={() => navigate("/client/recommended")}
+                        className="text-[11.25px] font-semibold text-[#0F0F14]"
+                        style={{ border: "1px solid #5E5EF466" }}
+                    >
+                        <span className="inline-flex items-center gap-2">
+                            <Sparkles className="h-4 w-4" />
+                            <span>Recommended</span>
                         </span>
                     </Button>
 
