@@ -83,7 +83,7 @@ export default function CreateWorkoutPlan() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F7FB] px-8 py-8">
+    <div className="min-h-screen bg-[#F7F7FB] px-36 py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
           <button
@@ -153,7 +153,7 @@ export default function CreateWorkoutPlan() {
           </div>
         </div>
 
-        <div className="w-80 shrink-0 bg-white border border-[#E6E6EE] rounded-2xl p-5 flex flex-col gap-4 sticky top-6">
+        <div className="w-80 shrink-0 bg-white border border-[#E6E6EE] rounded-2xl p-5 flex flex-col gap-4 sticky top-18">
           <div>
             <p className="text-base font-semibold text-black">Your Plan</p>
             <p className="text-xs text-[#72728A] mt-0.5">
@@ -162,7 +162,7 @@ export default function CreateWorkoutPlan() {
             </p>
           </div>
 
-          <div className="flex-1 overflow-y-auto max-h-[60vh]">
+          <div className="flex-1 overflow-y-auto max-h-[45vh]">
             <SelectedExerciseList
               selected={selectedExercises}
               onRemove={handleRemove}
