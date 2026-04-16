@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
-import { useAuth } from "../../utils/auth/AuthContext";import Nutrition from "../Nutrition/Nutrition";
-
+import { useAuth } from "../../utils/auth/AuthContext";
 import CoachDashBoard from "./DashBoard";
 import Chat from "../Chat/Chat";
 import CoachContractsPage from "./CoachContractsPage";
@@ -24,7 +23,6 @@ const CoachLayout = () => {
           <Route index element={<CoachDashBoard />} />
           <Route path="chat" element={<Chat />} />
           <Route path="contracts" element={<CoachContractsPage />} />
-          <Route path="nutrition" element={<Nutrition />} />
         </Routes>
       </div>
     </section>
