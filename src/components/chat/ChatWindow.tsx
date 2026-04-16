@@ -1,8 +1,19 @@
 import { Send } from "lucide-react";
 import type { Message } from "../../utils/Interfaces/chat";
+import { useState } from "react";
+import { sendMessage } from "../../services/chat/send_message";
 
-const ChatWindow = ({ user, messages }: { user: any; messages: Message[] }) => {
+const ChatWindow = ({
+  user,
+  messages,
+  setMessages,
+}: {
+  user: any;
+  messages: Message[];
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+}) => {
   const isOnline = user.status === "online";
+  const [input, setInput] = useState("");
 
   const groupedMessages = messages.reduce(
     (groups: Record<string, Message[]>, msg) => {
@@ -24,6 +35,26 @@ const ChatWindow = ({ user, messages }: { user: any; messages: Message[] }) => {
     },
     {},
   );
+
+  const handleSend = async () => {
+  if (!input.trim()) return;
+
+  const tempMessage = {
+    id: Date.now(),
+    text: input,
+    timestamp: new Date().toISOString(),
+    type: "sent",
+  };
+
+  setMessages((prev) => [...prev, tempMessage]);
+
+  try {
+    await sendMessage(input, user.conversationId);
+    setInput("");
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   return (
     <section className="flex flex-col bg-white rounded-3xl w-140 h-165 mx-auto">
@@ -87,10 +118,24 @@ const ChatWindow = ({ user, messages }: { user: any; messages: Message[] }) => {
       <div className="border-t p-4 bottom-0 flex items-center justify-center gap-3">
         <input
           type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSend()}
           placeholder="Type a message..."
           className="w-full bg-gray-100 rounded-xl px-4 py-2 text-sm outline-none"
         />
-        <div className="p-2 bg-[#a9aaff] rounded-lg flex items-center justify-center">
+
+        <div
+          onClick={() => {
+            if (!input.trim()) return;
+            handleSend();
+          }}
+          className={`p-2 rounded-lg flex items-center justify-center transition-all ${
+            input.trim()
+              ? "bg-indigo-600 hover:bg-indigo-700 cursor-pointer"
+              : "bg-indigo-300 cursor-not-allowed opacity-70"
+          }`}
+        >
           <Send className="w-4 h-4 text-white" />
         </div>
       </div>
