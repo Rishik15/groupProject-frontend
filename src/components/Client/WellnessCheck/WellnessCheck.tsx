@@ -5,7 +5,11 @@ import WellnessForm from "./WellnessForm";
 import WellnessComplete from "./WellnessComplete";
 import { checkSurveyStatus } from "../../../services/WellnessSurvey/checkSurveyStatus";
 import { submitSurvey } from "../../../services/WellnessSurvey/submitSurvey";
+import { useAuth } from "../../../utils/auth/AuthContext";
+
 const WellnessCheck = () => {
+    const { authenticated, loading: authLoading } = useAuth();
+
     const [moodScore, setMoodScore] = useState<number>(3);
     const [notes, setNotes] = useState<string>("");
     const [loading, setLoading] = useState(false);
@@ -13,12 +17,21 @@ const WellnessCheck = () => {
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
+        if (authLoading) return;
+        if (!authenticated) return;
+
         const surveyStatus = async () => {
-            const res = await checkSurveyStatus();
-            setDone(res)
-        }
+            try {
+                const res = await checkSurveyStatus();
+                setDone(res);
+            } catch (error) {
+                console.error("Failed to fetch survey status:", error);
+                setDone(false);
+            }
+        };
+
         surveyStatus();
-    }, []);
+    }, [authenticated, authLoading]);
 
     const sendWellness = async (): Promise<void> => {
         const payload = {
@@ -28,20 +41,18 @@ const WellnessCheck = () => {
 
         try {
             setLoading(true);
-
             const result = await submitSurvey(payload);
             console.log(result);
-
-            // do whatever after success
             setOpen(false);
             setDone(true);
-
         } catch (error) {
             console.error("Failed to submit wellness survey:", error);
         } finally {
             setLoading(false);
         }
     };
+
+    if (!authenticated) return null;
 
     return (
         <Modal isOpen={open} onOpenChange={setOpen}>
@@ -52,15 +63,14 @@ const WellnessCheck = () => {
                     <WellnessButton />
                 </div>
             )}
+
             <Modal.Backdrop>
                 <Modal.Container>
                     <Modal.Dialog className="sm:max-w-[420px]">
                         <Modal.CloseTrigger />
-
                         <Modal.Header>
                             <Modal.Heading>Mental Wellness</Modal.Heading>
                         </Modal.Header>
-
                         <Modal.Body>
                             <WellnessForm
                                 moodScore={moodScore}

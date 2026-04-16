@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import { useAuth } from "../../utils/auth/AuthContext";
 import ClientDashBoard from "./Dashboard";
+import WorkoutFlow from "../../components/client/RecommendedExercises/WorkoutFlow";
 
 const ClientLayout = () => {
   const { user } = useAuth();
@@ -18,9 +19,11 @@ const ClientLayout = () => {
       <div className="pt-14">
         <Routes>
           <Route index element={<ClientDashBoard />} />
+          <Route path="recommended" element={<WorkoutFlow />} />
         </Routes>
       </div>
     </section>
   );
 };
+
 export default ClientLayout;
