@@ -48,6 +48,45 @@ export default function FoodItemRow({
                     />
                 </div>
 
+<<<<<<< HEAD
+=======
+                <div className="space-y-2">
+                    <p className="text-[13.125px] font-medium text-[#0F0F14]">
+                        Food Item Photo
+                    </p>
+
+                    <input
+                        id={`food-item-photo-${item.clientId}`}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(event) =>
+                            onPhotoChange(item.clientId, event.target.files?.[0] ?? null)
+                        }
+                    />
+
+                    <Button
+                        variant="outline"
+                        className="w-full border-default-200 text-[#0F0F14]"
+                        onPress={() =>
+                            document
+                                .getElementById(`food-item-photo-${item.clientId}`)
+                                ?.click()
+                        }
+                    >
+                        {item.imageFile ? "Change Photo" : "Add Photo (optional)"}
+                    </Button>
+
+                    {(item.imagePreviewUrl || item.imageUrl) && (
+                        <img
+                            src={item.imagePreviewUrl || item.imageUrl}
+                            alt={`${item.name || "Food item"} preview`}
+                            className="h-32 w-full rounded-xl object-cover"
+                        />
+                    )}
+                </div>
+
+>>>>>>> 01c4c38ccafb0da51dc8c34795d95b0bea894795
                 <div className="grid grid-cols-2 gap-x-3 gap-y-3">
                     <div className="min-w-0 space-y-1">
                         <label className="block text-[13.125px] font-medium text-[#0F0F14]">

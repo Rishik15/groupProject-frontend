@@ -3,6 +3,9 @@ import Navbar from "../../components/Navbar/Navbar";
 import Nutrition from "./Nutrition";
 
 import ClientDashBoard from "./Dashboard";
+import Chat from "../Chat/Chat";
+import Settings from "./Settings";
+import CreateWorkoutPlan from "./CreateWorkoutPlan";
 
 const ClientLayout = () => {
   return (
