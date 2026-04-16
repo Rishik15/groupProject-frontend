@@ -1,18 +1,29 @@
 import { Send } from "lucide-react";
+import type { Message } from "../../utils/Interfaces/chat";
 
-const ChatWindow = ({
-  user,
-  messages,
-}: {
-  user: any;
-  messages: {
-    id: number;
-    text: string;
-    timestamp: string;
-    type: "sent" | "received";
-  }[];
-}) => {
+const ChatWindow = ({ user, messages }: { user: any; messages: Message[] }) => {
   const isOnline = user.status === "online";
+
+  const groupedMessages = messages.reduce(
+    (groups: Record<string, Message[]>, msg) => {
+      const date = new Date(msg.timestamp);
+
+      const dateLabel = date.toLocaleDateString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+
+      if (!groups[dateLabel]) {
+        groups[dateLabel] = [];
+      }
+
+      groups[dateLabel].push(msg);
+      return groups;
+    },
+    {},
+  );
 
   return (
     <section className="flex flex-col bg-white rounded-3xl w-140 h-165 mx-auto">
@@ -32,35 +43,45 @@ const ChatWindow = ({
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
-        {messages.map((msg) => {
-          const isSent = msg.type === "sent";
-
-          return (
-            <div
-              key={msg.id}
-              className={`flex flex-col ${
-                isSent ? "items-end" : "items-start"
-              }`}
-            >
-              <div
-                className={`
-                  max-w-[70%] px-3 py-1.5 text-[13px] shadow-3xl shadow-default-foreground
-                  ${
-                    isSent
-                      ? "bg-indigo-600 text-white rounded-br-2xl rounded-full"
-                      : "bg-gray-100 border border-gray-300 text-black rounded-full rounded-bl-2xl"
-                  }
-                `}
-              >
-                {msg.text}
-              </div>
-
-              <span className="text-[11px] text-gray-600 mt-0.5 px-1">
-                {msg.timestamp}
+        {Object.entries(groupedMessages).map(([dateLabel, msgs]) => (
+          <div key={dateLabel} className="flex flex-col gap-4">
+            <div className="flex items-center justify-center">
+              <span className="text-[11px] text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                {dateLabel}
               </span>
             </div>
-          );
-        })}
+
+            {msgs.map((msg) => {
+              const isSent = msg.type === "sent";
+
+              return (
+                <div
+                  key={msg.id}
+                  className={`flex flex-col ${
+                    isSent ? "items-end" : "items-start"
+                  }`}
+                >
+                  <div
+                    className={`max-w-[70%] px-3 py-1.5 text-[13px] shadow-3xl shadow-default-foreground ${
+                      isSent
+                        ? "bg-indigo-600 text-white rounded-br-2xl rounded-full"
+                        : "bg-gray-100 border border-gray-300 text-black rounded-full rounded-bl-2xl"
+                    }`}
+                  >
+                    {msg.text}
+                  </div>
+
+                  <span className="text-[11px] text-gray-600 mt-0.5 px-1">
+                    {new Date(msg.timestamp).toLocaleTimeString("en-US", {
+                      hour: "numeric",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        ))}
       </div>
 
       <div className="border-t p-4 bottom-0 flex items-center justify-center gap-3">

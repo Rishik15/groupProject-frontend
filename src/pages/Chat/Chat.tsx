@@ -4,38 +4,13 @@ import ChatSidebar from "../../components/chat/ChatSidebar";
 import ChatWindow from "../../components/chat/ChatWindow";
 import { get_users } from "../../services/chat/get_user";
 import { socket } from "../../services/sockets/socket";
-
-type Message = {
-  id: number;
-  text: string;
-  timestamp: string;
-  type: "sent" | "received";
-};
-
-const messages: Message[] = [
-  {
-    id: 1,
-    text: "Hey bro",
-    timestamp: "10:30 AM",
-    type: "received",
-  },
-  {
-    id: 2,
-    text: "What's up?",
-    timestamp: "10:31 AM",
-    type: "received",
-  },
-  {
-    id: 3,
-    text: "All good, working out",
-    timestamp: "10:32 AM",
-    type: "sent",
-  },
-];
+import { getMessages } from "../../services/chat/get_messages";
+import type { Message } from "../../utils/Interfaces/chat";
 
 const Chat = () => {
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [users, setUsers] = useState<any[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -49,8 +24,6 @@ const Chat = () => {
 
   useEffect(() => {
     const handleConnect = () => {
-      console.log(" socket ready in Chat");
-
       socket.emit("join_chat_presence");
     };
 
@@ -88,8 +61,6 @@ const Chat = () => {
 
   useEffect(() => {
     socket.on("presence_change", ({ userId, status }) => {
-      console.log(" presence_change RECEIVED:", userId, status);
-
       setUsers((prev) =>
         prev.map((u) => {
           if (u.id !== userId) return u;
@@ -106,6 +77,25 @@ const Chat = () => {
       socket.off("presence_change");
     };
   }, []);
+
+  useEffect(() => {
+    if (!selectedUser?.conversationId) return;
+
+    const convId = selectedUser.conversationId;
+
+    socket.emit("chat_selected", { convId });
+
+    const fetchMessages = async () => {
+      const data = await getMessages(convId);
+      setMessages(data);
+    };
+
+    fetchMessages();
+
+    return () => {
+      socket.emit("chat_deselected", { convId });
+    };
+  }, [selectedUser]);
 
   return (
     <main className="mt-16 flex items-center justify-center px-36">
