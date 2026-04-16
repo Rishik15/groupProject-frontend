@@ -71,7 +71,7 @@ export default function ScheduleHeader({
                     >
                         <span className="inline-flex items-center gap-2">
                             <ClipboardPlus className="h-4 w-4" />
-                            <span>View Workout Library</span>
+                            <span>View Exercise Library</span>
                         </span>
                     </Button>
 
@@ -83,7 +83,7 @@ export default function ScheduleHeader({
                     >
                         <span className="inline-flex items-center gap-2">
                             <Sparkles className="h-4 w-4" />
-                            <span>Recommended</span>
+                            <span>Recommended Workouts</span>
                         </span>
                     </Button>
 
