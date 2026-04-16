@@ -16,6 +16,7 @@ const DropdownItem = ({
 }) => {
   const navigate = useNavigate();
   const { clearAuth } = useAuth();
+  const { clearAuth } = useAuth();
 
   const handleClick = async () => {
     if (type === "logout") {

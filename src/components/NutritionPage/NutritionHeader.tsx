@@ -6,8 +6,8 @@ interface NutritionHeaderProps {
 
 const NutritionHeader = ({ onLogMeal }: NutritionHeaderProps) => {
     return (
-        <div className="h-[84px] border-b border-neutral-200 bg-white">
-            <div className="flex h-full items-center justify-between px-8">
+        <div className="py-6 px-36 border-b border-neutral-200 bg-white">
+            <div className="flex h-full items-center justify-between">
                 <div>
                     <h1 className="text-[18.75px] font-semibold leading-none text-[#0F0F14]">
                         Nutrition

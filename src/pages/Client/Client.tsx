@@ -1,24 +1,23 @@
 import { Routes, Route } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
-import { useAuth } from "../../utils/auth/AuthContext";
 import Nutrition from "../Nutrition/Nutrition";
 import BrowseCoaches from "./BrowseCoaches";
 
 import Workouts from "../Workouts/Workouts";
 
+
 import ClientDashBoard from "./Dashboard";
 import Chat from "../Chat/Chat";
 import Settings from "./Settings";
+import CreateWorkoutPlan from "./CreateWorkoutPlan";
 
 const ClientLayout = () => {
-  const { user } = useAuth();
-
   return (
     <section className="min-h-screen">
       <Navbar
         parent="/client"
-        name={user ? `${user.first_name} ${user.last_name}` : ""}
-        email={user?.email || ""}
+        name="Rishik"
+        email="rishik@email.com"
         notification={5}
       />
 
@@ -30,6 +29,7 @@ const ClientLayout = () => {
           <Route path="/coaches" element={<BrowseCoaches />} />
           <Route path="/workouts" element={<Workouts />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="createWorkout" element={<CreateWorkoutPlan />} />
         </Routes>
       </div>
     </section>
