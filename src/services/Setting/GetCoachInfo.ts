@@ -1,7 +1,11 @@
 export const GetCoachInfo = async () => {
   const res = await fetch("http://localhost:8080/coach/profile", {
-    method: "GET",
+    method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({}),
   });
 
   if (!res.ok) {
