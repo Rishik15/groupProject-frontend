@@ -1,6 +1,6 @@
 import { Send } from "lucide-react";
 import type { Message } from "../../utils/Interfaces/chat";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { sendMessage } from "../../services/chat/send_message";
 
 const ChatWindow = ({
@@ -14,6 +14,7 @@ const ChatWindow = ({
 }) => {
   const isOnline = user.status === "online";
   const [input, setInput] = useState("");
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
   const groupedMessages = messages.reduce(
     (groups: Record<string, Message[]>, msg) => {
@@ -36,25 +37,34 @@ const ChatWindow = ({
     {},
   );
 
-  const handleSend = async () => {
-  if (!input.trim()) return;
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-  const tempMessage = {
-    id: Date.now(),
-    text: input,
-    timestamp: new Date().toISOString(),
-    type: "sent",
+  const handleSend = async () => {
+    if (!input.trim()) return;
+
+    const messageText = input;
+
+    const tempMessage: Message = {
+      id: Date.now(),
+      text: messageText,
+      timestamp: new Date().toISOString(),
+      type: "sent",
+    };
+
+    setMessages((prev) => [...prev, tempMessage]);
+
+    setInput("");
+
+    try {
+      await sendMessage(messageText, user.conversationId);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  setMessages((prev) => [...prev, tempMessage]);
-
-  try {
-    await sendMessage(input, user.conversationId);
-    setInput("");
-  } catch (err) {
-    console.error(err);
-  }
-};
+  useEffect(() => {}, []);
 
   return (
     <section className="flex flex-col bg-white rounded-3xl w-140 h-165 mx-auto">
@@ -113,6 +123,7 @@ const ChatWindow = ({
             })}
           </div>
         ))}
+        <div ref={bottomRef} />
       </div>
 
       <div className="border-t p-4 bottom-0 flex items-center justify-center gap-3">

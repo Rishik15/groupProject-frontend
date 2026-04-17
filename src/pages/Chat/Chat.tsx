@@ -98,52 +98,56 @@ const Chat = () => {
   }, [selectedUser]);
 
   useEffect(() => {
-  const handleNewMessage = (message: any) => {
-    if (selectedUser?.conversationId !== message.conversation_id) return;
+    const handleNewMessage = (message: any) => {
+      console.log("New Message detected!");
+      setMessages((prev) => {
+        if (selectedUser?.conversationId !== message.conversation_id)
+          return prev;
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: message.message_id,
-        text: message.content,
-        timestamp: message.sent_at,
-        type: message.sender_user_id === selectedUser.id ? "received" : "sent",
-      },
-    ]);
-  };
+        return [
+          ...prev,
+          {
+            id: message.message_id,
+            text: message.content,
+            timestamp: message.sent_at,
+            type: "received",
+          },
+        ];
+      });
+    };
 
-  socket.on("new_message", handleNewMessage);
+    socket.on("new_message", handleNewMessage);
 
-  return () => {
-    socket.off("new_message", handleNewMessage);
-  };
-}, [selectedUser]);
+    return () => {
+      socket.off("new_message", handleNewMessage);
+    };
+  }, [selectedUser]);
 
-useEffect(() => {
-  const handleConversationUpdate = (data: any) => {
-    const { conversationId, message } = data;
+  useEffect(() => {
+    const handleConversationUpdate = (data: any) => {
+      const { conversationId, message } = data;
 
-    setUsers((prev) =>
-      prev.map((u) => {
-        if (u.conversationId !== conversationId) return u;
+      setUsers((prev) =>
+        prev.map((u) => {
+          if (u.conversationId !== conversationId) return u;
 
-        const isActive = selectedUser?.conversationId === conversationId;
+          const isActive = selectedUser?.conversationId === conversationId;
 
-        return {
-          ...u,
-          lastMessage: message.content,
-          unreadCount: isActive ? 0 : (u.unreadCount || 0) + 1,
-        };
-      }),
-    );
-  };
+          return {
+            ...u,
+            lastMessage: message.content,
+            unreadCount: isActive ? 0 : (u.unreadCount || 0) + 1,
+          };
+        }),
+      );
+    };
 
-  socket.on("conversation_update", handleConversationUpdate);
+    socket.on("conversation_update", handleConversationUpdate);
 
-  return () => {
-    socket.off("conversation_update", handleConversationUpdate);
-  };
-}, [selectedUser]);
+    return () => {
+      socket.off("conversation_update", handleConversationUpdate);
+    };
+  }, [selectedUser]);
 
   return (
     <main className="mt-16 flex items-center justify-center px-36">
@@ -154,7 +158,11 @@ useEffect(() => {
           {!selectedUser ? (
             <ChatMessages />
           ) : (
-            <ChatWindow user={selectedUser} messages={messages} setMessages={setMessages} />
+            <ChatWindow
+              user={selectedUser}
+              messages={messages}
+              setMessages={setMessages}
+            />
           )}
         </div>
       </div>

@@ -12,7 +12,7 @@ import { Toast } from "@heroui/react";
 function App() {
   return (
     <AuthProvider>
-      <Toast.Provider placement="top end" />
+      <Toast.Provider placement="top end" className="mt-11" />
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />
