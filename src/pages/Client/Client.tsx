@@ -13,7 +13,7 @@ const ClientLayout = () => {
         parent="/client"
         name={user ? `${user.first_name} ${user.last_name}` : ""}
         email={user?.email || ""}
-        notification={5}
+        notification={0}
       />
 
       <div className="pt-14">

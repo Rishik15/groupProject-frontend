@@ -12,7 +12,7 @@ import { CircleStar } from "lucide-react";
 import { Search } from "lucide-react";
 import { Bell } from "lucide-react";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { useEffect } from "react";
 import { socket } from "../../services/sockets/socket";
@@ -26,6 +26,8 @@ export default function Navbar({
   const [open, setOpen] = useState(false);
   const [count, setCount] = useState(notification || 0);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const handleNewNotification = () => {
       setCount((prev) => prev + 1);
@@ -34,8 +36,11 @@ export default function Navbar({
         description: "You have a new chat message",
         variant: "default",
         actionProps: {
-          children: "Close",
-          onPress: () => toast.clear(),
+          children: "View",
+          onPress: () => {
+            toast.clear();
+            navigate(`${parent}/chat`);
+          },
         },
       });
     };
@@ -45,11 +50,11 @@ export default function Navbar({
     return () => {
       socket.off("new_notification", handleNewNotification);
     };
-  }, []);
+  }, [navigate, parent]);
 
   useEffect(() => {
     setCount(notification);
-  }, []);
+  }, [notification]);
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 border-b">
