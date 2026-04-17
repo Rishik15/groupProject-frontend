@@ -7,10 +7,12 @@ const ChatWindow = ({
   user,
   messages,
   setMessages,
+  setUsers,
 }: {
   user: any;
   messages: Message[];
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  setUsers: React.Dispatch<React.SetStateAction<any[]>>;
 }) => {
   const isOnline = user.status === "online";
   const [input, setInput] = useState("");
@@ -54,6 +56,18 @@ const ChatWindow = ({
     };
 
     setMessages((prev) => [...prev, tempMessage]);
+
+    setUsers((prev) =>
+      prev.map((u) => {
+        if (u.conversationId !== user.conversationId) return u;
+
+        return {
+          ...u,
+          lastMessage: messageText,
+          unreadCount: 0,
+        };
+      }),
+    );
 
     setInput("");
 
@@ -105,8 +119,8 @@ const ChatWindow = ({
                   <div
                     className={`max-w-[70%] px-3 py-1.5 text-[13px] shadow-3xl shadow-default-foreground ${
                       isSent
-                        ? "bg-indigo-600 text-white rounded-br-2xl rounded-full"
-                        : "bg-gray-100 border border-gray-300 text-black rounded-full rounded-bl-2xl"
+                        ? "bg-indigo-600 text-white rounded-br-sm rounded-3xl pr-1.5 pl-3"
+                        : "bg-gray-100 border border-gray-300 text-black rounded-3xl rounded-bl-sm"
                     }`}
                   >
                     {msg.text}

@@ -87,7 +87,14 @@ const Chat = () => {
 
     const fetchMessages = async () => {
       const data = await getMessages(convId);
+
       setMessages(data);
+
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.conversationId === convId ? { ...u, unreadCount: 0 } : u,
+        ),
+      );
     };
 
     fetchMessages();
@@ -162,6 +169,7 @@ const Chat = () => {
               user={selectedUser}
               messages={messages}
               setMessages={setMessages}
+              setUsers={setUsers}
             />
           )}
         </div>

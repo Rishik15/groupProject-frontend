@@ -4,3 +4,11 @@ export interface NavbarInterface {
   email: string;
   notification: number;
 }
+
+export type Notification = {
+  id: number;
+  title: string;
+  body: string;
+  type: string;
+  is_read: boolean;
+};

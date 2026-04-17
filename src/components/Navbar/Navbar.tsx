@@ -11,11 +11,17 @@ import { MessageCircle } from "lucide-react";
 import { CircleStar } from "lucide-react";
 import { Search } from "lucide-react";
 import { Bell } from "lucide-react";
+import type { Notification } from "../../utils/Interfaces/navbar";
 
 import { Link, useNavigate } from "react-router-dom";
 
 import { useEffect } from "react";
 import { socket } from "../../services/sockets/socket";
+
+const truncate = (text: string, max = 40) => {
+  if (!text) return "";
+  return text.length > max ? text.slice(0, max) + "..." : text;
+};
 
 export default function Navbar({
   parent,
@@ -25,16 +31,19 @@ export default function Navbar({
 }: NavbarInterface) {
   const [open, setOpen] = useState(false);
   const [count, setCount] = useState(notification || 0);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handleNewNotification = () => {
+    const handleNewNotification = (notif: Notification) => {
+      setNotifications((prev) => [notif, ...prev]);
+
       setCount((prev) => prev + 1);
 
-      toast("New message received", {
-        description: "You have a new chat message",
-        variant: "default",
+      toast(notif.title, {
+        description: truncate(notif.body, 50),
+        timeout: 5000,
         actionProps: {
           children: "View",
           onPress: () => {
