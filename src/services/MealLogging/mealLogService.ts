@@ -10,9 +10,6 @@ const API_BASE_URL =
 const DEFAULT_FOOD_IMAGE_URL =
     "https://placehold.co/400x300/png?text=Food+Item";
 
-const DEFAULT_MEAL_PHOTO_URL =
-    "https://placehold.co/600x400/png?text=Meal+Photo";
-
 const nutritionApi = axios.create({
     baseURL: API_BASE_URL,
     withCredentials: true,
@@ -27,7 +24,6 @@ export interface CreateFoodItemInput {
     image_url?: string;
 }
 
-// Convert raw backend values into the shape the frontend uses everywhere else.
 const normalizeFoodItem = (item: any): FoodItemSuggestion => ({
     food_item_id: Number(item.food_item_id),
     name: String(item.name ?? ""),
@@ -38,9 +34,18 @@ const normalizeFoodItem = (item: any): FoodItemSuggestion => ({
     image_url: item.image_url ?? "",
 });
 
-/**
- * Get all saved food items for the currently logged-in user.
- */
+export const buildBackendMediaUrl = (photoUrl?: string | null): string | null => {
+    if (!photoUrl) {
+        return null;
+    }
+
+    if (/^https?:\/\//i.test(photoUrl)) {
+        return photoUrl;
+    }
+
+    return `${API_BASE_URL}${photoUrl.startsWith("/") ? "" : "/"}${photoUrl}`;
+};
+
 export const getFoodItems = async (): Promise<FoodItemSuggestion[]> => {
     const response = await nutritionApi.get("/nutrition/getFoodItems");
 
@@ -51,9 +56,6 @@ export const getFoodItems = async (): Promise<FoodItemSuggestion[]> => {
     return items.map(normalizeFoodItem);
 };
 
-/**
- * Create a new custom food item before it is used in a meal log.
- */
 export const createFoodItem = async (payload: CreateFoodItemInput) => {
     const response = await nutritionApi.post("/nutrition/createFoodItem", {
         name: payload.name.trim(),
@@ -67,7 +69,6 @@ export const createFoodItem = async (payload: CreateFoodItemInput) => {
     return response.data;
 };
 
-// Match by name after trimming/lowercasing so small casing differences do not matter.
 const findFoodItemByName = (
     items: FoodItemSuggestion[],
     name: string,
@@ -79,10 +80,6 @@ const findFoodItemByName = (
     );
 };
 
-/**
- * Saved food items already have an id.
- * Custom food items need to be created first so the backend can receive ids only.
- */
 const resolveFoodItemId = async (
     item: {
         foodItemId?: number;
@@ -123,11 +120,10 @@ const resolveFoodItemId = async (
     return createdMatch.food_item_id;
 };
 
-/**
- * Build the backend meal log request by resolving every selected/custom food item
- * into a real food_item_id first.
- */
-export const createMealLog = async (payload: CreateMealLogPayload) => {
+export const createMealLog = async (
+    payload: CreateMealLogPayload,
+    photoFile?: File | null,
+) => {
     const existingItems = await getFoodItems();
 
     const resolvedFoodItemIds = await Promise.all(
@@ -147,24 +143,27 @@ export const createMealLog = async (payload: CreateMealLogPayload) => {
         ),
     );
 
-    // Remove duplicates before sending the final meal log request.
     const uniqueFoodItemIds = [...new Set(resolvedFoodItemIds)];
 
-    const response = await nutritionApi.post("/nutrition/logMeal", {
-        name: payload.meal.name.trim(),
-        eaten_at: payload.meal_log.eaten_at,
-        servings: Number(payload.meal_log.servings),
-        notes: payload.meal_log.notes?.trim() || "",
-        photo_url: payload.meal_log.photo_url?.trim() || DEFAULT_MEAL_PHOTO_URL,
-        food_item_ids: uniqueFoodItemIds,
-    });
+    const formData = new FormData();
+    formData.append("name", payload.meal.name.trim());
+    formData.append("eaten_at", payload.meal_log.eaten_at);
+    formData.append("servings", String(payload.meal_log.servings));
+    formData.append("notes", payload.meal_log.notes?.trim() || "");
+    formData.append("food_item_ids", JSON.stringify(uniqueFoodItemIds));
 
-    return response.data;
+    if (photoFile) {
+        formData.append("photo", photoFile);
+    }
+
+    const response = await nutritionApi.post("/nutrition/logMeal", formData);
+
+    return {
+        ...response.data,
+        photo_url: buildBackendMediaUrl(response.data?.photo_url ?? null),
+    };
 };
 
-/**
- * Fetch logged meals for a date range. This is ready for the future meal history UI.
- */
 export const getLoggedMeals = async (
     start_datetime?: string,
     end_datetime?: string,
@@ -174,7 +173,10 @@ export const getLoggedMeals = async (
         end_datetime,
     });
 
-    return response.data?.loggedMeals ?? [];
-};
+    const meals = response.data?.loggedMeals ?? [];
 
-export const getDefaultMealPhotoUrl = () => DEFAULT_MEAL_PHOTO_URL;
+    return meals.map((meal: any) => ({
+        ...meal,
+        photo_url: buildBackendMediaUrl(meal.photo_url ?? null),
+    }));
+};

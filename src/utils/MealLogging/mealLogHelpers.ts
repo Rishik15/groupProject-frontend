@@ -113,7 +113,6 @@ const buildEatenAtIso = (values: MealLogFormValues): string => {
 
 export const buildMealLogPayload = (
     values: MealLogFormValues,
-    photoUrl: string,
 ): CreateMealLogPayload => {
     const totals = calculateMealTotals(values.foodItems);
 
@@ -130,7 +129,6 @@ export const buildMealLogPayload = (
             eaten_at: buildEatenAtIso(values),
             servings: Number(values.servings),
             notes: values.notes.trim(),
-            photo_url: photoUrl,
         },
         food_items: values.foodItems.map((item) => ({
             food_item_id: item.foodItemId,
@@ -139,10 +137,6 @@ export const buildMealLogPayload = (
             protein: parseNutritionValue(item.protein),
             carbs: parseNutritionValue(item.carbs),
             fats: parseNutritionValue(item.fats),
-
-            // Same open question as the meal photo:
-            // local upload can preview in the UI, but without a real upload endpoint
-            // this still needs to fall back to url text or a placeholder on submit.
             image_url: item.imageUrl.trim(),
             is_custom: item.isCustom,
         })),

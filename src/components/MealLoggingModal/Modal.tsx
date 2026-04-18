@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Button,
   Calendar,
@@ -16,10 +16,7 @@ import type {
   FoodItemDraft,
   MealLogFormValues,
 } from "../../utils/Interfaces/MealLogging/mealLog";
-import {
-  createMealLog,
-  getDefaultMealPhotoUrl,
-} from "../../services/MealLogging/mealLogService";
+import { createMealLog } from "../../services/MealLogging/mealLogService";
 import {
   buildMealLogPayload,
   calculateMealTotals,
@@ -38,7 +35,13 @@ interface MealLoggingModalProps {
   onSuccess?: () => void;
 }
 
-// Keep the starting form values in one place so reset logic stays simple.
+const SUPPORTED_IMAGE_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+]);
+
 const getInitialValues = (): MealLogFormValues => ({
   mealType: "breakfast",
   mealName: "",
@@ -51,6 +54,12 @@ const getInitialValues = (): MealLogFormValues => ({
   photoPreviewUrl: "",
 });
 
+const revokeBlobUrl = (url?: string) => {
+  if (url?.startsWith("blob:")) {
+    URL.revokeObjectURL(url);
+  }
+};
+
 export default function MealLoggingModal({
   isOpen,
   onOpenChange,
@@ -60,17 +69,23 @@ export default function MealLoggingModal({
     useState<MealLogFormValues>(getInitialValues());
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Recalculate meal totals whenever the food item list changes.
   const totals = useMemo(
     () => calculateMealTotals(formValues.foodItems),
     [formValues.foodItems],
   );
 
   const resetForm = () => {
-    setFormValues(getInitialValues());
+    setFormValues((prev) => {
+      revokeBlobUrl(prev.photoPreviewUrl);
+
+      prev.foodItems.forEach((item) => {
+        revokeBlobUrl(item.imagePreviewUrl);
+      });
+
+      return getInitialValues();
+    });
   };
 
-  // Generic updater for top-level modal form fields.
   const updateField = <K extends keyof MealLogFormValues>(
     field: K,
     value: MealLogFormValues[K],
@@ -102,14 +117,20 @@ export default function MealLoggingModal({
   };
 
   const handleRemoveFoodItem = (clientId: string) => {
-    setFormValues((prev) => ({
-      ...prev,
-      foodItems: prev.foodItems.filter((item) => item.clientId !== clientId),
-    }));
+    setFormValues((prev) => {
+      const itemToRemove = prev.foodItems.find(
+        (item) => item.clientId === clientId,
+      );
+
+      revokeBlobUrl(itemToRemove?.imagePreviewUrl);
+
+      return {
+        ...prev,
+        foodItems: prev.foodItems.filter((item) => item.clientId !== clientId),
+      };
+    });
   };
 
-  // Store a local uploaded image for an individual food item.
-  // This gives the user preview support even though the backend still expects a URL later.
   const handleFoodItemPhotoChange = (clientId: string, file: File | null) => {
     setFormValues((prev) => ({
       ...prev,
@@ -117,6 +138,8 @@ export default function MealLoggingModal({
         if (item.clientId !== clientId) {
           return item;
         }
+
+        revokeBlobUrl(item.imagePreviewUrl);
 
         if (!file) {
           return {
@@ -135,9 +158,17 @@ export default function MealLoggingModal({
     }));
   };
 
-  // Store a local uploaded image for the overall meal photo.
   const handlePhotoChange = (file: File | null) => {
+    revokeBlobUrl(formValues.photoPreviewUrl);
+
     if (!file) {
+      updateField("photoFile", null);
+      updateField("photoPreviewUrl", "");
+      return;
+    }
+
+    if (!SUPPORTED_IMAGE_TYPES.has(file.type)) {
+      console.error("Unsupported file type selected.");
       updateField("photoFile", null);
       updateField("photoPreviewUrl", "");
       return;
@@ -158,15 +189,12 @@ export default function MealLoggingModal({
     try {
       setIsSubmitting(true);
 
-      // Backend still expects a photo_url string, so keep using the default placeholder
-      // until real upload-to-URL support is added.
-      const photoUrl = getDefaultMealPhotoUrl();
-
-      const payload = buildMealLogPayload(formValues, photoUrl);
+      const payload = buildMealLogPayload(formValues);
 
       console.log("Meal log payload:", payload);
+      console.log("Meal photo file:", formValues.photoFile);
 
-      await createMealLog(payload);
+      await createMealLog(payload, formValues.photoFile);
 
       resetForm();
       onOpenChange(false);
@@ -177,6 +205,15 @@ export default function MealLoggingModal({
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      revokeBlobUrl(formValues.photoPreviewUrl);
+      formValues.foodItems.forEach((item) => {
+        revokeBlobUrl(item.imagePreviewUrl);
+      });
+    };
+  }, [formValues.photoPreviewUrl, formValues.foodItems]);
 
   return (
     <Modal>
@@ -195,8 +232,6 @@ export default function MealLoggingModal({
                   <Header />
                 </Modal.Header>
 
-                {/* Keep padding off the scrollable body itself so the scrollbar
-                    stays flush with the modal edge. */}
                 <Modal.Body className="p-0">
                   <div className="space-y-6 px-6 py-2">
                     <MealTypeSelector
@@ -361,7 +396,7 @@ export default function MealLoggingModal({
                         <input
                           id="meal-photo-input"
                           type="file"
-                          accept="image/*"
+                          accept="image/jpeg,image/png,image/gif,image/webp"
                           className="hidden"
                           onChange={(event) =>
                             handlePhotoChange(event.target.files?.[0] ?? null)
@@ -381,11 +416,13 @@ export default function MealLoggingModal({
                         </Button>
 
                         {formValues.photoPreviewUrl && (
-                          <img
-                            src={formValues.photoPreviewUrl}
-                            alt="Meal preview"
-                            className="h-40 w-full rounded-xl object-cover"
-                          />
+                          <div className="flex h-40 w-full items-center justify-center overflow-hidden rounded-xl border border-default-200 bg-default-50 p-2">
+                            <img
+                              src={formValues.photoPreviewUrl}
+                              alt="Meal preview"
+                              className="max-h-full max-w-full object-contain"
+                            />
+                          </div>
                         )}
                       </div>
                     </div>
