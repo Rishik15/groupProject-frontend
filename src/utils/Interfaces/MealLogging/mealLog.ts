@@ -29,10 +29,9 @@ export interface FoodItemDraft {
     carbs: string;
     fats: string;
 
-    // Keep the backend-facing url field for now.
     imageUrl: string;
 
-    // Local upload support for the UI, same idea as the meal photo.
+    // Still UI-only for now.
     imageFile: File | null;
     imagePreviewUrl: string;
 
@@ -43,11 +42,8 @@ export interface MealLogFormValues {
     mealType: MealType;
     mealName: string;
     foodItems: FoodItemDraft[];
-
-    // Split date and time so HeroUI can manage each field cleanly.
     eatenOn: DateValue | null;
     eatenTime: TimeValue | null;
-
     servings: string;
     notes: string;
     photoFile: File | null;
@@ -67,7 +63,6 @@ export interface CreateMealLogPayload {
         eaten_at: string;
         servings: number;
         notes: string;
-        photo_url: string;
     };
     food_items: Array<{
         food_item_id?: number;

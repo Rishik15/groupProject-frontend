@@ -5,6 +5,7 @@ import NutritionTabs from "../../components/NutritionPage/Tabs";
 
 const Nutrition = () => {
     const [isMealModalOpen, setIsMealModalOpen] = useState(false);
+    const [mealsRefreshKey, setMealsRefreshKey] = useState(0);
 
     return (
         <section className="bg-[#F7F7FB]">
@@ -12,7 +13,7 @@ const Nutrition = () => {
 
             <div className="px-36 py-6">
                 <div className="flex items-left">
-                    <NutritionTabs />
+                    <NutritionTabs key={mealsRefreshKey} />
                 </div>
             </div>
 
@@ -20,7 +21,7 @@ const Nutrition = () => {
                 isOpen={isMealModalOpen}
                 onOpenChange={setIsMealModalOpen}
                 onSuccess={() => {
-                    console.log("Meal logged successfully");
+                    setMealsRefreshKey((prev) => prev + 1);
                 }}
             />
         </section>
