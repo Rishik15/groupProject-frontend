@@ -119,8 +119,8 @@ const ChatWindow = ({
                   <div
                     className={`max-w-[70%] px-3 py-1.5 text-[13px] shadow-3xl shadow-default-foreground ${
                       isSent
-                        ? "bg-indigo-600 text-white rounded-br-sm rounded-3xl pr-1.5 pl-3"
-                        : "bg-gray-100 border border-gray-300 text-black rounded-3xl rounded-bl-sm"
+                        ? "bg-indigo-600 text-white rounded-br-sm rounded-2xl"
+                        : "bg-gray-100 border border-gray-300 text-black rounded-2xl rounded-bl-sm"
                     }`}
                   >
                     {msg.text}

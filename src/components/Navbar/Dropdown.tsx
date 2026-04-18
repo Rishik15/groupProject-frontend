@@ -3,7 +3,7 @@ import { logout } from "../../services/auth/logout";
 import { useAuth } from "../../utils/auth/AuthContext";
 import { socket } from "../../services/sockets/socket";
 
-const DropdownItem = ({
+const Dropdownaction = ({
   label,
   route,
   danger,
@@ -47,4 +47,4 @@ const DropdownItem = ({
   );
 };
 
-export default DropdownItem;
+export default Dropdownaction;
