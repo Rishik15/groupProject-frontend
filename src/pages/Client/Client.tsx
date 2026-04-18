@@ -1,12 +1,15 @@
 import { Routes, Route } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
+import Nutrition from "./Nutrition";
 import { useAuth } from "../../utils/auth/AuthContext";
+
 import ClientDashBoard from "./Dashboard";
 import Chat from "../Chat/Chat";
 import { useEffect, useState } from "react";
 import { getNotifications } from "../../services/notifications/getNotifications";
 import { toast } from "@heroui/react";
 import { useRef } from "react";
+import CreateWorkoutPlan from "./CreateWorkoutPlan";
 
 const ClientLayout = () => {
   const { user } = useAuth();
@@ -53,6 +56,8 @@ const ClientLayout = () => {
         <Routes>
           <Route index element={<ClientDashBoard />} />
           <Route path="chat" element={<Chat />} />
+          <Route path="nutrition" element={<Nutrition />} />
+          <Route path="createWorkout" element={<CreateWorkoutPlan />} />
         </Routes>
       </div>
     </section>
