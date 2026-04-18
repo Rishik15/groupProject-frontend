@@ -22,10 +22,6 @@ const ClientLayout = () => {
         <Routes>
           <Route index element={<ClientDashBoard />} />
           <Route path="nutrition" element={<Nutrition />} />
-          <Route path="chat" element={<Chat />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="coaches" element={<BrowseCoaches />} />
-          <Route path="workouts" element={<Workouts />} />
           <Route path="createWorkout" element={<CreateWorkoutPlan />} />
         </Routes>
       </div>
