@@ -7,6 +7,8 @@ import { login } from "../../services/auth/login";
 import { validateSignIn } from "../../utils/auth/validateInputs";
 import Modal from "../../components/global/Modal";
 import { useAuth } from "../../utils/auth/AuthContext";
+import GoogleAuthButton from "../../components/auth/GoogleAuthButton";
+import { startGoogleLogin } from "../../services/auth/googleLogin";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -15,17 +17,17 @@ const SignIn = () => {
   const [modalMessage, setModalMessage] = useState("");
 
   const navigate = useNavigate();
-
   const { refreshAuth, authenticated, role, loading } = useAuth();
 
   useEffect(() => {
-    if (loading) return; 
+    if (loading) return;
 
     if (authenticated) {
       if (role === "coach") navigate("/coach");
       else if (role === "client") navigate("/client");
     }
   }, [authenticated, role, loading, navigate]);
+
   const handleLogin = async () => {
     try {
       const errors = validateSignIn(email, password);
@@ -46,6 +48,11 @@ const SignIn = () => {
       }
 
       await refreshAuth();
+      if (data.role === "coach") {
+        navigate("/coach");
+      } else {
+        navigate("/client");
+      }
     } catch (err: any) {
       let message = "Something went wrong. Please try again.";
 
@@ -74,6 +81,14 @@ const SignIn = () => {
           />
 
           <SignFooter onSubmit={handleLogin} />
+
+          <div className="my-4 flex items-center gap-3">
+            <div className="h-px flex-1 bg-default-200" />
+            <span className="text-sm text-default-500">or</span>
+            <div className="h-px flex-1 bg-default-200" />
+          </div>
+
+          <GoogleAuthButton onPress={startGoogleLogin} />
         </section>
       </div>
 
