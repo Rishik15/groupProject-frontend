@@ -4,9 +4,12 @@ import { Button } from "@heroui/react";
 import { getAuth } from "../../services/auth/checkAuth";
 import { updateRole } from "../../services/auth/updateRole";
 import RoleSelector from "../Register/RoleSelection";
+import { useAuth } from "../../utils/auth/AuthContext";
 
 const AuthComplete = () => {
     const navigate = useNavigate();
+    const { refreshAuth } = useAuth();
+
 
     const [loading, setLoading] = useState(true);
     const [submittingRole, setSubmittingRole] = useState(false);
@@ -51,6 +54,7 @@ const AuthComplete = () => {
             setSubmittingRole(true);
 
             const data = await updateRole(selectedRole as "coach" | "client");
+            await refreshAuth();
 
             if (data.role === "coach") {
                 navigate("/onboarding/coach", { replace: true });
