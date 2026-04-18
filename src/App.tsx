@@ -9,6 +9,8 @@ import LandingPage from "./pages/LandingPage/LandingPage";
 import OnboardingSurveyPage from "./pages/OnboardingSurvey/OnboardingSurveyPage";
 import AuthComplete from "./components/auth/Handler";
 
+import AdminDashBoard from "./pages/Admin/Dashboard";
+
 function App() {
   return (
     <AuthProvider>
@@ -16,6 +18,8 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/admin" element={<AdminDashBoard />} />
+
           <Route path="/signin" element={<SignIn />} />
           <Route path="/auth/complete" element={<AuthComplete />} />
           <Route
