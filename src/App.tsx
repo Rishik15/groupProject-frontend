@@ -7,6 +7,7 @@ import CoachLayout from "./pages/Coach/Coach";
 import ClientLayout from "./pages/Client/Client";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import OnboardingSurveyPage from "./pages/OnboardingSurvey/OnboardingSurveyPage";
+import AuthComplete from "./components/auth/Handler";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/signin" element={<SignIn />} />
+          <Route path="/auth/complete" element={<AuthComplete />} />
           <Route
             path="/coach/*"
             element={
