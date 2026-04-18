@@ -3,7 +3,7 @@ import { Avatar, Badge } from "@heroui/react";
 import type { NavbarInterface } from "../../utils/Interfaces/navbar";
 import NavLink from "./Navlink";
 import DropdownItem from "./Dropdown";
-
+import { toast } from "@heroui/react";
 import { House } from "lucide-react";
 import { Dumbbell } from "lucide-react";
 import { Refrigerator } from "lucide-react";
@@ -14,6 +14,8 @@ import { Bell } from "lucide-react";
 
 import { Link } from "react-router-dom";
 
+import { useEffect } from "react";
+
 export default function Navbar({
   parent,
   name,
@@ -21,6 +23,32 @@ export default function Navbar({
   notification,
 }: NavbarInterface) {
   const [open, setOpen] = useState(false);
+  const [count, setCount] = useState(notification || 0);
+
+  // useEffect(() => {
+  //   const handleNewNotification = () => {
+  //     setCount((prev) => prev + 1);
+
+  //     toast("New message received", {
+  //       description: "You have a new chat message",
+  //       variant: "default",
+  //       actionProps: {
+  //         children: "Close",
+  //         onPress: () => toast.clear(),
+  //       },
+  //     });
+  //   };
+
+  //   socket.on("new_notification", handleNewNotification);
+
+  //   return () => {
+  //     socket.off("new_notification", handleNewNotification);
+  //   };
+  // }, []);
+
+  useEffect(() => {
+    setCount(notification);
+  }, []);
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 border-b">
@@ -74,9 +102,9 @@ export default function Navbar({
           <div className="hover:bg-gray-200 rounded-3xl w-10 h-10 p-2">
             <Badge.Anchor className="mt-px">
               <Bell className="w-5.5 h-5.5" />
-              {notification && notification > 0 && (
+              {count && count > 0 && (
                 <Badge color="danger" size="sm" className="-translate-y-0.5">
-                  {notification}
+                  {count}
                 </Badge>
               )}
             </Badge.Anchor>

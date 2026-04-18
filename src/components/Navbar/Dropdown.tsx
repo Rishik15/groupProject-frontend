@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../services/auth/logout";
 import { useAuth } from "../../utils/auth/AuthContext";
-import { socket } from "../../services/sockets/socket";
 
 const DropdownItem = ({
   label,
@@ -21,10 +20,6 @@ const DropdownItem = ({
     if (type === "logout") {
       await logout();
       clearAuth();
-
-      if (socket.connected) {
-        socket.disconnect();
-      }
 
       navigate("/");
       return;
