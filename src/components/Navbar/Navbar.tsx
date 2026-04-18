@@ -52,7 +52,7 @@ export default function Navbar({
 
       toast(notif.title, {
         description: truncate(notif.body, 50),
-        timeout: 10000,
+        timeout: 5000,
       });
     };
 
