@@ -22,9 +22,10 @@ interface AddSessionModalProps {
     defaultDate: string;
     defaultStartTime: string;
     editingEvent?: WorkoutCalendarEvent | null;
-    onCreate: (input: CreateWorkoutCalendarEventInput) => void;
-    onUpdate: (eventId: string, input: CreateWorkoutCalendarEventInput) => void;
-    onDelete: (eventId: string) => void;
+    onCreate: (input: CreateWorkoutCalendarEventInput) => void | Promise<unknown>;
+    onUpdate: (eventId: string, input: CreateWorkoutCalendarEventInput) => void | Promise<unknown>;
+    onDelete: (eventId: string) => void | Promise<unknown>;
+    onSetActive?: (eventId: string) => void | Promise<unknown>;
 }
 
 interface AddSessionFormState {
@@ -62,6 +63,7 @@ export default function AddSessionModal({
     onCreate,
     onUpdate,
     onDelete,
+    onSetActive,
 }: AddSessionModalProps) {
     const initialState = useMemo<AddSessionFormState>(
         () => ({
@@ -81,10 +83,12 @@ export default function AddSessionModal({
     );
 
     const [form, setForm] = useState<AddSessionFormState>(initialState);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
             setForm(initialState);
+            setIsSubmitting(false);
         }
     }, [initialState, isOpen]);
 
@@ -128,6 +132,13 @@ export default function AddSessionModal({
     );
 
     const isEditing = Boolean(editingEvent && editingEvent.source !== "active-session");
+    const canSetActive = Boolean(
+        isEditing &&
+        editingEvent &&
+        editingEvent.source !== "active-session" &&
+        editingEvent.status === "scheduled" &&
+        onSetActive,
+    );
 
     function updateField<K extends keyof AddSessionFormState>(
         field: K,
@@ -139,45 +150,72 @@ export default function AddSessionModal({
         }));
     }
 
-    function handleSubmit() {
-        if (!form.title.trim()) {
+    async function handleSubmit() {
+        if (!form.title.trim() || isSubmitting) {
             return;
         }
 
-        const safeStartTime = normalizeTimeForInput(form.startTime);
-        const safeEndTime = normalizeTimeForInput(form.endTime);
+        setIsSubmitting(true);
 
-        const payload: CreateWorkoutCalendarEventInput = {
-            title: form.title.trim(),
-            date: form.date,
-            startTime: safeStartTime,
-            endTime: safeEndTime,
-            kind: form.kind,
-            status: normalizeStatusForRange(
-                form.status,
-                form.date,
-                safeStartTime,
-                safeEndTime,
-            ),
-            notes: form.notes.trim() || undefined,
-        };
+        try {
+            const safeStartTime = normalizeTimeForInput(form.startTime);
+            const safeEndTime = normalizeTimeForInput(form.endTime);
 
-        if (isEditing && editingEvent) {
-            onUpdate(editingEvent.id, payload);
-        } else {
-            onCreate(payload);
+            const payload: CreateWorkoutCalendarEventInput = {
+                title: form.title.trim(),
+                date: form.date,
+                startTime: safeStartTime,
+                endTime: safeEndTime,
+                kind: form.kind,
+                status: normalizeStatusForRange(
+                    form.status,
+                    form.date,
+                    safeStartTime,
+                    safeEndTime,
+                ),
+                notes: form.notes.trim() || undefined,
+            };
+
+            if (isEditing && editingEvent) {
+                await onUpdate(editingEvent.id, payload);
+            } else {
+                await onCreate(payload);
+            }
+
+            onOpenChange(false);
+        } finally {
+            setIsSubmitting(false);
         }
-
-        onOpenChange(false);
     }
 
-    function handleDelete() {
-        if (!editingEvent || editingEvent.source === "active-session") {
+    async function handleDelete() {
+        if (!editingEvent || editingEvent.source === "active-session" || isSubmitting) {
             return;
         }
 
-        onDelete(editingEvent.id);
-        onOpenChange(false);
+        setIsSubmitting(true);
+
+        try {
+            await onDelete(editingEvent.id);
+            onOpenChange(false);
+        } finally {
+            setIsSubmitting(false);
+        }
+    }
+
+    async function handleSetActive() {
+        if (!editingEvent || !onSetActive || isSubmitting) {
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            await onSetActive(editingEvent.id);
+            onOpenChange(false);
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     return (
@@ -215,6 +253,7 @@ export default function AddSessionModal({
                                     className="rounded-xl px-3 py-2 text-[11.25px] font-semibold text-[#0F0F14] transition"
                                     style={{ border: "1px solid #5E5EF466" }}
                                     onClick={() => onOpenChange(false)}
+                                    disabled={isSubmitting}
                                 >
                                     Close
                                 </button>
@@ -254,6 +293,7 @@ export default function AddSessionModal({
                                         <Button
                                             variant="ghost"
                                             onPress={handleDelete}
+                                            isDisabled={isSubmitting}
                                             className="w-full sm:w-auto text-[11.25px] font-semibold text-[#0F0F14]"
                                             style={{ border: "1px solid #5E5EF466" }}
                                         >
@@ -266,15 +306,29 @@ export default function AddSessionModal({
                                     <Button
                                         variant="ghost"
                                         onPress={() => onOpenChange(false)}
+                                        isDisabled={isSubmitting}
                                         className="w-full sm:w-auto text-[11.25px] font-semibold text-[#0F0F14]"
                                         style={{ border: "1px solid #5E5EF466" }}
                                     >
                                         Cancel
                                     </Button>
 
+                                    {canSetActive ? (
+                                        <Button
+                                            variant="outline"
+                                            onPress={handleSetActive}
+                                            isDisabled={isSubmitting}
+                                            className="w-full sm:w-auto text-[11.25px] font-semibold text-[#5E5EF4]"
+                                            style={{ borderColor: "#5E5EF466" }}
+                                        >
+                                            Set Active
+                                        </Button>
+                                    ) : null}
+
                                     <Button
                                         variant="primary"
                                         onPress={handleSubmit}
+                                        isDisabled={isSubmitting}
                                         className="w-full sm:w-auto text-[11.25px] font-semibold text-white"
                                         style={{ backgroundColor: "#5E5EF4" }}
                                     >

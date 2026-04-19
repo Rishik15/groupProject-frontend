@@ -1,44 +1,63 @@
-import { type DragEvent, useMemo } from "react";
+import { useMemo, useState } from "react";
 
-import AddSessionModal from "./AddSessionModal";
-import ScheduleGrid from "./ScheduleGrid";
-import ScheduleHeader from "./ScheduleHeader";
-import ScheduleLegend from "./ScheduleLegend";
 import type { WorkoutCalendarEvent } from "../../utils/Interfaces/WorkoutLog/workoutLog";
-import useWorkoutSchedule, { toDateString } from "../../utils/WorkoutLog/useWorkoutSchedule";
-import useWorkoutScheduleView from "../../utils/WorkoutLog/useWorkoutScheduleView";
-import { ROW_HEIGHT } from "./constants";
+import useWorkoutSchedule, {
+    toDateString,
+} from "../../utils/WorkoutLog/useWorkoutSchedule";
+import AddSessionModal from "./AddSessionModal";
+import CossWorkoutCalendar from "./CossWorkoutCalendar";
 
 interface WeeklyWorkoutScheduleProps {
     refreshToken?: number;
     onOpenWorkoutLog: (event?: WorkoutCalendarEvent | null) => void;
 }
 
+function startOfMonth(date: Date) {
+    return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
+function endOfMonth(date: Date) {
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+}
+
+function startOfWeek(date: Date) {
+    const nextDate = new Date(date);
+    nextDate.setHours(0, 0, 0, 0);
+    nextDate.setDate(nextDate.getDate() - nextDate.getDay());
+    return nextDate;
+}
+
+function endOfWeek(date: Date) {
+    const nextDate = startOfWeek(date);
+    nextDate.setDate(nextDate.getDate() + 6);
+    return nextDate;
+}
+
+function getHourFromTime(time: string) {
+    const [hours = "0"] = time.split(":");
+    const parsed = Number(hours);
+    return Number.isFinite(parsed) ? parsed : 0;
+}
+
 export default function WeeklyWorkoutSchedule({
     refreshToken = 0,
     onOpenWorkoutLog,
 }: WeeklyWorkoutScheduleProps) {
-    const {
-        weekDays,
-        weekStart,
-        isAddSessionOpen,
-        selectedDate,
-        selectedStartTime,
-        editingEvent,
-        draggedEventId,
-        setDraggedEventId,
-        setEditingEvent,
-        handleModalOpenChange,
-        openAddSession,
-        openEditSession,
-        openAddSessionFromSelectedDate,
-        goToPreviousWeek,
-        goToNextWeek,
-        jumpToNow,
-    } = useWorkoutScheduleView();
+    const [currentDate, setCurrentDate] = useState(new Date());
+    const [isAddSessionOpen, setIsAddSessionOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(() => toDateString(new Date()));
+    const [selectedStartTime, setSelectedStartTime] = useState("06:00");
+    const [editingEvent, setEditingEvent] = useState<WorkoutCalendarEvent | null>(null);
 
-    const weekStartString = toDateString(weekDays[0]);
-    const weekEndString = toDateString(weekDays[6]);
+    const rangeStart = useMemo(
+        () => toDateString(startOfWeek(startOfMonth(currentDate))),
+        [currentDate],
+    );
+
+    const rangeEnd = useMemo(
+        () => toDateString(endOfWeek(endOfMonth(currentDate))),
+        [currentDate],
+    );
 
     const {
         events,
@@ -51,15 +70,14 @@ export default function WeeklyWorkoutSchedule({
         moveLocalEvent,
         removeLocalEvent,
         setEventActive,
-    } = useWorkoutSchedule(refreshToken, weekStartString, weekEndString);
+    } = useWorkoutSchedule(refreshToken, rangeStart, rangeEnd);
 
-    const visibleEvents = useMemo(
-        () =>
-            events.filter(
-                (event) => event.date >= weekStartString && event.date <= weekEndString,
-            ),
-        [events, weekEndString, weekStartString],
-    );
+    function handleOpenAddSession(date: Date) {
+        setEditingEvent(null);
+        setSelectedDate(toDateString(date));
+        setSelectedStartTime("06:00");
+        setIsAddSessionOpen(true);
+    }
 
     function handleOpenEditSession(event: WorkoutCalendarEvent) {
         if (event.source === "active-session") {
@@ -67,98 +85,41 @@ export default function WeeklyWorkoutSchedule({
             return;
         }
 
-        openEditSession(event);
+        setEditingEvent(event);
+        setSelectedDate(event.date);
+        setSelectedStartTime(event.startTime);
+        setIsAddSessionOpen(true);
     }
 
-    function handleEventDragStart(
-        event: DragEvent<HTMLElement>,
-        workoutEvent: WorkoutCalendarEvent,
-    ) {
-        const isAttachedActive =
-            activeSessionId != null &&
-            workoutEvent.sessionId != null &&
-            workoutEvent.sessionId === activeSessionId;
-
-        if (workoutEvent.source === "active-session" || isAttachedActive) {
+    async function handleMoveEventToDate(eventId: string, nextDate: string) {
+        const targetEvent = events.find((event) => event.id === eventId);
+        if (!targetEvent) {
             return;
         }
 
-        setDraggedEventId(workoutEvent.id);
-        event.dataTransfer.effectAllowed = "move";
-        event.dataTransfer.setData("text/plain", workoutEvent.id);
-    }
-
-    function handleEventDragEnd() {
-        setDraggedEventId(null);
-    }
-
-    function handleDayColumnDrop(
-        event: DragEvent<HTMLDivElement>,
-        targetDate: string,
-    ) {
-        event.preventDefault();
-
-        if (!draggedEventId) {
-            return;
-        }
-
-        const targetEvent = visibleEvents.find((workoutEvent) => workoutEvent.id === draggedEventId);
         const isAttachedActive =
             activeSessionId != null &&
-            targetEvent?.sessionId != null &&
+            targetEvent.sessionId != null &&
             targetEvent.sessionId === activeSessionId;
 
-        if (isAttachedActive) {
-            setDraggedEventId(null);
+        if (targetEvent.source === "active-session" || isAttachedActive) {
             return;
         }
 
-        const bounds = event.currentTarget.getBoundingClientRect();
-        const offsetY = event.clientY - bounds.top;
-        const targetHour = Math.max(0, Math.min(23, Math.floor(offsetY / ROW_HEIGHT)));
+        const nextHour = getHourFromTime(targetEvent.startTime);
 
-        void moveLocalEvent(draggedEventId, targetDate, targetHour);
-        setDraggedEventId(null);
-    }
-
-    function handleDayColumnDragOver(event: DragEvent<HTMLDivElement>) {
-        if (!draggedEventId) {
-            return;
+        try {
+            await moveLocalEvent(eventId, nextDate, nextHour);
+        } catch (error) {
+            console.error("[Workout Schedule] failed to move schedule event", error);
         }
-
-        event.preventDefault();
-        event.dataTransfer.dropEffect = "move";
-    }
-
-    async function handleSetActiveSession(event: WorkoutCalendarEvent) {
-        await setEventActive(event.id);
-    }
-
-    function handleLogWorkoutFromEvent() {
-        onOpenWorkoutLog(activeEvent);
     }
 
     return (
-        <section
-            className="rounded-3xl bg-white p-6 shadow-sm"
-            style={{ border: "1px solid #5E5EF44D" }}
-        >
-            <ScheduleHeader
-                weekStart={weekStart}
-                weekEnd={weekDays[6]}
-                activeEvent={activeEvent}
-                onAddSession={openAddSessionFromSelectedDate}
-                onLogWorkout={() => onOpenWorkoutLog(activeEvent)}
-                onPreviousWeek={goToPreviousWeek}
-                onNextWeek={goToNextWeek}
-                onJumpToNow={jumpToNow}
-            />
-
-            <ScheduleLegend />
-
+        <>
             {errorMessage ? (
                 <div
-                    className="mt-4 rounded-2xl px-4 py-3 text-[11.25px] text-[#72728A]"
+                    className="mb-4 rounded-2xl px-4 py-3 text-[11.25px] text-[#72728A]"
                     style={{
                         border: "1px solid #5E5EF44D",
                         backgroundColor: "#5E5EF414",
@@ -168,27 +129,23 @@ export default function WeeklyWorkoutSchedule({
                 </div>
             ) : null}
 
-            <ScheduleGrid
-                weekDays={weekDays}
-                visibleEvents={visibleEvents}
+            <CossWorkoutCalendar
+                currentDate={currentDate}
+                events={events}
                 isLoading={isLoading}
-                draggedEventId={draggedEventId}
-                activeSessionId={activeSessionId}
-                onOpenAddSession={openAddSession}
+                onCurrentDateChange={setCurrentDate}
+                onAddSession={handleOpenAddSession}
                 onEditSession={handleOpenEditSession}
-                onDeleteSession={removeLocalEvent}
-                onSetActiveSession={handleSetActiveSession}
-                onLogWorkout={handleLogWorkoutFromEvent}
-                onEventDragStart={handleEventDragStart}
-                onEventDragEnd={handleEventDragEnd}
-                onDayColumnDrop={handleDayColumnDrop}
-                onDayColumnDragOver={handleDayColumnDragOver}
+                onMoveEventToDate={handleMoveEventToDate}
+                onLogWorkout={
+                    activeEvent ? () => onOpenWorkoutLog(activeEvent) : undefined
+                }
             />
 
             <AddSessionModal
                 isOpen={isAddSessionOpen}
                 onOpenChange={(open) => {
-                    handleModalOpenChange(open);
+                    setIsAddSessionOpen(open);
                     if (!open) {
                         setEditingEvent(null);
                     }
@@ -199,7 +156,8 @@ export default function WeeklyWorkoutSchedule({
                 onCreate={addLocalEvent}
                 onUpdate={updateLocalEvent}
                 onDelete={removeLocalEvent}
+                onSetActive={setEventActive}
             />
-        </section>
+        </>
     );
 }
