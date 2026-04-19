@@ -48,7 +48,7 @@ export default function CoachCard({ coach }: { coach: Coach }) {
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-[#5B5EF4]/10 flex items-center justify-center shrink-0">
             <span className="text-sm font-semibold text-[#5B5EF4]">
-              {coach.first_name[0]}{coach.last_name[0]}
+              {coach.first_name?.[0] ?? ""}{coach.last_name?.[0] ?? ""}
             </span>
           </div>
           <div>
