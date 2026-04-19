@@ -9,8 +9,8 @@ import {
 } from "recharts";
 import { ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
-import { getWeight } from "../../services/dashboard/client/getMetrics";
-import { getNutrition } from "../../services/dashboard/client/getNutrition";
+import { getWeight } from "../../../services/dashboard/client/getMetrics";
+import { getNutrition } from "../../../services/dashboard/client/getNutrition";
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {

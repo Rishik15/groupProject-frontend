@@ -10,8 +10,8 @@ import {
   CartesianGrid,
 } from "recharts";
 import { useEffect, useState } from "react";
-import { getCaloriesMetrics } from "../../services/dashboard/client/getCalories";
-import { getWorkoutCompletion } from "../../services/dashboard/client/getWorkout";
+import { getCaloriesMetrics } from "../../../services/dashboard/client/getCalories";
+import { getWorkoutCompletion } from "../../../services/dashboard/client/getWorkout";
 
 const SessionTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
