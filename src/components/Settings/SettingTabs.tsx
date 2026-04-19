@@ -1,6 +1,6 @@
 import { Tabs } from "@heroui/react";
 import { InfoTab } from "./InfoTab";
-import ProgressPhoto from "./ProgressPhoto";
+import ProgressPhotos from "./ProgressPhotos";
 import SettingOptions from "./SettingsOptions";
 import {
   MessageCircle,
@@ -56,29 +56,47 @@ const SettingTab = ({
       {
         id: "info",
         label: "Info",
-        component: <InfoTab role="client" form={form} setForm={setForm} edit={edit} />,
+        component: (
+          <InfoTab
+            role="client"
+            form={form}
+            setForm={setForm}
+            edit={edit}
+          />
+        ),
       },
       {
         id: "photos",
         label: "Progress Photos",
-        component: <ProgressPhoto />,
+        component: <ProgressPhotos />,
       },
       {
         id: "settings",
         label: "Settings",
-        component: <SettingOptions options={clientOptions} onLogout={logout} />,
+        component: (
+          <SettingOptions options={clientOptions} onLogout={logout} />
+        ),
       },
     ],
     coach: [
       {
         id: "info",
         label: "Info",
-        component: <InfoTab role="coach" form={form} setForm={setForm} edit={edit} />,
+        component: (
+          <InfoTab
+            role="coach"
+            form={form}
+            setForm={setForm}
+            edit={edit}
+          />
+        ),
       },
       {
         id: "settings",
         label: "Settings",
-        component: <SettingOptions options={coachOptions} onLogout={logout} />,
+        component: (
+          <SettingOptions options={coachOptions} onLogout={logout} />
+        ),
       },
     ],
     admin: [
@@ -90,15 +108,15 @@ const SettingTab = ({
     ],
   };
 
-  const tabs = tabsConfig[role];
+  const tabs = tabsConfig[role] ?? [];
 
   return (
-    <div className="w-full flex">
+    <div className="flex w-full">
       <Tabs
         selectedKey={selectedTab}
         onSelectionChange={(key) => setSelectedTab(String(key))}
       >
-        <Tabs.List className="flex w-fit p-0 bg-transparent gap-4">
+        <Tabs.List className="flex w-fit gap-4 bg-transparent p-0">
           {tabs.map((tabItem) => (
             <Tabs.Tab
               key={tabItem.id}
@@ -113,7 +131,7 @@ const SettingTab = ({
 
         {tabs.map((tabItem) => (
           <Tabs.Panel key={tabItem.id} id={tabItem.id}>
-            <div className="w-full max-w-3xl mx-auto mt-4 flex justify-center">
+            <div className="mx-auto mt-4 flex w-full max-w-3xl justify-center">
               {tabItem.component}
             </div>
           </Tabs.Panel>
