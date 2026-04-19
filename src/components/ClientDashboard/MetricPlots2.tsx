@@ -9,43 +9,24 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
-
-const sessionData = [
-  { day: "Mon", completed: 1, planned: 1 },
-  { day: "Tue", completed: 1, planned: 1 },
-  { day: "Wed", completed: 0, planned: 1 },
-  { day: "Thu", completed: 1, planned: 1 },
-  { day: "Fri", completed: 1, planned: 2 },
-  { day: "Sat", completed: 1, planned: 1 },
-  { day: "Sun", completed: 0, planned: 0 },
-];
-
-const calorieData = [
-  { day: "Mon", actual: 2000 },
-  { day: "Tue", actual: 1800 },
-  { day: "Wed", actual: 2200 },
-  { day: "Thu", actual: 1900 },
-  { day: "Fri", actual: 1800},
-  { day: "Sat", actual: 2300},
-  { day: "Sun", actual: 1450 },
-];
+import { useEffect, useState } from "react";
+import { getCaloriesMetrics } from "../../services/dashboard/client/getCalories";
+import { getWorkoutCompletion } from "../../services/dashboard/client/getWorkout";
 
 const SessionTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
-    const completed = payload.find((p: any) => p.dataKey === "completed")?.value;
+    const completed = payload.find(
+      (p: any) => p.dataKey === "completed",
+    )?.value;
     const planned = payload.find((p: any) => p.dataKey === "planned")?.value;
 
     return (
       <div className="bg-white px-4 py-3 rounded-xl shadow-md border text-sm">
         <p className="font-semibold mb-1">{label}</p>
 
-        <p className="text-[#5B5EF4]">
-          completed : {completed}
-        </p>
+        <p className="text-[#5B5EF4]">completed : {completed}</p>
 
-        <p className="text-gray-500">
-          planned : {planned}
-        </p>
+        <p className="text-gray-500">planned : {planned}</p>
       </div>
     );
   }
@@ -60,9 +41,7 @@ const CaloriesTooltip = ({ active, payload, label }: any) => {
       <div className="bg-white px-4 py-3 rounded-xl shadow-md border text-sm">
         <p className="font-semibold mb-1">{label}</p>
 
-        <p className="text-[#22c55e]">
-          Calorie : {actual}
-        </p>
+        <p className="text-[#22c55e]">Calorie : {actual}</p>
       </div>
     );
   }
@@ -70,23 +49,46 @@ const CaloriesTooltip = ({ active, payload, label }: any) => {
 };
 
 const MetricPlots2 = () => {
+  const [calorieData, setCalorieData] = useState([]);
+  const [sessionData, setSessionData] = useState([]);
+  const [summary, setSummary] = useState({ planned: 0, completed: 0 });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const calData = await getCaloriesMetrics();
+      const formattedCalories = calData.map((d: any) => ({
+        day: d.day,
+        actual: d.calories,
+      }));
+      setCalorieData(formattedCalories);
+
+      const workoutData = await getWorkoutCompletion();
+
+      const formattedSessions = workoutData.days.map((d: any) => ({
+        day: d.day,
+        planned: d.planned,
+        completed: d.completed,
+      }));
+
+      setSessionData(formattedSessions);
+      setSummary(workoutData.summary);
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <section className="flex gap-6 px-38 mt-6">
-      
       <div className="bg-white px-6 py-4 rounded-3xl flex flex-col gap-4 w-full">
-        
         <div className="flex justify-between items-center">
-          <div className="font-semibold text-[14px]">
-            Session Completion
-          </div>
+          <div className="font-semibold text-[14px]">Session Completion</div>
           <div className="text-[12px] text-gray-500">
-            5/7 this week
+            {summary.completed}/{summary.planned} this week
           </div>
         </div>
 
         <ResponsiveContainer width="100%" height={160}>
           <BarChart data={sessionData}>
-            
             <CartesianGrid
               strokeDasharray="3 3"
               vertical={false}
@@ -107,19 +109,11 @@ const MetricPlots2 = () => {
               tick={{ fill: "#6b7280", fontSize: 12 }}
             />
 
-            <Tooltip content={SessionTooltip}/>
+            <Tooltip content={SessionTooltip} />
 
-            <Bar
-              dataKey="planned"
-              fill="#A9A9A9"
-              radius={[4, 4, 0, 0]}
-            />
+            <Bar dataKey="planned" fill="#A9A9A9" radius={[4, 4, 0, 0]} />
 
-            <Bar
-              dataKey="completed"
-              fill="#5B5EF4"
-              radius={[4, 4, 0, 0]}
-            />
+            <Bar dataKey="completed" fill="#5B5EF4" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
 
@@ -136,14 +130,10 @@ const MetricPlots2 = () => {
       </div>
 
       <div className="bg-white py-4 px-6 rounded-3xl flex flex-col gap-4 w-full">
-        
-        <div className="font-semibold text-[14px]">
-          Weekly Calories
-        </div>
+        <div className="font-semibold text-[14px] py-2">Weekly Calories</div>
 
         <ResponsiveContainer width="100%" height={160}>
           <LineChart data={calorieData}>
-            
             <CartesianGrid
               strokeDasharray="3 3"
               vertical={false}
@@ -159,13 +149,13 @@ const MetricPlots2 = () => {
             />
 
             <YAxis
-            domain={["dataMin - 100", "dataMax + 100"]}
+              domain={["dataMin - 100", "dataMax + 100"]}
               axisLine={false}
               tickLine={false}
               tick={{ fill: "#6b7280", fontSize: 12 }}
             />
 
-            <Tooltip content={CaloriesTooltip}/>
+            <Tooltip content={CaloriesTooltip} />
 
             <Line
               type="monotone"
@@ -192,7 +182,6 @@ const MetricPlots2 = () => {
           </div>
         </div>
       </div>
-
     </section>
   );
 };

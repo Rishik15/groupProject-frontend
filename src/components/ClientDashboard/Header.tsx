@@ -15,12 +15,19 @@ const DashboardHeader = () => {
   };
 
   const formattedDate: string = today.toLocaleDateString("en-US", options);
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+
+    if (hour < 12) return "Good Morning";
+    if (hour < 18) return "Good Afternoon";
+    return "Good Evening";
+  };
 
   return (
     <section className="flex justify-between items-center px-38 py-4 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
       <div className="flex flex-col">
         <div className="text-[16px] font-semibold">
-          Good Morning, {user?.first_name}
+          {getGreeting()}, {user?.first_name}
         </div>
         <div className="text-[13px] text-gray-600">{formattedDate}</div>
       </div>
