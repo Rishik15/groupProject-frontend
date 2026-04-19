@@ -4,12 +4,12 @@ import type { ReportReviewItem } from "../../../../utils/Interfaces/Admin/review
 
 interface ReportReviewCardProps {
     report: ReportReviewItem;
-    onOpenReport?: (report: ReportReviewItem) => void;
+    onCloseReport?: (report: ReportReviewItem) => void;
 }
 
 const ReportReviewCard = ({
     report,
-    onOpenReport,
+    onCloseReport,
 }: ReportReviewCardProps) => {
     return (
         <Card className="rounded-[20px] border border-[#DCDCF4] bg-white shadow-none">
@@ -43,10 +43,10 @@ const ReportReviewCard = ({
 
                     <button
                         type="button"
-                        onClick={() => onOpenReport?.(report)}
+                        onClick={() => onCloseReport?.(report)}
                         className="inline-flex h-[42px] items-center justify-center rounded-[13.5px] border border-[#DCDCF4] bg-white px-[18px] text-[13.125px] font-medium leading-[18px] text-[#0F0F14] transition-colors hover:bg-[#F8F8FC]"
                     >
-                        Open report
+                        Close report
                     </button>
                 </div>
             </div>

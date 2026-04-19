@@ -3,13 +3,13 @@ import type { ReportReviewItem } from "../../../../utils/Interfaces/Admin/review
 
 interface ReportsPaneProps {
     reports: ReportReviewItem[];
-    onOpenReport?: (report: ReportReviewItem) => void;
+    onCloseReport?: (report: ReportReviewItem) => void;
     onViewClosedReports?: () => void;
 }
 
 const ReportsPane = ({
     reports,
-    onOpenReport,
+    onCloseReport,
     onViewClosedReports,
 }: ReportsPaneProps) => {
     return (
@@ -32,7 +32,7 @@ const ReportsPane = ({
                 <ReportReviewCard
                     key={report.id}
                     report={report}
-                    onOpenReport={onOpenReport}
+                    onCloseReport={onCloseReport}
                 />
             ))}
         </div>

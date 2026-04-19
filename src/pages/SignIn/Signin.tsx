@@ -48,11 +48,7 @@ const SignIn = () => {
       }
 
       await refreshAuth();
-      if (data.role === "coach") {
-        navigate("/coach");
-      } else {
-        navigate("/client");
-      }
+      navigate("/auth/complete");
     } catch (err: any) {
       let message = "Something went wrong. Please try again.";
 
