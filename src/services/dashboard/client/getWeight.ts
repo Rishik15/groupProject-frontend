@@ -1,8 +1,8 @@
 import axios from "axios";
 
-export const getMetrics = async () => {
+export const getWeight = async () => {
   const res = await axios.get(
-    "http://localhost:8080/dashboard/client/metrics",
+    "http://localhost:8080/dashboard/client/weight",
     { withCredentials: true }
   );
 
