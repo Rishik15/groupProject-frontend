@@ -36,6 +36,8 @@ const AuthComplete = () => {
                     navigate("/coach", { replace: true });
                 } else if (data.role === "client") {
                     navigate("/client", { replace: true });
+                } else if (data.role === "admin") {
+                    navigate("/admin", { replace: true });
                 } else {
                     navigate("/", { replace: true });
                 }

@@ -9,7 +9,7 @@ import LandingPage from "./pages/LandingPage/LandingPage";
 import OnboardingSurveyPage from "./pages/OnboardingSurvey/OnboardingSurveyPage";
 import AuthComplete from "./components/auth/Handler";
 
-import AdminDashBoard from "./pages/Admin/Dashboard";
+import AdminLayout from "./pages/Admin/Admin";
 
 function App() {
   return (
@@ -18,10 +18,18 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/admin" element={<AdminDashBoard />} />
-
           <Route path="/signin" element={<SignIn />} />
           <Route path="/auth/complete" element={<AuthComplete />} />
+
+          <Route
+            path="/admin/*"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/coach/*"
             element={

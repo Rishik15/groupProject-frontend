@@ -13,62 +13,18 @@ interface ReviewQueueSectionProps {
     reports?: ReportReviewItem[];
     onApprove?: (application: ApplicationReviewItem) => void;
     onReject?: (application: ApplicationReviewItem) => void;
-    onOpenReport?: (report: ReportReviewItem) => void;
+    onCloseReport?: (report: ReportReviewItem) => void;
     onViewClosedReports?: () => void;
 }
-
-const fallbackApplications: ApplicationReviewItem[] = [
-    {
-        id: "1",
-        name: "John Smith",
-        email: "john.smith@email.com",
-        appliedLabel: "Applied: Mar 1, 2026 · 5yr experience",
-        certifications: ["ACE", "NASM"],
-        avatarInitial: "J",
-    },
-    {
-        id: "2",
-        name: "Lisa Anderson",
-        email: "lisa.anderson@email.com",
-        appliedLabel: "Applied: Mar 2, 2026 · 8yr experience",
-        certifications: ["ISSA", "PN"],
-        avatarInitial: "L",
-    },
-    {
-        id: "3",
-        name: "David Kim",
-        email: "david.kim@email.com",
-        appliedLabel: "Applied: Mar 3, 2026 · 3yr experience",
-        certifications: ["ACE"],
-        avatarInitial: "D",
-    },
-];
-
-const fallbackReports: ReportReviewItem[] = [
-    {
-        id: "r1",
-        title: "Payment dispute",
-        description: "A user flagged a billing issue related to a coaching subscription.",
-        submittedLabel: "Submitted: Mar 4, 2026",
-        statusLabel: "Open",
-    },
-    {
-        id: "r2",
-        title: "Coach conduct report",
-        description: "A conversation was reported for inappropriate communication.",
-        submittedLabel: "Submitted: Mar 5, 2026",
-        statusLabel: "Open",
-    },
-];
 
 type ReviewTabId = "applications" | "reports";
 
 const ReviewQueueSection = ({
-    applications = fallbackApplications,
-    reports = fallbackReports,
+    applications = [],
+    reports = [],
     onApprove,
     onReject,
-    onOpenReport,
+    onCloseReport,
     onViewClosedReports,
 }: ReviewQueueSectionProps) => {
     const [selectedTab, setSelectedTab] = useState<ReviewTabId>("applications");
@@ -129,7 +85,7 @@ const ReviewQueueSection = ({
                 >
                     <ReportsPane
                         reports={reports}
-                        onOpenReport={onOpenReport}
+                        onCloseReport={onCloseReport}
                         onViewClosedReports={onViewClosedReports}
                     />
                 </Tabs.Panel>
