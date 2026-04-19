@@ -10,11 +10,14 @@ export async function getAuth() {
       authenticated: true,
       role: data.role,
       user: data.user,
+      needs_onboarding: data.needs_onboarding ?? false,
     };
   } catch {
     return {
       authenticated: false,
       role: null,
+      user: null,
+      needs_onboarding: false,
     };
   }
 }

@@ -8,6 +8,10 @@ import ClientLayout from "./pages/Client/Client";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import OnboardingSurveyPage from "./pages/OnboardingSurvey/OnboardingSurveyPage";
 import ExerciseLibrary from "./pages/ExerciseLibrary/ExerciseLibrary"
+import AuthComplete from "./components/auth/Handler";
+
+import AdminLayout from "./pages/Admin/Admin";
+
 function App() {
   return (
     <AuthProvider>
@@ -16,6 +20,17 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/signin" element={<SignIn />} />
+          <Route path="/auth/complete" element={<AuthComplete />} />
+
+          <Route
+            path="/admin/*"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/coach/*"
             element={
