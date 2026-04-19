@@ -32,7 +32,7 @@ interface CreateWorkoutSchedulePayload {
     session_type: WorkoutScheduleKind;
     status: WorkoutScheduleStatus;
     notes?: string;
-    workout_plan_id?: number | null;
+    workout_plan_id?: number;
 }
 
 interface UpdateWorkoutSchedulePayload {
@@ -43,7 +43,7 @@ interface UpdateWorkoutSchedulePayload {
     session_type?: WorkoutScheduleKind;
     status?: WorkoutScheduleStatus;
     notes?: string;
-    workout_plan_id?: number | null;
+    workout_plan_id?: number;
 }
 
 function normalizeTimeString(value: string) {
@@ -83,7 +83,8 @@ function toCreatePayload(
         session_type: input.kind,
         status: input.status,
         notes: input.notes?.trim() || undefined,
-        workout_plan_id: input.workoutPlanId ?? null,
+        workout_plan_id:
+            typeof input.workoutPlanId === "number" ? input.workoutPlanId : undefined,
     };
 }
 
@@ -106,7 +107,7 @@ function toUpdatePayload(
         status: input.status,
         notes: input.notes?.trim() || undefined,
         workout_plan_id:
-            input.workoutPlanId === undefined ? undefined : input.workoutPlanId,
+            typeof input.workoutPlanId === "number" ? input.workoutPlanId : undefined,
     };
 }
 
@@ -149,9 +150,11 @@ export async function updateWorkoutScheduleEvent(
         workoutPlanId?: number | null;
     },
 ) {
+    const payload = toUpdatePayload(input);
+
     const { data } = await axios.patch<{ event: BackendWorkoutScheduleEvent }>(
         `http://localhost:8080/workoutAction/schedule/${eventId}`,
-        toUpdatePayload(input),
+        payload,
         {
             withCredentials: true,
             headers: {
