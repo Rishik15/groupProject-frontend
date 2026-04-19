@@ -3,6 +3,8 @@ import Navbar from "../../components/Navbar/Navbar";
 import { useAuth } from "../../utils/auth/AuthContext";
 import CoachDashBoard from "./DashBoard";
 import Settings from "../Settings/Settings";
+import CoachContractsPage from "./Contracts";
+
 const CoachLayout = () => {
   const { user } = useAuth();
 
@@ -20,6 +22,7 @@ const CoachLayout = () => {
           <Route index element={<CoachDashBoard />} />
           <Route path="settings" element={<Settings role="coach" tab="settings" />} />
           <Route path="profile" element={<Settings role="coach" tab="info" />} />
+          <Route path="contracts" element={<CoachContractsPage />} />
         </Routes>
       </div>
     </section>
