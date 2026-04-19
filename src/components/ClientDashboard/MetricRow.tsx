@@ -1,7 +1,9 @@
 import { Flame } from "lucide-react";
 import { Activity, Dumbbell, Target} from "lucide-react";
+import { useState, useEffect } from "react";
 
 const MetricRow = () => {
+  
   return (
     <section className="flex px-38 py-6 mx-auto gap-10 grid-cols-4">
       <div className="flex items-center gap-3 bg-white rounded-xl px-5 py-4 w-full shadow-[0_0_0_1px_rgba(0,0,0,0.03),_0_4px_12px_rgba(0,0,0,0.04)]">
