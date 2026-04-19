@@ -1,7 +1,7 @@
-import DashboardHeader from "../../components/ClientDashboard/Header";
-import MetricPlots from "../../components/ClientDashboard/MetricPlots";
-import MetricPlots2 from "../../components/ClientDashboard/MetricPlots2";
-import MetricRow from "../../components/ClientDashboard/MetricRow";
+import DashboardHeader from "../../components/Client/ClientDashboard/Header";
+import MetricPlots from "../../components/Client/ClientDashboard/MetricPlots";
+import MetricPlots2 from "../../components/Client/ClientDashboard/MetricPlots2";
+import MetricRow from "../../components/Client/ClientDashboard/MetricRow";
 
 const ClientDashBoard = () => {
   return (
