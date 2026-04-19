@@ -3,11 +3,7 @@ import { Input, Button, Chip } from "@heroui/react";
 import CoachCard, {
   SkeletonCard,
 } from "../../components/LandingPage/CoachCard";
-<<<<<<< HEAD
-import FilterPanel from "../../components/client/CoachFiltering/FilterPanel";
-=======
 import FilterPanel from "../../components/BrowseCoaches/FilterPanel";
->>>>>>> createExercises
 import { searchCoaches } from "../../services/filtering/searchcoaches";
 import type { CoachQuery } from "../../utils/Interfaces/coachquery";
 import type { Coach } from "../../utils/Interfaces/coachquery";
@@ -40,15 +36,9 @@ export default function BrowseCoaches() {
     min_rating: minRating,
     sort_by: "rating",
   };
-<<<<<<< HEAD
-    const { coaches, count } = await searchCoaches(query);
-    setCoaches(coaches);
-    setCount(count);
-=======
     const { coaches } = await searchCoaches(query);
     setCoaches(coaches);
     setCount(coaches.length);
->>>>>>> createExercises
     setLoading(false);
   }, [nameSearch, selectedTags, minRating, maxPrice, certifiedOnly]);
 
