@@ -14,7 +14,7 @@ type AuthContextType = {
   authenticated: boolean;
   loading: boolean;
   setAuth: (data: { user: User; role: string }) => void;
-  clearAuth: () => void;
+  clearAuth: (isLogout?: boolean) => void,
   refreshAuth: () => Promise<void>;
 };
 
@@ -23,9 +23,9 @@ const AuthContext = createContext<AuthContextType>({
   role: null,
   authenticated: false,
   loading: true,
-  setAuth: () => { },
-  clearAuth: () => { },
-  refreshAuth: async () => { },
+  setAuth: () => {},
+  clearAuth: () => {},
+  refreshAuth: async () => {},
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -40,10 +40,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setAuthenticated(true);
   };
 
-  const clearAuth = () => {
-    console.log("Clearing auth + disconnecting socket");
+  const clearAuth = (isLogout = false) => {
+    console.log("Clearing auth");
 
-    socket.disconnect();
+    if (isLogout && socket.connected) {
+      console.log("Disconnecting socket (logout)");
+      socket.disconnect();
+    }
 
     setUser(null);
     setRole(null);
@@ -51,48 +54,55 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const refreshAuth = async () => {
-  try {
-    const res = await getAuth();
+    try {
+      const res = await getAuth();
 
-    if (res.authenticated) {
-      setAuth({ user: res.user, role: res.role });
-    } else {
+      if (res.authenticated) {
+        setAuth({ user: res.user, role: res.role });
+      } else {
+        setUser(null);
+        setRole(null);
+        setAuthenticated(false);
+      }
+    } catch (err) {
+      console.error("Auth check failed:", err);
+
       setUser(null);
       setRole(null);
       setAuthenticated(false);
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error("Auth check failed:", err);
-
-    setUser(null);
-    setRole(null);
-    setAuthenticated(false);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   useEffect(() => {
-    if (authenticated && user) {
-      if (!socket.connected) {
-        console.log("Connecting socket...");
-        socket.connect();
-      }
+  if (!authenticated || !user) return;
 
-      socket.on("connect", () => {
-        console.log("Socket connected:", socket.id);
-      });
+  if (!socket.connected) {
+    console.log("Connecting socket...");
+    socket.connect();
+  }
 
-      socket.on("disconnect", () => {
-        console.log("Socket disconnected");
-      });
+  const handleConnect = () => {
+    console.log("Socket connected:", socket.id);
+  };
 
-      return () => {
-        socket.off("connect");
-        socket.off("disconnect");
-      };
-    }
-  }, [authenticated, user]);
+  const handleDisconnect = () => {
+    console.log("Socket disconnected");
+  };
+
+  socket.on("connect", handleConnect);
+  socket.on("disconnect", handleDisconnect);
+
+  return () => {
+    socket.off("connect", handleConnect);
+    socket.off("disconnect", handleDisconnect);
+  };
+}, [authenticated, user]);
+
+  useEffect(() => {
+    refreshAuth();
+  }, []);
 
   return (
     <AuthContext.Provider

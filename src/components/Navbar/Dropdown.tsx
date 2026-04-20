@@ -20,7 +20,7 @@ const Dropdownaction = ({
   const handleClick = async () => {
     if (type === "logout") {
       await logout();
-      clearAuth();
+      clearAuth(true);
 
       if (socket.connected) {
         socket.disconnect();

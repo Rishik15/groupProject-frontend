@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useAuth } from "../../utils/auth/AuthContext";
 import CategoryFilter from "../../components/CreateWorkoutPlan/CategoryFilter";
 import ExerciseCard, {
@@ -14,8 +13,8 @@ import ExerciseModal from "../../components/CreateWorkoutPlan/ExerciseModal";
 import MyPlans from "../../components/CreateWorkoutPlan/MyPlans";
 import CreateExerciseForm from "../../components/CreateExercises/CreateExerciseForm";
 import { getExercises } from "../../services/workout/getExercises";
-
-const BASE_URL = "http://localhost:8080";
+import { createWorkout } from "../../services/workout/createWorkout";
+import CustomModal from "../../components/global/Modal";
 
 export default function CreateWorkoutPlan() {
   const navigate = useNavigate();
@@ -33,6 +32,8 @@ export default function CreateWorkoutPlan() {
   const [activeTab, setActiveTab] = useState<"browse" | "plans" | "create">(
     "browse",
   );
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   useEffect(() => {
     async function load() {
@@ -79,24 +80,22 @@ export default function CreateWorkoutPlan() {
 
   async function handleSave() {
     try {
-      await axios.post(
-        `${BASE_URL}/workouts/create`,
-        {
-          name: planName,
-          exercises: selectedExercises.map(({ exercise, sets, reps }) => ({
-            exercise_id: exercise.exercise_id,
-            sets,
-            reps,
-          })),
-        },
-        { withCredentials: true },
+      await createWorkout(
+        planName,
+        selectedExercises.map(({ exercise, sets, reps }) => ({
+          exercise_id: exercise.exercise_id,
+          sets,
+          reps,
+        })),
       );
+
       setSelectedExercises([]);
       setPlanName("");
       setActiveTab("plans");
     } catch (err: any) {
-      const message = err?.response?.data?.error || "Failed to save plan";
-      alert(message);
+      const message = err?.message || "Failed to save plan";
+      setModalMessage(message);
+      setShowModal(true);
     }
   }
 
@@ -213,7 +212,7 @@ export default function CreateWorkoutPlan() {
           {activeTab === "create" && isCoach && <CreateExerciseForm />}
         </div>
 
-        <div className="w-80 shrink-0 bg-white border border-[#E6E6EE] rounded-2xl p-5 flex flex-col gap-4 sticky top-18">
+        <div className="w-80 shrink-0 bg-white border border-[#E6E6EE] mt-14.5 rounded-2xl p-5 flex flex-col gap-4 sticky top-18">
           <div>
             <p className="text-base font-semibold text-black">Your Plan</p>
             <p className="text-xs text-[#72728A] mt-0.5">
@@ -241,6 +240,14 @@ export default function CreateWorkoutPlan() {
         exercise={previewExercise}
         onClose={() => setPreviewExercise(null)}
       />
+
+      <CustomModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title="Error"
+      >
+        {modalMessage}
+      </CustomModal>
     </div>
   );
 }
