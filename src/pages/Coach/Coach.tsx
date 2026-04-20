@@ -5,6 +5,7 @@ import CoachDashBoard from "./DashBoard";
 import Settings from "../Settings/Settings"; import Chat from "../Chat/Chat";
 import CoachContractsPage from "./CoachContractsPage";
 // import CoachContractsPage from "./Contracts";
+import CreateWorkoutPlan from "../Client/CreateWorkoutPlan";
 
 const CoachLayout = () => {
   const { user } = useAuth();
@@ -25,6 +26,7 @@ const CoachLayout = () => {
           <Route path="profile" element={<Settings role="coach" tab="info" />} />
           <Route path="chat" element={<Chat />} />
           <Route path="contracts" element={<CoachContractsPage />} />
+          <Route path="create-workout" element={<CreateWorkoutPlan />} />        
         </Routes>
       </div>
     </section>
