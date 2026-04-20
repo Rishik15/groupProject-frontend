@@ -6,11 +6,12 @@ import { GetUserInfo } from "../../services/Setting/GetUserInfo";
 import { GetCoachInfo } from "../../services/Setting/GetCoachInfo";
 import { updateProfile } from "../../services/Setting/UpdateUserInfo";
 import { Alert, Button, CloseButton } from "@heroui/react";
-import type { User } from "../../types/User";
-import type { Coach } from "../../types/Coach";
+import type { User } from "../../services/Setting/User";
+import type { Coach } from "../../services/Setting/Coach";
 import { updateCoachProfile } from "../../services/Setting/UpdateCoachInfo";
+import { updateCoachAvailability } from "../../services/Setting/saveTime";
 
-type SettingsForm = User & Coach;
+type SettingsForm = User & Coach; 
 
 type SettingsProps = {
   role: string;
@@ -82,6 +83,8 @@ const Settings = ({ role, tab }: SettingsProps) => {
           Number(form.height),
           Number(form.goal_weight)
         );
+
+
       }
 
       if (role === "coach") {
@@ -89,6 +92,7 @@ const Settings = ({ role, tab }: SettingsProps) => {
           price: form.price === "" || form.price == null ? undefined : Number(form.price),
           coach_description: form.coach_description,
         });
+        await updateCoachAvailability(form.availability ?? []);
       }
 
       setUser(form);
