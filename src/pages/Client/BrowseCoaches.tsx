@@ -8,6 +8,7 @@ import { searchCoaches } from "../../services/filtering/searchcoaches";
 import type { CoachQuery } from "../../utils/Interfaces/coachquery";
 import type { Coach } from "../../utils/Interfaces/coachquery";
 import { useNavigate } from "react-router-dom";
+import { Search } from "lucide-react";
 
 const MAX_PRICE_LIMIT = 300;
 
@@ -24,18 +25,16 @@ export default function BrowseCoaches() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  
-
   const loadCoaches = useCallback(async () => {
     setLoading(true);
     const query: CoachQuery = {
-    name: nameSearch.trim(),
-    filters: selectedTags,
-    is_certified: certifiedOnly,
-    max_price: maxPrice,
-    min_rating: minRating,
-    sort_by: "rating",
-  };
+      name: nameSearch.trim(),
+      filters: selectedTags,
+      is_certified: certifiedOnly,
+      max_price: maxPrice,
+      min_rating: minRating,
+      sort_by: "rating",
+    };
     const { coaches } = await searchCoaches(query);
     setCoaches(coaches);
     setCount(coaches.length);
@@ -68,37 +67,38 @@ export default function BrowseCoaches() {
     (certifiedOnly ? 1 : 0);
 
   return (
-    <div className="min-h-screen bg-default-100 px-8 py-8">
+    <div className="min-h-screen bg-default-100 px-38 py-8">
       <button
         onClick={() => navigate(-1)}
         className="flex items-center gap-1.5 text-sm text-[#72728A] hover:text-black mb-4 transition-colors"
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M19 12H5M12 5l-7 7 7 7" />
         </svg>
         Back
       </button>
-      <h1 className="text-2xl font-bold text-foreground mb-1">Browse Expert Coaches</h1>
-      <p className="text-sm text-[#72728A] mb-5">Find the perfect coach for your fitness journey</p>
+      <h1 className="text-2xl font-bold text-foreground mb-1">
+        Browse Expert Coaches
+      </h1>
+      <p className="text-sm text-[#72728A] mb-5">
+        Find the perfect coach for your fitness journey
+      </p>
       <div className="flex items-center gap-3 mb-6">
-        <div className="flex items-center gap-2 bg-white border border-default-200 rounded-xl px-3 py-2 max-w-lg flex-1">
-          <svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="text-default-400 shrink-0"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.35-4.35" />
-          </svg>
+        <div className="flex-1 max-w-2xl relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-default-400 pointer-events-none" />
+
           <Input
             placeholder="Search by name or specialty..."
             value={nameSearch}
             onChange={(e) => setNameSearch(e.target.value)}
-            className="border-none outline-none bg-transparent flex-1"
+            className="pl-9 w-full"
           />
         </div>
         <Button
@@ -145,11 +145,6 @@ export default function BrowseCoaches() {
         )}
 
         <div className="flex-1 min-w-0">
-          {!loading && (
-            <p className="text-sm text-default-500 mb-4">
-              {count} {count === 1 ? "coach" : "coaches"} found
-            </p>
-          )}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {loading ? (
               [0, 1, 2, 3, 4, 5].map((i) => <SkeletonCard key={i} />)
