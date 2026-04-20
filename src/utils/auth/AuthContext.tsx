@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { getAuth } from "../../services/auth/checkAuth";
+import { socket } from "../../services/sockets/socket";
 
 type User = {
   first_name: string;
@@ -40,31 +41,58 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const clearAuth = () => {
+    console.log("Clearing auth + disconnecting socket");
+
+    socket.disconnect();
+
     setUser(null);
     setRole(null);
     setAuthenticated(false);
   };
 
   const refreshAuth = async () => {
-    try {
-      const res = await getAuth();
+  try {
+    const res = await getAuth();
 
-      if (res.authenticated) {
-        setAuth({ user: res.user, role: res.role });
-      } else {
-        clearAuth();
-      }
-    } catch (err) {
-      console.error("Auth check failed:", err);
-      clearAuth();
-    } finally {
-      setLoading(false);
+    if (res.authenticated) {
+      setAuth({ user: res.user, role: res.role });
+    } else {
+      setUser(null);
+      setRole(null);
+      setAuthenticated(false);
     }
-  };
+  } catch (err) {
+    console.error("Auth check failed:", err);
+
+    setUser(null);
+    setRole(null);
+    setAuthenticated(false);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
-    refreshAuth();
-  }, []);
+    if (authenticated && user) {
+      if (!socket.connected) {
+        console.log("Connecting socket...");
+        socket.connect();
+      }
+
+      socket.on("connect", () => {
+        console.log("Socket connected:", socket.id);
+      });
+
+      socket.on("disconnect", () => {
+        console.log("Socket disconnected");
+      });
+
+      return () => {
+        socket.off("connect");
+        socket.off("disconnect");
+      };
+    }
+  }, [authenticated, user]);
 
   return (
     <AuthContext.Provider
