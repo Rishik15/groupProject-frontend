@@ -11,6 +11,7 @@ import { ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getWeight } from "../../../services/dashboard/client/getWeight";
 import { getNutrition } from "../../../services/dashboard/client/getNutrition";
+import { useNavigate } from "react-router-dom";
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -48,6 +49,7 @@ const ProgressBar = ({
 const MetricPlots = () => {
   const [data, setData] = useState<any[]>([]);
   const [nutrition, setNutrition] = useState<any>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchWeight = async () => {
@@ -183,7 +185,10 @@ const MetricPlots = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-0.5 px-3 h-8 mx-auto text-[12px] font-semibold bg-gray-200 text-gray-600 cursor-pointer rounded-lg  hover:bg-[#5B5EF4] hover:text-white">
+        <div
+          onClick={() => navigate("/client/nutrition")}
+          className="flex items-center gap-0.5 px-3 h-8 mx-auto text-[12px] font-semibold bg-gray-200 text-gray-600 cursor-pointer rounded-lg hover:bg-[#5B5EF4] hover:text-white"
+        >
           View Details
           <ArrowRight className="w-3 h-3 font-semibold" />
         </div>

@@ -39,12 +39,6 @@ const DashboardHeader = () => {
           </div>
         </Button>
         <WellnessCheck />
-        <Button className="h-8 px-3 rounded-xl bg-gray-100 text-black hover:bg-[#5B5EF4] hover:text-white">
-          <div className="flex items-center gap-2">
-            <Search className="w-4 h-4" />
-            <div className="text-[12px]">Find Coaches</div>
-          </div>
-        </Button>
       </div>
     </section>
   );
