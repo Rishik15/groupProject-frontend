@@ -152,9 +152,9 @@ function OnboardingSurveyPage({
         (certification, currentIndex) =>
           currentIndex === index
             ? {
-                ...certification,
-                [name]: value,
-              }
+              ...certification,
+              [name]: value,
+            }
             : certification,
       ),
     }));
@@ -182,17 +182,17 @@ function OnboardingSurveyPage({
       },
       ...(surveyType === "coach"
         ? {
-            coach: {
-              primarySpecialties,
-              secondarySpecialties,
-              clientTypes,
-              availability,
-              sessionFormats,
-              price,
-              credentials,
-              profileDescription,
-            },
-          }
+          coach: {
+            primarySpecialties,
+            secondarySpecialties,
+            clientTypes,
+            availability,
+            sessionFormats,
+            price,
+            credentials,
+            profileDescription,
+          },
+        }
         : {}),
     };
 

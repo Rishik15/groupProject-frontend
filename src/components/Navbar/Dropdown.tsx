@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../services/auth/logout";
 import { useAuth } from "../../utils/auth/AuthContext";
+import { socket } from "../../services/sockets/socket";
 
 const DropdownItem = ({
   label,
@@ -21,6 +22,10 @@ const DropdownItem = ({
       await logout();
       clearAuth();
 
+      if (socket.connected) {
+        socket.disconnect();
+      }
+
       navigate("/");
       return;
     }
@@ -33,9 +38,8 @@ const DropdownItem = ({
   return (
     <button
       onClick={handleClick}
-      className={`w-full text-left px-3 py-2 rounded-md transition ${
-        danger ? "text-red-400 hover:bg-red-500/10" : "hover:bg-[#d5d5f5]"
-      }`}
+      className={`w-full text-left px-3 py-2 rounded-md transition ${danger ? "text-red-400 hover:bg-red-500/10" : "hover:bg-[#d5d5f5]"
+        }`}
     >
       {label}
     </button>

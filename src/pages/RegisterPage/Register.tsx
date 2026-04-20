@@ -8,6 +8,8 @@ import { register } from "../../services/auth/register";
 import { validateRegister } from "../../utils/auth/validateInputs";
 import Modal from "../../components/global/Modal";
 import { useAuth } from "../../utils/auth/AuthContext";
+import GoogleAuthButton from "../../components/auth/GoogleAuthButton";
+import { startGoogleLogin } from "../../services/auth/googleLogin";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -18,7 +20,6 @@ const Register = () => {
   const [modalMessage, setModalMessage] = useState("");
 
   const navigate = useNavigate();
-
   const { refreshAuth } = useAuth();
 
   const handleRegister = async () => {
@@ -71,6 +72,14 @@ const Register = () => {
           />
 
           <RegFooter onSubmit={handleRegister} />
+
+          <div className="my-4 flex items-center gap-3">
+            <div className="h-px flex-1 bg-default-200" />
+            <span className="text-sm text-default-500">or</span>
+            <div className="h-px flex-1 bg-default-200" />
+          </div>
+
+          <GoogleAuthButton onPress={startGoogleLogin} />
         </section>
       </div>
 
@@ -86,3 +95,4 @@ const Register = () => {
 };
 
 export default Register;
+

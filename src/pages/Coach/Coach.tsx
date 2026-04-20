@@ -2,13 +2,15 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import { useAuth } from "../../utils/auth/AuthContext";
 import CoachDashBoard from "./DashBoard";
-import CoachContractsPage from "./Contracts";
+import Settings from "../Settings/Settings"; import Chat from "../Chat/Chat";
+import CoachContractsPage from "./CoachContractsPage";
+// import CoachContractsPage from "./Contracts";
 
 const CoachLayout = () => {
   const { user } = useAuth();
 
   return (
-    <section className="min-h-screen">
+    <section className="min-h-screen bg-white">
       <Navbar
         parent="/coach"
         name={user ? `${user.first_name} ${user.last_name}` : ""}
@@ -19,6 +21,9 @@ const CoachLayout = () => {
       <div className="pt-14">
         <Routes>
           <Route index element={<CoachDashBoard />} />
+          <Route path="settings" element={<Settings role="coach" tab="settings" />} />
+          <Route path="profile" element={<Settings role="coach" tab="info" />} />
+          <Route path="chat" element={<Chat />} />
           <Route path="contracts" element={<CoachContractsPage />} />
         </Routes>
       </div>

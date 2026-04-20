@@ -15,8 +15,9 @@ const BASE_URL = "http://localhost:8080";
 
 export default function CreateWorkoutPlan() {
   const navigate = useNavigate();
-const {role } = useAuth();
-const isCoach = role === "coach";
+  const { user, role } = useAuth();
+  console.log("role:", role);
+  const isCoach = role === "coach";
 
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -103,7 +104,7 @@ const isCoach = role === "coach";
         </div>
       </div>
 
-      <div className="flex gap-6 items-start">
+      <div className={`flex gap-6 items-start ${activeTab === "create" ? "justify-center" : ""}`}>
         <div className="flex-1 min-w-0 flex flex-col gap-4">
 
           <div className="flex gap-0 border-b border-[#E6E6EE]">
@@ -177,29 +178,30 @@ const isCoach = role === "coach";
           {activeTab === "plans" && <MyPlans />}
           {activeTab === "create" && isCoach && <CreateExerciseForm />}
         </div>
-
-        <div className="w-80 shrink-0 bg-white border border-[#E6E6EE] rounded-2xl p-5 flex flex-col gap-4 sticky top-18">
-          <div>
-            <p className="text-base font-semibold text-black">Your Plan</p>
-            <p className="text-xs text-[#72728A] mt-0.5">
-              {selectedExercises.length} exercise{selectedExercises.length !== 1 ? "s" : ""} added
-            </p>
-          </div>
-          <div className="flex-1 overflow-y-auto max-h-[45vh]">
-            <SelectedExerciseList
+        {activeTab !== "create" && (
+          <div className="w-80 shrink-0 bg-white border border-[#E6E6EE] rounded-2xl p-5 flex flex-col gap-4 sticky top-18">
+            <div>
+              <p className="text-base font-semibold text-black">Your Plan</p>
+              <p className="text-xs text-[#72728A] mt-0.5">
+                {selectedExercises.length} exercise{selectedExercises.length !== 1 ? "s" : ""} added
+              </p>
+            </div>
+            <div className="flex-1 overflow-y-auto max-h-[45vh]">
+              <SelectedExerciseList
+                selected={selectedExercises}
+                onRemove={handleRemove}
+                onUpdateSets={handleUpdateSets}
+                onUpdateReps={handleUpdateReps}
+              />
+            </div>
+            <PlanSummary
               selected={selectedExercises}
-              onRemove={handleRemove}
-              onUpdateSets={handleUpdateSets}
-              onUpdateReps={handleUpdateReps}
+              planName={planName}
+              onPlanNameChange={setPlanName}
+              onSave={handleSave}
             />
           </div>
-          <PlanSummary
-            selected={selectedExercises}
-            planName={planName}
-            onPlanNameChange={setPlanName}
-            onSave={handleSave}
-          />
-        </div>
+        )}
       </div>
 
       <ExerciseModal

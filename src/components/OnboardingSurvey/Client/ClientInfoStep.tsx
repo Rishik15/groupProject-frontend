@@ -30,15 +30,15 @@ function ClientInfoStep({
   // consistent without repeating the same check in every field.
   const handleNonNegativeChange =
     (fieldName: "height" | "weight" | "goalWeight") =>
-    (event: ChangeEvent<HTMLInputElement>) => {
-      const value = event.target.value;
+      (event: ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
 
-      // Allow an empty string while the user is editing, but block negatives
-      // from entering state.
-      if (value === "" || Number(value) >= 0) {
-        onFieldChange(fieldName, value);
-      }
-    };
+        // Allow an empty string while the user is editing, but block negatives
+        // from entering state.
+        if (value === "" || Number(value) >= 0) {
+          onFieldChange(fieldName, value);
+        }
+      };
 
   const dateValue: DateValue | null = values.dateOfBirth
     ? parseDate(values.dateOfBirth)
