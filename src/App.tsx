@@ -12,6 +12,10 @@ import AuthComplete from "./components/auth/Handler";
 
 import AdminLayout from "./pages/Admin/Admin";
 import { Toast } from "@heroui/react";
+import BrowseCoaches from "./pages/Client/BrowseCoaches";
+import CoachProfile from "./pages/Client/CoachProfile";
+
+import Workouts from "./pages/Workouts/Workouts";
 
 function App() {
   return (
@@ -33,7 +37,11 @@ function App() {
             }
           />
 
-          <Route
+          <Route path="/coaches" element={<BrowseCoaches/>} />
+          <Route path="/coaches/:id" element={<CoachProfile />} />
+          
+        <Route path="/workouts" element={<Workouts />} />
+        <Route
             path="/coach/*"
             element={
               <ProtectedRoute allowedRoles={["coach"]}>
