@@ -1,5 +1,5 @@
-import CoachMetricRow from "../../components/Client/Coach/CoachDashboard/CoachMetricsRow";
-import CoachHeader from "../../components/Client/Coach/CoachDashboard/Header";
+import CoachMetricRow from "../../components/Coach/CoachDashboard/CoachMetricsRow";
+import CoachHeader from "../../components/Coach/CoachDashboard/Header";
 
 const CoachDashBoard = () => {
   return (

@@ -1,6 +1,6 @@
 import { Users, DollarSign, Dumbbell, Star } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getCoachMetrics } from "../../../../services/dashboard/coach/getCoachMetrics";
+import { getCoachMetrics } from "../../../services/dashboard/coach/getCoachMetrics";
 
 type Metrics = {
   activeClients: {
