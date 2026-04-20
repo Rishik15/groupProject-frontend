@@ -4,6 +4,7 @@ import Nutrition from "./Nutrition";
 
 import ClientDashBoard from "./Dashboard";
 import CreateWorkoutPlan from "./CreateWorkoutPlan";
+import Recommendation from "./Recommendation";
 
 const ClientLayout = () => {
   return (
@@ -20,6 +21,8 @@ const ClientLayout = () => {
           <Route index element={<ClientDashBoard />} />
           <Route path="nutrition" element={<Nutrition />} />
           <Route path="createWorkout" element={<CreateWorkoutPlan />} />
+          <Route path="recommendation" element={<Recommendation />} />
+
         </Routes>
       </div>
     </section>
