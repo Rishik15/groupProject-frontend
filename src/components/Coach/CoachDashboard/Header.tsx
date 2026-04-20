@@ -1,5 +1,5 @@
 import { Button } from "@heroui/react";
-import { useAuth } from "../../../../utils/auth/AuthContext";
+import { useAuth } from "../../../utils/auth/AuthContext";
 import { Plus, RotateCcw } from "lucide-react";
 
 const CoachHeader = () => {
