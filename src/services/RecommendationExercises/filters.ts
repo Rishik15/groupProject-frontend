@@ -2,12 +2,15 @@ export const goalItems = [
   { key: "strength", label: "Strength" },
   { key: "muscle gain", label: "Muscle Gain" },
   { key: "endurance", label: "Endurance" },
+  { key: "cutting", label: "Cutting" },
+  { key: "general fitness", label: "General Fitness"}
 ];
 
 export const experienceItems = [
   { key: "beginner", label: "Beginner" },
   { key: "intermediate", label: "Intermediate" },
   { key: "advanced", label: "Advanced" },
+  
 ];
 
 export const dayItems = [
