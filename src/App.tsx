@@ -11,10 +11,12 @@ import ExerciseLibrary from "./pages/ExerciseLibrary/ExerciseLibrary"
 import AuthComplete from "./components/auth/Handler";
 
 import AdminLayout from "./pages/Admin/Admin";
+import { Toast } from "@heroui/react";
 
 function App() {
   return (
     <AuthProvider>
+      <Toast.Provider placement="top end" className="mt-11" />
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />

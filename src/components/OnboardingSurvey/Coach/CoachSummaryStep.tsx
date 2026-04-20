@@ -265,7 +265,7 @@ function CoachSummaryStep({
         <h3 className="text-[13.125px] font-semibold text-black">
           Profile Description Preview
         </h3>
-        <p className="mt-4 whitespace-pre-wrap rounded-[16px] border border-[#E4E4EC] bg-white p-4 text-[11.25px] leading-7 text-[#6E728C]">
+        <p className="mt-4 whitespace-pre-wrap rounded-4xl border border-[#E4E4EC] bg-white p-4 text-[11.25px] leading-7 text-[#6E728C]">
           {profileDescription}
         </p>
       </Card>
@@ -315,7 +315,7 @@ function CoachSummaryStep({
               Next: Personal Profile
             </h3>
 
-            <p className="mt-1 max-w-[520px] text-[13.125px] leading-7 text-[#6E728C]">
+            <p className="mt-1 max-w-130 text-[13.125px] leading-7 text-[#6E728C]">
               Your coaching details are saved. Continue to your personal profile
               so we can collect the shared information needed for onboarding.
             </p>

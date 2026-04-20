@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../services/auth/logout";
 import { useAuth } from "../../utils/auth/AuthContext";
+import { socket } from "../../services/sockets/socket";
 
-const DropdownItem = ({
+const Dropdownaction = ({
   label,
   route,
   danger,
@@ -20,6 +21,10 @@ const DropdownItem = ({
     if (type === "logout") {
       await logout();
       clearAuth();
+
+      if (socket.connected) {
+        socket.disconnect();
+      }
 
       navigate("/");
       return;
@@ -42,4 +47,4 @@ const DropdownItem = ({
   );
 };
 
-export default DropdownItem;
+export default Dropdownaction;
