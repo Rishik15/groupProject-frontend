@@ -21,7 +21,6 @@ export default function BrowseCoaches() {
   const [showFilterPanel, setShowFilterPanel] = useState(false);
 
   const [coaches, setCoaches] = useState<Coach[]>([]);
-  const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -37,7 +36,6 @@ export default function BrowseCoaches() {
     };
     const { coaches } = await searchCoaches(query);
     setCoaches(coaches);
-    setCount(coaches.length);
     setLoading(false);
   }, [nameSearch, selectedTags, minRating, maxPrice, certifiedOnly]);
 
