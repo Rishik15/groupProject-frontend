@@ -55,7 +55,7 @@ export default function Recommendation() {
             Based on your current filters, this is the plan that matches.
           </p>
         </div>
-        {plan != null ? (<ExerciseCard plan={plan} />) : (<NoResultCard />)}
+        {plan != null ? (<ExerciseCard plan={plan} />) : (<NoResultCard  openModalWorkouts={() => setIsOpenWorkouts(true)} openModal={() => setIsOpen(true)}/>)}
         <FilterModal
           filters={filters}
           setFilters={setFilters}

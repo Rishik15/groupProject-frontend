@@ -1,6 +1,10 @@
 import { Card, Button } from "@heroui/react";
+type Props = {
+  openModal: () => void;
+  openModalWorkouts: () => void;
+};
 
-const NoResultCard = () => {
+const NoResultCard = ({openModal, openModalWorkouts}:Props) => {
     return (
         <Card className="bg-white mt-4 rounded-2xl border border-dashed border-[#D9D6FF] bg-transparent shadow-none">
             <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
@@ -21,12 +25,14 @@ const NoResultCard = () => {
 
                 <div className="mt-6 flex gap-3">
                     <Button
+                    onPress={openModal}
                         className="h-10 rounded-xl bg-indigo-500 px-5 text-sm font-semibold text-white"
                     >
                         Adjust filters
                     </Button>
 
-                    <Button className="h-10 rounded-xl border border-gray-300 bg-white px-5 text-sm font-semibold text-black">
+                    <Button className="h-10 rounded-xl border border-gray-300 bg-white px-5 text-sm font-semibold text-black"
+                    onPress={openModalWorkouts}>
                         Preview exercises
                     </Button>
                 </div>
