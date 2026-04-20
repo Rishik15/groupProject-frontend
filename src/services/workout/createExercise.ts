@@ -8,7 +8,6 @@ interface NewExercise {
   description: string;
 }
 
-// sends new exercise data to backend
 export async function createExercise(exercise: NewExercise): Promise<void> {
   await axios.post(
     `${BASE_URL}/exercise/create`,
