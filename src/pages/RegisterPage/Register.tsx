@@ -20,7 +20,7 @@ const Register = () => {
   const [modalMessage, setModalMessage] = useState("");
 
   const navigate = useNavigate();
-  const { refreshAuth } = useAuth();
+  const { setAuth } = useAuth();
 
   const handleRegister = async () => {
     try {
@@ -41,9 +41,14 @@ const Register = () => {
 
       const data = await register(name, email, password, selectedRole);
 
-      await refreshAuth();
+      const roles = data.roles ?? (data.role ? [data.role] : []);
 
-      if (data.role === "coach") {
+      setAuth({
+        user: data.user,
+        roles,
+      });
+
+      if (roles.includes("coach")) {
         navigate("/onboarding/coach");
       } else {
         navigate("/onboarding/client");
@@ -73,13 +78,14 @@ const Register = () => {
 
           <RegFooter onSubmit={handleRegister} />
 
-          <div className="my-4 flex items-center gap-3">
-            <div className="h-px flex-1 bg-default-200" />
-            <span className="text-sm text-default-500">or</span>
-            <div className="h-px flex-1 bg-default-200" />
+          <div className="flex flex-col gap-4">
+            <div className="pt-4 flex items-center gap-3">
+              <div className="h-px flex-1 bg-indigo-300" />
+              <span className="text-[12px] text-default-500">or</span>
+              <div className="h-px flex-1 bg-indigo-300" />
+            </div>
+            <GoogleAuthButton onPress={startGoogleLogin} />
           </div>
-
-          <GoogleAuthButton onPress={startGoogleLogin} />
         </section>
       </div>
 

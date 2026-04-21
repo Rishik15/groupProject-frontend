@@ -12,6 +12,7 @@ export interface Coach {
   first_name: string;
   last_name: string;
   coach_description: string;
+  price: number;
   avg_rating: number;
   review_count: number;
 }
