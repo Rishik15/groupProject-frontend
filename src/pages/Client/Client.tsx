@@ -12,6 +12,7 @@ import { toast } from "@heroui/react";
 import { useRef } from "react";
 import CreateWorkoutPlan from "./CreateWorkoutPlan";
 import { useAuth } from "../../utils/auth/AuthContext";
+import Recommendation from "./Recommendation";
 
 const ClientLayout = () => {
   const { user } = useAuth();
@@ -63,8 +64,15 @@ const ClientLayout = () => {
           <Route path="/coaches" element={<BrowseCoaches />} />
           <Route path="/workouts" element={<Workouts />} />
           <Route path="createWorkout" element={<CreateWorkoutPlan />} />
-           <Route path="settings" element={<Settings role="client" tab="settings" />} />
-          <Route path="profile" element={<Settings role="client" tab="info" />} />
+          <Route
+            path="settings"
+            element={<Settings role="client" tab="settings" />}
+          />
+          <Route
+            path="profile"
+            element={<Settings role="client" tab="info" />}
+          />
+          <Route path="recommendation" element={<Recommendation />} />
         </Routes>
       </div>
     </section>
