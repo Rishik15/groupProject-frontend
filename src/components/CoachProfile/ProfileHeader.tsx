@@ -10,9 +10,14 @@ import {
 interface ProfileHeaderProps {
   coach: CoachProfile;
   coachId: number;
+  mode?: "app" | "landing";
 }
 
-export default function ProfileHeader({ coach, coachId }: ProfileHeaderProps) {
+export default function ProfileHeader({
+  coach,
+  mode = "app",
+  coachId,
+}: ProfileHeaderProps) {
   const [contractStatus, setContractStatus] = useState<ContractStatus | null>(
     null,
   );
@@ -21,6 +26,12 @@ export default function ProfileHeader({ coach, coachId }: ProfileHeaderProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (mode !== "app") {
+      setIsCheckingStatus(false);
+      setContractStatus(null);
+      return;
+    }
+
     const loadContractStatus = async () => {
       try {
         setIsCheckingStatus(true);
@@ -39,11 +50,8 @@ export default function ProfileHeader({ coach, coachId }: ProfileHeaderProps) {
 
     if (coachId) {
       loadContractStatus();
-    } else {
-      setIsCheckingStatus(false);
-      setContractStatus(null);
     }
-  }, [coachId]);
+  }, [coachId, mode]);
 
   const canRequest = contractStatus === "none" || contractStatus === "closed";
 
@@ -127,56 +135,56 @@ export default function ProfileHeader({ coach, coachId }: ProfileHeaderProps) {
         </div>
       </div>
 
-      {isCheckingStatus ? (
-        <div className="flex gap-3">
-          <div className="flex-1 h-10.5 rounded-xl bg-default-100 animate-pulse" />
-          <div className="w-30 h-10.5 rounded-xl bg-default-100 animate-pulse" />
-        </div>
-      ) : (
-        <div className="flex gap-3">
-          {!isAlreadyCoaching && (
+      {mode === "app" &&
+        (isCheckingStatus ? (
+          <div className="flex gap-3">
+            <div className="flex-1 h-10.5 rounded-xl bg-default-100 animate-pulse" />
+            <div className="w-30 h-10.5 rounded-xl bg-default-100 animate-pulse" />
+          </div>
+        ) : (
+          <div className="flex gap-3">
+            {!isAlreadyCoaching && (
+              <button
+                onClick={handleRequestCoaching}
+                disabled={isSubmitting || !canRequest}
+                className={`flex-1 flex items-center justify-center gap-2 text-sm font-medium py-2.5 rounded-xl transition-colors disabled:cursor-not-allowed ${requestButtonClass}`}
+              >
+                {isPending && (
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                )}
+                {requestButtonText}
+              </button>
+            )}
+
             <button
-              onClick={handleRequestCoaching}
-              disabled={isSubmitting || !canRequest}
-              className={`flex-1 flex items-center justify-center gap-2 text-sm font-medium py-2.5 rounded-xl transition-colors disabled:cursor-not-allowed ${requestButtonClass}`}
+              className={`flex items-center justify-center gap-2 text-sm font-medium text-foreground border border-default-200 rounded-xl bg-white hover:bg-default-50 transition-colors ${
+                isAlreadyCoaching ? "flex-1 px-5 py-3" : "px-5 py-2.5"
+              }`}
             >
-              {isPending && (
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22 4 12 14.01 9 11.01" />
-                </svg>
-              )}
-              {requestButtonText}
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+              Message
             </button>
-          )}
-
-          <button
-            className={`flex items-center justify-center gap-2 text-sm font-medium text-foreground border border-default-200 rounded-xl bg-white hover:bg-default-50 transition-colors ${
-              isAlreadyCoaching ? "flex-1 px-5 py-3" : "px-5 py-2.5"
-            }`}
-          >
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
-            Message
-          </button>
-        </div>
-      )}
-
+          </div>
+        ))}
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );
