@@ -42,7 +42,7 @@ const CoachLayout = () => {
     fetchNotifications();
   }, []);
   return (
-    <section className="min-h-screen bg-white">
+    <section className="min-h-screen">
       <Navbar
         parent="/coach"
         name={user ? `${user.first_name} ${user.last_name}` : ""}
@@ -55,8 +55,14 @@ const CoachLayout = () => {
       <div className="pt-14">
         <Routes>
           <Route index element={<CoachDashBoard />} />
-          <Route path="settings" element={<Settings role="coach" tab="settings" />} />
-          <Route path="profile" element={<Settings role="coach" tab="info" />} />
+          <Route
+            path="settings"
+            element={<Settings role="coach" tab="settings" />}
+          />
+          <Route
+            path="profile"
+            element={<Settings role="coach" tab="info" />}
+          />
           <Route path="chat" element={<Chat />} />
           <Route path="contracts" element={<CoachContractsPage />} />
         </Routes>
