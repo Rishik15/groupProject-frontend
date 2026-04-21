@@ -14,7 +14,6 @@ import { Toast } from "@heroui/react";
 import BrowseCoaches from "./components/LandingPage/LandingBrowseCoaches";
 import CoachProfile from "./pages/Client/CoachProfile";
 
-import Workouts from "./pages/Workouts/Workouts";
 
 function App() {
   return (
