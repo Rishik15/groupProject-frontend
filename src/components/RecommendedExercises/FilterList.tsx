@@ -1,9 +1,4 @@
-import {
-  Select,
-  Label,
-  Description,
-  ListBox,
-} from "@heroui/react";
+import { Select, Label, Description, ListBox } from "@heroui/react";
 
 export type FilterItem = {
   key: string;
@@ -19,13 +14,7 @@ type Props = {
   placeholder?: string;
 };
 
-const FilterList = ({
-  name,
-  items,
-  value,
-  onChange,
-  placeholder = "Select an option",
-}: Props) => {
+const FilterList = ({ name, items, value, onChange }: Props) => {
   return (
     <Select
       selectedKey={value || null}
@@ -34,23 +23,20 @@ const FilterList = ({
           onChange(String(key));
         }
       }}
-      placeholder={placeholder}
     >
       <Label className="mb-2 block font-bold">{name}</Label>
 
       <Select.Trigger className="flex h-12 items-center rounded-xl border border-gray-300 px-3">
-        <Select.Value />
+        <Select.Value>
+          {value ? items.find((item) => item.key === value)?.label : "-"}
+        </Select.Value>
         <Select.Indicator />
       </Select.Trigger>
 
       <Select.Popover>
-        <ListBox className="min-w-[220px]">
+        <ListBox className="min-w-55">
           {items.map((item) => (
-            <ListBox.Item
-              key={item.key}
-              id={item.key}
-              textValue={item.label}
-            >
+            <ListBox.Item key={item.key} id={item.key} textValue={item.label}>
               <Label>{item.label}</Label>
               {item.description && (
                 <Description>{item.description}</Description>
