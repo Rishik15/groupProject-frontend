@@ -20,7 +20,7 @@ const Register = () => {
   const [modalMessage, setModalMessage] = useState("");
 
   const navigate = useNavigate();
-  const { refreshAuth } = useAuth();
+  const { setAuth } = useAuth();
 
   const handleRegister = async () => {
     try {
@@ -41,9 +41,14 @@ const Register = () => {
 
       const data = await register(name, email, password, selectedRole);
 
-      await refreshAuth();
+      const roles = data.roles ?? (data.role ? [data.role] : []);
 
-      if (data.role === "coach") {
+      setAuth({
+        user: data.user,
+        roles,
+      });
+
+      if (roles.includes("coach")) {
         navigate("/onboarding/coach");
       } else {
         navigate("/onboarding/client");
