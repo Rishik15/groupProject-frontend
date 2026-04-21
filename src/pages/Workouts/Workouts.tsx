@@ -2,7 +2,7 @@ import WorkoutScheduleSection from "../../components/WorkoutSchedule/WorkoutSche
 
 export default function Workouts() {
     return (
-        <main className="min-h-screen bg-white px-8 py-8">
+        <main className="min-h-screen px-8 py-8">
             <div className="mx-auto w-full max-w-[1400px] space-y-6">
                 <div>
                     <p className="text-[11.25px] font-medium text-[#72728A]">

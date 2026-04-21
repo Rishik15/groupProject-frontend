@@ -1,6 +1,9 @@
 import { useMemo, useState } from "react";
 
-import type { WorkoutCalendarEvent } from "../../utils/Interfaces/WorkoutLog/workoutLog";
+import type {
+    CreateWorkoutCalendarEventInput,
+    WorkoutCalendarEvent,
+} from "../../utils/Interfaces/WorkoutLog/workoutLog";
 import useWorkoutSchedule, {
     toDateString,
 } from "../../utils/WorkoutLog/useWorkoutSchedule";
@@ -62,6 +65,7 @@ export default function WeeklyWorkoutSchedule({
     const {
         events,
         activeEvent,
+        loggableEvents,
         activeSessionId,
         isLoading,
         errorMessage,
@@ -70,6 +74,8 @@ export default function WeeklyWorkoutSchedule({
         moveLocalEvent,
         removeLocalEvent,
         setEventActive,
+        refreshActiveSession,
+        refreshSchedule,
     } = useWorkoutSchedule(refreshToken, rangeStart, rangeEnd);
 
     function handleOpenAddSession(date: Date) {
@@ -91,8 +97,36 @@ export default function WeeklyWorkoutSchedule({
         setIsAddSessionOpen(true);
     }
 
+    async function refreshWorkoutScheduleState() {
+        await refreshActiveSession();
+        await refreshSchedule();
+    }
+
+    async function handleCreateSession(input: CreateWorkoutCalendarEventInput) {
+        await addLocalEvent(input);
+        await refreshWorkoutScheduleState();
+    }
+
+    async function handleUpdateSession(
+        eventId: string,
+        input: CreateWorkoutCalendarEventInput,
+    ) {
+        await updateLocalEvent(eventId, input);
+        await refreshWorkoutScheduleState();
+    }
+
+    async function handleDeleteSession(eventId: string) {
+        await removeLocalEvent(eventId);
+        await refreshWorkoutScheduleState();
+    }
+
+    async function handleSetActiveSession(eventId: string) {
+        await setEventActive(eventId);
+        await refreshWorkoutScheduleState();
+    }
+
     async function handleMoveEventToDate(eventId: string, nextDate: string) {
-        const targetEvent = events.find((event) => event.id === eventId);
+        const targetEvent = events.find((event: WorkoutCalendarEvent) => event.id === eventId);
         if (!targetEvent) {
             return;
         }
@@ -110,8 +144,27 @@ export default function WeeklyWorkoutSchedule({
 
         try {
             await moveLocalEvent(eventId, nextDate, nextHour);
+            await refreshWorkoutScheduleState();
         } catch (error) {
             console.error("[Workout Schedule] failed to move schedule event", error);
+        }
+    }
+
+    async function handleLogWorkoutFromHeader(event: WorkoutCalendarEvent) {
+        const isAttachedActive =
+            activeSessionId != null &&
+            event.sessionId != null &&
+            event.sessionId === activeSessionId;
+
+        try {
+            if (!isAttachedActive && event.source !== "active-session") {
+                await setEventActive(event.id);
+                await refreshWorkoutScheduleState();
+            }
+
+            onOpenWorkoutLog(event);
+        } catch (error) {
+            console.error("[Workout Schedule] failed to open workout logger", error);
         }
     }
 
@@ -121,8 +174,8 @@ export default function WeeklyWorkoutSchedule({
                 <div
                     className="mb-4 rounded-2xl px-4 py-3 text-[11.25px] text-[#72728A]"
                     style={{
-                        border: "1px solid #5E5EF44D",
-                        backgroundColor: "#5E5EF414",
+                        border: "1px solid #E5E7EB",
+                        backgroundColor: "#F8FAFC",
                     }}
                 >
                     {errorMessage}
@@ -132,14 +185,14 @@ export default function WeeklyWorkoutSchedule({
             <CossWorkoutCalendar
                 currentDate={currentDate}
                 events={events}
+                activeSessionId={activeSessionId}
                 isLoading={isLoading}
+                loggableEvents={loggableEvents}
                 onCurrentDateChange={setCurrentDate}
                 onAddSession={handleOpenAddSession}
                 onEditSession={handleOpenEditSession}
                 onMoveEventToDate={handleMoveEventToDate}
-                onLogWorkout={
-                    activeEvent ? () => onOpenWorkoutLog(activeEvent) : undefined
-                }
+                onLogWorkout={handleLogWorkoutFromHeader}
             />
 
             <AddSessionModal
@@ -153,10 +206,10 @@ export default function WeeklyWorkoutSchedule({
                 defaultDate={selectedDate}
                 defaultStartTime={selectedStartTime}
                 editingEvent={editingEvent}
-                onCreate={addLocalEvent}
-                onUpdate={updateLocalEvent}
-                onDelete={removeLocalEvent}
-                onSetActive={setEventActive}
+                onCreate={handleCreateSession}
+                onUpdate={handleUpdateSession}
+                onDelete={handleDeleteSession}
+                onSetActive={handleSetActiveSession}
             />
         </>
     );

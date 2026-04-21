@@ -9,8 +9,12 @@ import type { CalendarEvent } from "./types";
 import { EventItem } from "./event-item";
 import { useCalendarDnd } from "./calendar-dnd-context";
 
+type CalendarEventWithDrag = CalendarEvent & {
+  isDraggable?: boolean;
+};
+
 interface DraggableEventProps {
-  event: CalendarEvent;
+  event: CalendarEventWithDrag;
   view: "month" | "week" | "day";
   showTime?: boolean;
   onClick?: (e: React.MouseEvent) => void;
@@ -41,7 +45,8 @@ export function DraggableEvent({
     y: number;
   } | null>(null);
 
-  // Check if this is a multi-day event
+  const isEventDraggable = event.isDraggable !== false;
+
   const eventStart = new Date(event.start);
   const eventEnd = new Date(event.end);
   const isMultiDayEvent =
@@ -49,6 +54,8 @@ export function DraggableEvent({
 
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
+      id: `${event.id}-${view}`,
+      disabled: !isEventDraggable,
       data: {
         dragHandlePosition,
         event,
@@ -59,11 +66,13 @@ export function DraggableEvent({
         multiDayWidth: multiDayWidth,
         view,
       },
-      id: `${event.id}-${view}`,
     });
 
-  // Handle mouse down to track where on the event the user clicked
   const handleMouseDown = (e: React.MouseEvent) => {
+    if (!isEventDraggable) {
+      return;
+    }
+
     if (elementRef.current) {
       const rect = elementRef.current.getBoundingClientRect();
       setDragHandlePosition({
@@ -73,7 +82,6 @@ export function DraggableEvent({
     }
   };
 
-  // Don't render if this event is being dragged
   if (isDragging || activeId === `${event.id}-${view}`) {
     return (
       <div
@@ -97,8 +105,11 @@ export function DraggableEvent({
         isMultiDayEvent && multiDayWidth ? `${multiDayWidth}%` : undefined,
     };
 
-  // Handle touch start to track where on the event the user touched
   const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isEventDraggable) {
+      return;
+    }
+
     if (elementRef.current) {
       const rect = elementRef.current.getBoundingClientRect();
       const touch = e.touches[0];
@@ -113,24 +124,24 @@ export function DraggableEvent({
 
   return (
     <div
-      className="touch-none"
+      className={isEventDraggable ? "touch-none" : undefined}
       ref={(node) => {
         setNodeRef(node);
-        if (elementRef) elementRef.current = node;
+        elementRef.current = node;
       }}
       style={style}
     >
       <EventItem
         aria-hidden={ariaHidden}
-        dndAttributes={attributes}
-        dndListeners={listeners}
+        dndAttributes={isEventDraggable ? attributes : undefined}
+        dndListeners={isEventDraggable ? listeners : undefined}
         event={event}
         isDragging={isDragging}
         isFirstDay={isFirstDay}
         isLastDay={isLastDay}
         onClick={onClick}
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleTouchStart}
+        onMouseDown={isEventDraggable ? handleMouseDown : undefined}
+        onTouchStart={isEventDraggable ? handleTouchStart : undefined}
         showTime={showTime}
         view={view}
       />
