@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ProfileHeader from "../../components/CoachProfile/ProfileHeader";
 import ProfileTabs, { type Tab } from "../../components/CoachProfile/ProfileTabs";
 import AboutTab from "../../components/CoachProfile/AboutTab";
+import CoachReviewsSection from "../../components/CoachProfile/CoachReviewSection";
 import ReviewsTab from "../../components/CoachProfile/ReviewsTab";
 import SuccessStoriesTab from "../../components/CoachProfile/SuccessStoriesTab";
 import { getCoachProfile, type CoachProfile as CoachProfileType } from "../../services/contract/requestcontracts.ts";
@@ -16,11 +17,22 @@ export default function CoachProfile() {
 
   useEffect(() => {
     async function load() {
-      if (!id) return;
-      const data = await getCoachProfile(Number(id));
-      setCoach(data);
-      setLoading(false);
+      if (!id) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const data = await getCoachProfile(Number(id));
+        setCoach(data);
+      } catch (error) {
+        console.error("Failed to load coach profile:", error);
+        setCoach(null);
+      } finally {
+        setLoading(false);
+      }
     }
+
     load();
   }, [id]);
 
@@ -32,7 +44,7 @@ export default function CoachProfile() {
     );
   }
 
-  if (!coach) {
+  if (!coach || !id) {
     return (
       <div className="min-h-screen bg-default-100 flex items-center justify-center">
         <p className="text-sm text-default-400">Coach not found.</p>
@@ -40,9 +52,10 @@ export default function CoachProfile() {
     );
   }
 
+  const coachId = Number(id);
+
   return (
     <div className="min-h-screen bg-default-100 px-8 py-8 max-w-3xl mx-auto">
-      {/* Back link */}
       <button
         onClick={() => navigate(-1)}
         className="flex items-center gap-1.5 text-sm text-default-400 hover:text-foreground mb-6 transition-colors"
@@ -53,19 +66,23 @@ export default function CoachProfile() {
         Back to coaches
       </button>
 
-      {/* Header */}
       <div className="mb-6">
-        <ProfileHeader coach={coach} />
+        <ProfileHeader coach={coach} coachId={coachId} />
       </div>
 
-      {/* Tabs */}
       <div className="mb-5">
         <ProfileTabs activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
 
-      {/* Tab content */}
       {activeTab === "about" && <AboutTab coach={coach} />}
-      {activeTab === "reviews" && <ReviewsTab reviews={coach.reviews} />}
+
+      {activeTab === "reviews" && (
+        <div className="space-y-6">
+          <CoachReviewsSection coachId={coachId} />
+          <ReviewsTab reviews={coach.reviews} />
+        </div>
+      )}
+
       {activeTab === "stories" && <SuccessStoriesTab reviews={coach.reviews} />}
     </div>
   );

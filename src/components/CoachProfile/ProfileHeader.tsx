@@ -1,9 +1,33 @@
 import { useState } from "react";
 import { StarRating } from "../LandingPage/CoachCard";
-import type { CoachProfile } from "../../services/contract/requestcontracts.ts";
+import { requestCoachContract, type CoachProfile } from "../../services/contract/requestcontracts.ts";
 
-export default function ProfileHeader({ coach }: { coach: CoachProfile }) {
+interface ProfileHeaderProps {
+  coach: CoachProfile;
+  coachId: number;
+}
+
+export default function ProfileHeader({ coach, coachId }: ProfileHeaderProps) {
   const [requested, setRequested] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleRequestCoaching = async () => {
+    if (requested || isSubmitting) return;
+
+    try {
+      setIsSubmitting(true);
+      setError(null);
+
+      await requestCoachContract(coachId);
+      setRequested(true);
+    } catch (err) {
+      console.error("Failed to request coaching:", err);
+      setError("Could not send request. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -38,15 +62,16 @@ export default function ProfileHeader({ coach }: { coach: CoachProfile }) {
           <p className="text-xs text-default-400">per session</p>
         </div>
       </div>
-    
       <div className="flex gap-3">
         <button
-          onClick={() => !requested && setRequested(true)}
-          className={`flex-1 flex items-center justify-center gap-2 text-sm font-medium py-2.5 rounded-xl transition-colors ${
-            requested
-              ? "bg-green-50 text-green-600 border border-green-200"
+          onClick={handleRequestCoaching}
+          disabled={requested || isSubmitting}
+          className={`flex-1 flex items-center justify-center gap-2 text-sm font-medium py-2.5 rounded-xl transition-colors disabled:cursor-not-allowed ${requested
+            ? "bg-green-50 text-green-600 border border-green-200"
+            : isSubmitting
+              ? "bg-[#5B5EF4]/70 text-white"
               : "bg-[#5B5EF4] text-white hover:bg-[#4B4EE4]"
-          }`}
+            }`}
         >
           {requested && (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -54,7 +79,7 @@ export default function ProfileHeader({ coach }: { coach: CoachProfile }) {
               <polyline points="22 4 12 14.01 9 11.01" />
             </svg>
           )}
-          {requested ? "Request Sent!" : "Request Coaching"}
+          {requested ? "Request Sent!" : isSubmitting ? "Sending..." : "Request Coaching"}
         </button>
         <button className="flex items-center gap-2 text-sm font-medium text-foreground border border-default-200 px-5 py-2.5 rounded-xl bg-white hover:bg-default-50 transition-colors">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -63,6 +88,7 @@ export default function ProfileHeader({ coach }: { coach: CoachProfile }) {
           Message
         </button>
       </div>
+      {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );
 }
