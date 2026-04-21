@@ -1,35 +1,57 @@
-import { Card, Button } from "@heroui/react";
+import { Card } from "@heroui/react";
 import type { User } from "../../services/Setting/User";
+import CertificationModal from "./CertificationModal";
 
 type Prop = {
   form: User;
-  edit: boolean
+  edit: boolean;
 };
+
 export default function CoachCertificationsSection({ form, edit }: Prop) {
-
-
-
+  const certifications = form.certifications ?? [];
 
   return (
     <div className="w-full">
       <div className="flex flex-col gap-3">
-        <div className="flex flex-row">
+        <div className="flex flex-row items-start justify-between gap-4">
           <div>
             <p className="text-sm font-semibold text-gray-900">
               Coach Certifications
             </p>
-            <p className="text-xs">
+            <p className="text-xs text-gray-500">
               Show your credentials on your profile.
             </p>
           </div>
-          {edit ? (<Button className="ml-auto bg-white text-black border border-gray-300 rounded-xl">Edit</Button>):(<></>)}
+
+          {edit && <CertificationModal form={form} />}
         </div>
-        <Card className="bg-gray-100 rounded-xl">
-          <div className="px-1">
+
+        <Card className="rounded-xl bg-gray-100 p-4">
+          <div className="flex flex-col gap-2">
             <div>
-              <p className="text-[#6c7280] font-extrabold">Total Certifications</p>
-              <p className="text-xs"> {form.certifications?.length} certifications added</p>
+              <p className="font-semibold text-gray-800">Saved Certifications</p>
+              <p className="text-xs text-gray-500">
+                {certifications.length} certification
+                {certifications.length !== 1 ? "s" : ""} added
+              </p>
             </div>
+
+            {certifications.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {certifications.map((cert, index) => (
+                  <span
+                    key={`${cert.name}-${index}`}
+                    className="rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-indigo-700"
+                  >
+                    {cert.name}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-lg bg-white px-3 py-2 text-sm text-gray-500">
+                No certifications added yet
+              </div>
+            )}
           </div>
         </Card>
       </div>
