@@ -18,6 +18,7 @@ export interface Review {
 }
 
 export interface CoachProfile {
+  coach_id: number;
   first_name: string;
   last_name: string;
   coach_description: string;
@@ -29,6 +30,8 @@ export interface CoachProfile {
   reviews: Review[];
 }
 
+export type ContractStatus = "none" | "active" | "pending" | "closed";
+
 // sends coach_id to backend and returns full coach profile
 export async function getCoachProfile(coach_id: number): Promise<CoachProfile> {
   const { data } = await axios.post(
@@ -39,11 +42,19 @@ export async function getCoachProfile(coach_id: number): Promise<CoachProfile> {
   return data.coach;
 }
 
+// gets the current contract status between logged-in user and selected coach
+export async function getContractStatus(coach_id: number): Promise<ContractStatus> {
+  const { data } = await axios.get(`${BASE_URL}/contract/contractStatus`, {
+    params: { coach_id },
+    withCredentials: true,
+  });
+
+  return data.status;
+}
+
 // sends coach_id to the clientContracts route so the contract request is saved in the database
 export async function requestCoachContract(coach_id: number) {
   const { data } = await axios.post(
-    // If your blueprint is mounted with a prefix like /contracts,
-    // change this to `${BASE_URL}/contracts/requestContract`
     `${BASE_URL}/contract/requestContract`,
     { coach_id },
     { withCredentials: true }
