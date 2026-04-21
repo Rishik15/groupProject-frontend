@@ -6,7 +6,7 @@ import FilterModal from "../../components/RecommendedExercises/FilterModal";
 import type { Filters } from "../../services/RecommendationExercises/types";
 import ExerciseCard from "../../components/RecommendedExercises/ExerciseCard";
 import AllExercisesModal from "../../components/RecommendedExercises/AllExercisesModal";
-import get_all_plans from "../../services/RecommendationExercises/getAllPlans"
+import get_all_plans from "../../services/RecommendationExercises/getAllPlans";
 import type { Plan } from "../../services/RecommendationExercises/types";
 import NoResultCard from "../../components/RecommendedExercises/NoResultCard";
 
@@ -14,21 +14,19 @@ export default function Recommendation() {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenWorkouts, setIsOpenWorkouts] = useState(false);
   const [all_plans, set_allPlans] = useState<Plan[]>([]);
-  const [plan, setPlan] = useState<Plan>()
-
+  const [plan, setPlan] = useState<Plan>();
 
   useEffect(() => {
     const handleBrowseWorkouts = async () => {
       const res = await get_all_plans();
       console.log(res.data.plans);
-      set_allPlans(res.data.plans)
+      set_allPlans(res.data.plans);
     };
 
     if (isOpenWorkouts) {
       handleBrowseWorkouts();
     }
   }, [isOpenWorkouts]);
-
 
   const [filters, setFilters] = useState<Filters>({
     category: "",
@@ -37,13 +35,14 @@ export default function Recommendation() {
     duration: "",
   });
 
-
-
   return (
-    <div className="mt-5 flex justify-center">
-      <div className="min-h-screen bg-gray-50">
+    <div className="flex justify-center py-12">
+      <div className="min-h-screen">
         <div className="flex flex-row gap-3">
-          <RecommendedTitle openModalWorkouts={() => setIsOpenWorkouts(true)} openModal={() => setIsOpen(true)} />
+          <RecommendedTitle
+            openModalWorkouts={() => setIsOpenWorkouts(true)}
+            openModal={() => setIsOpen(true)}
+          />
           <FitSummaryCard openModal={() => setIsOpen(true)} filters={filters} />
         </div>
 
@@ -55,7 +54,14 @@ export default function Recommendation() {
             Based on your current filters, this is the plan that matches.
           </p>
         </div>
-        {plan != null ? (<ExerciseCard plan={plan} />) : (<NoResultCard  openModalWorkouts={() => setIsOpenWorkouts(true)} openModal={() => setIsOpen(true)}/>)}
+        {plan != null ? (
+          <ExerciseCard plan={plan} />
+        ) : (
+          <NoResultCard
+            openModalWorkouts={() => setIsOpenWorkouts(true)}
+            openModal={() => setIsOpen(true)}
+          />
+        )}
         <FilterModal
           filters={filters}
           setFilters={setFilters}
@@ -64,11 +70,11 @@ export default function Recommendation() {
           setPlan={setPlan}
         />
 
-        <AllExercisesModal isOpen={isOpenWorkouts}
+        <AllExercisesModal
+          isOpen={isOpenWorkouts}
           setIsOpen={setIsOpenWorkouts}
           plans={all_plans}
         />
-
       </div>
     </div>
   );
