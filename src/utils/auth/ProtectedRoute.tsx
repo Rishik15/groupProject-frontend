@@ -1,78 +1,64 @@
 import { useNavigate } from "react-router-dom";
-import type { ReactNode } from "react";
-import CustomModal from "../../components/global/Modal";
+import { useEffect } from "react";
 import { Spinner } from "@heroui/react";
 import { useAuth } from "./AuthContext";
-import { useEffect, useState } from "react";
+import { useRef } from "react";
 
 const ProtectedRoute = ({
   children,
   allowedRoles,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
   allowedRoles?: string[];
 }) => {
-  const { authenticated, role, loading } = useAuth();
-
-  const [showModal, setShowModal] = useState(false);
-  const [message, setMessage] = useState("");
-  const [redirectPath, setRedirectPath] = useState<string | null>(null);
-
+  const { status, roles, refreshAuth, hasCheckedAuth } = useAuth();
   const navigate = useNavigate();
 
+  // 🔥 trigger auth check
+  const hasChecked = useRef(false);
+
   useEffect(() => {
-    if (loading) return;
+    if (status === "anonymous" && !hasChecked.current) {
+      hasChecked.current = true;
+      refreshAuth();
+    }
+  }, [status]);
 
-    console.log("CHECKING ACCESS...");
+  // 🔥 handle routing AFTER check
+  useEffect(() => {
+    if (status === "checking") return;
 
-    if (!authenticated) {
-      console.log("NOT AUTHENTICATED");
-      setMessage("You must be signed in to access this page.");
-      setRedirectPath("/signin");
-      setShowModal(true);
+    // ❌ not logged in AFTER check
+    if (hasCheckedAuth && status === "anonymous") {
+      navigate("/signin");
       return;
     }
 
-    if (allowedRoles && role && !allowedRoles.includes(role)) {
-      console.log("ROLE NOT ALLOWED:", role);
-      setMessage("You are not authorized to access this page.");
-
-      if (role === "client") setRedirectPath("/client");
-      else if (role === "coach") setRedirectPath("/coach");
-      else setRedirectPath("/");
-
-      setShowModal(true);
-    } else {
-      console.log("ACCESS GRANTED");
+    // 🔐 role check
+    if (
+      status === "authenticated" &&
+      allowedRoles &&
+      !allowedRoles.some((r) => roles.includes(r))
+    ) {
+      if (roles.includes("client")) navigate("/client");
+      else if (roles.includes("coach")) navigate("/coach");
+      else navigate("/");
     }
-  }, [loading, authenticated, role, allowedRoles]);
+  }, [status, roles, allowedRoles, navigate]);
 
-  const handleModalClose = () => {
-    setShowModal(false);
-    if (redirectPath) navigate(redirectPath);
-  };
-
-  if (loading) {
+  // ⏳ loading
+  if (status === "checking") {
     return (
       <div className="h-screen flex items-center justify-center">
-        <Spinner size="lg" color="accent" />
+        <Spinner size="lg" />
       </div>
     );
   }
 
-  return (
-    <>
-      {!showModal && children}
+  // 🚫 block render until ready
+  if (status !== "authenticated") return null;
 
-      <CustomModal
-        isOpen={showModal}
-        onClose={handleModalClose}
-        title="Access Denied"
-      >
-        {message}
-      </CustomModal>
-    </>
-  );
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;
