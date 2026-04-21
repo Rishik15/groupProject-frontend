@@ -7,6 +7,8 @@ import PlanDetailModal from "./PlanDetailModal";
 
 type Prop = {
   plan: Plan;
+  submit: boolean
+  setSubmit: (val: boolean) => void;
 };
 
 export type Exercise = {
@@ -27,10 +29,9 @@ export type ExerciseResponse = {
   plan_id: string;
 };
 
-export default function ExerciseCard({ plan }: Prop) {
+export default function ExerciseCard({ plan, submit, setSubmit }: Prop) {
   const [exerciseData, setExerciseData] = useState<ExerciseResponse | null>(null);
   const [loadingPlan, setLoadingPlan] = useState(false);
-  const [submit, setSubmit] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [goal, days, duration, level] = plan.description.split(" | ");
@@ -124,6 +125,8 @@ export default function ExerciseCard({ plan }: Prop) {
       </Card>
 
       <PlanDetailModal
+        submit={submit}
+        setSubmit={setSubmit}
         isOpen={isModalOpen}
         onOpenChange={setIsModalOpen}
         exerciseData={exerciseData}

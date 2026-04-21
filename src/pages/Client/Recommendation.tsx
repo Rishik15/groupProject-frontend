@@ -15,6 +15,7 @@ export default function Recommendation() {
   const [isOpenWorkouts, setIsOpenWorkouts] = useState(false);
   const [all_plans, set_allPlans] = useState<Plan[]>([]);
   const [plan, setPlan] = useState<Plan>()
+  const [submit, setSubmit] = useState(false);
 
 
   useEffect(() => {
@@ -46,16 +47,13 @@ export default function Recommendation() {
           <RecommendedTitle openModalWorkouts={() => setIsOpenWorkouts(true)} openModal={() => setIsOpen(true)} />
           <FitSummaryCard openModal={() => setIsOpen(true)} filters={filters} />
         </div>
-
-        <FilterChips filters={filters} />
-
-        <div className="mt-5">
+        <div className="mt-8">
           <h1 className="text-[28px] font-bold">Matched plan</h1>
           <p className="text-gray-500">
             Based on your current filters, this is the plan that matches.
           </p>
         </div>
-        {plan != null ? (<ExerciseCard plan={plan} />) : (<NoResultCard  openModalWorkouts={() => setIsOpenWorkouts(true)} openModal={() => setIsOpen(true)}/>)}
+        {plan != null ? (<ExerciseCard submit={submit} setSubmit={setSubmit} plan={plan} />) : (<NoResultCard  openModalWorkouts={() => setIsOpenWorkouts(true)} openModal={() => setIsOpen(true)}/>)}
         <FilterModal
           filters={filters}
           setFilters={setFilters}

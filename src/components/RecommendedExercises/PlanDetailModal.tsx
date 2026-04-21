@@ -12,6 +12,8 @@ type Props = {
   level: string;
   days: string;
   duration: string;
+  setSubmit: (val:boolean) => void;
+  submit: boolean;
 };
 
 const PlanDetailModal = ({
@@ -24,6 +26,9 @@ const PlanDetailModal = ({
   level,
   days,
   duration,
+  submit,
+  setSubmit
+  
 }: Props) => {
   const grouped: Record<
     number,
@@ -61,7 +66,6 @@ const PlanDetailModal = ({
         (a, b) => a.order_in_workout - b.order_in_workout
       ),
     }));
-  const [submit, setSubmit] = useState(false);
 
   return (
     <Modal>
