@@ -9,6 +9,7 @@ import type { CoachQuery } from "../../utils/Interfaces/coachquery";
 import type { Coach } from "../../utils/Interfaces/coachquery";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
+import { CircleAlert } from "lucide-react";
 
 const MAX_PRICE_LIMIT = 300;
 
@@ -147,20 +148,9 @@ export default function BrowseCoaches() {
             {loading ? (
               [0, 1, 2, 3, 4, 5].map((i) => <SkeletonCard key={i} />)
             ) : coaches.length === 0 ? (
-              <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-                <div className="w-12 h-12 rounded-full bg-[#5B5EF4]/10 flex items-center justify-center mb-3">
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#5B5EF4"
-                    strokeWidth="2"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="12" y1="8" x2="12" y2="12" />
-                    <circle cx="12" cy="16" r="1" />
-                  </svg>
+              <div className="col-span-full flex flex-col items-center justify-center py-24 text-center">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center">
+                  <CircleAlert className="w-8 h-8" />
                 </div>
 
                 <p className="text-sm font-medium text-foreground">
