@@ -13,7 +13,9 @@ interface ProfileHeaderProps {
 }
 
 export default function ProfileHeader({ coach, coachId }: ProfileHeaderProps) {
-  const [contractStatus, setContractStatus] = useState<ContractStatus | null>(null);
+  const [contractStatus, setContractStatus] = useState<ContractStatus | null>(
+    null,
+  );
   const [isCheckingStatus, setIsCheckingStatus] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,8 +45,7 @@ export default function ProfileHeader({ coach, coachId }: ProfileHeaderProps) {
     }
   }, [coachId]);
 
-  const canRequest =
-    contractStatus === "none" || contractStatus === "closed";
+  const canRequest = contractStatus === "none" || contractStatus === "closed";
 
   const isAlreadyCoaching = contractStatus === "active";
   const isPending = contractStatus === "pending";
@@ -108,7 +109,9 @@ export default function ProfileHeader({ coach, coachId }: ProfileHeaderProps) {
             <h1 className="text-xl font-bold text-foreground">
               {coach.first_name} {coach.last_name}
             </h1>
-            <p className="text-sm text-default-400">{coach.coach_description}</p>
+            <p className="text-sm text-default-400">
+              {coach.coach_description}
+            </p>
             <div className="flex items-center gap-3 mt-1">
               <StarRating
                 rating={coach.avg_rating}
@@ -126,8 +129,8 @@ export default function ProfileHeader({ coach, coachId }: ProfileHeaderProps) {
 
       {isCheckingStatus ? (
         <div className="flex gap-3">
-          <div className="flex-1 h-[42px] rounded-xl bg-default-100 animate-pulse" />
-          <div className="w-[120px] h-[42px] rounded-xl bg-default-100 animate-pulse" />
+          <div className="flex-1 h-10.5 rounded-xl bg-default-100 animate-pulse" />
+          <div className="w-30 h-10.5 rounded-xl bg-default-100 animate-pulse" />
         </div>
       ) : (
         <div className="flex gap-3">
@@ -155,8 +158,9 @@ export default function ProfileHeader({ coach, coachId }: ProfileHeaderProps) {
           )}
 
           <button
-            className={`flex items-center justify-center gap-2 text-sm font-medium text-foreground border border-default-200 rounded-xl bg-white hover:bg-default-50 transition-colors ${isAlreadyCoaching ? "flex-1 px-5 py-3" : "px-5 py-2.5"
-              }`}
+            className={`flex items-center justify-center gap-2 text-sm font-medium text-foreground border border-default-200 rounded-xl bg-white hover:bg-default-50 transition-colors ${
+              isAlreadyCoaching ? "flex-1 px-5 py-3" : "px-5 py-2.5"
+            }`}
           >
             <svg
               width="15"
