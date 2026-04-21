@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { StarRating } from "../LandingPage/CoachCard";
 import type { CoachProfile } from "../../services/contract/requestcontracts.ts";
+import { useAuth } from "../../utils/auth/AuthContext";
 
 export default function ProfileHeader({ coach }: { coach: CoachProfile }) {
   const [requested, setRequested] = useState(false);
+  const { authenticated } = useAuth();
 
   return (
     <div className="flex flex-col gap-4">
@@ -40,6 +42,7 @@ export default function ProfileHeader({ coach }: { coach: CoachProfile }) {
       </div>
     
       <div className="flex gap-3">
+        {authenticated && (
         <button
           onClick={() => !requested && setRequested(true)}
           className={`flex-1 flex items-center justify-center gap-2 text-sm font-medium py-2.5 rounded-xl transition-colors ${
@@ -56,12 +59,15 @@ export default function ProfileHeader({ coach }: { coach: CoachProfile }) {
           )}
           {requested ? "Request Sent!" : "Request Coaching"}
         </button>
+        )}
+        {authenticated && (
         <button className="flex items-center gap-2 text-sm font-medium text-foreground border border-default-200 px-5 py-2.5 rounded-xl bg-white hover:bg-default-50 transition-colors">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
           </svg>
           Message
         </button>
+        )}
       </div>
     </div>
   );
