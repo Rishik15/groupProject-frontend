@@ -31,12 +31,32 @@ export default function AboutTab({ coach }: { coach: CoachProfile }) {
     <div className="flex flex-col gap-4">
       <Card className="p-6 flex flex-col gap-5">
         <div>
-          <p className="text-xs text-default-400 mb-1">Bio</p>
+          <p className="text-sm font-semibold text-foreground mb-1">Bio</p>
           <p className="text-sm text-foreground leading-relaxed">{coach.coach_description}</p>
         </div>
 
+        {coach.certifications.length > 0 && (
+          <div>
+            <p className="text-sm font-semibold text-foreground mb-2">Certifications</p>
+            <div className="flex flex-col gap-2">
+              {coach.certifications.map((cert) => (
+                <div key={cert.name} className="flex items-start justify-between text-sm">
+                  <div>
+                    <p className="font-medium text-foreground">{cert.name}</p>
+                    <p className="text-xs text-default-400">{cert.provider}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-default-400">Issued {cert.issued_date}</p>
+                    <p className="text-xs text-default-400">Expires {cert.expires_date}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div>
-          <p className="text-xs text-default-400 mb-2">Availability</p>
+
           <div className="flex flex-col gap-1.5">
             {coach.availability.map((slot, i) => (
               <div key={i} className="flex items-center gap-2 text-sm text-foreground">

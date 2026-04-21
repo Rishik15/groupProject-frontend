@@ -27,6 +27,7 @@ export interface CoachProfile {
   profile_picture: string;
   availability: Availability[];
   reviews: Review[];
+  certifications: Certification[];
 }
 
 // sends coach_id to backend and returns full coach profile
