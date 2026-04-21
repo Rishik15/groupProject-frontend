@@ -1,19 +1,38 @@
-import { Card } from "@heroui/react";
+import { Card, Button } from "@heroui/react";
+import type { User } from "../../services/Setting/User";
 
-export default function CoachCertificationsSection() {
+type Prop = {
+  form: User;
+  edit: boolean
+};
+export default function CoachCertificationsSection({ form, edit }: Prop) {
+
+
+
+
   return (
     <div className="w-full">
-      <Card className="rounded-xl border border-[#E8E8EF] p-4 shadow-none">
-        <div className="flex flex-col gap-3">
-          <p className="text-sm font-semibold text-gray-900">
-            Coach Certifications
-          </p>
-
-          <div className="rounded-md bg-gray-100 px-3 py-3 text-sm text-gray-500">
-            No certifications added yet
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-row">
+          <div>
+            <p className="text-sm font-semibold text-gray-900">
+              Coach Certifications
+            </p>
+            <p className="text-xs">
+              Show your credentials on your profile.
+            </p>
           </div>
+          {edit ? (<Button className="ml-auto bg-white text-black border border-gray-300 rounded-xl">Edit</Button>):(<></>)}
         </div>
-      </Card>
+        <Card className="bg-gray-100 rounded-xl">
+          <div className="px-1">
+            <div>
+              <p className="text-[#6c7280] font-extrabold">Total Certifications</p>
+              <p className="text-xs"> {form.certifications?.length} certifications added</p>
+            </div>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }

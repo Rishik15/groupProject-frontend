@@ -4,6 +4,14 @@ export type AvailabilitySlot = {
   end_time: string;
 };
 
+export type Certification = {
+  name: string;
+  provider: string;
+  description?: string | null;
+  issued_date?: string | null;
+  expires_date?: string | null;
+};
+
 export type User = {
   first_name?: string;
   last_name?: string;
@@ -20,4 +28,6 @@ export type User = {
   reviews?: unknown[];
   active_clients?: number;
   availability?: AvailabilitySlot[];
+
+  certifications?: Certification[];
 };

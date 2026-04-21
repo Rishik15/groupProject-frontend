@@ -11,7 +11,7 @@ import type { Coach } from "../../services/Setting/Coach";
 import { updateCoachProfile } from "../../services/Setting/UpdateCoachInfo";
 import { updateCoachAvailability } from "../../services/Setting/saveTime";
 
-type SettingsForm = User & Coach; 
+type SettingsForm = User & Coach;
 
 type SettingsProps = {
   role: string;
@@ -42,26 +42,22 @@ const Settings = ({ role, tab }: SettingsProps) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const userData = await GetUserInfo();
+      const userData = await GetUserInfo();
 
-        let mergedForm: SettingsForm = {
+      let mergedForm: SettingsForm = {
+        ...userData.user,
+      };
+
+      if (role === "coach") {
+        const coachData = await GetCoachInfo();
+        mergedForm = {
           ...userData.user,
+          ...coachData.coach,
         };
-
-        if (role === "coach") {
-          const coachData = await GetCoachInfo();
-          mergedForm = {
-            ...userData.user,
-            ...coachData.coach,
-          };
-        }
-
-        setUser(userData.user);
-        setForm(mergedForm);
-      } catch (error) {
-        console.error("Failed to fetch settings data:", error);
       }
+
+      setUser(userData.user);
+      setForm(mergedForm);
     };
 
     fetchData();
@@ -92,6 +88,7 @@ const Settings = ({ role, tab }: SettingsProps) => {
           price: form.price === "" || form.price == null ? undefined : Number(form.price),
           coach_description: form.coach_description,
         });
+
         await updateCoachAvailability(form.availability ?? []);
       }
 
@@ -118,8 +115,8 @@ const Settings = ({ role, tab }: SettingsProps) => {
 
         <div
           className={`fixed top-20 right-6 z-50 transition-all duration-300 ${showAlert
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 -translate-y-2 pointer-events-none"
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 -translate-y-2 pointer-events-none"
             }`}
         >
           <Alert status="success" className="rounded-xl bg-[#e5fcf0]">

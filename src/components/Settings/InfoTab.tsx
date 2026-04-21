@@ -73,7 +73,10 @@ export function InfoTab({ form, setForm, edit, role }: InfoTabProps) {
               updateAvailabilityField={updateAvailabilityField}
             />
 
-            <CoachCertificationsSection />
+            <CoachCertificationsSection
+            form={form}
+            edit={edit}
+            />
 
             <CoachDescriptionBlock
               form={form}
