@@ -8,7 +8,6 @@ import {
 import { buildRatingBreakdown } from "../../utils/CoachReview/coachReviewHelper";
 import { coachReviewTheme } from "../../utils/CoachReview/coachReviewTheme";
 import CoachReviewSummary from "./CoachReviewSummary";
-import CoachReviewCard from "./CoachReviewCard";
 import WriteReviewModal from "./WriteReviewModal";
 import CoachPlaceholderSection from "./CoachPlaceholderSection";
 
@@ -146,14 +145,6 @@ export default function CoachReviewsSection({
                     breakdown={breakdown}
                     onWriteReview={openModal}
                 />
-
-                {reviews.length === 0 ? (
-                    <CoachPlaceholderSection message="No reviews yet." />
-                ) : (
-                    reviews.map((review) => (
-                        <CoachReviewCard key={review.review_id} review={review} />
-                    ))
-                )}
             </div>
 
             <WriteReviewModal
