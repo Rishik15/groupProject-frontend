@@ -12,8 +12,8 @@ const AdminLayout = () => {
                 parent="/admin"
                 name="Admin"
                 email="admin@email.com"
-                notifications={[]}
-                count={0}
+                notifications={[]} //This needs fixing
+                count={0} //Same deal here
             />
 
             <div className="pt-14">
