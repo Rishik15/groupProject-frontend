@@ -46,9 +46,7 @@ export default function Recommendation() {
           <FitSummaryCard openModal={() => setIsOpen(true)} filters={filters} />
         </div>
 
-        <FilterChips filters={filters} />
-
-        <div className="mt-5">
+        <div className="mt-8">
           <h1 className="text-[28px] font-bold">Matched plan</h1>
           <p className="text-gray-500">
             Based on your current filters, this is the plan that matches.
