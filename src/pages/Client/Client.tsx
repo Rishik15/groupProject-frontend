@@ -13,6 +13,7 @@ import { useRef } from "react";
 import CreateWorkoutPlan from "./CreateWorkoutPlan";
 import { useAuth } from "../../utils/auth/AuthContext";
 import Recommendation from "./Recommendation";
+import ExerciseLibrary from "../ExerciseLibrary/ExerciseLibrary";
 
 const ClientLayout = () => {
   const { user } = useAuth();
@@ -61,9 +62,10 @@ const ClientLayout = () => {
           <Route index element={<ClientDashBoard />} />
           <Route path="chat" element={<Chat />} />
           <Route path="nutrition" element={<Nutrition />} />
-          <Route path="/coaches" element={<BrowseCoaches />} />
-          <Route path="/workouts" element={<Workouts />} />
+          <Route path="coaches" element={<BrowseCoaches />} />
+          <Route path="workouts" element={<Workouts />} />
           <Route path="createWorkout" element={<CreateWorkoutPlan />} />
+          <Route path="exercises" element={<ExerciseLibrary />} />
           <Route
             path="settings"
             element={<Settings role="client" tab="settings" />}

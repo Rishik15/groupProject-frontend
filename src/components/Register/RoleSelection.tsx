@@ -7,7 +7,7 @@ interface RoleProps {
 
 const RoleSelector = ({ role, setRole }: RoleProps) => {
   return (
-    <section className="flex flex-col pt-6">
+    <section className="flex flex-col py-2">
       <h4 className="text-sm mb-2 font-[525]">I want to...</h4>
 
       <div className="flex gap-4">

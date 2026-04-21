@@ -92,7 +92,7 @@ const AuthComplete = () => {
   if (showRoleSelection) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
-        <section className="w-full max-w-md">
+        <section className="w-full max-w-md items-center flex flex-col ">
           <h1 className="text-2xl font-semibold text-center mb-2">
             Finish setting up your account
           </h1>

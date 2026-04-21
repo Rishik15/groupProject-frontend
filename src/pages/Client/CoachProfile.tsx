@@ -6,6 +6,7 @@ import AboutTab from "../../components/CoachProfile/AboutTab";
 import ReviewsTab from "../../components/CoachProfile/ReviewsTab";
 import SuccessStoriesTab from "../../components/CoachProfile/SuccessStoriesTab";
 import { getCoachProfile, type CoachProfile as CoachProfileType } from "../../services/contract/requestcontracts.ts";
+import { useAuth } from "../../utils/auth/AuthContext"; 
 
 export default function CoachProfile() {
   const navigate = useNavigate();
@@ -13,6 +14,9 @@ export default function CoachProfile() {
   const [activeTab, setActiveTab] = useState<Tab>("about");
   const [coach, setCoach] = useState<CoachProfileType | null>(null);
   const [loading, setLoading] = useState(true);
+  const { status } = useAuth();
+
+const mode = status === "authenticated" ? "app" : "landing";
 
   useEffect(() => {
     async function load() {
@@ -55,7 +59,7 @@ export default function CoachProfile() {
 
       {/* Header */}
       <div className="mb-6">
-        <ProfileHeader coach={coach} />
+        <ProfileHeader coach={coach} mode={mode} />
       </div>
 
       {/* Tabs */}
