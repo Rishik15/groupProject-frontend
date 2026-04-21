@@ -7,12 +7,11 @@ import CoachLayout from "./pages/Coach/Coach";
 import ClientLayout from "./pages/Client/Client";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import OnboardingSurveyPage from "./pages/OnboardingSurvey/OnboardingSurveyPage";
-import ExerciseLibrary from "./pages/ExerciseLibrary/ExerciseLibrary"
 import AuthComplete from "./components/auth/Handler";
 
 import AdminLayout from "./pages/Admin/Admin";
 import { Toast } from "@heroui/react";
-import BrowseCoaches from "./pages/Client/BrowseCoaches";
+import BrowseCoaches from "./components/LandingPage/LandingBrowseCoaches";
 import CoachProfile from "./pages/Client/CoachProfile";
 
 import Workouts from "./pages/Workouts/Workouts";
@@ -27,6 +26,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/auth/complete" element={<AuthComplete />} />
+          <Route path="/coaches" element={<BrowseCoaches />} />
+          <Route path="/coaches/:id" element={<CoachProfile />} />
 
           <Route
             path="/admin/*"
@@ -37,11 +38,7 @@ function App() {
             }
           />
 
-          <Route path="/coaches" element={<BrowseCoaches/>} />
-          <Route path="/coaches/:id" element={<CoachProfile />} />
-          
-        <Route path="/workouts" element={<Workouts />} />
-        <Route
+          <Route
             path="/coach/*"
             element={
               <ProtectedRoute allowedRoles={["coach"]}>
@@ -58,14 +55,13 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/onboarding/client"
             element={<OnboardingSurveyPage surveyType="client" />}
           />
-          <Route
-            path="/exercises"
-            element={<ExerciseLibrary/>}
-          />
+
+
           <Route
             path="/onboarding/coach"
             element={<OnboardingSurveyPage surveyType="coach" />}

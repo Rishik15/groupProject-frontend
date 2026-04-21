@@ -161,7 +161,11 @@ export default function WeeklyWorkoutSchedule({
         onPreviousWeek={goToPreviousWeek}
         onNextWeek={goToNextWeek}
         onJumpToNow={jumpToNow}
-        onCreateWorkout={() => navigate("/client/createWorkout")}
+        onCreateWorkout={() => {
+          setTimeout(() => {
+            navigate("/client/createWorkout");
+          }, 0);
+        }}
       />
 
       <ScheduleLegend />
