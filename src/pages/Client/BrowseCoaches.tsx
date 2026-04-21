@@ -70,7 +70,7 @@ export default function BrowseCoaches() {
   return (
     <div className="min-h-screen bg-default-100 px-8 py-8">
       <button
-        onClick={() => navigate(-1)}
+        onClick={() => navigate("/")}
         className="flex items-center gap-1.5 text-sm text-[#72728A] hover:text-black mb-4 transition-colors"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
