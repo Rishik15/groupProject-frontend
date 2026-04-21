@@ -58,6 +58,7 @@ const Settings = ({ role, tab }: SettingsProps) => {
 
       setUser(userData.user);
       setForm(mergedForm);
+       console.log(mergedForm)
     };
 
     fetchData();
