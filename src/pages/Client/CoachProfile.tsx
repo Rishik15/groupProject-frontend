@@ -7,6 +7,7 @@ import CoachReviewsSection from "../../components/CoachProfile/CoachReviewSectio
 import ReviewsTab from "../../components/CoachProfile/ReviewsTab";
 import SuccessStoriesTab from "../../components/CoachProfile/SuccessStoriesTab";
 import { getCoachProfile, type CoachProfile as CoachProfileType } from "../../services/contract/requestcontracts.ts";
+import { useAuth } from "../../utils/auth/AuthContext"; 
 
 export default function CoachProfile() {
   const navigate = useNavigate();
@@ -14,6 +15,9 @@ export default function CoachProfile() {
   const [activeTab, setActiveTab] = useState<Tab>("about");
   const [coach, setCoach] = useState<CoachProfileType | null>(null);
   const [loading, setLoading] = useState(true);
+  const { status } = useAuth();
+
+const mode = status === "authenticated" ? "app" : "landing";
 
   useEffect(() => {
     async function load() {
@@ -67,7 +71,7 @@ export default function CoachProfile() {
       </button>
 
       <div className="mb-6">
-        <ProfileHeader coach={coach} coachId={coachId} />
+        <ProfileHeader coach={coach} coachId={coachId} mode={mode} />
       </div>
 
       <div className="mb-5">
