@@ -7,7 +7,6 @@ import {
   UserRound,
   CreditCard,
   Bell,
-  HelpCircle,
 } from "lucide-react";
 import { logout } from "../../../services/auth/logout";
 
