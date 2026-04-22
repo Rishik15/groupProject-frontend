@@ -9,6 +9,7 @@ type Props = {
   parent: string;
   setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
 };
+import { useAuth } from "../../utils/auth/AuthContext";
 
 export default function NotificationDropdown({
   count,
@@ -33,9 +34,11 @@ export default function NotificationDropdown({
     }
   };
 
+  const { activeMode } = useAuth();
+
   const handleClick = async (notif: Notification) => {
     try {
-      await markAsRead(notif.id);
+      await markAsRead(notif.id, activeMode);
 
       setNotifications((prev) => prev.filter((n) => n.id !== notif.id));
 
