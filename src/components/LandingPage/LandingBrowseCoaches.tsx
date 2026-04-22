@@ -1,12 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { Input, Button, Chip } from "@heroui/react";
-import CoachCard, {
-  SkeletonCard,
-} from "../../components/LandingPage/CoachCard";
-import FilterPanel from "../../components/BrowseCoaches/FilterPanel";
+import CoachCard, { SkeletonCard } from "./CoachCard";
+import FilterPanel from "../BrowseCoaches/FilterPanel";
 import { searchCoaches } from "../../services/filtering/searchcoaches";
 import type { CoachQuery } from "../../utils/Interfaces/coachquery";
 import type { Coach } from "../../utils/Interfaces/coachquery";
+import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import { CircleAlert } from "lucide-react";
 
@@ -22,6 +21,7 @@ export default function BrowseCoaches() {
 
   const [coaches, setCoaches] = useState<Coach[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const loadCoaches = useCallback(async () => {
     setLoading(true);
@@ -64,7 +64,23 @@ export default function BrowseCoaches() {
     (certifiedOnly ? 1 : 0);
 
   return (
-    <div className="min-h-screen bg-default-100 px-42 py-8">
+    <div className="min-h-screen bg-default-100 px-38 py-8">
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-1.5 text-sm text-[#72728A] hover:text-black mb-4 transition-colors"
+      >
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path d="M19 12H5M12 5l-7 7 7 7" />
+        </svg>
+        Back
+      </button>
       <h1 className="text-2xl font-bold text-foreground mb-1">
         Browse Expert Coaches
       </h1>

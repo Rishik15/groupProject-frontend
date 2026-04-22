@@ -3,12 +3,13 @@ import TemplateButton from "./TemplateButton";
 import { ArrowRightIcon } from "lucide-react";
 import { TrendingUp } from "lucide-react";
 import landingImage from "../../assets/landing_header.jpg";
+import { useState } from "react";
 // Above-the-fold hero section.
 // Register is a real route now.
 // Temporary buttons route back to the landing page until their screens exist.
 const HeroSection = () => {
   const navigate = useNavigate();
-
+  const [imageLoaded, setImageLoaded] = useState(false);
   // Current working routes.
   const landingRoute = "/coaches";
   const registerRoute = "/register";
@@ -82,7 +83,10 @@ const HeroSection = () => {
           <img
             src={landingImage}
             alt="Fitness coaching session"
-            className="h-120 object-cover shadow-2xl"
+            onLoad={() => setImageLoaded(true)}
+            className={`h-120 object-cover shadow-2xl transition-opacity duration-500 ${
+              imageLoaded ? "opacity-100" : "opacity-0"
+            }`}
           />
         </div>
 

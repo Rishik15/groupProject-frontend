@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const RegFooter = ({ onSubmit }: { onSubmit: () => void }) => {
   return (
-    <section className="pt-6 flex flex-col gap-3 items-center">
+    <section className="pt-4 flex flex-col gap-2 items-center">
       <Button
         fullWidth
         onClick={onSubmit}
@@ -14,12 +14,12 @@ const RegFooter = ({ onSubmit }: { onSubmit: () => void }) => {
         <ChevronRight className="w-5 h-5" />
       </Button>
 
-      <h3 className="mt-4 text-[14px]">
+      <h3 className="mt-4 text-[12px]">
         By creating an account you agree to our <u>Terms</u> and{" "}
         <u>Privacy Policy</u>.
       </h3>
 
-      <h3 className="text-[14px]">
+      <h3 className="text-[12px]">
         Already have an account?{" "}
         <Link to="/signin" className="text-[#5B5EF4]">
           Sign In

@@ -18,6 +18,7 @@ const CoachLayout = () => {
   const hasFetched = useRef(false);
 
   const count = notifications.length;
+
   useEffect(() => {
     if (hasFetched.current) return;
     hasFetched.current = true;

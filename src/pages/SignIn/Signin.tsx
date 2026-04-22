@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SignFooter from "../../components/SignIn/Footer";
 import SignHeader from "../../components/SignIn/Header";
@@ -17,16 +17,7 @@ const SignIn = () => {
   const [modalMessage, setModalMessage] = useState("");
 
   const navigate = useNavigate();
-  const { refreshAuth, authenticated, role, loading } = useAuth();
-
-  useEffect(() => {
-    if (loading) return;
-
-    if (authenticated) {
-      if (role === "coach") navigate("/coach");
-      else if (role === "client") navigate("/client");
-    }
-  }, [authenticated, role, loading, navigate]);
+  const { setAuth } = useAuth();
 
   const handleLogin = async () => {
     try {
@@ -47,7 +38,13 @@ const SignIn = () => {
         return;
       }
 
-      await refreshAuth();
+      const roles = data.roles ?? (data.role ? [data.role] : []);
+
+      setAuth({
+        user: data.user,
+        roles,
+      });
+
       navigate("/auth/complete");
     } catch (err: any) {
       let message = "Something went wrong. Please try again.";
@@ -78,13 +75,14 @@ const SignIn = () => {
 
           <SignFooter onSubmit={handleLogin} />
 
-          <div className="my-4 flex items-center gap-3">
-            <div className="h-px flex-1 bg-default-200" />
-            <span className="text-sm text-default-500">or</span>
-            <div className="h-px flex-1 bg-default-200" />
+          <div className="flex flex-col gap-4">
+            <div className="pt-4 flex items-center gap-3">
+              <div className="h-px flex-1 bg-gray-400" />
+              <span className="text-[12px] text-default-500">or</span>
+              <div className="h-px flex-1 bg-gray-400" />
+            </div>
+            <GoogleAuthButton onPress={startGoogleLogin} />
           </div>
-
-          <GoogleAuthButton onPress={startGoogleLogin} />
         </section>
       </div>
 
