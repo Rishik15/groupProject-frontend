@@ -7,7 +7,6 @@ import Chat from "../Chat/Chat";
 import { useState, useEffect } from "react";
 import { toast } from "@heroui/react";
 import { getNotifications } from "../../services/notifications/getNotifications";
-import CoachContractsPage from "./Contracts";
 import { useRef } from "react";
 
 const CoachLayout = () => {
@@ -77,7 +76,6 @@ const CoachLayout = () => {
             element={<Settings role="coach" tab="info" />}
           />
           <Route path="chat" element={<Chat />} />
-          <Route path="contracts" element={<CoachContractsPage />} />
         </Routes>
       </div>
     </section>
