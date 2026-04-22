@@ -31,22 +31,22 @@ const MetricCard = ({
   icon: React.ReactNode;
   title: string;
   value: string | number;
-  subtitle: string;
+  subtitle?: string;
   diff?: number;
 }) => {
   const isPositive = diff && diff >= 0;
 
   return (
-    <div className="flex items-center gap-4 bg-white rounded-2xl px-6 py-5 w-full shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
+    <div className="flex items-center gap-4 bg-white rounded-2xl px-6 py-4 w-full shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
       <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-[#eef0ff] text-[#5b5fc7]">
         {icon}
       </div>
 
       <div className="flex flex-col">
-        <div className="text-sm text-gray-500">{title}</div>
+        <div className="text-[14px] text-gray-500">{title}</div>
 
         <div className="flex items-center gap-2">
-          <span className="text-lg font-semibold">{value}</span>
+          <span className="text-[16px] font-semibold">{value}</span>
 
           {diff !== undefined && (
             <span
@@ -84,8 +84,7 @@ const CoachMetricRow = () => {
   if (!metrics) return null;
 
   return (
-    <section className="grid grid-cols-4 gap-6 px-32 py-6">
-      {/* Active Clients */}
+    <section className="grid grid-cols-4 gap-10 px-38 py-5">
       <MetricCard
         icon={<Users className="w-5 h-5" />}
         title="Active Clients"
@@ -108,7 +107,6 @@ const CoachMetricRow = () => {
         icon={<Dumbbell className="w-5 h-5" />}
         title="Sessions / Week"
         value={metrics.sessions.week}
-        subtitle={`${metrics.sessions.month} total this month`}
       />
 
       {/* Rating */}
