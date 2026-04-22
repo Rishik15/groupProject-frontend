@@ -56,14 +56,24 @@ export default function Navbar({
       });
     };
 
+    const handleNotificationsCleared = (data: { conversationId: number }) => {
+      console.log("CLEARING NOTIFS FOR:", data.conversationId);
+
+      setNotifications((prev) =>
+        prev.filter((n) => n.conversationId !== data.conversationId),
+      );
+    };
+
     socket.on("new_notification", handleNotification);
     socket.on("update_notification", handleNotification);
+    socket.on("chat_notifications_cleared", handleNotificationsCleared);
 
     isListenerAttached.current = true;
 
     return () => {
       socket.off("new_notification", handleNotification);
       socket.off("update_notification", handleNotification);
+      socket.off("chat_notifications_cleared", handleNotificationsCleared);
       isListenerAttached.current = false;
     };
   }, []);

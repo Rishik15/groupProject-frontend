@@ -77,9 +77,9 @@ const SignIn = () => {
 
           <div className="flex flex-col gap-4">
             <div className="pt-4 flex items-center gap-3">
-              <div className="h-px flex-1 bg-indigo-300" />
+              <div className="h-px flex-1 bg-gray-400" />
               <span className="text-[12px] text-default-500">or</span>
-              <div className="h-px flex-1 bg-indigo-300" />
+              <div className="h-px flex-1 bg-gray-400" />
             </div>
             <GoogleAuthButton onPress={startGoogleLogin} />
           </div>
