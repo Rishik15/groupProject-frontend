@@ -34,7 +34,9 @@ export default function AvailabilityCard({
     <Card className="rounded-xl border border-gray-200 p-4 shadow-sm">
       <div className="grid w-full grid-cols-4 gap-3">
         <div className="flex flex-col gap-2">
-          <DayListBox slot={slot} edit={edit} />
+          <DayListBox slot={slot} edit={edit} updateDay={(value) =>
+            updateAvailabilityField(index, "day_of_week", value)
+          } />
         </div>
 
         <div className="flex flex-col gap-2">

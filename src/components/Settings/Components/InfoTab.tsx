@@ -44,6 +44,9 @@ export function InfoTab({ form, setForm, edit, role }: InfoTabProps) {
         }
         : prev
     );
+
+    console.log(form?.availability?.[index]);
+
   };
 
   const days = [
