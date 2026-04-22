@@ -59,29 +59,6 @@ const Accounts = () => {
                                     </p>
                                 </div>
                             </div>
-
-                            <div className="rounded-[20px] border border-default-200 bg-default-50 p-4">
-                                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-default-500">
-                                    Temporary navigation
-                                </p>
-                                <div className="mt-3 flex flex-wrap gap-2">
-                                    <Button className={"bg-[#5B5EF4]"} onPress={() => navigate(ADMIN_ROUTES.dashboard)}>
-                                        Dashboard
-                                    </Button>
-                                    <Button className={"bg-[#5B5EF4]"} onPress={() => navigate(ADMIN_ROUTES.coachGovernance)}>
-                                        Coach Governance
-                                    </Button>
-                                    <Button className={"bg-[#5B5EF4]"} onPress={() => navigate(ADMIN_ROUTES.reports)}>
-                                        Reports
-                                    </Button>
-                                    <Button className={"bg-[#5B5EF4]"} onPress={() => navigate(ADMIN_ROUTES.exercises)}>
-                                        Exercises
-                                    </Button>
-                                    <Button className={"bg-[#5B5EF4]"} onPress={() => navigate(ADMIN_ROUTES.workouts)}>
-                                        Workouts
-                                    </Button>
-                                </div>
-                            </div>
                         </div>
 
                         <div className="grid gap-3 md:grid-cols-3">

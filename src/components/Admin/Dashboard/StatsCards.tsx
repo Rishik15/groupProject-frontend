@@ -49,7 +49,7 @@ const StatsCards = ({ stats }: StatsCardsProps) => {
   ];
 
   return (
-    <section className="space-y-4" aria-labelledby="dashboard-overview-heading">
+    <section className="space-y-3" aria-labelledby="dashboard-overview-heading">
       <div>
         <h2 id="dashboard-overview-heading" className="text-xl font-semibold text-default-900">
           Overview
@@ -64,21 +64,24 @@ const StatsCards = ({ stats }: StatsCardsProps) => {
           const Icon = item.icon;
 
           return (
-            <Card key={item.id} className="rounded-[24px] border border-default-200 bg-white shadow-sm">
-              <div className="flex h-full flex-col justify-between gap-5 p-5">
-                <div className="flex items-start justify-between gap-4">
+            <Card
+              key={item.id}
+              className="rounded-[20px] border border-default-200 bg-white shadow-sm"
+            >
+              <div className="flex flex-col justify-between gap-3 p-4">
+                <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-medium text-default-600">{item.title}</p>
-                    <p className="mt-3 text-3xl font-semibold tracking-tight text-default-900">
+                    <p className="mt-2 text-2xl font-semibold tracking-tight text-default-900">
                       {item.value}
                     </p>
                   </div>
-                  <div className="rounded-[18px] border border-default-200 bg-default-50 p-3">
-                    <Icon className="h-5 w-5 text-default-700" />
+                  <div className="rounded-[14px] border border-default-200 bg-default-50 p-2.5">
+                    <Icon className="h-4.5 w-4.5 text-default-700" />
                   </div>
                 </div>
 
-                <p className="text-sm leading-6 text-default-500">{item.helperText}</p>
+                <p className="text-xs leading-5 text-default-500">{item.helperText}</p>
               </div>
             </Card>
           );

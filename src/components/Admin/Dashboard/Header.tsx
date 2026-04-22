@@ -49,19 +49,6 @@ const AdminDashboardHeader = ({
               </p>
             </div>
           </div>
-
-          <div className="rounded-[20px] border border-default-200 bg-default-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-default-500">
-              Temporary navigation
-            </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <Button className={"bg-[#5B5EF4]"} onPress={onNavigateToAccounts}>Accounts</Button>
-              <Button className={"bg-[#5B5EF4]"} onPress={onNavigateToCoachGovernance}>Coach Governance</Button>
-              <Button className={"bg-[#5B5EF4]"} onPress={onNavigateToReports}>Reports</Button>
-              <Button className={"bg-[#5B5EF4]"} onPress={onNavigateToExercises}>Exercises</Button>
-              <Button className={"bg-[#5B5EF4]"} onPress={onNavigateToWorkouts}>Workouts</Button>
-            </div>
-          </div>
         </div>
 
         <div className="flex flex-wrap gap-3">

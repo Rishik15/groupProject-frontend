@@ -1,12 +1,18 @@
-import { Card } from "@heroui/react";
+import { Button, Card } from "@heroui/react";
 import { FileWarning, ShieldAlert, TriangleAlert } from "lucide-react";
 import type { AdminDashboardStats } from "../../../utils/Interfaces/Admin/adminDashboard";
 
 interface PendingReviewSummaryProps {
   stats: AdminDashboardStats;
+  onNavigateToCoachGovernance: () => void;
+  onNavigateToReports: () => void;
 }
 
-const PendingReviewSummary = ({ stats }: PendingReviewSummaryProps) => {
+const PendingReviewSummary = ({
+  stats,
+  onNavigateToCoachGovernance,
+  onNavigateToReports,
+}: PendingReviewSummaryProps) => {
   const hasReviewBacklog = stats.pending_reviews > 0;
 
   return (
@@ -20,57 +26,7 @@ const PendingReviewSummary = ({ stats }: PendingReviewSummaryProps) => {
         </p>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr_1fr]">
-        <Card className="rounded-[24px] border border-default-200 bg-white shadow-sm">
-          <div className="flex h-full flex-col gap-4 p-5">
-            <div className="flex items-center gap-3">
-              <div className="rounded-[18px] border border-default-200 bg-default-50 p-3">
-                <TriangleAlert className="h-5 w-5 text-default-700" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-default-600">Review backlog status</p>
-                <p className="text-2xl font-semibold tracking-tight text-default-900">
-                  {stats.pending_reviews.toLocaleString()} items pending
-                </p>
-              </div>
-            </div>
-
-            <p className="text-sm leading-6 text-default-500">
-              {hasReviewBacklog
-                ? "There are moderation items waiting for action. Use the quick navigation buttons above to jump into the correct workflow."
-                : "There is no current moderation backlog. The dashboard is clear right now."}
-            </p>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-[20px] border border-default-200 p-4">
-                <div className="flex items-center gap-2 text-sm font-medium text-default-700">
-                  <ShieldAlert className="h-4 w-4" />
-                  Coach applications
-                </div>
-                <p className="mt-3 text-2xl font-semibold tracking-tight text-default-900">
-                  {stats.pending_coach_applications.toLocaleString()}
-                </p>
-                <p className="mt-2 text-sm text-default-500">
-                  Approval and rejection decisions waiting in Coach Governance.
-                </p>
-              </div>
-
-              <div className="rounded-[20px] border border-default-200 p-4">
-                <div className="flex items-center gap-2 text-sm font-medium text-default-700">
-                  <FileWarning className="h-4 w-4" />
-                  Open reports
-                </div>
-                <p className="mt-3 text-2xl font-semibold tracking-tight text-default-900">
-                  {stats.open_reports.toLocaleString()}
-                </p>
-                <p className="mt-2 text-sm text-default-500">
-                  Reports still waiting for admin closure or follow-up.
-                </p>
-              </div>
-            </div>
-          </div>
-        </Card>
-
+      <div className="grid gap-4 lg:grid-cols-2">
         <Card className="rounded-[24px] border border-default-200 bg-white shadow-sm">
           <div className="flex h-full flex-col justify-between gap-3 p-5">
             <div>
@@ -100,6 +56,62 @@ const PendingReviewSummary = ({ stats }: PendingReviewSummaryProps) => {
             <p className="text-sm leading-6 text-default-500">
               Portion of the backlog driven by moderation reports from users or coaches.
             </p>
+          </div>
+        </Card>
+
+        <Card className="rounded-[24px] border border-default-200 bg-white shadow-sm lg:col-span-2">
+          <div className="flex h-full flex-col gap-4 p-5">
+            <div className="flex items-center gap-3">
+              <div className="rounded-[18px] border border-default-200 bg-default-50 p-3">
+                <TriangleAlert className="h-5 w-5 text-default-700" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-default-600">Review backlog status</p>
+                <p className="text-2xl font-semibold tracking-tight text-default-900">
+                  {stats.pending_reviews.toLocaleString()} items pending
+                </p>
+              </div>
+            </div>
+
+            <p className="text-sm leading-6 text-default-500">
+              {hasReviewBacklog
+                ? "There are moderation items waiting for action. Use the buttons below to jump directly into the correct workflow."
+                : "There is no current moderation backlog. The dashboard is clear right now."}
+            </p>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-[20px] border border-default-200 p-4">
+                <div className="flex items-center gap-2 text-sm font-medium text-default-700">
+                  <ShieldAlert className="h-4 w-4" />
+                  Coach applications
+                </div>
+                <p className="mt-3 text-2xl font-semibold tracking-tight text-default-900">
+                  {stats.pending_coach_applications.toLocaleString()}
+                </p>
+                <p className="mt-2 text-sm text-default-500">
+                  Approval and rejection decisions waiting in Coach Governance.
+                </p>
+                <Button className="mt-4 bg-[#5B5EF4]" size="sm" onPress={onNavigateToCoachGovernance}>
+                  Open Coach Governance
+                </Button>
+              </div>
+
+              <div className="rounded-[20px] border border-default-200 p-4">
+                <div className="flex items-center gap-2 text-sm font-medium text-default-700">
+                  <FileWarning className="h-4 w-4" />
+                  Open reports
+                </div>
+                <p className="mt-3 text-2xl font-semibold tracking-tight text-default-900">
+                  {stats.open_reports.toLocaleString()}
+                </p>
+                <p className="mt-2 text-sm text-default-500">
+                  Reports still waiting for admin closure or follow-up.
+                </p>
+                <Button className="mt-4 bg-[#5B5EF4]" size="sm" onPress={onNavigateToReports}>
+                  Open Reports
+                </Button>
+              </div>
+            </div>
           </div>
         </Card>
       </div>
