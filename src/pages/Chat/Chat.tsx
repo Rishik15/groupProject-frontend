@@ -7,6 +7,7 @@ import { socket } from "../../services/sockets/socket";
 import { getMessages } from "../../services/chat/get_messages";
 import type { Message } from "../../utils/Interfaces/chat";
 import { useRef } from "react";
+import { useAuth } from "../../utils/auth/AuthContext";
 
 const Chat = () => {
   const [selectedUser, setSelectedUser] = useState<any>(null);
@@ -14,9 +15,14 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const selectedUserRef = useRef<any>(null);
 
+  const { activeMode, socketReady } = useAuth();
+
+  const mode = activeMode === "coach" ? "coach" : "client";
+  const targetMode = mode === "coach" ? "client" : "coach";
+
   useEffect(() => {
     const fetchUsers = async () => {
-      const data = await get_users();
+      const data = await get_users(mode);
       console.log("FULL DATA:", data);
       setUsers(data);
     };
@@ -30,48 +36,41 @@ const Chat = () => {
     selectedUserRef.current = selectedUser;
   }, [selectedUser]);
 
+  const hasJoinedRef = useRef(false);
+
   useEffect(() => {
-    const handleConnect = () => {
-      socket.emit("join_chat_presence");
-    };
+    if (!socketReady) return;
+    if (hasJoinedRef.current) return;
 
-    if (socket.connected) {
-      handleConnect();
-    } else {
-      socket.on("connect", handleConnect);
-    }
+    socket.emit("join_chat_presence");
+    hasJoinedRef.current = true;
+  }, [socketReady]);
 
+  useEffect(() => {
     return () => {
-      socket.emit("leave_chat_presence");
-      socket.off("connect", handleConnect);
+      if (hasJoinedRef.current) {
+        socket.emit("leave_chat_presence");
+        hasJoinedRef.current = false;
+      }
     };
   }, []);
 
   useEffect(() => {
+    if (!socketReady) return;
     if (users.length === 0) return;
 
-    const sendSubscribe = () => {
-      socket.emit("subscribe_presence", {
-        userIds: users.map((u) => u.id),
-      });
-    };
-
-    if (socket.connected) {
-      sendSubscribe();
-    } else {
-      socket.on("connect", sendSubscribe);
-    }
-
-    return () => {
-      socket.off("connect", sendSubscribe);
-    };
-  }, [users]);
+    socket.emit("subscribe_presence", {
+      identities: users.map((u) => `${u.id}:${targetMode}`),
+    });
+  }, [socketReady, users, targetMode]);
 
   useEffect(() => {
-    socket.on("presence_change", ({ userId, status }) => {
+    const handler = ({ identity, status }: any) => {
+      const [userId] = identity.split(":");
+
       setUsers((prev) =>
         prev.map((u) => {
-          if (u.id !== userId) return u;
+          if (String(u.id) !== userId) return u;
 
           return {
             ...u,
@@ -79,10 +78,12 @@ const Chat = () => {
           };
         }),
       );
-    });
+    };
+
+    socket.on("presence_change", handler);
 
     return () => {
-      socket.off("presence_change");
+      socket.off("presence_change", handler);
     };
   }, []);
 

@@ -8,16 +8,21 @@ const Dropdownaction = ({
   route,
   danger,
   type = "link",
+  onClick,
 }: {
   label: string;
   route?: string;
   danger?: boolean;
-  type?: "logout" | "link";
+  type?: "logout" | "link" | "action";
+  onClick?: () => void;
 }) => {
   const navigate = useNavigate();
   const { clearAuth } = useAuth();
 
-  const handleClick = async () => {
+  const handleClick = () => {
+  onClick?.();
+
+  setTimeout(async () => {
     if (type === "logout") {
       await logout();
       clearAuth(true);
@@ -32,8 +37,10 @@ const Dropdownaction = ({
 
     if (type === "link" && route) {
       navigate(route);
+      return;
     }
-  };
+  }, 0);
+};
 
   return (
     <button
