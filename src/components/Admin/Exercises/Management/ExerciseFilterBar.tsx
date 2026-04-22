@@ -41,14 +41,14 @@ const ExerciseFilterBar = ({
         />
 
         <div className="flex flex-wrap gap-2">
-          <Button onPress={onRefresh} isDisabled={isRefreshing}>
+          <Button className={"bg-[#5B5EF4]"} onPress={onRefresh} isDisabled={isRefreshing}>
             <span className="inline-flex items-center gap-2">
               <RefreshCw className={isRefreshing ? "h-4 w-4 animate-spin" : "h-4 w-4"} />
               Refresh
             </span>
           </Button>
 
-          <Button onPress={onCreate}>
+          <Button className={"bg-[#5B5EF4]"} onPress={onCreate}>
             <span className="inline-flex items-center gap-2">
               <Plus className="h-4 w-4" />
               New Exercise

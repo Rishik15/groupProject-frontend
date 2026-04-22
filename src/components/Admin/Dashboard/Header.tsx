@@ -20,11 +20,6 @@ interface AdminDashboardHeaderProps {
 }
 
 const AdminDashboardHeader = ({
-  onNavigateToAccounts,
-  onNavigateToCoachGovernance,
-  onNavigateToReports,
-  onNavigateToExercises,
-  onNavigateToWorkouts,
   onScrollToOverview,
   onScrollToEngagement,
   onScrollToReviews,

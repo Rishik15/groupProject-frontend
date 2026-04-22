@@ -1,14 +1,13 @@
-import { Button, Card } from "@heroui/react";
+import { Card } from "@heroui/react";
 import {
     AlertTriangle,
     ClipboardList,
     FileWarning,
 } from "lucide-react";
-import { Navigate, NavLink, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, NavLink, Route, Routes, useLocation } from "react-router-dom";
 import { ClosedReportsTab, OpenReportsTab } from "../../components/Admin/Reports";
 
 const Reports = () => {
-    const navigate = useNavigate();
     const location = useLocation();
 
     const openActive = location.pathname.endsWith("/open") || location.pathname === "/admin/reports";

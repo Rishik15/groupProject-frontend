@@ -209,7 +209,7 @@ const CoachApplicationsTab = () => {
                 </div>
 
                 {actionIsOpen ? (
-                  <Button onPress={closeAction} isDisabled={submitting}>
+                  <Button className={"bg-[#5B5EF4]"} onPress={closeAction} isDisabled={submitting}>
                     Back to roster
                   </Button>
                 ) : null}

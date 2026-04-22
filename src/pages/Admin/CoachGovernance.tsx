@@ -89,7 +89,7 @@ const CoachGovernance = () => {
                                     <Button
                                         key={tab.key}
                                         onPress={() => navigate(tab.path)}
-                                        className={active ? "border border-default-300" : undefined}
+                                        className={active ? "border border-default-300 bg-[#5B5EF4] " : "bg-[#5B5EF4]"}
                                     >
                                         <span className="inline-flex items-center gap-2">
                                             <Icon className="h-4 w-4" />

@@ -157,7 +157,13 @@ const Dashboard = () => {
                         </div>
 
                         <div ref={reviewsRef}>
-                            <PendingReviewSummary stats={stats} />
+                            <PendingReviewSummary
+                                stats={stats}
+                                onNavigateToCoachGovernance={() =>
+                                    navigate("/admin/coach-governance")
+                                }
+                                onNavigateToReports={() => navigate("/admin/reports")}
+                            />
                         </div>
                     </>
                 ) : null}
