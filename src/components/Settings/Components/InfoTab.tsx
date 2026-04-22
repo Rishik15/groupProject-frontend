@@ -40,7 +40,55 @@ export function InfoTab({ form, setForm, edit, role }: InfoTabProps) {
           ...prev,
           availability: prev.availability?.map((slot, i) =>
             i === index ? { ...slot, [key]: value } : slot
-          ),
+          ) ?? [],
+        }
+        : prev
+    );
+  };
+
+  const days = [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun",
+  ];
+
+  const addAvailability = () => {
+    if (!form) return;
+
+    const existingDays = form.availability?.map(a => a.day_of_week) ?? [];
+
+    const nextDay = days.find(day => !existingDays.includes(day));
+
+    if (!nextDay) return;
+
+    setForm((prev) =>
+      prev
+        ? {
+          ...prev,
+          availability: [
+            ...(prev.availability ?? []),
+            {
+              day_of_week: nextDay,
+              start_time: "09:00:00",
+              end_time: "17:00:00",
+            },
+          ],
+        }
+        : prev
+    );
+  };
+
+  const removeAvailability = (index: number) => {
+    setForm((prev) =>
+      prev
+        ? {
+          ...prev,
+          availability:
+            prev.availability?.filter((_, i) => i !== index) ?? [],
         }
         : prev
     );
@@ -71,12 +119,11 @@ export function InfoTab({ form, setForm, edit, role }: InfoTabProps) {
               availability={form.availability}
               edit={edit}
               updateAvailabilityField={updateAvailabilityField}
+              addAvailability={addAvailability}
+              removeAvailability={removeAvailability}
             />
 
-            <CoachCertificationsSection
-            form={form}
-            edit={edit}
-            />
+            <CoachCertificationsSection form={form} edit={edit} />
 
             <CoachDescriptionBlock
               form={form}
