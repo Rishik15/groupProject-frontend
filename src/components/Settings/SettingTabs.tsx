@@ -32,7 +32,6 @@ const clientOptions = [
   { label: "Browse Coaches", icon: UserRound, route: "/client/coaches" },
   { label: "Payments & Billing", icon: CreditCard, route: "/billing" },
   { label: "Notifications", icon: Bell, route: "/notifications" },
-  { label: "Help & Support", icon: HelpCircle, route: "/help" },
 ];
 
 const coachOptions = [
@@ -40,7 +39,6 @@ const coachOptions = [
   { label: "Browse Coaches", icon: UserRound, route: "/coaches" },
   { label: "Payments & Billing", icon: CreditCard, route: "/billing" },
   { label: "Notifications", icon: Bell, route: "/notifications" },
-  { label: "Help & Support", icon: HelpCircle, route: "/help" },
 ];
 
 const SettingTab = ({
