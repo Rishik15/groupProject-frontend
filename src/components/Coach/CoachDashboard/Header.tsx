@@ -1,6 +1,6 @@
 import { Button } from "@heroui/react";
 import { useAuth } from "../../../utils/auth/AuthContext";
-import { Plus, RotateCcw } from "lucide-react";
+import { Plus } from "lucide-react";
 
 const CoachHeader = () => {
   const { user } = useAuth();
@@ -37,12 +37,7 @@ const CoachHeader = () => {
             <div className="text-[12px]">Manage Clients</div>
           </div>
         </Button>
-        <Button className="h-8 px-3 rounded-xl bg-gray-100 text-black hover:bg-[#5B5EF4] hover:text-white">
-          <div className="flex items-center gap-2">
-            <RotateCcw className="w-4 h-4" />
-            <div className="text-[12px]">Switch Role</div>
-          </div>
-        </Button>
+       
       </div>
     </section>
   );
