@@ -16,21 +16,17 @@ type Coach = {
 
 const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
     const [coaches, setCoaches] = useState<Coach[]>([]);
-    const [loading, setLoading] = useState(true);
     const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
     const [reason, setReason] = useState<string>("");
     const [details, setDetails] = useState("");
 
     useEffect(() => {
         const getClientCoach = async () => {
-            setLoading(true);
-
             const res = await axios.get("http://localhost:8080/client/getCoaches", {
                 withCredentials: true,
             });
 
             setCoaches(Array.isArray(res.data) ? res.data : []);
-            setLoading(false);
         };
 
         if (isOpen) {
@@ -46,8 +42,7 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
     };
 
     const handleSubmit = () => {
-        if (!selectedCoach) return;
-        if (!reason) return;
+        if (!selectedCoach || !reason) return;
 
         console.log({
             coach: selectedCoach,
@@ -79,9 +74,7 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                             <div className="flex flex-col gap-2">
                                 <Label>Coach</Label>
 
-                                {loading ? (
-                                    <p className="text-sm text-gray-500">Loading coaches...</p>
-                                ) : coaches.length === 0 ? (
+                                {coaches.length === 0 ? (
                                     <p className="text-sm text-gray-500">No coaches found</p>
                                 ) : (
                                     <div className="flex flex-col gap-3">
@@ -92,10 +85,11 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                                                 <Card
                                                     key={coach.email}
                                                     onClick={() => setSelectedCoach(coach)}
-                                                    className={`flex cursor-pointer flex-row items-center gap-3 border p-3 transition ${isSelected
+                                                    className={`flex cursor-pointer flex-row items-center gap-3 border p-3 transition ${
+                                                        isSelected
                                                             ? "border-indigo-500 bg-[#eef2ff]"
                                                             : "border-gray-200 bg-white hover:bg-gray-50"
-                                                        }`}
+                                                    }`}
                                                 >
                                                     <Avatar>
                                                         <Avatar.Image
@@ -135,33 +129,13 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
 
                                             <Select.Popover>
                                                 <ListBox>
-                                                    <ListBox.Item id="harassment" textValue="Harassment">
-                                                        Harassment
-                                                        <ListBox.ItemIndicator />
-                                                    </ListBox.Item>
-
-                                                    <ListBox.Item id="spam_scam" textValue="Spam / Scam">
-                                                        Spam / Scam
-                                                        <ListBox.ItemIndicator />
-                                                    </ListBox.Item>
-
-                                                    <ListBox.Item
-                                                        id="inappropriate_content"
-                                                        textValue="Inappropriate Content"
-                                                    >
+                                                    <ListBox.Item id="harassment">Harassment</ListBox.Item>
+                                                    <ListBox.Item id="spam_scam">Spam / Scam</ListBox.Item>
+                                                    <ListBox.Item id="inappropriate_content">
                                                         Inappropriate Content
-                                                        <ListBox.ItemIndicator />
                                                     </ListBox.Item>
-
-                                                    <ListBox.Item id="fake_profile" textValue="Fake Profile">
-                                                        Fake Profile
-                                                        <ListBox.ItemIndicator />
-                                                    </ListBox.Item>
-
-                                                    <ListBox.Item id="other" textValue="Other">
-                                                        Other
-                                                        <ListBox.ItemIndicator />
-                                                    </ListBox.Item>
+                                                    <ListBox.Item id="fake_profile">Fake Profile</ListBox.Item>
+                                                    <ListBox.Item id="other">Other</ListBox.Item>
                                                 </ListBox>
                                             </Select.Popover>
                                         </Select>
@@ -174,20 +148,20 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                                             onChange={(e) => setDetails(e.target.value)}
                                             placeholder="Add more details..."
                                             className="
-                        w-full
-                        rounded-xl
-                        border border-gray-200
-                        bg-white
-                        px-4 py-3
-                        focus:outline-none
-                        focus:ring-0
-                        [&_textarea]:min-h-[110px]
-                        [&_textarea]:w-full
-                        [&_textarea]:resize-none
-                        [&_textarea]:bg-transparent
-                        [&_textarea]:text-sm
-                        [&_textarea]:outline-none
-                      "
+                                                w-full
+                                                rounded-xl
+                                                border border-gray-200
+                                                bg-white
+                                                px-4 py-3
+                                                focus:outline-none
+                                                focus:ring-0
+                                                [&_textarea]:min-h-[110px]
+                                                [&_textarea]:w-full
+                                                [&_textarea]:resize-none
+                                                [&_textarea]:bg-transparent
+                                                [&_textarea]:text-sm
+                                                [&_textarea]:outline-none
+                                            "
                                         />
                                     </div>
                                 </>
