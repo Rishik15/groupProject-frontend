@@ -1,12 +1,12 @@
 import { Input, Label, TimeField } from "@heroui/react";
 import type { Time } from "@internationalized/date";
-import type { AvailabilitySlot } from "../../services/Setting/User";
+import type { AvailabilitySlot } from "../../../services/Setting/User";
 import {
   parseBackendTime,
   formatTime,
   readonlyClass,
   getTimeBoxClass,
-} from "./utils";
+} from "../utils";
 
 type CoachAvailabilitySectionProps = {
   availability?: AvailabilitySlot[];

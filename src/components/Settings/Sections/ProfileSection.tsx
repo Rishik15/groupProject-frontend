@@ -1,6 +1,6 @@
 import { Input, Label } from "@heroui/react";
-import type { User } from "../../services/Setting/User";
-import { formatDate, readonlyClass } from "./utils";
+import type { User } from "../../../services/Setting/User";
+import { formatDate, readonlyClass } from "../utils";
 
 type ProfileSectionProps = {
   form: User;

@@ -1,13 +1,13 @@
 import { Card } from "@heroui/react";
 import type { Dispatch, SetStateAction, ChangeEvent } from "react";
-import type { User, AvailabilitySlot } from "../../services/Setting/User";
+import type { User, AvailabilitySlot } from "../../../services/Setting/User";
 
-import ProfileSection from "./ProfileSection";
-import ClientMetricsSection from "./ClientMetricsSection";
-import CoachStatsSection from "./CoachStatsSection";
-import CoachAvailabilitySection from "./CoachAvailabilitySection";
-import CoachCertificationsSection from "./CoachCertificationsSection";
-import { CoachDescriptionBlock } from "./CoachDescriptionBlock";
+import ProfileSection from "../Sections/ProfileSection";
+import ClientMetricsSection from "../Sections/ClientMetricsSection";
+import CoachStatsSection from "../Sections/CoachStatsSection";
+import CoachAvailabilitySection from "../Sections/CoachAvailabilitySection";
+import CoachCertificationsSection from "../Sections/CoachCertificationsSection";
+import { CoachDescriptionBlock } from "../Sections/CoachDescriptionBlock";
 
 type InfoTabProps = {
   form: User | null;

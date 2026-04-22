@@ -1,7 +1,7 @@
 import { Input, Label } from "@heroui/react";
 import type { ChangeEvent } from "react";
-import type { User } from "../../services/Setting/User";
-import { getInputClass, readonlyClass } from "./utils";
+import type { User } from "../../../services/Setting/User";
+import { getInputClass, readonlyClass } from "../utils";
 
 type CoachStatsSectionProps = {
   form: User;

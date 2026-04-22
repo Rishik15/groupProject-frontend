@@ -1,7 +1,7 @@
 import { Modal, Card, Button } from "@heroui/react";
-import ReportOption from "./SupportOptionsCard";
+import ReportOption from "../Components/SupportOptionsCard";
 import { Siren, MessageCircle, ShieldCheck, HelpCircle } from "lucide-react";
-import ReportModal from "./ReportModal";
+import ReportModal from "../Modals/ReportModal";
 import { useState } from "react";
 
 type Prop = {

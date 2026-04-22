@@ -8,7 +8,7 @@ import type { LucideIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { HelpCircle } from "lucide-react";
-import HelpModal from "./HelpModal";
+import HelpModal from "../Modals/HelpModal";
 
 type OptionItem = {
   label: string;

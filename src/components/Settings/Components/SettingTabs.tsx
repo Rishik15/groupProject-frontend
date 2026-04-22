@@ -1,6 +1,6 @@
 import { Tabs } from "@heroui/react";
 import { InfoTab } from "./InfoTab";
-import ProgressPhoto from "./ProgressPhoto";
+import ProgressPhoto from "../Media/ProgressPhoto";
 import SettingOptions from "./SettingsOptions";
 import {
   MessageCircle,
@@ -9,7 +9,7 @@ import {
   Bell,
   HelpCircle,
 } from "lucide-react";
-import { logout } from "../../services/auth/logout";
+import { logout } from "../../../services/auth/logout";
 
 type Props = {
   role: string;

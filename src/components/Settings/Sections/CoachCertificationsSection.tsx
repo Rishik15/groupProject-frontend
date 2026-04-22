@@ -1,6 +1,6 @@
 import { Card } from "@heroui/react";
-import type { User } from "../../services/Setting/User";
-import CertificationModal from "./CertificationModal";
+import type { User } from "../../../services/Setting/User";
+import CertificationModal from "../Modals/CertificationModal";
 
 type Prop = {
   form: User;

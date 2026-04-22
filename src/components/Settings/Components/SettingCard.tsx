@@ -1,5 +1,5 @@
 import { Card, Avatar } from "@heroui/react";
-import { useAuth } from "../../utils/auth/AuthContext";
+import { useAuth } from "../../../utils/auth/AuthContext";
 
 const SettingCard = ({ role }: { role: string }) => {
   const { user } = useAuth();

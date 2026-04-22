@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import SettingHeader from "../../components/Settings/SettingHeader";
-import SettingCard from "../../components/Settings/SettingCard";
-import SettingTab from "../../components/Settings/SettingTabs";
+import SettingHeader from "../../components/Settings/Components/SettingHeader";
+import SettingCard from "../../components/Settings/Components/SettingCard";
+import SettingTab from "../../components/Settings/Components/SettingTabs";
 import { GetUserInfo } from "../../services/Setting/GetUserInfo";
 import { GetCoachInfo } from "../../services/Setting/GetCoachInfo";
 import { updateProfile } from "../../services/Setting/UpdateUserInfo";
