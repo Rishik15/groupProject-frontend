@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Spinner } from "@heroui/react";
 import { useAuth } from "./AuthContext";
-import { useRef } from "react";
 
 const ProtectedRoute = ({
   children,
@@ -14,27 +13,20 @@ const ProtectedRoute = ({
   const { status, roles, refreshAuth, hasCheckedAuth } = useAuth();
   const navigate = useNavigate();
 
-  // 🔥 trigger auth check
-  const hasChecked = useRef(false);
-
   useEffect(() => {
-    if (status === "anonymous" && !hasChecked.current) {
-      hasChecked.current = true;
+    if (!hasCheckedAuth) {
       refreshAuth();
     }
-  }, [status]);
+  }, [hasCheckedAuth]);
 
-  // 🔥 handle routing AFTER check
   useEffect(() => {
-    if (status === "checking") return;
+    if (!hasCheckedAuth) return;
 
-    // ❌ not logged in AFTER check
-    if (hasCheckedAuth && status === "anonymous") {
+    if (status === "anonymous") {
       navigate("/signin");
       return;
     }
 
-    // 🔐 role check
     if (
       status === "authenticated" &&
       allowedRoles &&
@@ -44,10 +36,9 @@ const ProtectedRoute = ({
       else if (roles.includes("coach")) navigate("/coach");
       else navigate("/");
     }
-  }, [status, roles, allowedRoles, navigate]);
+  }, [status, roles, allowedRoles, navigate, hasCheckedAuth]);
 
-  // ⏳ loading
-  if (status === "checking") {
+  if (!hasCheckedAuth) {
     return (
       <div className="h-screen flex items-center justify-center">
         <Spinner size="lg" />
@@ -55,7 +46,6 @@ const ProtectedRoute = ({
     );
   }
 
-  // 🚫 block render until ready
   if (status !== "authenticated") return null;
 
   return <>{children}</>;
