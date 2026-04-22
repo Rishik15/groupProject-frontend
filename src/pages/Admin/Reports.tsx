@@ -37,29 +37,6 @@ const Reports = () => {
                                     </p>
                                 </div>
                             </div>
-
-                            <div className="rounded-[20px] border border-default-200 bg-default-50 p-4">
-                                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-default-500">
-                                    Temporary navigation
-                                </p>
-                                <div className="mt-3 flex flex-wrap gap-2">
-                                    <Button className={"bg-[#5B5EF4]"} onPress={() => navigate("/admin/dashboard")}>
-                                        Dashboard
-                                    </Button>
-                                    <Button className={"bg-[#5B5EF4]"} onPress={() => navigate("/admin/accounts")}>
-                                        Accounts
-                                    </Button>
-                                    <Button className={"bg-[#5B5EF4]"} onPress={() => navigate("/admin/coach-governance")}>
-                                        Coach Governance
-                                    </Button>
-                                    <Button className={"bg-[#5B5EF4]"} onPress={() => navigate("/admin/exercises")}>
-                                        Exercises
-                                    </Button>
-                                    <Button className={"bg-[#5B5EF4]"} onPress={() => navigate("/admin/workouts")}>
-                                        Workouts
-                                    </Button>
-                                </div>
-                            </div>
                         </div>
 
                         <div className="flex flex-wrap gap-3">

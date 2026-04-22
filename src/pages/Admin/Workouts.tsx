@@ -1,11 +1,6 @@
-import { Button, Card } from "@heroui/react";
+import { Card } from "@heroui/react";
 import {
-    ClipboardList,
     Dumbbell,
-    Home,
-    ShieldCheck,
-    UserCog,
-    Wrench,
 } from "lucide-react";
 import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import WorkoutManagementTab from "../../components/Admin/Workouts/WorkoutManagementTab";
@@ -18,18 +13,6 @@ const Workouts = () => {
     const managementIsActive =
         location.pathname === "/admin/workouts" ||
         location.pathname === managementPath;
-
-    const pageLinks = [
-        { label: "Dashboard", icon: Home, path: "/admin" },
-        { label: "Accounts", icon: UserCog, path: "/admin/accounts" },
-        {
-            label: "Coach Governance",
-            icon: ShieldCheck,
-            path: "/admin/coach-governance",
-        },
-        { label: "Reports", icon: ClipboardList, path: "/admin/reports" },
-        { label: "Exercises", icon: Wrench, path: "/admin/exercises" },
-    ];
 
     return (
         <div className="min-h-[calc(100vh-56px)] bg-default-50 px-36 py-8">
@@ -50,25 +33,6 @@ const Workouts = () => {
                                     <p className="mt-2 max-w-3xl text-sm text-default-600">
                                         Manage workout plans and templates, edit metadata, and update day 1 exercises using the admin workout endpoints already available on the backend.
                                     </p>
-                                </div>
-                            </div>
-
-                            <div className="rounded-[20px] border border-default-200 bg-default-50 p-4">
-                                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-default-500">
-                                    Temporary navigation
-                                </p>
-                                <div className="mt-3 flex flex-wrap gap-2">
-                                    {pageLinks.map((link) => {
-                                        const Icon = link.icon;
-                                        return (
-                                            <Button className={"bg-[#5B5EF4]"} key={link.path} onPress={() => navigate(link.path)}>
-                                                <span className="inline-flex items-center gap-2">
-                                                    <Icon className="h-4 w-4" />
-                                                    {link.label}
-                                                </span>
-                                            </Button>
-                                        );
-                                    })}
                                 </div>
                             </div>
                         </div>

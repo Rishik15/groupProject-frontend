@@ -6,6 +6,10 @@ import {
   CircleStar,
   Search,
   Users,
+  ClipboardList,
+  ShieldCheck,
+  UserCog,
+  Wrench,
 } from "lucide-react";
 
 export const getNavItems = (activeMode: string | null, parent: string) => {
@@ -29,6 +33,37 @@ export const getNavItems = (activeMode: string | null, parent: string) => {
       },
     ];
   }
+  else if (activeMode === "admin") {
+    return [
+      { label: "Home", route: `${parent}/dashboard`, icon: <House className="w-4 h-4" /> },
+      {
+        label: "Accounts",
+        route: `${parent}/accounts/users`,
+        icon: <UserCog className="w-4 h-4" />,
+      },
+      {
+        label: "Coach Governance",
+        route: `${parent}/coach-governance/applications`,
+        icon: <ShieldCheck className="w-4 h-4" />,
+      },
+      {
+        label: "Reports",
+        route: `${parent}/reports/open`,
+        icon: <ClipboardList className="w-4 h-4" />,
+      },
+      {
+        label: "Exercises",
+        route: `${parent}/exercises/management`,
+        icon: <Wrench className="w-4 h-4" />,
+      },
+      {
+        label: "Workouts",
+        route: `${parent}/workouts/workout-management`,
+        icon: <Dumbbell className="w-4 h-4" />,
+      },
+    ];
+  }
+
 
   return [
     { label: "Home", route: parent, icon: <House className="w-4 h-4" /> },
