@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SignFooter from "../../components/SignIn/Footer";
 import SignHeader from "../../components/SignIn/Header";
@@ -45,9 +45,7 @@ const SignIn = () => {
         roles,
       });
 
-      if (roles.includes("coach")) navigate("/coach");
-      else if (roles.includes("client")) navigate("/client");
-      else navigate("/");
+      navigate("/auth/complete");
     } catch (err: any) {
       let message = "Something went wrong. Please try again.";
 
