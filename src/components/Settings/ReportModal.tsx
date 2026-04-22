@@ -1,12 +1,63 @@
 import { Modal, Button, Card, Avatar, TextArea } from "@heroui/react";
 import { Label, ListBox, Select } from "@heroui/react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 type Prop = {
     isOpen: boolean;
     setIsOpen: (val: boolean) => void;
 };
 
+type Coach = {
+    name: string;
+    email: string;
+    image?: string;
+};
+
 const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
+    const [coaches, setCoaches] = useState<Coach[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
+    const [reason, setReason] = useState<string>("");
+    const [details, setDetails] = useState("");
+
+    useEffect(() => {
+        const getClientCoach = async () => {
+            setLoading(true);
+
+            const res = await axios.get("http://localhost:8080/client/getCoaches", {
+                withCredentials: true,
+            });
+
+            setCoaches(Array.isArray(res.data) ? res.data : []);
+            setLoading(false);
+        };
+
+        if (isOpen) {
+            getClientCoach();
+        }
+    }, [isOpen]);
+
+    const closeModal = () => {
+        setIsOpen(false);
+        setSelectedCoach(null);
+        setReason("");
+        setDetails("");
+    };
+
+    const handleSubmit = () => {
+        if (!selectedCoach) return;
+        if (!reason) return;
+
+        console.log({
+            coach: selectedCoach,
+            reason,
+            details,
+        });
+
+        closeModal();
+    };
+
     return (
         <Modal>
             <Modal.Backdrop isOpen={isOpen} onOpenChange={setIsOpen}>
@@ -19,7 +70,7 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                                     Report a Coach
                                 </Modal.Heading>
                                 <p className="text-sm text-gray-500">
-                                    Pick an option and explain to us what happened.
+                                    Select a coach first, then tell us what happened.
                                 </p>
                             </div>
                         </Modal.Header>
@@ -27,80 +78,139 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                         <Modal.Body className="flex flex-col gap-4">
                             <div className="flex flex-col gap-2">
                                 <Label>Coach</Label>
-                                <Card className="flex flex-row items-center gap-3 border bg-[#eef2ff] border-indigo-500">
-                                    <Avatar>
-                                        <Avatar.Image
-                                            alt="Blue"
-                                            src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg"
-                                        />
-                                    </Avatar>
-                                    <div>
-                                        <p className="font-bold text-black">Example Coach</p>
-                                        <p className="text-sm text-gray-500">coach@example.com</p>
+
+                                {loading ? (
+                                    <p className="text-sm text-gray-500">Loading coaches...</p>
+                                ) : coaches.length === 0 ? (
+                                    <p className="text-sm text-gray-500">No coaches found</p>
+                                ) : (
+                                    <div className="flex flex-col gap-3">
+                                        {coaches.map((coach) => {
+                                            const isSelected = selectedCoach?.email === coach.email;
+
+                                            return (
+                                                <Card
+                                                    key={coach.email}
+                                                    onClick={() => setSelectedCoach(coach)}
+                                                    className={`flex cursor-pointer flex-row items-center gap-3 border p-3 transition ${isSelected
+                                                            ? "border-indigo-500 bg-[#eef2ff]"
+                                                            : "border-gray-200 bg-white hover:bg-gray-50"
+                                                        }`}
+                                                >
+                                                    <Avatar>
+                                                        <Avatar.Image
+                                                            alt={coach.name}
+                                                            src={
+                                                                coach.image ||
+                                                                "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg"
+                                                            }
+                                                        />
+                                                    </Avatar>
+
+                                                    <div>
+                                                        <p className="font-bold text-black">{coach.name}</p>
+                                                        <p className="text-sm text-gray-500">{coach.email}</p>
+                                                    </div>
+                                                </Card>
+                                            );
+                                        })}
                                     </div>
-                                </Card>
+                                )}
                             </div>
 
-                            <Select className="w-full flex gap-2" placeholder="Select a reason">
-                                <Label>Reason</Label>
-                                <Select.Trigger className="w-full h-[48px] px-4 border border-gray-200 rounded-xl bg-white">
-                                    <Select.Value className="m-auto" />
-                                    <Select.Indicator />
-                                </Select.Trigger>
+                            {selectedCoach && (
+                                <>
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Reason</Label>
+                                        <Select
+                                            selectedKey={reason || undefined}
+                                            onSelectionChange={(key) => setReason(String(key))}
+                                            placeholder="Select a reason"
+                                            className="w-full"
+                                        >
+                                            <Select.Trigger className="h-[48px] w-full rounded-xl border border-gray-200 bg-white px-4">
+                                                <Select.Value />
+                                                <Select.Indicator />
+                                            </Select.Trigger>
 
-                                <Select.Popover>
-                                    <ListBox>
-                                        <ListBox.Item id="harassment" textValue="Harassment">
-                                            Harassment
-                                            <ListBox.ItemIndicator />
-                                        </ListBox.Item>
+                                            <Select.Popover>
+                                                <ListBox>
+                                                    <ListBox.Item id="harassment" textValue="Harassment">
+                                                        Harassment
+                                                        <ListBox.ItemIndicator />
+                                                    </ListBox.Item>
 
-                                        <ListBox.Item id="spam_scam" textValue="Spam / Scam">
-                                            Spam / Scam
-                                            <ListBox.ItemIndicator />
-                                        </ListBox.Item>
+                                                    <ListBox.Item id="spam_scam" textValue="Spam / Scam">
+                                                        Spam / Scam
+                                                        <ListBox.ItemIndicator />
+                                                    </ListBox.Item>
 
-                                        <ListBox.Item id="inappropriate_content" textValue="Inappropriate Content">
-                                            Inappropriate Content
-                                            <ListBox.ItemIndicator />
-                                        </ListBox.Item>
+                                                    <ListBox.Item
+                                                        id="inappropriate_content"
+                                                        textValue="Inappropriate Content"
+                                                    >
+                                                        Inappropriate Content
+                                                        <ListBox.ItemIndicator />
+                                                    </ListBox.Item>
 
-                                        <ListBox.Item id="fake_profile" textValue="Fake Profile">
-                                            Fake Profile
-                                            <ListBox.ItemIndicator />
-                                        </ListBox.Item>
+                                                    <ListBox.Item id="fake_profile" textValue="Fake Profile">
+                                                        Fake Profile
+                                                        <ListBox.ItemIndicator />
+                                                    </ListBox.Item>
 
-                                        <ListBox.Item id="other" textValue="Other">
-                                            Other
-                                            <ListBox.ItemIndicator />
-                                        </ListBox.Item>
-                                    </ListBox>
-                                </Select.Popover>
-                            </Select>
-                            <TextArea
-                                placeholder="Add more details..."
-                                className="
-                                    w-full
-                                    rounded-xl
-                                    border border-gray-200
-                                    bg-white
-                                    px-4 py-3
-                                    focus:outline-none
-                                    focus:ring-0
-                                    [&_textarea]:min-h-[110px]
-                                    [&_textarea]:w-full
-                                    [&_textarea]:resize-none
-                                    [&_textarea]:bg-transparent
-                                    [&_textarea]:text-sm
-                                    [&_textarea]:outline-none
-                                "
-                            />
+                                                    <ListBox.Item id="other" textValue="Other">
+                                                        Other
+                                                        <ListBox.ItemIndicator />
+                                                    </ListBox.Item>
+                                                </ListBox>
+                                            </Select.Popover>
+                                        </Select>
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Details</Label>
+                                        <TextArea
+                                            value={details}
+                                            onChange={(e) => setDetails(e.target.value)}
+                                            placeholder="Add more details..."
+                                            className="
+                        w-full
+                        rounded-xl
+                        border border-gray-200
+                        bg-white
+                        px-4 py-3
+                        focus:outline-none
+                        focus:ring-0
+                        [&_textarea]:min-h-[110px]
+                        [&_textarea]:w-full
+                        [&_textarea]:resize-none
+                        [&_textarea]:bg-transparent
+                        [&_textarea]:text-sm
+                        [&_textarea]:outline-none
+                      "
+                                        />
+                                    </div>
+                                </>
+                            )}
                         </Modal.Body>
 
-
                         <Modal.Footer>
-                            <Button onPress={() => setIsOpen(false)} className="rounded-xl bg-white text-black border border-gray-300">Close</Button>
-                            <Button className="bg-indigo-500 text-white rounded-xl">Submit</Button>
+                            <Button
+                                onPress={closeModal}
+                                className="rounded-xl border border-gray-300 bg-white text-black"
+                            >
+                                Close
+                            </Button>
+
+                            {selectedCoach && (
+                                <Button
+                                    className="rounded-xl bg-indigo-500 text-white"
+                                    onPress={handleSubmit}
+                                    isDisabled={!reason}
+                                >
+                                    Submit
+                                </Button>
+                            )}
                         </Modal.Footer>
                     </Modal.Dialog>
                 </Modal.Container>
