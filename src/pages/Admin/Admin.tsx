@@ -4,6 +4,7 @@ import AdminDashBoard from "./Dashboard";
 import Users from "./Users";
 import Coaches from "./Coaches";
 import ClosedReports from "./ClosedReports";
+import Exercises from "./Exercises";
 
 const AdminLayout = () => {
     return (
@@ -14,6 +15,8 @@ const AdminLayout = () => {
                 email="admin@email.com"
                 notifications={[]} //This needs fixing
                 count={0} //Same deal here
+                setNotifications={() => { }} //And here
+
             />
 
             <div className="pt-14">
@@ -22,6 +25,7 @@ const AdminLayout = () => {
                     <Route path="users" element={<Users />} />
                     <Route path="coaches" element={<Coaches />} />
                     <Route path="reports/closed" element={<ClosedReports />} />
+                    <Route path="exercises" element={<Exercises />} />
                 </Routes>
             </div>
         </section>
