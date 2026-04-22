@@ -47,21 +47,21 @@ const VideoModerationCard = ({
       </div>
 
       <div className="mt-auto flex flex-wrap gap-2 border-t border-default-200 pt-4">
-        <Button onPress={() => onApprove(video)}>
+        <Button className={"bg-[#5B5EF4]"} onPress={() => onApprove(video)}>
           <span className="inline-flex items-center gap-2">
             <Check className="h-4 w-4" />
             Approve
           </span>
         </Button>
 
-        <Button onPress={() => onReject(video)}>
+        <Button className={"bg-[#5B5EF4]"} onPress={() => onReject(video)}>
           <span className="inline-flex items-center gap-2">
             <X className="h-4 w-4" />
             Reject
           </span>
         </Button>
 
-        <Button onPress={() => onRemove(video)}>
+        <Button className={"bg-[#5B5EF4]"} onPress={() => onRemove(video)}>
           <span className="inline-flex items-center gap-2">
             <Eraser className="h-4 w-4" />
             Remove
