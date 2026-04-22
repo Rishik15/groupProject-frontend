@@ -14,12 +14,12 @@ import { Toast } from "@heroui/react";
 import BrowseCoaches from "./components/LandingPage/LandingBrowseCoaches";
 import CoachProfile from "./pages/Client/CoachProfile";
 
-
 function App() {
   return (
-    <AuthProvider>
-      <Toast.Provider placement="top end" className="mt-11" />
-      <Router>
+    <Router>
+      <AuthProvider>
+        <Toast.Provider placement="top end" className="mt-11" />
+
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/register" element={<Register />} />
@@ -60,15 +60,13 @@ function App() {
             element={<OnboardingSurveyPage surveyType="client" />}
           />
 
-
           <Route
             path="/onboarding/coach"
             element={<OnboardingSurveyPage surveyType="coach" />}
           />
         </Routes>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
 }
-
 export default App;
