@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { getAuth } from "../../services/auth/checkAuth";
 import { socket } from "../../services/sockets/socket";
 
@@ -8,50 +8,82 @@ type User = {
   email: string;
 };
 
+type AuthStatus = "anonymous" | "checking" | "authenticated";
+
 type AuthContextType = {
   user: User | null;
-  role: string | null;
-  authenticated: boolean;
-  loading: boolean;
-  setAuth: (data: { user: User; role: string }) => void;
-  clearAuth: () => void;
+  roles: string[];
+  activeMode: string | null;
+  status: AuthStatus;
+  hasCheckedAuth: boolean;
+  setAuth: (data: { user: User; roles: string[] }) => void;
+  clearAuth: (isLogout?: boolean) => void;
   refreshAuth: () => Promise<void>;
+  setActiveMode: (mode: string) => void;
 };
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  role: null,
-  authenticated: false,
-  loading: true,
+  roles: [],
+  activeMode: null,
+  status: "anonymous",
+  hasCheckedAuth: false,
   setAuth: () => {},
   clearAuth: () => {},
   refreshAuth: async () => {},
+  setActiveMode: () => {},
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [role, setRole] = useState<string | null>(null);
-  const [authenticated, setAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [roles, setRoles] = useState<string[]>([]);
+  const [activeModeState, setActiveModeState] = useState<string | null>(null);
+  const [status, setStatus] = useState<AuthStatus>("anonymous");
+  const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
 
-  const setAuth = (data: { user: User; role: string }) => {
+  const hasConnectedSocket = useRef(false);
+
+  const setAuth = (data: { user: User; roles: string[] }) => {
     setUser(data.user);
-    setRole(data.role);
-    setAuthenticated(true);
+    setRoles(data.roles);
+
+    setActiveModeState((prev) => {
+      if (prev && data.roles.includes(prev)) return prev;
+      if (data.roles.includes("coach")) return "coach";
+      return data.roles[0] || null;
+    });
+
+    setStatus("authenticated");
+
+    setHasCheckedAuth(true);
   };
 
-  const clearAuth = () => {
+  const clearAuth = (isLogout = false) => {
+    console.log("Clearing auth");
+
+    if (socket.connected) {
+      socket.disconnect();
+    }
+
+    hasConnectedSocket.current = false;
     setUser(null);
-    setRole(null);
-    setAuthenticated(false);
+    setRoles([]);
+    setActiveModeState(null);
+    setStatus("anonymous");
+    setHasCheckedAuth(true);
   };
 
   const refreshAuth = async () => {
+    setStatus("checking");
+
     try {
       const res = await getAuth();
 
-      if (res.authenticated) {
-        setAuth({ user: res.user, role: res.role });
+      if (res?.authenticated && res.user) {
+        setAuth({
+          user: res.user,
+          roles: res.roles || [],
+        });
       } else {
         clearAuth();
       }
@@ -59,40 +91,64 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error("Auth check failed:", err);
       clearAuth();
     } finally {
-      setLoading(false);
+      setHasCheckedAuth(true);
+
+      setStatus((prev) => (prev === "checking" ? "anonymous" : prev));
     }
   };
+  useEffect(() => {
+    if (activeModeState) {
+      localStorage.setItem("activeMode", activeModeState);
+    }
+  }, [activeModeState]);
 
   useEffect(() => {
-    refreshAuth();
+    const saved = localStorage.getItem("activeMode");
+    if (saved) setActiveModeState(saved);
   }, []);
 
   useEffect(() => {
-    if (authenticated && user) {
-      if (!socket.connected) {
-        socket.connect();
-      }
+    if (status !== "authenticated" || !user) return;
+    if (hasConnectedSocket.current) return;
 
-      socket.on("connect", () => {
-        console.log("Socket connected:", socket.id);
-      });
+    console.log("Connecting socket...");
+    socket.connect();
+    hasConnectedSocket.current = true;
 
-      return () => {
-        socket.off("connect");
-      };
-    }
-  }, [authenticated, user]);
+    const handleConnect = () => {
+      console.log("Socket connected:", socket.id);
+    };
+
+    const handleDisconnect = () => {
+      console.log("Socket disconnected");
+      hasConnectedSocket.current = false;
+    };
+
+    socket.on("connect", handleConnect);
+    socket.on("disconnect", handleDisconnect);
+
+    return () => {
+      socket.off("connect", handleConnect);
+      socket.off("disconnect", handleDisconnect);
+    };
+  }, [status, user]);
+
+  const setActiveMode = (mode: string) => {
+    setActiveModeState(mode);
+  };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        role,
-        authenticated,
-        loading,
+        roles,
+        activeMode: activeModeState,
+        status,
+        hasCheckedAuth,
         setAuth,
         clearAuth,
         refreshAuth,
+        setActiveMode,
       }}
     >
       {children}

@@ -7,20 +7,24 @@ import RoleSelector from "../../components/Register/RoleSelection";
 import { register } from "../../services/auth/register";
 import { validateRegister } from "../../utils/auth/validateInputs";
 import Modal from "../../components/global/Modal";
+import { useAuth } from "../../utils/auth/AuthContext";
+import GoogleAuthButton from "../../components/auth/GoogleAuthButton";
+import { startGoogleLogin } from "../../services/auth/googleLogin";
 
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<string | null>(null);
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
   const navigate = useNavigate();
+  const { setAuth } = useAuth();
 
   const handleRegister = async () => {
     try {
-      if (!role) {
+      if (!selectedRole) {
         setModalMessage("Please select whether you are a coach or client.");
         setShowModal(true);
         return;
@@ -35,12 +39,19 @@ const Register = () => {
         return;
       }
 
-      const data = await register(name, email, password, role);
+      const data = await register(name, email, password, selectedRole);
 
-      if (data.role === "coach") {
-        navigate("/coach");
+      const roles = data.roles ?? (data.role ? [data.role] : []);
+
+      setAuth({
+        user: data.user,
+        roles,
+      });
+
+      if (roles.includes("coach")) {
+        navigate("/onboarding/coach");
       } else {
-        navigate("/client");
+        navigate("/onboarding/client");
       }
     } catch (err: any) {
       setModalMessage(err.message || "Something went wrong");
@@ -54,7 +65,7 @@ const Register = () => {
         <section className="w-auto">
           <RegHeader />
 
-          <RoleSelector role={role} setRole={setRole} />
+          <RoleSelector role={selectedRole} setRole={setSelectedRole} />
 
           <RegInput
             name={name}
@@ -66,6 +77,15 @@ const Register = () => {
           />
 
           <RegFooter onSubmit={handleRegister} />
+
+          <div className="flex flex-col gap-4">
+            <div className="pt-4 flex items-center gap-3">
+              <div className="h-px flex-1 bg-gray-400" />
+              <span className="text-[12px] text-default-500">or</span>
+              <div className="h-px flex-1 bg-gray-400" />
+            </div>
+            <GoogleAuthButton onPress={startGoogleLogin} />
+          </div>
         </section>
       </div>
 
