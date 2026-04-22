@@ -162,18 +162,18 @@ export default function CertificationModal({ form }: Props) {
 
                         <Modal.Footer>
                             <div className="flex w-full items-center justify-between gap-3">
-                                <Button onPress={addCertificate}>
+                                <Button  className="bg-indigo-500 rounded-xl text-white" onPress={addCertificate}>
                                     <Plus />
                                     Add Certification
                                 </Button>
 
                                 <div className="flex gap-2">
-                                    <Button variant="ghost" onPress={() => setOpen(false)}>
+                                    <Button className="border border-gray-300 rounded-xl bg-white text-black" onPress={() => setOpen(false)}>
                                         Cancel
                                     </Button>
 
                                     <Button
-                                        variant="primary"
+                                    className="bg-indigo-500 rounded-xl text-white"
                                         onPress={handleSave}
                                         isDisabled={!isValid()}
                                     >
