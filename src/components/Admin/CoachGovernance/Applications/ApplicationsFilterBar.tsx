@@ -64,15 +64,16 @@ const ApplicationsFilterBar = ({
           <div className="flex flex-wrap gap-2">
             {statusOptions.map((status) => (
               <Button
+
                 key={status}
                 onPress={() => onStatusChange(status)}
-                className={statusFilter === status ? "border border-default-300" : undefined}
+                className={statusFilter === status ? "border border-default-300 bg-[#5B5EF4] text-white" : "bg-[#5B5EF4] text-white"}
               >
                 {formatStatusButtonLabel(status)}
               </Button>
             ))}
 
-            <Button onPress={onRefresh} isDisabled={isRefreshing}>
+            <Button className={"bg-[#5B5EF4]"} onPress={onRefresh} isDisabled={isRefreshing}>
               <span className="inline-flex items-center gap-2">
                 <RefreshCw className={isRefreshing ? "h-4 w-4 animate-spin" : "h-4 w-4"} />
                 Refresh

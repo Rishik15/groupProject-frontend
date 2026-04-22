@@ -87,7 +87,7 @@ const Exercises = () => {
                                     <Button
                                         key={tab.key}
                                         onPress={() => navigate(tab.path)}
-                                        className={active ? "border border-default-300" : undefined}
+                                        className={active ? "border border-default-300 bg-[#5B5EF4] text-white" : "bg-[#5B5EF4] text-white"}
                                     >
                                         <span className="inline-flex items-center gap-2">
                                             <Icon className="h-4 w-4" />

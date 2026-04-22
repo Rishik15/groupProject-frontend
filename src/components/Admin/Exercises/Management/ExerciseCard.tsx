@@ -48,14 +48,14 @@ const ExerciseCard = ({ exercise, statusLabel, onEdit, onDelete }: ExerciseCardP
       </div>
 
       <div className="mt-auto flex flex-wrap gap-2 border-t border-default-200 pt-4">
-        <Button onPress={() => onEdit(exercise)}>
+        <Button className={"bg-[#5B5EF4]"} onPress={() => onEdit(exercise)}>
           <span className="inline-flex items-center gap-2">
             <Pencil className="h-4 w-4" />
             Edit
           </span>
         </Button>
 
-        <Button onPress={() => onDelete(exercise)}>
+        <Button className={"bg-[#5B5EF4]"} onPress={() => onDelete(exercise)}>
           <span className="inline-flex items-center gap-2">
             <Trash2 className="h-4 w-4" />
             Delete

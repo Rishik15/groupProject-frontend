@@ -155,10 +155,10 @@ const ExerciseActionPanel = ({
             ) : null}
 
             <div className="flex flex-wrap gap-2">
-              <Button onPress={onSubmit} isDisabled={submitting}>
+              <Button className={"bg-[#5B5EF4]"} onPress={onSubmit} isDisabled={submitting}>
                 {submitting ? "Saving..." : actionMode === "delete" ? "Confirm delete" : "Confirm action"}
               </Button>
-              <Button onPress={onCancel} isDisabled={submitting}>
+              <Button className={"bg-[#5B5EF4]"} onPress={onCancel} isDisabled={submitting}>
                 Cancel
               </Button>
             </div>

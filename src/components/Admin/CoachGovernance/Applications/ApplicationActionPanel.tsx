@@ -98,10 +98,10 @@ const ApplicationActionPanel = ({
             ) : null}
 
             <div className="flex flex-wrap gap-2">
-              <Button onPress={onSubmit} isDisabled={submitting}>
+              <Button className={"bg-[#5B5EF4]"} onPress={onSubmit} isDisabled={submitting}>
                 {submitting ? "Saving..." : "Confirm action"}
               </Button>
-              <Button onPress={onCancel} isDisabled={submitting}>
+              <Button className={"bg-[#5B5EF4]"} onPress={onCancel} isDisabled={submitting}>
                 Cancel
               </Button>
             </div>
