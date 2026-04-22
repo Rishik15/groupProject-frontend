@@ -4,22 +4,25 @@ import type { AvailabilitySlot } from "../../../services/Setting/User";
 type Prop = {
     slot: AvailabilitySlot;
     edit: boolean;
+    updateDay: (value: string) => void;
 }
 
 
-const DayListBox = ({ slot, edit }: Prop) => {
+const DayListBox = ({ updateDay, slot, edit }: Prop) => {
     return (
-        <Select placeholder="Select one" value={slot.day_of_week} isDisabled={!edit} isRequired>
+        <Select placeholder="Select one"
+            onChange={(key) => updateDay(String(key))}
+            isDisabled={!edit}
+            isRequired
+            value={slot.day_of_week}
+        >
             <Label className="text-black">Day</Label>
 
             <Select.Trigger className="
                     min-h-11 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm
                     shadow-none outline-none transition
-
                     hover:border-gray-400
                     data-[focus-visible=true]:border-black
-
-                    /* override disabled styles */
                     data-[disabled=true]:opacity-100
                     data-[disabled=true]:bg-white
                     data-[disabled=true]:text-gray-900
