@@ -3,7 +3,7 @@ import { logout } from "../../services/auth/logout";
 import { useAuth } from "../../utils/auth/AuthContext";
 import { socket } from "../../services/sockets/socket";
 
-const DropdownItem = ({
+const Dropdownaction = ({
   label,
   route,
   danger,
@@ -20,7 +20,7 @@ const DropdownItem = ({
   const handleClick = async () => {
     if (type === "logout") {
       await logout();
-      clearAuth();
+      clearAuth(true);
 
       if (socket.connected) {
         socket.disconnect();
@@ -47,4 +47,4 @@ const DropdownItem = ({
   );
 };
 
-export default DropdownItem;
+export default Dropdownaction;

@@ -31,10 +31,14 @@ services:
       db:
         condition: service_healthy
     command: >
-      gunicorn
-      --reload
-      --bind 0.0.0.0:8000
-      app.main:app   
+      sh -c "
+        sleep 5 &&
+        gunicorn --worker-class eventlet --workers 1 \
+          --bind 0.0.0.0:8000 \
+          --log-level debug \
+          --access-logfile - \
+          app.main:app
+        " 
   frontend:
     build: 
       context: frontend

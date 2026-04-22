@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { getAuth } from "../../services/auth/checkAuth";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SignFooter from "../../components/SignIn/Footer";
 import SignHeader from "../../components/SignIn/Header";
@@ -7,6 +6,9 @@ import SignInputs from "../../components/SignIn/Input";
 import { login } from "../../services/auth/login";
 import { validateSignIn } from "../../utils/auth/validateInputs";
 import Modal from "../../components/global/Modal";
+import { useAuth } from "../../utils/auth/AuthContext";
+import GoogleAuthButton from "../../components/auth/GoogleAuthButton";
+import { startGoogleLogin } from "../../services/auth/googleLogin";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -15,27 +17,7 @@ const SignIn = () => {
   const [modalMessage, setModalMessage] = useState("");
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    let isActive = true;
-
-    const checkAuth = async () => {
-      const { authenticated, role } = await getAuth();
-
-      if (!isActive) return;
-
-      if (authenticated) {
-        if (role === "coach") navigate("/coach");
-        else if (role === "client") navigate("/client");
-      }
-    };
-
-    checkAuth();
-
-    return () => {
-      isActive = false;
-    };
-  }, [navigate]);
+  const { setAuth } = useAuth();
 
   const handleLogin = async () => {
     try {
@@ -56,11 +38,14 @@ const SignIn = () => {
         return;
       }
 
-      if (data.role === "coach") {
-        navigate("/coach");
-      } else {
-        navigate("/client");
-      }
+      const roles = data.roles ?? (data.role ? [data.role] : []);
+
+      setAuth({
+        user: data.user,
+        roles,
+      });
+
+      navigate("/auth/complete");
     } catch (err: any) {
       let message = "Something went wrong. Please try again.";
 
@@ -89,6 +74,15 @@ const SignIn = () => {
           />
 
           <SignFooter onSubmit={handleLogin} />
+
+          <div className="flex flex-col gap-4">
+            <div className="pt-4 flex items-center gap-3">
+              <div className="h-px flex-1 bg-gray-400" />
+              <span className="text-[12px] text-default-500">or</span>
+              <div className="h-px flex-1 bg-gray-400" />
+            </div>
+            <GoogleAuthButton onPress={startGoogleLogin} />
+          </div>
         </section>
       </div>
 
