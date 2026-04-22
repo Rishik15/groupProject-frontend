@@ -1,20 +1,11 @@
-import axios from "axios";
+import api from "../api";
 
 export async function login(email: string, password: string) {
   try {
-    const response = await axios.post(
-      "http://localhost:8080/auth/login",
-      {
-        email,
-        password,
-      },
-      {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
+    const response = await api.post("/auth/login", {
+      email,
+      password,
+    });
 
     return response.data;
   } catch (error: any) {

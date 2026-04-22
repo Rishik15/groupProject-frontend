@@ -54,6 +54,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     setStatus("authenticated");
+
+    setHasCheckedAuth(true);
   };
 
   const clearAuth = (isLogout = false) => {
@@ -68,6 +70,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setRoles([]);
     setActiveModeState(null);
     setStatus("anonymous");
+    setHasCheckedAuth(true);
   };
 
   const refreshAuth = async () => {
@@ -76,7 +79,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const res = await getAuth();
 
-      if (res.authenticated) {
+      if (res?.authenticated && res.user) {
         setAuth({
           user: res.user,
           roles: res.roles || [],
@@ -89,9 +92,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       clearAuth();
     } finally {
       setHasCheckedAuth(true);
+
+      setStatus((prev) => (prev === "checking" ? "anonymous" : prev));
     }
   };
-
   useEffect(() => {
     if (activeModeState) {
       localStorage.setItem("activeMode", activeModeState);
