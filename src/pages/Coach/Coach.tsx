@@ -1,35 +1,46 @@
 import { Routes, Route } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import { useAuth } from "../../utils/auth/AuthContext";
-import Nutrition from "../Nutrition/Nutrition";
-
 import CoachDashBoard from "./DashBoard";
 import Settings from "../Settings/Settings";
 import Chat from "../Chat/Chat";
 import { useState, useEffect } from "react";
 import { toast } from "@heroui/react";
 import { getNotifications } from "../../services/notifications/getNotifications";
-import { useRef } from "react";
 import CoachContractsPage from "./Contracts";
+import { useRef } from "react";
 
 const CoachLayout = () => {
-  const { user } = useAuth();
+  const { user, activeMode } = useAuth();
   const [notifications, setNotifications] = useState<any[]>([]);
-  const hasFetched = useRef(false);
 
   const count = notifications.length;
 
+  const fetchedModeRef = useRef<string | null>(null);
+
   useEffect(() => {
-    if (hasFetched.current) return;
-    hasFetched.current = true;
+    console.log("EFFECT RUNNING:", activeMode);
+
+    if (!activeMode) return;
+    if (fetchedModeRef.current === activeMode) {
+      console.log("SKIPPED (same mode):", activeMode);
+      return;
+    }
+
+    fetchedModeRef.current = activeMode;
+
+    console.log("FETCHING NOTIFS FOR:", activeMode);
 
     const fetchNotifications = async () => {
       try {
-        const data = await getNotifications();
+        const data = await getNotifications(activeMode);
+
+        console.log("NOTIFICATIONS RECEIVED:", data.notifications);
 
         setNotifications(data.notifications || []);
 
         data.notifications.forEach((notif: any) => {
+          console.log("TOAST:", notif.title);
           toast(notif.title, {
             description: notif.body,
             timeout: 5000,
@@ -41,7 +52,8 @@ const CoachLayout = () => {
     };
 
     fetchNotifications();
-  }, []);
+  }, [activeMode]);
+
   return (
     <section className="min-h-screen">
       <Navbar
