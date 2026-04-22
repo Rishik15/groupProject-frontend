@@ -10,13 +10,13 @@ import ExerciseModal from "../../components/CreateWorkoutPlan/ExerciseModal";
 import MyPlans from "../../components/CreateWorkoutPlan/MyPlans";
 import CreateExerciseForm from "../../components/CreateExercises/CreateExerciseForm";
 import { getExercises } from "../../services/workout/getExercises";
+import MyExercises from "../../components/CreateExercises/MyExercises";
 
 const BASE_URL = "http://localhost:8080";
 
 export default function CreateWorkoutPlan() {
   const navigate = useNavigate();
-  const { user, role } = useAuth();
-  console.log("role:", role);
+  const { role } = useAuth();
   const isCoach = role === "coach";
 
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -25,21 +25,16 @@ export default function CreateWorkoutPlan() {
   const [selectedExercises, setSelectedExercises] = useState<SelectedExercise[]>([]);
   const [planName, setPlanName] = useState("");
   const [previewExercise, setPreviewExercise] = useState<Exercise | null>(null);
-  const [activeTab, setActiveTab] = useState<"browse" | "plans" | "create">("browse");
+  const [activeTab, setActiveTab] = useState<"exercises" | "browse" | "plans" | "create">("browse");
 
   useEffect(() => {
     async function load() {
-      const data = await getExercises();
+      const equipmentFilter = selectedCategory === "All" ? [] : [selectedCategory];
+      const data = await getExercises(search, equipmentFilter);
       setExercises(data);
     }
     load();
-  }, []);
-
-  const filteredExercises = exercises.filter((ex) => {
-    const matchesCategory = selectedCategory === "All" || ex.equipment === selectedCategory;
-    const matchesSearch = ex.exercise_name.toLowerCase().includes(search.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  }, [selectedCategory, search]);
 
   const addedIds = new Set(selectedExercises.map((s) => s.exercise.exercise_id));
 
@@ -140,7 +135,29 @@ export default function CreateWorkoutPlan() {
                 Create Exercise
               </button>
             )}
+            {isCoach && (
+              <button
+                onClick={() => setActiveTab("exercises")}
+                className="px-5 py-2.5 text-sm font-medium transition-colors border-b-2"
+                style={{
+                  borderColor: activeTab === "exercises" ? "#5B5EF4" : "transparent",
+                  color: activeTab === "exercises" ? "#5B5EF4" : "#72728A",
+                }}
+              >
+                My Exercises
+              </button>
+            )}
           </div>
+
+          {activeTab === "exercises" && (
+            <>
+              <div>
+                <h1 className="text-2xl font-bold text-black">Created Exercises</h1>
+                <p className="text-sm text-[#72728A] mt-1">Repository of all created exercises.</p>
+              </div>
+              <MyExercises />
+            </>
+          )}
 
           {activeTab === "browse" && (
             <>
@@ -158,10 +175,10 @@ export default function CreateWorkoutPlan() {
               </div>
               <CategoryFilter selected={selectedCategory} onSelect={setSelectedCategory} />
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {filteredExercises.length === 0 ? (
+                {exercises.length === 0 ? (
                   <p className="text-sm text-[#72728A]">No exercises found.</p>
                 ) : (
-                  filteredExercises.map((exercise) => (
+                  exercises.map((exercise) => (
                     <ExerciseCard
                       key={exercise.exercise_id}
                       exercise={exercise}
@@ -178,7 +195,8 @@ export default function CreateWorkoutPlan() {
           {activeTab === "plans" && <MyPlans />}
           {activeTab === "create" && isCoach && <CreateExerciseForm />}
         </div>
-        {activeTab !== "create" && (
+
+        {activeTab !== "create" && activeTab !== "exercises" && activeTab !== "plans" && (
           <div className="w-80 shrink-0 bg-white border border-[#E6E6EE] rounded-2xl p-5 flex flex-col gap-4 sticky top-18">
             <div>
               <p className="text-base font-semibold text-black">Your Plan</p>

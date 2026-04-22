@@ -17,24 +17,30 @@ function FormField({ label, children }: { label: string; children: React.ReactNo
 
 export default function CreateExerciseForm() {
   const [name, setName] = useState("");
-  const [equipment, setEquipment] = useState("");
+  const [equipment, setEquipment] = useState<string[]>([]);
   const [description, setDescription] = useState("");
   const [video, setVideo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+
   async function handleSubmit() {
-    if (!name.trim() || !equipment || !description.trim()) {
+    if (!name.trim() || equipment.length === 0 || !description.trim()) {
       setError("Please fill in all fields.");
       return;
     }
     setLoading(true);
     setError(null);
     try {
-      await createExercise({ name, equipment, description });
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("equipment", equipment.join(", "));
+      formData.append("description", description);
+      if (video) formData.append("video", video);
+      await createExercise(formData);
       setSuccess(true);
-      setName(""); setEquipment(""); setDescription(""); setVideo(null);
+      setName(""); setEquipment([]); setDescription(""); setVideo(null);
     } catch (err: any) {
       setError(err?.response?.data?.error || "Failed to create exercise.");
     } finally {
@@ -65,11 +71,31 @@ export default function CreateExerciseForm() {
 
 
       <FormField label="Equipment">
-        <select value={equipment} onChange={(e) => { setEquipment(e.target.value); setSuccess(false); }}
-          className={`${inputClass} bg-white`}>
-          <option value="">Select equipment...</option>
-          {EQUIPMENT_OPTIONS.map((eq) => <option key={eq} value={eq}>{eq}</option>)}
-        </select>
+        <div className="flex flex-wrap gap-2">
+          {EQUIPMENT_OPTIONS.map((eq) => {
+            const active = equipment.includes(eq);
+            return (
+              <button
+                key={eq}
+                type="button"
+                onClick={() => {
+                  setEquipment((prev) =>
+                    active ? prev.filter((e) => e !== eq) : [...prev, eq]
+                  );
+                  setSuccess(false);
+                }}
+                className="text-xs font-medium px-3 py-1.5 rounded-full border transition-colors"
+                style={{
+                  backgroundColor: active ? "#5B5EF4" : "transparent",
+                  color: active ? "#ffffff" : "#72728A",
+                  borderColor: active ? "#5B5EF4" : "#E6E6EE",
+                }}
+              >
+                {eq}
+              </button>
+            );
+          })}
+        </div>
       </FormField>
 
       <FormField label="Description">
@@ -87,7 +113,7 @@ export default function CreateExerciseForm() {
             <polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" />
           </svg>
           <p className="text-sm text-[#72728A]">{video ? video.name : "Click to upload a video"}</p>
-          <p className="text-xs text-[#72728A]">MP4, MOV up to 50MB</p>
+          <p className="text-xs text-[#72728A]">MP4</p>
           <input id="video-upload" type="file" accept="video/*" className="hidden"
             onChange={(e) => setVideo(e.target.files?.[0] ?? null)} />
         </div>

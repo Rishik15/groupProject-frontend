@@ -2,17 +2,13 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:8080";
 
-interface NewExercise {
-  name: string;
-  equipment: string;
-  description: string;
-}
-
-// sends new exercise data to backend
-export async function createExercise(exercise: NewExercise): Promise<void> {
+export async function createExercise(formData: FormData): Promise<void> {
   await axios.post(
-    `${BASE_URL}/exercise/create`,
-    exercise,
-    { withCredentials: true }
+    `${BASE_URL}/coach/exercise/create`,
+    formData,
+    {
+      withCredentials: true,
+      headers: { "Content-Type": "multipart/form-data" },
+    }
   );
 }
