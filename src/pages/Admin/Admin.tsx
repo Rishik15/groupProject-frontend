@@ -1,31 +1,34 @@
-import { Routes, Route } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
-import AdminDashBoard from "./Dashboard";
-import Users from "./Users";
-import Coaches from "./Coaches";
-import ClosedReports from "./ClosedReports";
+import Dashboard from "./Dashboard";
+import Accounts from "./Accounts";
+import CoachGovernance from "./CoachGovernance";
+import Reports from "./Reports";
 import Exercises from "./Exercises";
+import Workouts from "./Workouts";
 
 const AdminLayout = () => {
     return (
-        <section className="min-h-screen">
+        <section className="min-h-screen bg-default-50">
             <Navbar
                 parent="/admin"
                 name="Admin"
                 email="admin@email.com"
-                notifications={[]} //This needs fixing
-                count={0} //Same deal here
-                setNotifications={() => { }} //And here
-
+                notifications={[]}
+                count={0}
+                setNotifications={() => { }}
             />
 
             <div className="pt-14">
                 <Routes>
-                    <Route index element={<AdminDashBoard />} />
-                    <Route path="users" element={<Users />} />
-                    <Route path="coaches" element={<Coaches />} />
-                    <Route path="reports/closed" element={<ClosedReports />} />
-                    <Route path="exercises" element={<Exercises />} />
+                    <Route index element={<Navigate to="dashboard" replace />} />
+                    <Route path="dashboard/*" element={<Dashboard />} />
+                    <Route path="accounts/*" element={<Accounts />} />
+                    <Route path="coach-governance/*" element={<CoachGovernance />} />
+                    <Route path="reports/*" element={<Reports />} />
+                    <Route path="exercises/*" element={<Exercises />} />
+                    <Route path="workouts/*" element={<Workouts />} />
+                    <Route path="*" element={<Navigate to="dashboard" replace />} />
                 </Routes>
             </div>
         </section>
