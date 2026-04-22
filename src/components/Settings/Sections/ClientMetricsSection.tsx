@@ -1,7 +1,7 @@
 import { Input, Label } from "@heroui/react";
 import type { ChangeEvent } from "react";
-import type { User } from "../../services/Setting/User";
-import { getInputClass } from "./utils";
+import type { User } from "../../../services/Setting/User";
+import { getInputClass } from "../utils";
 
 type ClientMetricsSectionProps = {
   form: User;

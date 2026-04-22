@@ -5,6 +5,7 @@ export type AvailabilitySlot = {
 };
 
 export type Certification = {
+  id: number; 
   name: string;
   provider: string;
   description?: string | null;

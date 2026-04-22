@@ -1,5 +1,5 @@
 import { Label } from "@heroui/react";
-import type { User } from "../../services/Setting/User";
+import type { User } from "../../../services/Setting/User";
 
 type CoachDescriptionBlockProps = {
   form: User;
