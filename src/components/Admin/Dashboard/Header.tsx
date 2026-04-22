@@ -1,3 +1,4 @@
+import { Button } from "@heroui/react";
 import { Shield } from "lucide-react";
 
 interface AdminDashboardHeaderProps {
@@ -5,16 +6,18 @@ interface AdminDashboardHeaderProps {
     subtitle?: string;
     onViewAllUsers?: () => void;
     onViewAllActiveCoaches?: () => void;
+    onViewExerciseReview?: () => void;
 }
 
 const actionButtonClassName =
-    "inline-flex h-[42px] items-center justify-center rounded-[13.5px] border border-[#DCDCF4] bg-white px-[18px] text-[13.125px] font-medium leading-[18px] text-[#0F0F14] transition-colors hover:bg-[#F8F8FC]";
+    "h-[42px] rounded-[13.5px] border border-[#DCDCF4] bg-white px-[18px] text-[13.125px] font-medium leading-[18px] text-[#0F0F14]";
 
 const AdminDashboardHeader = ({
     title = "Admin Dashboard",
     subtitle = "Platform governance & oversight",
     onViewAllUsers,
     onViewAllActiveCoaches,
+    onViewExerciseReview,
 }: AdminDashboardHeaderProps) => {
     return (
         <header className="border-b border-border bg-card">
@@ -36,21 +39,29 @@ const AdminDashboardHeader = ({
                     </div>
 
                     <div className="flex flex-wrap gap-3">
-                        <button
+                        <Button
                             type="button"
                             onClick={onViewAllUsers}
                             className={actionButtonClassName}
                         >
                             View all users
-                        </button>
+                        </Button>
 
-                        <button
+                        <Button
                             type="button"
                             onClick={onViewAllActiveCoaches}
                             className={actionButtonClassName}
                         >
                             View all active coaches
-                        </button>
+                        </Button>
+
+                        <Button
+                            type="button"
+                            onClick={onViewExerciseReview}
+                            className={actionButtonClassName}
+                        >
+                            Exercise review
+                        </Button>
                     </div>
                 </div>
             </div>

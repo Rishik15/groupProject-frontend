@@ -151,6 +151,7 @@ const AdminDashboard = () => {
             <AdminDashboardHeader
                 onViewAllUsers={() => navigate("/admin/users")}
                 onViewAllActiveCoaches={() => navigate("/admin/coaches")}
+                onViewExerciseReview={() => navigate("/admin/exercises")}
             />
 
             <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
