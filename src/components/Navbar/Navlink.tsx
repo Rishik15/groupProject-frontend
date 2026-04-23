@@ -12,15 +12,15 @@ const NavLink = ({
   icon?: ReactNode;
 }) => {
   const location = useLocation();
-  const isActive = location.pathname === route;
+  const isActive = location.pathname === route || location.pathname.startsWith(route);
+
   return (
     <Link
       to={route}
-      className={`flex items-center gap-1.5 transition px-3 py-1 rounded-xl font-medium font-primary ${
-        isActive
-          ? "text-[#5659ed] bg-[#d5d5f5]"
-          : "text-gray-600 hover:text-gray-900 hover:bg-gray-200"
-      }`}
+      className={`flex items-center gap-1.5 transition px-3 py-1 rounded-xl font-medium font-primary ${isActive
+        ? "text-[#5659ed] bg-[#d5d5f5]"
+        : "text-gray-600 hover:text-gray-900 hover:bg-gray-200"
+        }`}
     >
       {icon && <span className="w-4 h-4">{icon}</span>}
       {label}

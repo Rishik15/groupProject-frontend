@@ -6,3 +6,4 @@ export * from "./adminExerciseService";
 export * from "./adminWorkoutService";
 export * from "./adminVideoModerationService";
 export * from "./adminCoachPriceService";
+export * from "./adminPredictionService";

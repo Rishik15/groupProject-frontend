@@ -1,6 +1,6 @@
 import { Button, Card } from "@heroui/react";
 import { AlertCircle, RefreshCw } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type {
     AdminDashboardStats,
@@ -10,6 +10,11 @@ import {
     getDashboardStats,
     getEngagementAnalytics,
 } from "../../services/Admin/adminDashboardService";
+import {
+    getCancellationReviewMarkets,
+    getMarketsInReview,
+    getPendingSettlementMarkets,
+} from "../../services/Admin/adminPredictionService";
 import AdminDashboardHeader from "../../components/Admin/Dashboard/Header";
 import StatsCards from "../../components/Admin/Dashboard/StatsCards";
 import EngagementAnalytics from "../../components/Admin/Dashboard/EngagementAnalytics";
@@ -23,7 +28,10 @@ const Dashboard = () => {
     const reviewsRef = useRef<HTMLDivElement | null>(null);
 
     const [stats, setStats] = useState<AdminDashboardStats | null>(null);
-    const [analytics, setAnalytics] = useState<AdminEngagementAnalytics | null>(null);
+    const [analytics, setAnalytics] = useState<AdminEngagementAnalytics | null>(
+        null,
+    );
+    const [predictionPendingReviews, setPredictionPendingReviews] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -32,9 +40,18 @@ const Dashboard = () => {
         setError(null);
 
         try {
-            const [statsResult, analyticsResult] = await Promise.allSettled([
+            const [
+                statsResult,
+                analyticsResult,
+                reviewQueueResult,
+                settlementQueueResult,
+                cancelQueueResult,
+            ] = await Promise.allSettled([
                 getDashboardStats(signal),
                 getEngagementAnalytics(signal),
+                getMarketsInReview(),
+                getPendingSettlementMarkets(),
+                getCancellationReviewMarkets(),
             ]);
 
             if (signal?.aborted) {
@@ -55,6 +72,23 @@ const Dashboard = () => {
             } else {
                 setAnalytics(null);
             }
+
+            const reviewCount =
+                reviewQueueResult.status === "fulfilled"
+                    ? reviewQueueResult.value.length
+                    : 0;
+
+            const settlementCount =
+                settlementQueueResult.status === "fulfilled"
+                    ? settlementQueueResult.value.length
+                    : 0;
+
+            const cancelCount =
+                cancelQueueResult.status === "fulfilled"
+                    ? cancelQueueResult.value.length
+                    : 0;
+
+            setPredictionPendingReviews(reviewCount + settlementCount + cancelCount);
         } catch (err) {
             if (err instanceof DOMException && err.name === "AbortError") {
                 return;
@@ -66,6 +100,7 @@ const Dashboard = () => {
             setError(message);
             setStats(null);
             setAnalytics(null);
+            setPredictionPendingReviews(0);
         } finally {
             if (!signal?.aborted) {
                 setIsLoading(false);
@@ -83,6 +118,18 @@ const Dashboard = () => {
     const scrollToSection = (element: HTMLDivElement | null) => {
         element?.scrollIntoView({ behavior: "smooth", block: "start" });
     };
+
+    const totalPendingReviewsIncludingPredictions = useMemo(() => {
+        if (!stats) {
+            return 0;
+        }
+
+        return (
+            stats.pending_coach_applications +
+            stats.open_reports +
+            predictionPendingReviews
+        );
+    }, [predictionPendingReviews, stats]);
 
     return (
         <div className="min-h-[calc(100vh-56px)] bg-default-50 px-36 py-8">
@@ -159,10 +206,15 @@ const Dashboard = () => {
                         <div ref={reviewsRef}>
                             <PendingReviewSummary
                                 stats={stats}
+                                predictionPendingReviews={predictionPendingReviews}
+                                totalPendingReviewsIncludingPredictions={
+                                    totalPendingReviewsIncludingPredictions
+                                }
                                 onNavigateToCoachGovernance={() =>
                                     navigate("/admin/coach-governance")
                                 }
                                 onNavigateToReports={() => navigate("/admin/reports")}
+                                onNavigateToPredictions={() => navigate("/admin/prediction")}
                             />
                         </div>
                     </>
