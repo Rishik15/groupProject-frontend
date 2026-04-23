@@ -22,7 +22,7 @@ const RegisterInputs = ({
   const [isVisible, setIsVisible] = useState(false);
 
   return (
-    <div className="flex flex-col gap-3 w-full pt-4">
+    <div className="flex flex-col gap-3 w-full py-2">
       <TextField name="name">
         <Label className="text-sm">Full Name</Label>
 
@@ -34,7 +34,7 @@ const RegisterInputs = ({
           <InputGroup.Input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Enter your name"
+            placeholder="First and last name"
           />
         </InputGroup>
       </TextField>

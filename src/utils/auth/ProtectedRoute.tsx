@@ -1,93 +1,67 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { ReactNode } from "react";
-import { getAuth } from "../../services/auth/checkAuth";
-import CustomModal from "../../components/global/Modal";
+import { useEffect, useRef } from "react";
 import { Spinner } from "@heroui/react";
-
-type RedirectPath = string | null;
+import { useAuth } from "./AuthContext";
 
 const ProtectedRoute = ({
   children,
   allowedRoles,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
   allowedRoles?: string[];
 }) => {
-  const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [message, setMessage] = useState("");
-  const [redirectPath, setRedirectPath] = useState<RedirectPath>(null);
+  const { status, roles, refreshAuth, hasCheckedAuth, socketReady } = useAuth();
 
   const navigate = useNavigate();
+  const hasTriggeredAuth = useRef(false);
 
   useEffect(() => {
-    let isActive = true;
-
-    const verifyAuth = async () => {
-      const { authenticated, role } = await getAuth();
-
-      if (!isActive) return;
-
-      if (!authenticated) {
-        setMessage("You must be signed in to access this page.");
-        setRedirectPath("/signin");
-        setShowModal(true);
-        setLoading(false);
-        return;
-      }
-
-      if (allowedRoles && role && !allowedRoles.includes(role)) {
-        setMessage("You are not authorized to access this page.");
-
-        if (role === "client") setRedirectPath("/client");
-        else if (role === "coach") setRedirectPath("/coach");
-        else setRedirectPath("/");
-
-        setShowModal(true);
-        setLoading(false);
-        return;
-      }
-
-      setLoading(false);
-    };
-
-    verifyAuth();
-
-    return () => {
-      isActive = false;
-    };
-  }, [allowedRoles]);
-
-  const handleModalClose = () => {
-    setShowModal(false);
-
-    if (redirectPath) {
-      navigate(redirectPath);
+    if (!hasCheckedAuth && !hasTriggeredAuth.current) {
+      hasTriggeredAuth.current = true;
+      refreshAuth();
     }
-  };
+  }, [hasCheckedAuth, refreshAuth]);
 
-  if (loading) {
+  useEffect(() => {
+    if (!hasCheckedAuth) return;
+
+    if (status === "anonymous") {
+      navigate("/signin", { replace: true });
+      return;
+    }
+
+    if (
+      status === "authenticated" &&
+      allowedRoles &&
+      !allowedRoles.some((r) => roles.includes(r))
+    ) {
+      if (roles.includes("admin")) {
+        navigate("/admin", { replace: true });
+      } else if (roles.includes("coach")) {
+        navigate("/coach", { replace: true });
+      } else if (roles.includes("client")) {
+        navigate("/client", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
+    }
+  }, [status, roles, allowedRoles, hasCheckedAuth, navigate]);
+
+  if (
+    !hasCheckedAuth ||
+    status === "checking" ||
+    (status === "authenticated" && !socketReady)
+  ) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <Spinner size="lg" color="accent" />
+        <Spinner size="lg" />
       </div>
     );
   }
 
-  return (
-    <>
-      {!showModal && children}
+  if (status !== "authenticated") return null;
 
-      <CustomModal
-        isOpen={showModal}
-        onClose={handleModalClose}
-        title="Access Denied"
-      >
-        {message}
-      </CustomModal>
-    </>
-  );
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

@@ -1,30 +1,46 @@
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../services/auth/logout";
+import { useAuth } from "../../utils/auth/AuthContext";
+import { socket } from "../../services/sockets/socket";
 
-const DropdownItem = ({
+const Dropdownaction = ({
   label,
   route,
   danger,
   type = "link",
+  onClick,
 }: {
   label: string;
   route?: string;
   danger?: boolean;
-  type?: "logout" | "link";
+  type?: "logout" | "link" | "action";
+  onClick?: () => void;
 }) => {
   const navigate = useNavigate();
+  const { clearAuth } = useAuth();
 
-  const handleClick = async () => {
+  const handleClick = () => {
+  onClick?.();
+
+  setTimeout(async () => {
     if (type === "logout") {
       await logout();
+      clearAuth(true);
+
+      if (socket.connected) {
+        socket.disconnect();
+      }
+
       navigate("/");
       return;
     }
 
     if (type === "link" && route) {
       navigate(route);
+      return;
     }
-  };
+  }, 0);
+};
 
   return (
     <button
@@ -38,4 +54,4 @@ const DropdownItem = ({
   );
 };
 
-export default DropdownItem;
+export default Dropdownaction;
