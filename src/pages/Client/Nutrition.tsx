@@ -2,6 +2,7 @@ import { useState } from "react";
 import MealLoggingModal from "../../components/MealLoggingModal/Modal";
 import NutritionHeader from "../../components/NutritionPage/NutritionHeader";
 import NutritionTabs from "../../components/NutritionPage/Tabs";
+import ViewMeals from "../../components/Nutrition/ViewMeals";
 
 const Nutrition = () => {
   const [isMealModalOpen, setIsMealModalOpen] = useState(false);
@@ -24,6 +25,9 @@ const Nutrition = () => {
           setMealsRefreshKey((prev) => prev + 1);
         }}
       />
+      <div>
+        <ViewMeals></ViewMeals>
+      </div>
     </section>
   );
 };

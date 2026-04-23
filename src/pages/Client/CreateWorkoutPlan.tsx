@@ -18,9 +18,8 @@ import CustomModal from "../../components/global/Modal";
 
 export default function CreateWorkoutPlan() {
   const navigate = useNavigate();
-  const { role } = useAuth();
-  const isCoach = role === "coach";
-
+  const {roles} = useAuth();
+  const isCoach = roles.includes("coach");
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [search, setSearch] = useState("");
