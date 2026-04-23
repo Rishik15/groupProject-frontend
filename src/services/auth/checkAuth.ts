@@ -8,14 +8,14 @@ export async function getAuth() {
 
     return {
       authenticated: true,
-      role: data.role,
+      roles: data.roles,
       user: data.user,
       needs_onboarding: data.needs_onboarding ?? false,
     };
   } catch {
     return {
       authenticated: false,
-      role: null,
+      roles: null,
       user: null,
       needs_onboarding: false,
     };

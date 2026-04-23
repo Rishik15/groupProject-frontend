@@ -1,8 +1,3 @@
-import {
-    getLocalTimeZone,
-    Time,
-    toCalendarDateTime,
-} from "@internationalized/date";
 import type {
     CreateMealLogPayload,
     FoodItemDraft,
@@ -10,6 +5,8 @@ import type {
     MealLogFormValues,
     MealTotals,
 } from "../Interfaces/MealLogging/mealLog";
+
+const pad = (value: number) => String(value).padStart(2, "0");
 
 export const createEmptyFoodItemDraft = (): FoodItemDraft => ({
     clientId: crypto.randomUUID(),
@@ -97,18 +94,18 @@ export const validateMealLogForm = (
 
 const buildEatenAtIso = (values: MealLogFormValues): string => {
     if (!values.eatenOn || !values.eatenTime) {
-        return new Date().toISOString();
+        const now = new Date();
+
+        return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(
+            now.getDate(),
+        )}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
     }
 
-    const time = new Time(
-        values.eatenTime.hour,
-        values.eatenTime.minute,
-        values.eatenTime.second ?? 0,
-    );
+    const second = values.eatenTime.second ?? 0;
 
-    const calendarDateTime = toCalendarDateTime(values.eatenOn, time);
-
-    return calendarDateTime.toDate(getLocalTimeZone()).toISOString();
+    return `${values.eatenOn.year}-${pad(values.eatenOn.month)}-${pad(
+        values.eatenOn.day,
+    )}T${pad(values.eatenTime.hour)}:${pad(values.eatenTime.minute)}:${pad(second)}`;
 };
 
 export const buildMealLogPayload = (
