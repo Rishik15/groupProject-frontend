@@ -22,7 +22,6 @@ export { default as MyBetsSection } from "./Lists/MyBetsSection";
 export { default as MyMarketsSection } from "./Lists/MyMarketsSection";
 export { default as PredictionLeaderboardList } from "./Lists/PredictionLeaderboardList";
 
-export { default as WalletSurveyBanner } from "./Sections/WalletSurveyBanner";
 export { default as GamblingDenSection } from "./Sections/GamblingDenSection";
 export { default as MyBetsTabContent } from "./Sections/MyBetsTabContent";
 export { default as MyMarketsTabContent } from "./Sections/MyMarketsTabContent";

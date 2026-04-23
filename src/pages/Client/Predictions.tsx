@@ -18,7 +18,6 @@ import {
     PredictionPageTabs,
     PredictionSummaryCards,
     RequestCancellationModal,
-    WalletSurveyBanner,
 } from "../../components/Predictions";
 import type { PredictionPageTabKey } from "../../components/Predictions/Layout/PredictionPageTabs";
 import {
@@ -35,12 +34,7 @@ import {
 } from "../../services/Predictions/predictionMarketService";
 import {
     getWalletSummary,
-    getWalletTransactions,
 } from "../../services/Predictions/predictionWalletService";
-import {
-    rewardDailySurvey,
-    type PredictionDailyReward,
-} from "../../services/WellnessSurvey/predictionSurveyBridge";
 import type { PredictionBet } from "../../utils/Interfaces/Predictions/predictionBet";
 import type { PredictionLeaderboardEntry } from "../../utils/Interfaces/Predictions/predictionLeaderboard";
 import type { PredictionMarket } from "../../utils/Interfaces/Predictions/predictionMarket";
@@ -90,7 +84,6 @@ export default function Predictions() {
     const [pageError, setPageError] = useState<string | null>(null);
     const [isInitialLoading, setIsInitialLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const [isRewardPending, setIsRewardPending] = useState(false);
     const [isCreateSubmitting, setIsCreateSubmitting] = useState(false);
     const [isBetSubmitting, setIsBetSubmitting] = useState(false);
     const [isCancelSubmitting, setIsCancelSubmitting] = useState(false);
@@ -101,7 +94,6 @@ export default function Predictions() {
     const [isBetModalOpen, setIsBetModalOpen] = useState(false);
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
     const [isCompletedModalOpen, setIsCompletedModalOpen] = useState(false);
-    const [rewardResult, setRewardResult] = useState<PredictionDailyReward | null>(null);
     const [createError, setCreateError] = useState<string | null>(null);
     const [betError, setBetError] = useState<string | null>(null);
     const [cancelError, setCancelError] = useState<string | null>(null);
@@ -301,23 +293,6 @@ export default function Predictions() {
         [loadAllClientData],
     );
 
-    const handleClaimReward = useCallback(async () => {
-        try {
-            setIsRewardPending(true);
-            setPageError(null);
-            const reward = await rewardDailySurvey();
-            setRewardResult(reward);
-            await Promise.allSettled([getWalletSummary(), getWalletTransactions()]);
-            await loadAllClientData("refresh");
-        } catch (error) {
-            setPageError(
-                error instanceof Error ? error.message : "Unable to claim daily reward.",
-            );
-        } finally {
-            setIsRewardPending(false);
-        }
-    }, [loadAllClientData]);
-
     const handleViewBetResult = useCallback(
         (bet: PredictionBet) => {
             const matchingMarket = data.completedMarkets.find(
@@ -395,14 +370,6 @@ export default function Predictions() {
                     walletBalance={data.wallet?.balance ?? null}
                     isLoading={isInitialLoading || isRefreshing}
                     onRefresh={handleRefresh}
-                />
-
-                <WalletSurveyBanner
-                    walletBalance={data.wallet?.balance ?? null}
-                    canClaimReward={!isRewardPending && !rewardResult?.already_awarded}
-                    isRewardPending={isRewardPending}
-                    rewardResult={rewardResult}
-                    onClaimReward={handleClaimReward}
                 />
 
                 {pageError ? (
