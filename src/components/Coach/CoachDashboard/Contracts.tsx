@@ -5,6 +5,12 @@ import { getContracts } from "../../../services/dashboard/coach/getContracts";
 import type { Contract } from "../../../utils/Interfaces/Dashboard/Coach/types";
 import List from "./List";
 import { ActionBtn } from "./ActionButton";
+import {
+  acceptCoachContract,
+  rejectCoachContract,
+  terminateCoachContract,
+} from "../../../services/Contracts/coachContractService";
+import { toast } from "@heroui/react";
 
 type ContractsState = {
   pending: Contract[];
@@ -41,43 +47,67 @@ export default function CoachContractsPanel() {
     fetchData();
   }, []);
 
-  const handleAccept = (id: number) => {
-    const contract = contracts.pending.find((c) => c.contract_id === id);
-    if (!contract) return;
+  const handleAccept = async (id: number) => {
+    try {
+      const res = await acceptCoachContract(id);
 
-    setContracts((prev) => ({
-      ...prev,
-      pending: prev.pending.filter((c) => c.contract_id !== id),
-      active: [...prev.active, contract],
-    }));
+      toast.success("Contract accepted successfully!");
+
+      const contract = contracts.pending.find((c) => c.contract_id === id);
+      console.log(contract);
+      if (!contract) return;
+
+      setContracts((prev) => ({
+        ...prev,
+        pending: prev.pending.filter((c) => c.contract_id !== id),
+        active: [...prev.active, { ...contract, active: 1 }],
+      }));
+    } catch (err: any) {
+      toast("Failed to accept contract", { variant: "danger" });
+    }
   };
 
-  const handleReject = (id: number) => {
-    setContracts((prev) => ({
-      ...prev,
-      pending: prev.pending.filter((c) => c.contract_id !== id),
-    }));
+  const handleReject = async (id: number) => {
+    try {
+      const res = await rejectCoachContract(id);
+
+      toast.success("Contract rejected successfully!");
+
+      setContracts((prev) => ({
+        ...prev,
+        pending: prev.pending.filter((c) => c.contract_id !== id),
+      }));
+    } catch (err: any) {
+      toast("Failed to reject contract", { variant: "danger" });
+    }
   };
 
-  const handleTerminate = (id: number) => {
-    const contract = contracts.active.find((c) => c.contract_id === id);
-    if (!contract) return;
+  const handleTerminate = async (id: number) => {
+    try {
+      const res = await terminateCoachContract(id);
 
-    setContracts((prev) => ({
-      ...prev,
-      active: prev.active.filter((c) => c.contract_id !== id),
-      history: [
-        ...prev.history,
-        { ...contract, end_date: new Date().toISOString() },
-      ],
-    }));
+      toast.success("Contract terminated successfully!");
+
+      const contract = contracts.active.find((c) => c.contract_id === id);
+      if (!contract) return;
+
+      setContracts((prev) => ({
+        ...prev,
+        active: prev.active.filter((c) => c.contract_id !== id),
+        history: [
+          ...prev.history,
+          { ...contract, end_date: new Date().toISOString() },
+        ],
+      }));
+    } catch (err: any) {
+      toast("Failed to terminate contract", { variant: "danger" });
+    }
   };
-
   if (loading) return <div>Loading...</div>;
 
   return (
     <section className="flex flex-col px-38">
-      <div className="bg-white rounded-4xl border shadow-sm p-4">
+      <div className="bg-white rounded-4xl shadow-sm p-4">
         <Tabs defaultSelectedKey="pending">
           <Tabs.List
             aria-label="Contracts"
