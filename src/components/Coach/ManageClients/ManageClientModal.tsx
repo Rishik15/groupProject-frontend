@@ -24,7 +24,7 @@ export default function ManageClientModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center py-6 gap-4 backdrop-blur-sm">
-      <div className="absolute left-13 top-12 flex flex-col gap-4 pt-4">
+      <div className="absolute left-13 top-12 flex flex-col gap-4 pt-6">
         {(["dashboard", "workouts", "nutrition"] as Tab[]).map((tab) => (
           <div
             key={tab}
@@ -37,7 +37,7 @@ export default function ManageClientModal({
         ))}
       </div>
 
-      <div className="absolute right-15 top-12 pt-4">
+      <div className="absolute right-15 top-12 pt-6">
         <div
           onClick={onClose}
           className="w-8 h-8 rounded-full bg-white flex items-center justify-center cursor-pointer shadow-lg hover:bg-indigo-500 hover:text-white"
@@ -46,13 +46,14 @@ export default function ManageClientModal({
         </div>
       </div>
 
-      <div className="w-[85%] h-[95%] bg-white rounded-4xl shadow-xl overflow-hidden p-6">
-        {activeTab === "dashboard" && <Dashboard contractId={contractId} onTabChange={setActiveTab}
-/>}
+      <div className="w-[85%] h-[95%] bg-[#f8f8fbe4] rounded-4xl shadow-xl overflow-hidden p-6">
+        {activeTab === "dashboard" && (
+          <Dashboard contractId={contractId} onTabChange={setActiveTab} />
+        )}
 
         {activeTab === "workouts" && <Workouts contractId={contractId} />}
 
-        {activeTab === "nutrition" && <Nutrition contractId={contractId} />}
+        {activeTab === "nutrition" && <Nutrition contract_Id={contractId} />}
       </div>
     </div>
   );
