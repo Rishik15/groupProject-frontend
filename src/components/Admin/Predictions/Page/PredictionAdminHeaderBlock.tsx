@@ -85,7 +85,7 @@ export default function PredictionAdminHeaderBlock({
                     >
                         <div className="flex items-start justify-between gap-3 p-5">
                             <div className="space-y-1">
-                                <p className="text-sm text-slate-500">{title}</p>
+                                <p className="text-[13.125px] text-slate-500">{title}</p>
                                 <p className="text-2xl font-semibold text-slate-900">
                                     {value}
                                 </p>
@@ -94,7 +94,7 @@ export default function PredictionAdminHeaderBlock({
                                 <Icon className="h-5 w-5" />
                             </div>
                         </div>
-                        <div className="px-5 pb-5 pt-0 text-sm text-slate-500">
+                        <div className="px-5 pb-5 pt-0 text-[13.125px] text-slate-500">
                             {description}
                         </div>
                     </Card>

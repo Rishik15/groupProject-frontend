@@ -412,10 +412,10 @@ export default function Predictions() {
                                 <ShieldCheck className="h-4 w-4" strokeWidth={2.2} />
                             </div>
                             <div>
-                                <p className="text-sm font-semibold text-amber-900">
+                                <p className="text-[13.125px] font-semibold text-amber-900">
                                     Prediction page notice
                                 </p>
-                                <p className="mt-1 text-sm text-amber-800">{pageError}</p>
+                                <p className="mt-1 text-[13.125px] text-amber-800">{pageError}</p>
                             </div>
                         </div>
                     </Card>
@@ -434,7 +434,7 @@ export default function Predictions() {
                                 <h2 className="mt-3 text-2xl font-semibold tracking-tight text-foreground">
                                     Predictions workspace
                                 </h2>
-                                <p className="mt-2 max-w-3xl text-sm leading-6 text-foreground/65">
+                                <p className="mt-2 max-w-3xl text-[13.125px] leading-6 text-foreground/65">
                                     Browse bettable markets in Gambling Den, track your participation in My Bets, manage creator workflows in My Markets, and monitor ranking in Leaderboard.
                                 </p>
                             </div>
@@ -477,7 +477,7 @@ export default function Predictions() {
                                 onChange={setActiveTab}
                             />
 
-                            <p className="text-xs text-foreground/50">
+                            <p className="text-[11.25px] text-foreground/50">
                                 {lastUpdatedAt
                                     ? `Last updated ${new Date(lastUpdatedAt).toLocaleString()}`
                                     : "Loading predictions data…"}

@@ -58,14 +58,14 @@ export default function PredictionCancelReviewModal({
                     <Modal.Dialog aria-label="Review cancellation request" className="rounded-3xl">
                         <Modal.Header className="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-5">
                             <div className="space-y-1">
-                                <div className="inline-flex items-center gap-2 rounded-full bg-[#EEF0FF] px-3 py-1 text-xs font-semibold text-[#5B5EF4]">
+                                <div className="inline-flex items-center gap-2 rounded-full bg-[#EEF0FF] px-3 py-1 text-[11.25px] font-semibold text-[#5B5EF4]">
                                     {isApprove ? <ShieldCheck className="h-4 w-4" /> : <CircleOff className="h-4 w-4" />}
                                     Cancel review
                                 </div>
-                                <h2 className="text-xl font-semibold text-slate-900">
+                                <h2 className="text-[18.75px] font-semibold text-slate-900">
                                     {isApprove ? "Approve cancellation" : "Reject cancellation"}
                                 </h2>
-                                <p className="text-sm text-slate-500">
+                                <p className="text-[13.125px] text-slate-500">
                                     {market?.title ?? "This market"}
                                 </p>
                             </div>
@@ -78,7 +78,7 @@ export default function PredictionCancelReviewModal({
                         </Modal.Header>
 
                         <Modal.Body className="space-y-5 px-6 py-6">
-                            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+                            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-[13.125px] text-slate-700">
                                 <p className="font-medium text-slate-900">Creator request reason</p>
                                 <p className="mt-2">
                                     {market?.cancel_request_reason || "No cancellation reason provided."}
@@ -86,7 +86,7 @@ export default function PredictionCancelReviewModal({
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-700">
+                                <label className="text-[13.125px] font-medium text-slate-700">
                                     Admin action note
                                 </label>
                                 <Input
@@ -100,7 +100,7 @@ export default function PredictionCancelReviewModal({
                             </div>
 
                             {error ? (
-                                <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                                <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-[13.125px] text-rose-700">
                                     {error}
                                 </div>
                             ) : null}

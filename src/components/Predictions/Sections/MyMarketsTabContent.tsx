@@ -23,8 +23,8 @@ export default function MyMarketsTabContent({
     if (error) {
         return (
             <Card className="rounded-3xl border border-rose-200 bg-rose-50 p-6">
-                <h3 className="text-lg font-semibold text-rose-800">Unable to load your markets</h3>
-                <p className="mt-2 text-sm text-rose-700">{error}</p>
+                <h3 className="text-[18.75px] font-semibold text-rose-800">Unable to load your markets</h3>
+                <p className="mt-2 text-[13.125px] text-rose-700">{error}</p>
             </Card>
         );
     }
@@ -38,8 +38,8 @@ export default function MyMarketsTabContent({
                             <LayoutDashboard className="h-4 w-4" />
                             My Markets
                         </div>
-                        <h2 className="text-2xl font-semibold text-slate-900">Manage the markets you created</h2>
-                        <p className="max-w-3xl text-sm text-slate-500">
+                        <h2 className="text-[18.75px] font-semibold text-slate-900">Manage the markets you created</h2>
+                        <p className="max-w-3xl text-[13.125px] text-slate-500">
                             Review market lifecycle, close eligible markets, and send cancellation requests when necessary.
                         </p>
                     </div>
@@ -61,7 +61,7 @@ export default function MyMarketsTabContent({
 
             {isLoading ? (
                 <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                    <p className="text-sm text-slate-500">Loading your creator dashboard...</p>
+                    <p className="text-[13.125px] text-slate-500">Loading your creator dashboard...</p>
                 </Card>
             ) : (
                 <MyMarketsSection

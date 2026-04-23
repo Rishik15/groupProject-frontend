@@ -92,8 +92,8 @@ export default function CompletedMarketResultModal({
                                     <Trophy className="h-5 w-5" strokeWidth={2.2} />
                                 </div>
                                 <div>
-                                    <h2 className="text-xl font-semibold tracking-tight text-foreground">Completed market result</h2>
-                                    <p className="mt-1 text-sm text-foreground/60">
+                                    <h2 className="text-[18.75px] font-semibold tracking-tight text-foreground">Completed market result</h2>
+                                    <p className="mt-1 text-[13.125px] text-foreground/60">
                                         Finalized market outcome, settlement context, and pool summary.
                                     </p>
                                 </div>
@@ -103,7 +103,7 @@ export default function CompletedMarketResultModal({
                         <Modal.Body className="space-y-5 px-6 py-6">
                             {!market ? (
                                 <Card className="border border-dashed border-default-300 bg-content2/40 p-6 text-center shadow-none">
-                                    <p className="text-sm text-foreground/60">No completed market is currently selected.</p>
+                                    <p className="text-[13.125px] text-foreground/60">No completed market is currently selected.</p>
                                 </Card>
                             ) : (
                                 <>
@@ -111,8 +111,8 @@ export default function CompletedMarketResultModal({
                                         <div className="space-y-5 p-6">
                                             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                                                 <div>
-                                                    <h3 className="text-lg font-semibold text-foreground">{market.title}</h3>
-                                                    <p className="mt-2 max-w-2xl text-sm leading-7 text-foreground/65">{market.goal_text}</p>
+                                                    <h3 className="text-[18.75px] font-semibold text-foreground">{market.title}</h3>
+                                                    <p className="mt-2 max-w-2xl text-[13.125px] leading-7 text-foreground/65">{market.goal_text}</p>
                                                 </div>
 
                                                 <div className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold ${resultMeta.tone}`}>
@@ -122,8 +122,8 @@ export default function CompletedMarketResultModal({
                                             </div>
 
                                             <div className="rounded-3xl border border-default-200 bg-content2/50 p-4">
-                                                <p className="text-sm font-semibold text-foreground">Settlement note</p>
-                                                <p className="mt-2 text-sm text-foreground/65">
+                                                <p className="text-[13.125px] font-semibold text-foreground">Settlement note</p>
+                                                <p className="mt-2 text-[13.125px] text-foreground/65">
                                                     {market.settlement_note || market.cancel_review_note || market.review_note || resultMeta.description}
                                                 </p>
                                             </div>
@@ -133,20 +133,20 @@ export default function CompletedMarketResultModal({
                                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                         <Card className="border border-default-200 shadow-sm">
                                             <div className="space-y-4 p-5">
-                                                <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                                                <div className="flex items-center gap-2 text-[13.125px] font-semibold text-foreground">
                                                     <Coins className="h-4 w-4 text-[#5B5EF4]" strokeWidth={2.2} />
                                                     Market totals
                                                 </div>
 
                                                 <div className="grid grid-cols-2 gap-3">
                                                     <div className="rounded-2xl bg-content2/50 p-4">
-                                                        <p className="text-xs font-medium uppercase tracking-wide text-foreground/55">Total bets</p>
-                                                        <p className="mt-2 text-lg font-semibold text-foreground">{formatPoints(market.total_bets)}</p>
+                                                        <p className="text-[11.25px] font-medium uppercase tracking-wide text-foreground/55">Total bets</p>
+                                                        <p className="mt-2 text-[18.75px] font-semibold text-foreground">{formatPoints(market.total_bets)}</p>
                                                     </div>
 
                                                     <div className="rounded-2xl bg-content2/50 p-4">
-                                                        <p className="text-xs font-medium uppercase tracking-wide text-foreground/55">Total points</p>
-                                                        <p className="mt-2 text-lg font-semibold text-foreground">{formatPoints(market.total_points)}</p>
+                                                        <p className="text-[11.25px] font-medium uppercase tracking-wide text-foreground/55">Total points</p>
+                                                        <p className="mt-2 text-[18.75px] font-semibold text-foreground">{formatPoints(market.total_points)}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -154,20 +154,20 @@ export default function CompletedMarketResultModal({
 
                                         <Card className="border border-default-200 shadow-sm">
                                             <div className="space-y-4 p-5">
-                                                <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                                                <div className="flex items-center gap-2 text-[13.125px] font-semibold text-foreground">
                                                     <CalendarDays className="h-4 w-4 text-[#5B5EF4]" strokeWidth={2.2} />
                                                     Timeline
                                                 </div>
 
                                                 <div className="space-y-3">
                                                     <div className="rounded-2xl bg-content2/50 p-4">
-                                                        <p className="text-xs font-medium uppercase tracking-wide text-foreground/55">Deadline</p>
-                                                        <p className="mt-2 text-sm font-semibold text-foreground">{formatDate(market.end_date)}</p>
+                                                        <p className="text-[11.25px] font-medium uppercase tracking-wide text-foreground/55">Deadline</p>
+                                                        <p className="mt-2 text-[13.125px] font-semibold text-foreground">{formatDate(market.end_date)}</p>
                                                     </div>
 
                                                     <div className="rounded-2xl bg-content2/50 p-4">
-                                                        <p className="text-xs font-medium uppercase tracking-wide text-foreground/55">Settled at</p>
-                                                        <p className="mt-2 text-sm font-semibold text-foreground">{formatDate(market.settled_at)}</p>
+                                                        <p className="text-[11.25px] font-medium uppercase tracking-wide text-foreground/55">Settled at</p>
+                                                        <p className="mt-2 text-[13.125px] font-semibold text-foreground">{formatDate(market.settled_at)}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -176,25 +176,25 @@ export default function CompletedMarketResultModal({
 
                                     <Card className="border border-default-200 shadow-sm">
                                         <div className="space-y-4 p-5">
-                                            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                                            <div className="flex items-center gap-2 text-[13.125px] font-semibold text-foreground">
                                                 <Wallet className="h-4 w-4 text-[#5B5EF4]" strokeWidth={2.2} />
                                                 Outcome summary
                                             </div>
 
                                             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                                                 <div className="rounded-2xl bg-content2/50 p-4">
-                                                    <p className="text-xs font-medium uppercase tracking-wide text-foreground/55">Status</p>
-                                                    <p className="mt-2 text-sm font-semibold capitalize text-foreground">{market.status}</p>
+                                                    <p className="text-[11.25px] font-medium uppercase tracking-wide text-foreground/55">Status</p>
+                                                    <p className="mt-2 text-[13.125px] font-semibold capitalize text-foreground">{market.status}</p>
                                                 </div>
 
                                                 <div className="rounded-2xl bg-content2/50 p-4">
-                                                    <p className="text-xs font-medium uppercase tracking-wide text-foreground/55">Review status</p>
-                                                    <p className="mt-2 text-sm font-semibold capitalize text-foreground">{market.review_status}</p>
+                                                    <p className="text-[11.25px] font-medium uppercase tracking-wide text-foreground/55">Review status</p>
+                                                    <p className="mt-2 text-[13.125px] font-semibold capitalize text-foreground">{market.review_status}</p>
                                                 </div>
 
                                                 <div className="rounded-2xl bg-content2/50 p-4">
-                                                    <p className="text-xs font-medium uppercase tracking-wide text-foreground/55">Result</p>
-                                                    <p className="mt-2 text-sm font-semibold capitalize text-foreground">{resultValue || "Not set"}</p>
+                                                    <p className="text-[11.25px] font-medium uppercase tracking-wide text-foreground/55">Result</p>
+                                                    <p className="mt-2 text-[13.125px] font-semibold capitalize text-foreground">{resultValue || "Not set"}</p>
                                                 </div>
                                             </div>
                                         </div>

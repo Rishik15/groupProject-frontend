@@ -58,14 +58,14 @@ export default function PredictionSettlementModal({
                     <Modal.Dialog aria-label="Settle prediction market" className="rounded-3xl">
                         <Modal.Header className="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-5">
                             <div className="space-y-1">
-                                <div className="inline-flex items-center gap-2 rounded-full bg-[#EEF0FF] px-3 py-1 text-xs font-semibold text-[#5B5EF4]">
+                                <div className="inline-flex items-center gap-2 rounded-full bg-[#EEF0FF] px-3 py-1 text-[11.25px] font-semibold text-[#5B5EF4]">
                                     <Scale className="h-4 w-4" />
                                     Settlement
                                 </div>
-                                <h2 className="text-xl font-semibold text-slate-900">
+                                <h2 className="text-[18.75px] font-semibold text-slate-900">
                                     Settle market
                                 </h2>
-                                <p className="text-sm text-slate-500">
+                                <p className="text-[13.125px] text-slate-500">
                                     Choose the verified result for {market?.title ?? "this market"}.
                                 </p>
                             </div>
@@ -92,14 +92,14 @@ export default function PredictionSettlementModal({
                                                 : "border-slate-200 bg-white text-slate-700"
                                                 }`}
                                         >
-                                            <div className="text-sm font-semibold capitalize">{option}</div>
+                                            <div className="text-[13.125px] font-semibold capitalize">{option}</div>
                                         </button>
                                     );
                                 })}
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-700">
+                                <label className="text-[13.125px] font-medium text-slate-700">
                                     Admin action note
                                 </label>
                                 <Input
@@ -113,7 +113,7 @@ export default function PredictionSettlementModal({
                             </div>
 
                             {error ? (
-                                <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                                <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-[13.125px] text-rose-700">
                                     {error}
                                 </div>
                             ) : null}

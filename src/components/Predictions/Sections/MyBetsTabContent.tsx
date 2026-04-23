@@ -21,8 +21,8 @@ export default function MyBetsTabContent({
     if (error) {
         return (
             <Card className="rounded-3xl border border-rose-200 bg-rose-50 p-6">
-                <h3 className="text-lg font-semibold text-rose-800">Unable to load bets</h3>
-                <p className="mt-2 text-sm text-rose-700">{error}</p>
+                <h3 className="text-[18.75px] font-semibold text-rose-800">Unable to load bets</h3>
+                <p className="mt-2 text-[13.125px] text-rose-700">{error}</p>
             </Card>
         );
     }
@@ -36,8 +36,8 @@ export default function MyBetsTabContent({
                             <Trophy className="h-4 w-4" />
                             My Bets
                         </div>
-                        <h2 className="text-2xl font-semibold text-slate-900">Track every prediction you placed</h2>
-                        <p className="max-w-3xl text-sm text-slate-500">
+                        <h2 className="text-[18.75px] font-semibold text-slate-900">Track every prediction you placed</h2>
+                        <p className="max-w-3xl text-[13.125px] text-slate-500">
                             This tab groups your participation by active, pending, and completed market lifecycle states.
                         </p>
                     </div>
@@ -55,7 +55,7 @@ export default function MyBetsTabContent({
 
             {isLoading ? (
                 <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                    <p className="text-sm text-slate-500">Loading your betting activity...</p>
+                    <p className="text-[13.125px] text-slate-500">Loading your betting activity...</p>
                 </Card>
             ) : (
                 <MyBetsSection bets={bets} onViewResult={onViewResult} />

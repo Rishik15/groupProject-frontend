@@ -81,8 +81,8 @@ export default function PlacePredictionModal({
                                     <TrendingUp className="h-4 w-4" />
                                     Place Bet
                                 </div>
-                                <h2 className="text-xl font-semibold text-slate-900">{market?.title ?? "Place a bet"}</h2>
-                                <p className="text-sm text-slate-500">{market?.goal_text ?? "Choose a side and confirm your wager."}</p>
+                                <h2 className="text-[13.125px] font-semibold text-slate-900">{market?.title ?? "Place a bet"}</h2>
+                                <p className="text-[13.125px] text-slate-500">{market?.goal_text ?? "Choose a side and confirm your wager."}</p>
                             </div>
                         </Modal.Header>
 
@@ -105,10 +105,10 @@ export default function PlacePredictionModal({
                                             ].join(" ")}
                                         >
                                             <div className="flex items-center justify-between">
-                                                <span className="text-sm font-semibold capitalize text-slate-900">{side}</span>
+                                                <span className="text-[13.125px] font-semibold capitalize text-slate-900">{side}</span>
                                                 {active && <CheckCircle2 className="h-4 w-4 text-[#5B5EF4]" />}
                                             </div>
-                                            <p className="mt-2 text-xs text-slate-500">
+                                            <p className="mt-2 text-[13.125px] text-slate-500">
                                                 {side === "yes"
                                                     ? "You are predicting the goal will be achieved."
                                                     : "You are predicting the goal will not be achieved."}
@@ -119,7 +119,7 @@ export default function PlacePredictionModal({
                             </div>
 
                             <div className="space-y-2">
-                                <label htmlFor="prediction-points-wagered" className="text-sm font-medium text-slate-700">
+                                <label htmlFor="prediction-points-wagered" className="text-[13.125px] font-medium text-slate-700">
                                     Points wagered
                                 </label>
                                 <Input
@@ -134,10 +134,10 @@ export default function PlacePredictionModal({
                                     fullWidth
                                     aria-label="Points wagered"
                                 />
-                                <p className="text-xs text-slate-500">Available balance: {walletBalance} points</p>
+                                <p className="text-[13.125px] text-slate-500">Available balance: {walletBalance} points</p>
                             </div>
 
-                            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-[13.125px] text-slate-600">
                                 <div className="inline-flex items-center gap-2 font-medium text-slate-700">
                                     <Coins className="h-4 w-4 text-[#5B5EF4]" />
                                     Wager summary
@@ -150,13 +150,13 @@ export default function PlacePredictionModal({
                                     <span>Points committed</span>
                                     <span className="font-medium text-slate-900">{Number.isFinite(numericWager) ? numericWager : 0}</span>
                                 </div>
-                                <p className="mt-3 text-xs text-slate-500">
+                                <p className="mt-3 text-[11.25px] text-slate-500">
                                     Final payout calculations remain backend-driven. This modal focuses on the finalized MVP bet payload.
                                 </p>
                             </div>
 
                             {(validationError || error) && (
-                                <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                                <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-[13.125px] text-rose-700">
                                     {validationError ?? error}
                                 </div>
                             )}

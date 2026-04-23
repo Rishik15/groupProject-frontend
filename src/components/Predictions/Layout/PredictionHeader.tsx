@@ -34,13 +34,13 @@ export default function PredictionHeader({
                     </div>
 
                     <h1 className="text-3xl font-semibold tracking-tight text-foreground">{title}</h1>
-                    <p className="mt-2 max-w-3xl text-sm text-foreground/65">{subtitle}</p>
+                    <p className="mt-2 max-w-3xl text-[13.125px] text-foreground/65">{subtitle}</p>
                 </div>
 
                 <div className="flex flex-col gap-3 lg:min-w-[260px] lg:items-end">
                     <div className="flex w-full items-center justify-between rounded-2xl border border-default-200 bg-white px-4 py-3 lg:max-w-[280px]">
                         <div>
-                            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/45">
+                            <p className="text-[11.25px] font-semibold uppercase tracking-[0.18em] text-foreground/45">
                                 Wallet balance
                             </p>
                             <div className="mt-1 flex items-center gap-2 text-2xl font-semibold text-foreground">

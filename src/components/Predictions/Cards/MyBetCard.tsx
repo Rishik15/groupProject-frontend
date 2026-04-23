@@ -22,36 +22,36 @@ export default function MyBetCard({ bet, onViewResult }: MyBetCardProps) {
         <Card className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm max-w-[450px]">
             <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="space-y-2">
-                    <div className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${statusTone}`}>
+                    <div className={`inline-flex items-center rounded-full px-3 py-1 text-[11.25px] font-semibold ${statusTone}`}>
                         {marketStatus}
                     </div>
-                    <h3 className="text-lg font-semibold text-slate-900">
+                    <h3 className="text-[18.75px] font-semibold text-slate-900">
                         {bet.market_title ?? `Market #${bet.market_id}`}
                     </h3>
-                    {bet.goal_text && <p className="max-w-2xl text-sm text-slate-500">{bet.goal_text}</p>}
+                    {bet.goal_text && <p className="max-w-2xl text-[13.125px] text-slate-500">{bet.goal_text}</p>}
                 </div>
 
                 <div className="rounded-2xl bg-[#EEF0FF] px-4 py-3 text-right">
-                    <div className="text-xs font-medium uppercase tracking-wide text-[#5B5EF4]">My pick</div>
-                    <div className="mt-1 text-lg font-semibold uppercase text-slate-900">{bet.prediction_value}</div>
+                    <div className="text-[11.25px] font-medium uppercase tracking-wide text-[#5B5EF4]">My pick</div>
+                    <div className="mt-1 text-[18.75px] font-semibold uppercase text-slate-900">{bet.prediction_value}</div>
                 </div>
             </div>
 
             <div className="mt-5 grid gap-3 sm:grid-cols-3">
                 <div className="rounded-2xl bg-slate-50 px-4 py-3">
-                    <div className="inline-flex items-center gap-2 text-xs font-medium text-slate-500">
+                    <div className="inline-flex items-center gap-2 text-[11.25px] font-medium text-slate-500">
                         <CircleDollarSign className="h-4 w-4" />
                         Wagered
                     </div>
-                    <p className="mt-2 text-sm font-semibold text-slate-900">{bet.points_wagered} points</p>
+                    <p className="mt-2 text-[13.125px] font-semibold text-slate-900">{bet.points_wagered} points</p>
                 </div>
 
                 <div className="rounded-2xl bg-slate-50 px-4 py-3">
-                    <div className="inline-flex items-center gap-2 text-xs font-medium text-slate-500">
+                    <div className="inline-flex items-center gap-2 text-[11.25px] font-medium text-slate-500">
                         <CalendarDays className="h-4 w-4" />
                         End date
                     </div>
-                    <p className="mt-2 text-sm font-semibold text-slate-900">{bet.end_date ?? "—"}</p>
+                    <p className="mt-2 text-[13.125px] font-semibold text-slate-900">{bet.end_date ?? "—"}</p>
                 </div>
             </div>
 

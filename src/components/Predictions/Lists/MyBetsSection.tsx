@@ -46,15 +46,15 @@ const SectionBlock = ({
         <div className="flex items-end justify-between gap-4">
             <div>
                 <h3 className="text-base font-semibold text-slate-900">{title}</h3>
-                <p className="text-sm text-slate-500">{description}</p>
+                <p className="text-[13.125px] text-slate-500">{description}</p>
             </div>
-            <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+            <div className="rounded-full bg-slate-100 px-3 py-1 text-[11.25px] font-semibold text-slate-700">
                 {items.length}
             </div>
         </div>
 
         {items.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-sm text-slate-500">
+            <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-[13.125px] text-slate-500">
                 Nothing to show in this section yet.
             </div>
         ) : (

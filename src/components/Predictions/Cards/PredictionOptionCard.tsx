@@ -32,12 +32,12 @@ export default function PredictionOptionCard({ side, isDisabled = false, onPress
                     </div>
                     <div>
                         <p className="text-base font-semibold text-foreground">{label}</p>
-                        <p className="text-xs text-foreground/55">{description}</p>
+                        <p className="text-[11.25px] text-foreground/55">{description}</p>
                     </div>
                 </div>
 
                 <div
-                    className={`rounded-full px-2.5 py-1 text-xs font-semibold ${isYes ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700"
+                    className={`rounded-full px-2.5 py-1 text-[11.25px] font-semibold ${isYes ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700"
                         }`}
                 >
                     {label}

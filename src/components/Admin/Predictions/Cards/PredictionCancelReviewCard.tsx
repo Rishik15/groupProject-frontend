@@ -20,24 +20,24 @@ export default function PredictionCancelReviewCard({
             <div className="space-y-5 p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="space-y-2">
-                        <div className="inline-flex rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-700 ring-1 ring-orange-200">
+                        <div className="inline-flex rounded-full bg-orange-50 px-3 py-1 text-[11.25px] font-semibold text-orange-700 ring-1 ring-orange-200">
                             Cancel review
                         </div>
                         <div>
-                            <h3 className="text-lg font-semibold text-slate-900">
+                            <h3 className="text-[18.75px] font-semibold text-slate-900">
                                 {market.title}
                             </h3>
-                            <p className="mt-1 text-sm text-slate-600">
+                            <p className="mt-1 text-[13.125px] text-slate-600">
                                 {market.goal_text}
                             </p>
                         </div>
                     </div>
-                    <div className="rounded-full bg-slate-50 px-3 py-1 text-sm font-medium text-slate-600 ring-1 ring-slate-200">
+                    <div className="rounded-full bg-slate-50 px-3 py-1 text-[13.125px] font-medium text-slate-600 ring-1 ring-slate-200">
                         Market #{market.market_id}
                     </div>
                 </div>
 
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-[13.125px] text-slate-700">
                     <p className="font-medium text-slate-900">Requested cancellation reason</p>
                     <p className="mt-2">
                         {market.cancel_request_reason || "No cancellation reason provided."}

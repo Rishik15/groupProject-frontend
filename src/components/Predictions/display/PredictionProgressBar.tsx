@@ -21,7 +21,7 @@ export default function PredictionProgressBar({
 
     return (
         <div className="space-y-2">
-            <div className="flex items-center justify-between gap-3 text-sm">
+            <div className="flex items-center justify-between gap-3 text-[13.125px]">
                 <span className="font-medium text-foreground/70">{label}</span>
                 {showValue ? <span className="text-foreground/60">{percentage}%</span> : null}
             </div>
