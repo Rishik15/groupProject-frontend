@@ -25,7 +25,7 @@ const Dropdownaction = ({
   setTimeout(async () => {
     if (type === "logout") {
       await logout();
-      clearAuth(true);
+      clearAuth();
 
       if (socket.connected) {
         socket.disconnect();
