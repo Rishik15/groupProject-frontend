@@ -9,32 +9,34 @@ import LandingPage from "./pages/LandingPage/LandingPage";
 import OnboardingSurveyPage from "./pages/OnboardingSurvey/OnboardingSurveyPage";
 import AuthComplete from "./components/auth/Handler";
 
-import AdminDashBoard from "./pages/Admin/Dashboard";
-import ExerciseLibrary from "./pages/ExerciseLibrary/ExerciseLibrary";
-import BrowseCoaches from "./pages/Client/BrowseCoaches";
+import AdminLayout from "./pages/Admin/Admin";
+import { Toast } from "@heroui/react";
+import BrowseCoaches from "./components/LandingPage/LandingBrowseCoaches";
 import CoachProfile from "./pages/Client/CoachProfile";
-
-/*
-import CoachProfile from "./pages/Coach/CoachProfile";
-<Route path="/coaches/:id" element={<CoachProfile />} />
-
-*/
-import Workouts from "./pages/Workouts/Workouts";
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
+        <Toast.Provider placement="top end" className="mt-11" />
+
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/admin" element={<AdminDashBoard />} />
-
           <Route path="/signin" element={<SignIn />} />
           <Route path="/auth/complete" element={<AuthComplete />} />
           <Route path="/coaches" element={<BrowseCoaches />} />
           <Route path="/coaches/:id" element={<CoachProfile />} />
-          <Route path="/workouts" element={<Workouts />} />
+
+          <Route
+            path="/admin/*"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/coach/*"
             element={
@@ -52,22 +54,19 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/onboarding/client"
             element={<OnboardingSurveyPage surveyType="client" />}
           />
-          <Route
-            path="/exercises"
-            element={<ExerciseLibrary />}
-          />
+
           <Route
             path="/onboarding/coach"
             element={<OnboardingSurveyPage surveyType="coach" />}
           />
         </Routes>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
 }
-
 export default App;

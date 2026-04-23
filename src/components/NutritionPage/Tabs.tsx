@@ -6,6 +6,7 @@ import MealsToday from "./Today/MealsToday";
 import WeeklyCalories from "./Week/WeeklyCalories";
 import type { TodayNutritionSummary } from "../../utils/Interfaces/Nutrition/nutrition";
 import { getTodayNutritionSummary } from "../../services/Nutrition/nutritionDashboardService";
+import MealPlan from "./MealPlan/MealPlan";
 
 const NutritionTabs = () => {
     const [summary, setSummary] = useState<TodayNutritionSummary | null>(null);
@@ -67,6 +68,8 @@ const NutritionTabs = () => {
                                 Meal Plans
                                 <Tabs.Indicator />
                             </Tabs.Tab>
+
+                            
                         </Tabs.List>
                     </Tabs.ListContainer>
 
@@ -87,9 +90,7 @@ const NutritionTabs = () => {
 
                     <Tabs.Panel className="mt-5 pt-0 pl-0 pr-0" id="Meal Plans">
                         <div className="rounded-2xl border border-dashed border-neutral-300 bg-white p-6">
-                            <span className="text-base font-normal text-black">
-                                Temp
-                            </span>
+                            <MealPlan/>
                         </div>
                     </Tabs.Panel>
                 </Tabs>

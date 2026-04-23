@@ -25,6 +25,7 @@ const Nutrition = () => {
                     setMealsRefreshKey((prev) => prev + 1);
                 }}
             />
+            
         </section>
     );
 };

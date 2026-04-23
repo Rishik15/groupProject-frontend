@@ -231,5 +231,4 @@ const MealsToday = ({ meals, isLoading = false }: MealsTodayProps) => {
     );
 };
 
-
 export default MealsToday;
