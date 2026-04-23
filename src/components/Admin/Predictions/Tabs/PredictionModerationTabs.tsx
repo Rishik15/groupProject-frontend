@@ -48,7 +48,7 @@ export default function PredictionModerationTabs({
                         <Tabs.Tab
                             key={key}
                             id={key}
-                            className="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 transition data-[selected=true]:bg-[#5B5EF4] data-[selected=true]:text-white"
+                            className="rounded-xl px-4 py-2 text-[13.125px] font-medium text-slate-600 transition data-[selected=true]:bg-[#5B5EF4] data-[selected=true]:text-white"
                         >
                             <span className="inline-flex items-center gap-2 whitespace-nowrap">
                                 <Icon className="h-4 w-4" strokeWidth={2.2} />
