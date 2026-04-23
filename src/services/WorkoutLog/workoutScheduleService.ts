@@ -49,8 +49,8 @@ interface UpdateWorkoutSchedulePayload {
 function normalizeTimeString(value: string) {
     const trimmed = value.trim();
 
-    if (trimmed.length === 5) {
-        return `${trimmed}:00`;
+    if (trimmed.length >= 5) {
+        return trimmed.slice(0, 5);
     }
 
     return trimmed;
@@ -138,6 +138,18 @@ function toUpdatePayload(
     };
 }
 
+function logAxiosScheduleError(action: string, error: unknown) {
+    if (axios.isAxiosError(error)) {
+        console.error(`[Workout Schedule] ${action} failed`, {
+            status: error.response?.status,
+            data: error.response?.data,
+            payloadMessage: error.message,
+        });
+    } else {
+        console.error(`[Workout Schedule] ${action} failed`, error);
+    }
+}
+
 export async function getWorkoutSchedule(startDate: string, endDate: string) {
     const { data } = await axios.get<GetWorkoutScheduleResponse>(
         "http://localhost:8080/workoutAction/schedule",
@@ -158,23 +170,28 @@ export async function getWorkoutSchedule(startDate: string, endDate: string) {
 export async function createWorkoutScheduleEvent(
     input: CreateWorkoutCalendarEventInput,
 ) {
-    const { data } = await axios.post<{ event: BackendWorkoutScheduleEvent }>(
-        "http://localhost:8080/workoutAction/schedule",
-        toCreatePayload(input),
-        {
-            withCredentials: true,
-            headers: {
-                "Content-Type": "application/json",
+    try {
+        const { data } = await axios.post<{ event: BackendWorkoutScheduleEvent }>(
+            "http://localhost:8080/workoutAction/schedule",
+            toCreatePayload(input),
+            {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json",
+                },
             },
-        },
-    );
+        );
 
-    const created = toFrontendEvent(data.event);
-    if (!created) {
-        throw new Error("Backend returned an invalid workout schedule event after create.");
+        const created = toFrontendEvent(data.event);
+        if (!created) {
+            throw new Error("Backend returned an invalid workout schedule event after create.");
+        }
+
+        return created;
+    } catch (error) {
+        logAxiosScheduleError("create event", error);
+        throw error;
     }
-
-    return created;
 }
 
 export async function updateWorkoutScheduleEvent(
@@ -184,25 +201,30 @@ export async function updateWorkoutScheduleEvent(
         workoutPlanId?: number | null;
     },
 ) {
-    const payload = toUpdatePayload(input);
+    try {
+        const payload = toUpdatePayload(input);
 
-    const { data } = await axios.patch<{ event: BackendWorkoutScheduleEvent }>(
-        `http://localhost:8080/workoutAction/schedule/${eventId}`,
-        payload,
-        {
-            withCredentials: true,
-            headers: {
-                "Content-Type": "application/json",
+        const { data } = await axios.patch<{ event: BackendWorkoutScheduleEvent }>(
+            `http://localhost:8080/workoutAction/schedule/${eventId}`,
+            payload,
+            {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json",
+                },
             },
-        },
-    );
+        );
 
-    const updated = toFrontendEvent(data.event);
-    if (!updated) {
-        throw new Error("Backend returned an invalid workout schedule event after update.");
+        const updated = toFrontendEvent(data.event);
+        if (!updated) {
+            throw new Error("Backend returned an invalid workout schedule event after update.");
+        }
+
+        return updated;
+    } catch (error) {
+        logAxiosScheduleError("update event", error);
+        throw error;
     }
-
-    return updated;
 }
 
 export async function deleteWorkoutScheduleEvent(eventId: string | number) {

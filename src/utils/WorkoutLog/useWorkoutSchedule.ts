@@ -9,7 +9,6 @@ import {
     createWorkoutScheduleEvent,
     deleteWorkoutScheduleEvent,
     getWorkoutSchedule,
-    moveWorkoutScheduleEvent,
     updateWorkoutScheduleEvent,
 } from "../../services/WorkoutLog/workoutScheduleService";
 import type {
@@ -347,12 +346,21 @@ export default function useWorkoutSchedule(
         const nextStartTime = minutesToTimeString(nextStartMinutes);
         const nextEndTime = minutesToTimeString(nextEndMinutes);
 
-        const updated = await moveWorkoutScheduleEvent(
-            eventId,
-            nextDate,
-            nextStartTime,
-            nextEndTime,
-        );
+        const updated = await updateWorkoutScheduleEvent(eventId, {
+            title: existing.title,
+            date: nextDate,
+            startTime: nextStartTime,
+            endTime: nextEndTime,
+            kind: existing.kind,
+            status: normalizeStatusForRange(
+                existing.status,
+                nextDate,
+                nextStartTime,
+                nextEndTime,
+            ),
+            notes: existing.notes,
+            workoutPlanId: existing.workoutPlanId ?? null,
+        });
 
         setScheduleEvents((previous) => previous.map((event) => (
             event.id === eventId
