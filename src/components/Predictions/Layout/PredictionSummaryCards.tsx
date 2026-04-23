@@ -1,4 +1,4 @@
-import { Activity, BarChart3, Coins, Flag, Trophy } from "lucide-react";
+import { Activity, BarChart3, Flag, Trophy } from "lucide-react";
 import type { PredictionSummary } from "../../../utils/Interfaces/Predictions/predictionSummary";
 import PredictionSummaryCard from "../Cards/PredictionSummaryCard";
 
