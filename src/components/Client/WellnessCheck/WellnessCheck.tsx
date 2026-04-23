@@ -6,9 +6,14 @@ import WellnessComplete from "./WellnessComplete";
 import { checkSurveyStatus } from "../../../services/WellnessSurvey/checkSurveyStatus";
 import { submitSurvey } from "../../../services/WellnessSurvey/submitSurvey";
 import { useAuth } from "../../../utils/auth/AuthContext";
+import { Heart } from "lucide-react";
+
 
 const WellnessCheck = () => {
-  const { authenticated, loading: authLoading } = useAuth();
+  const { status, hasCheckedAuth } = useAuth();
+
+  const authenticated = status === "authenticated";
+  const authLoading = !hasCheckedAuth || status === "checking";
 
   const [moodScore, setMoodScore] = useState<number>(3);
   const [notes, setNotes] = useState<string>("");
@@ -55,7 +60,7 @@ const WellnessCheck = () => {
   if (!authenticated) return null;
 
   return (
-    <Modal isOpen={open} onOpenChange={setOpen}>
+    <Modal isOpen={open} onOpenChange={setOpen} >
       {surveyDone ? (
         <WellnessComplete />
       ) : (
@@ -66,10 +71,14 @@ const WellnessCheck = () => {
 
       <Modal.Backdrop className="backdrop-blur-xs">
         <Modal.Container>
-          <Modal.Dialog className="sm:max-w-105">
+          <Modal.Dialog className="sm:max-w-155">
             <Modal.CloseTrigger />
             <Modal.Header>
-              <Modal.Heading className="text-[18px] pb-4">Mental Wellness</Modal.Heading>
+              <div className="flex">
+                <Modal.Heading className="text-2xl pb-4">
+                  Daily Survey
+                </Modal.Heading>
+              </div>
             </Modal.Header>
             <Modal.Body>
               <WellnessForm
