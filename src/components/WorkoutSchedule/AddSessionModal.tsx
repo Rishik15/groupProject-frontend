@@ -105,13 +105,6 @@ export default function AddSessionModal({
     );
 
     const isEditing = Boolean(editingEvent && editingEvent.source !== "active-session");
-    const canSetActive = Boolean(
-        isEditing &&
-        editingEvent &&
-        editingEvent.source !== "active-session" &&
-        systemStatus === "scheduled" &&
-        onSetActive,
-    );
 
     function updateField<K extends keyof AddSessionFormState>(
         field: K,
@@ -191,14 +184,14 @@ export default function AddSessionModal({
     return (
         <Modal>
             <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpenChange}>
-                <Modal.Container placement="center" size="md" scroll="inside" className="p-4">
+                <Modal.Container placement="center" size="md" scroll="inside">
                     <Modal.Dialog
                         aria-label={isEditing ? "Edit workout session" : "Add workout session"}
-                        className="flex max-h-[92vh] w-full max-w-[680px] flex-col overflow-hidden rounded-3xl bg-white"
+                        className="flex max-h-[92vh] w-full max-w-[680px] flex-col overflow-hidden rounded-4xl bg-white"
                         style={{ border: "1px solid #E5E7EB" }}
                     >
                         <div
-                            className="shrink-0 bg-white px-5 py-5"
+                            className="shrink-0 bg-white py-2 px-4"
                             style={{ borderBottom: "1px solid #ECEEF2" }}
                         >
                             <div className="flex items-start justify-between gap-4">
@@ -257,7 +250,7 @@ export default function AddSessionModal({
                         </div>
 
                         <div
-                            className="shrink-0 bg-white px-5 py-4"
+                            className="shrink-0 bg-white px-4 pt-4"
                             style={{ borderTop: "1px solid #ECEEF2" }}
                         >
                             <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
@@ -292,20 +285,6 @@ export default function AddSessionModal({
                                         Cancel
                                     </Button>
 
-                                    {canSetActive ? (
-                                        <Button
-                                            variant="outline"
-                                            onPress={handleSetActive}
-                                            isDisabled={isSubmitting}
-                                            className="w-full sm:w-auto text-[11.25px] font-semibold text-[#4F46E5]"
-                                            style={{
-                                                border: "1px solid #E5E7EB",
-                                                backgroundColor: "#F8FAFC",
-                                            }}
-                                        >
-                                            Set Active
-                                        </Button>
-                                    ) : null}
 
                                     <Button
                                         variant="primary"
