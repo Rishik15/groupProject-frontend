@@ -14,6 +14,7 @@ import CreateWorkoutPlan from "./CreateWorkoutPlan";
 import { useAuth } from "../../utils/auth/AuthContext";
 import Recommendation from "./Recommendation";
 import ExerciseLibrary from "../ExerciseLibrary/ExerciseLibrary";
+import Predictions from "./Predictions";
 
 const ClientLayout = () => {
   const { user, activeMode } = useAuth();
@@ -69,6 +70,8 @@ const ClientLayout = () => {
           <Route path="workouts" element={<Workouts />} />
           <Route path="createWorkout" element={<CreateWorkoutPlan />} />
           <Route path="exercises" element={<ExerciseLibrary />} />
+          <Route path="prediction" element={<Predictions />} />
+
           <Route
             path="settings"
             element={<Settings role="client" tab="settings" />}
