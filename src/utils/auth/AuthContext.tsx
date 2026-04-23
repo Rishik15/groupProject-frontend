@@ -7,6 +7,7 @@ type User = {
   last_name: string;
   email: string;
 };
+
 type Mode = "client" | "coach" | "admin";
 type AuthStatus = "anonymous" | "checking" | "authenticated";
 type SocketStatus =
@@ -38,10 +39,10 @@ const AuthContext = createContext<AuthContextType>({
   socketStatus: "disconnected",
   socketReady: false,
   hasCheckedAuth: false,
-  setAuth: () => {},
-  clearAuth: () => {},
-  refreshAuth: async () => {},
-  setActiveMode: () => {},
+  setAuth: () => { },
+  clearAuth: () => { },
+  refreshAuth: async () => { },
+  setActiveMode: () => { },
 });
 
 const MODE_KEY = "activeMode";
@@ -56,6 +57,8 @@ const getValidMode = (
   if (roles.includes("admin")) return "admin";
   if (roles.includes("coach")) return "coach";
   if (roles.includes("client")) return "client";
+  if (roles.includes("admin")) return "admin";
+
 
   return null;
 };
