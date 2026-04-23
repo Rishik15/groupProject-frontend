@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import RecommendedTitle from "../../components/RecommendedExercises/RecommendedTitle";
 import FitSummaryCard from "../../components/RecommendedExercises/FitSummaryCard";
-import FilterChips from "../../components/RecommendedExercises/FilterChips";
 import FilterModal from "../../components/RecommendedExercises/FilterModal";
 import type { Filters } from "../../services/RecommendationExercises/types";
 import ExerciseCard from "../../components/RecommendedExercises/ExerciseCard";

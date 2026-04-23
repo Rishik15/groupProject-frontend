@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Card, Input, Label, TextArea, TextField } from "@heroui/react";
 import MoodSelector from "./MoodSelector";
-import { Moon, Notebook, File, Weight } from "lucide-react";
+import { Moon, File, Weight } from "lucide-react";
 
 type WellnessFormProps = {
   moodScore: number;
