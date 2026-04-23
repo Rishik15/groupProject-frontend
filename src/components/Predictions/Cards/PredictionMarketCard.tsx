@@ -45,6 +45,7 @@ export default function PredictionMarketCard({
         <Card className="border border-default-200 bg-white shadow-sm">
             <div className="space-y-4 p-5">
                 <div className="flex items-start justify-between gap-4">
+
                     <div className="min-w-0 flex-1">
                         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/45">
                             Goal prediction
@@ -55,13 +56,11 @@ export default function PredictionMarketCard({
                         <p className="mt-2 line-clamp-2 text-sm leading-6 text-foreground/65">
                             {market.goal_text}
                         </p>
+                        <TimeLeftBadge endDate={market.end_date} status={market.status} />
                     </div>
 
-                    <TimeLeftBadge endDate={market.end_date} status={market.status} />
-                </div>
+                    <div className="rounded-2xl bg-default-50 px-3 py-3">
 
-                <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-                    <div className="rounded-2xl border border-default-200 bg-default-50 px-3 py-3">
                         <div className="mb-2 inline-flex rounded-xl bg-[#5B5EF4]/10 p-2 text-[#5B5EF4]">
                             <UserRound className="h-4 w-4" strokeWidth={2.2} />
                         </div>
@@ -72,7 +71,9 @@ export default function PredictionMarketCard({
                             {market.creator_name || market.creator_email}
                         </p>
                     </div>
+                </div>
 
+                <div className="grid grid-cols-2 gap-3 grid-cols-3 max-w-[450px]">
                     <div className="rounded-2xl border border-default-200 bg-default-50 px-3 py-3">
                         <div className="mb-2 inline-flex rounded-xl bg-amber-500/10 p-2 text-amber-600">
                             <CalendarDays className="h-4 w-4" strokeWidth={2.2} />
@@ -114,17 +115,7 @@ export default function PredictionMarketCard({
                     <div className="flex items-center justify-between gap-3">
                         <div>
                             <p className="text-sm font-semibold text-foreground">Choose a side</p>
-                            <p className="text-xs text-foreground/55">
-                                Pick the outcome you want to back before the deadline.
-                            </p>
                         </div>
-
-                        <Chip variant="secondary" color="accent" size="sm">
-                            <span className="inline-flex items-center gap-1.5">
-                                <TimerReset className="h-3.5 w-3.5" strokeWidth={2.2} />
-                                Live market
-                            </span>
-                        </Chip>
                     </div>
 
                     <div className="grid grid-cols-1 gap-3 md:grid-cols-2">

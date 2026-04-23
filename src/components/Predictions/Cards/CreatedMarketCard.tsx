@@ -154,7 +154,7 @@ export default function CreatedMarketCard({
 
     return (
         <Card className="rounded-3xl border border-slate-200 bg-white shadow-sm">
-            <div className="space-y-5 p-5">
+            <div className="space-y-2 p-2">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="space-y-3">
                         <div className="flex flex-wrap items-center gap-2">
@@ -187,10 +187,6 @@ export default function CreatedMarketCard({
                                 {market.goal_text}
                             </p>
                         </div>
-                    </div>
-
-                    <div className="rounded-full bg-slate-50 px-3 py-1 text-sm font-medium text-slate-600 ring-1 ring-slate-200">
-                        Market #{market.market_id}
                     </div>
                 </div>
 

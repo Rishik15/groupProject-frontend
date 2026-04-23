@@ -28,10 +28,7 @@ const groupMarkets = (markets: PredictionMarket[]): MarketGroups =>
                 accumulator.rejected.push(market);
             } else if (market.status === "open") {
                 accumulator.open.push(market);
-            } else if (
-                market.status === "settled" ||
-                market.status === "cancelled"
-            ) {
+            } else if (market.status === "settled" || market.status === "cancelled") {
                 accumulator.closed.push(market);
             } else {
                 accumulator.pending.push(market);
@@ -78,7 +75,7 @@ const MarketBlock = ({
                 Nothing to show in this section yet.
             </div>
         ) : (
-            <div className="space-y-3">
+            <div className=" flex grid-cols-2 grid gap-3 h-80">
                 {items.map((market) => (
                     <CreatedMarketCard
                         key={market.market_id}
@@ -100,7 +97,7 @@ export default function MyMarketsSection({
     const grouped = React.useMemo(() => groupMarkets(markets), [markets]);
 
     return (
-        <div className="space-y-8">
+        <div className="grid grid-cols-1 gap-5">
             <MarketBlock
                 title="In Review"
                 description="Markets waiting for admin review."
@@ -108,7 +105,6 @@ export default function MyMarketsSection({
                 onCloseMarket={onCloseMarket}
                 onRequestCancel={onRequestCancel}
             />
-
             <MarketBlock
                 title="Open"
                 description="Approved markets open to participation."
@@ -116,7 +112,6 @@ export default function MyMarketsSection({
                 onCloseMarket={onCloseMarket}
                 onRequestCancel={onRequestCancel}
             />
-
             <MarketBlock
                 title="Pending Settlement"
                 description="Closed markets waiting for final resolution."
@@ -124,7 +119,6 @@ export default function MyMarketsSection({
                 onCloseMarket={onCloseMarket}
                 onRequestCancel={onRequestCancel}
             />
-
             <MarketBlock
                 title="Closed"
                 description="Markets that settled or were cancelled."
@@ -132,7 +126,6 @@ export default function MyMarketsSection({
                 onCloseMarket={onCloseMarket}
                 onRequestCancel={onRequestCancel}
             />
-
             <MarketBlock
                 title="Rejected"
                 description="Markets not approved by admin review."
@@ -140,7 +133,6 @@ export default function MyMarketsSection({
                 onCloseMarket={onCloseMarket}
                 onRequestCancel={onRequestCancel}
             />
-
             <MarketBlock
                 title="Cancel Review"
                 description="Markets waiting for cancellation review."

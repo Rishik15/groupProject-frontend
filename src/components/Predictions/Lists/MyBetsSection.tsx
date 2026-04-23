@@ -58,7 +58,7 @@ const SectionBlock = ({
                 Nothing to show in this section yet.
             </div>
         ) : (
-            <div className="space-y-3">
+            <div className="flex grid-cols-2 grid gap-2">
                 {items.map((bet) => (
                     <MyBetCard
                         key={bet.prediction_id}
@@ -78,7 +78,7 @@ export default function MyBetsSection({
     const grouped = React.useMemo(() => groupBets(bets), [bets]);
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-3 grid-cols-1">
             <SectionBlock
                 title="Open Bets"
                 description="Markets that are still open and actively running."
