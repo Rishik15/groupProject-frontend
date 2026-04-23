@@ -14,7 +14,7 @@ export default function PredictionSettlementList({
 }: PredictionSettlementListProps) {
     if (markets.length === 0) {
         return (
-            <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+            <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-[13.125px] text-slate-500">
                 No markets are waiting for settlement.
             </div>
         );

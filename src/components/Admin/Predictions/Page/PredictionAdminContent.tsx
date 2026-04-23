@@ -46,10 +46,10 @@ export default function PredictionAdminContent({
                     <CheckCheck className="h-5 w-5" />
                 </div>
                 <div>
-                    <h2 className="text-lg font-semibold text-slate-900">
+                    <h2 className="text-[18.75px] font-semibold text-slate-900">
                         Moderation queues
                     </h2>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-[13.125px] text-slate-500">
                         Manage review, settlement, and cancellation decisions
                         against the finalized backend contract.
                     </p>
@@ -63,7 +63,7 @@ export default function PredictionAdminContent({
                 />
 
                 {pageError ? (
-                    <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                    <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-[13.125px] text-rose-700">
                         {pageError}
                     </div>
                 ) : null}

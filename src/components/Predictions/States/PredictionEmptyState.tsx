@@ -25,8 +25,8 @@ export default function PredictionEmptyState({
                 </div>
 
                 <div className="space-y-2">
-                    <h3 className="text-xl font-semibold tracking-tight text-foreground">{title}</h3>
-                    <p className="max-w-xl text-sm leading-6 text-foreground/65">{description}</p>
+                    <h3 className="text-[18.75px] font-semibold tracking-tight text-foreground">{title}</h3>
+                    <p className="max-w-xl text-[13.125px] leading-6 text-foreground/65">{description}</p>
                 </div>
 
                 {actionLabel && onAction ? (

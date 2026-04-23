@@ -1,8 +1,7 @@
-import { Card, Chip } from "@heroui/react";
+import { Card } from "@heroui/react";
 import {
     CalendarDays,
     Coins,
-    TimerReset,
     UserRound,
     Users,
 } from "lucide-react";
@@ -47,13 +46,13 @@ export default function PredictionMarketCard({
                 <div className="flex items-start justify-between gap-4">
 
                     <div className="min-w-0 flex-1">
-                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/45">
+                        <p className="text-[11.25px] font-semibold uppercase tracking-[0.18em] text-foreground/45">
                             Goal prediction
                         </p>
-                        <h3 className="mt-2 line-clamp-2 text-2xl font-semibold tracking-tight text-foreground">
+                        <h3 className="mt-2 line-clamp-2 text-[18.75px] font-semibold tracking-tight text-foreground">
                             {market.title}
                         </h3>
-                        <p className="mt-2 line-clamp-2 text-sm leading-6 text-foreground/65">
+                        <p className="mt-2 line-clamp-2 text-[13.125px] leading-6 text-foreground/65">
                             {market.goal_text}
                         </p>
                         <TimeLeftBadge endDate={market.end_date} status={market.status} />
@@ -64,10 +63,10 @@ export default function PredictionMarketCard({
                         <div className="mb-2 inline-flex rounded-xl bg-[#5B5EF4]/10 p-2 text-[#5B5EF4]">
                             <UserRound className="h-4 w-4" strokeWidth={2.2} />
                         </div>
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground/45">
+                        <p className="text-[11.25px] font-semibold uppercase tracking-[0.16em] text-foreground/45">
                             Creator
                         </p>
-                        <p className="mt-1 truncate text-sm font-semibold text-foreground">
+                        <p className="mt-1 truncate text-[13.125px] font-semibold text-foreground">
                             {market.creator_name || market.creator_email}
                         </p>
                     </div>
@@ -78,10 +77,10 @@ export default function PredictionMarketCard({
                         <div className="mb-2 inline-flex rounded-xl bg-amber-500/10 p-2 text-amber-600">
                             <CalendarDays className="h-4 w-4" strokeWidth={2.2} />
                         </div>
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground/45">
+                        <p className="text-[11.25px] font-semibold uppercase tracking-[0.16em] text-foreground/45">
                             Deadline
                         </p>
-                        <p className="mt-1 text-sm font-semibold text-foreground">
+                        <p className="mt-1 text-[13.125px] font-semibold text-foreground">
                             {formatDate(market.end_date)}
                         </p>
                     </div>
@@ -90,10 +89,10 @@ export default function PredictionMarketCard({
                         <div className="mb-2 inline-flex rounded-xl bg-violet-500/10 p-2 text-violet-600">
                             <Coins className="h-4 w-4" strokeWidth={2.2} />
                         </div>
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground/45">
+                        <p className="text-[11.25px] font-semibold uppercase tracking-[0.16em] text-foreground/45">
                             Total points
                         </p>
-                        <p className="mt-1 text-sm font-semibold text-foreground">
+                        <p className="mt-1 text-[13.125px] font-semibold text-foreground">
                             {market.total_points}
                         </p>
                     </div>
@@ -102,10 +101,10 @@ export default function PredictionMarketCard({
                         <div className="mb-2 inline-flex rounded-xl bg-emerald-500/10 p-2 text-emerald-600">
                             <Users className="h-4 w-4" strokeWidth={2.2} />
                         </div>
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground/45">
+                        <p className="text-[11.25px] font-semibold uppercase tracking-[0.16em] text-foreground/45">
                             Total bets
                         </p>
-                        <p className="mt-1 text-sm font-semibold text-foreground">
+                        <p className="mt-1 text-[13.125px] font-semibold text-foreground">
                             {market.total_bets}
                         </p>
                     </div>
@@ -114,7 +113,7 @@ export default function PredictionMarketCard({
                 <div className="space-y-3 rounded-2xl border border-default-200 bg-default-50 p-4">
                     <div className="flex items-center justify-between gap-3">
                         <div>
-                            <p className="text-sm font-semibold text-foreground">Choose a side</p>
+                            <p className="text-[13.125px] font-semibold text-foreground">Choose a side</p>
                         </div>
                     </div>
 

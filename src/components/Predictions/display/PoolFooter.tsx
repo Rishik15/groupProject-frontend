@@ -21,7 +21,7 @@ export default function PoolFooter({ totalPoints, totalBets }: PoolFooterProps) 
                     <Coins className="h-4 w-4" strokeWidth={2.2} />
                 </div>
                 <div>
-                    <p className="text-xs font-medium uppercase tracking-wide text-foreground/55">Total points</p>
+                    <p className="text-[11.25px] font-medium uppercase tracking-wide text-foreground/55">Total points</p>
                     <p className="text-base font-semibold text-foreground">{formatNumber(totalPoints)}</p>
                 </div>
             </div>
@@ -31,7 +31,7 @@ export default function PoolFooter({ totalPoints, totalBets }: PoolFooterProps) 
                     <Users className="h-4 w-4" strokeWidth={2.2} />
                 </div>
                 <div>
-                    <p className="text-xs font-medium uppercase tracking-wide text-foreground/55">Total bets</p>
+                    <p className="text-[11.25px] font-medium uppercase tracking-wide text-foreground/55">Total bets</p>
                     <p className="text-base font-semibold text-foreground">{formatNumber(totalBets)}</p>
                 </div>
             </div>

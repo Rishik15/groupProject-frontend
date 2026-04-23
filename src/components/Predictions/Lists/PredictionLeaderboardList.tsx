@@ -88,8 +88,8 @@ export default function PredictionLeaderboardList({
             <div className="space-y-4 p-5">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                     <div>
-                        <h3 className="text-xl font-semibold text-foreground">{title}</h3>
-                        <p className="mt-1 text-sm text-foreground/60">
+                        <h3 className="text-[18.75px] font-semibold text-foreground">{title}</h3>
+                        <p className="mt-1 text-[13.125px] text-foreground/60">
                             Ranked by current wallet balance.
                         </p>
                     </div>
@@ -113,16 +113,16 @@ export default function PredictionLeaderboardList({
                 {currentUserEntry ? (
                     <div className="flex flex-col gap-3 rounded-2xl border border-[#5B5EF4]/20 bg-[#5B5EF4]/5 p-4 md:flex-row md:items-center md:justify-between">
                         <div>
-                            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#5B5EF4]">
+                            <p className="text-[11.25px] font-semibold uppercase tracking-[0.18em] text-[#5B5EF4]">
                                 Your position
                             </p>
-                            <p className="mt-1 text-lg font-semibold text-foreground">
+                            <p className="mt-1 text-[18.75px] font-semibold text-foreground">
                                 #{currentUserEntry.rank} • {currentUserEntry.name}
                             </p>
                         </div>
                         <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-[#5B5EF4] shadow-sm">
                             <Coins className="h-4 w-4" strokeWidth={2.2} />
-                            <span className="text-sm font-semibold">
+                            <span className="text-[13.125px] font-semibold">
                                 {formatPoints(currentUserEntry.balance)} points
                             </span>
                         </div>
@@ -133,17 +133,17 @@ export default function PredictionLeaderboardList({
                     <div className="flex min-h-48 items-center justify-center rounded-2xl border border-default-200 bg-default-50">
                         <div className="flex flex-col items-center gap-3 text-center">
                             <Spinner size="md" />
-                            <p className="text-sm text-foreground/60">Loading leaderboard…</p>
+                            <p className="text-[13.125px] text-foreground/60">Loading leaderboard…</p>
                         </div>
                     </div>
                 ) : error ? (
-                    <div className="rounded-2xl border border-danger/20 bg-danger/5 p-5 text-sm text-danger-700">
+                    <div className="rounded-2xl border border-danger/20 bg-danger/5 p-5 text-[13.125px] text-danger-700">
                         <p className="font-medium">Unable to load leaderboard.</p>
                         <p className="mt-1 opacity-80">{error}</p>
                     </div>
                 ) : paginated.length === 0 ? (
                     <div className="rounded-2xl border border-dashed border-default-300 bg-default-50 p-8 text-center">
-                        <p className="text-sm text-foreground/60">
+                        <p className="text-[13.125px] text-foreground/60">
                             No leaderboard entries match your search.
                         </p>
                     </div>
@@ -166,7 +166,7 @@ export default function PredictionLeaderboardList({
                                         </div>
 
                                         <div>
-                                            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/45">
+                                            <span className="text-[11.25px] font-semibold uppercase tracking-[0.18em] text-foreground/45">
                                                 Rank #{rank}
                                             </span>
                                             <p className="mt-1 text-base font-semibold text-foreground">
@@ -177,7 +177,7 @@ export default function PredictionLeaderboardList({
 
                                     <div className="flex items-center gap-2 rounded-full bg-[#5B5EF4]/10 px-3 py-2 text-[#5B5EF4]">
                                         <Coins className="h-4 w-4" strokeWidth={2.2} />
-                                        <span className="text-sm font-semibold">
+                                        <span className="text-[13.125px] font-semibold">
                                             {formatPoints(entry.balance)} points
                                         </span>
                                     </div>
@@ -189,7 +189,7 @@ export default function PredictionLeaderboardList({
 
                 {!isLoading && !error && filtered.length > 0 ? (
                     <div className="flex flex-col gap-3 border-t border-default-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
-                        <p className="text-sm text-foreground/55">
+                        <p className="text-[13.125px] text-foreground/55">
                             Page {safePage} of {totalPages}
                         </p>
                         <div className="flex items-center gap-2">

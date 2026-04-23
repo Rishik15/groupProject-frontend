@@ -20,7 +20,7 @@ export default function PredictionSectionHeader({
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
                 <h2 className="text-2xl font-semibold tracking-tight text-foreground">{title}</h2>
-                {description ? <p className="mt-2 text-sm leading-6 text-foreground/65">{description}</p> : null}
+                {description ? <p className="mt-2 text-[13.125px] leading-6 text-foreground/65">{description}</p> : null}
             </div>
 
             {actionLabel && onAction ? (

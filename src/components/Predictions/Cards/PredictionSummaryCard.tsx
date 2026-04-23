@@ -52,12 +52,12 @@ export default function PredictionSummaryCard({
         >
             <div className="flex h-full items-start justify-between gap-3 p-5">
                 <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-foreground/70">{label}</p>
+                    <p className="text-[13.125px] font-medium text-foreground/70">{label}</p>
                     <p className="mt-2 text-3xl font-semibold leading-none tracking-tight text-foreground">
                         {value}
                     </p>
                     {description ? (
-                        <p className="mt-3 line-clamp-2 text-sm leading-5 text-foreground/55">
+                        <p className="mt-3 line-clamp-2 text-[13.125px] leading-5 text-foreground/55">
                             {description}
                         </p>
                     ) : null}

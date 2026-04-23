@@ -149,10 +149,10 @@ export default function CreateGoalMarketModal({
                                     <PlusCircle className="h-4 w-4" />
                                     Create Market
                                 </div>
-                                <h2 className="text-xl font-semibold text-slate-900">
+                                <h2 className="text-[18.75px] font-semibold text-slate-900">
                                     Create a new prediction market
                                 </h2>
-                                <p className="text-sm text-slate-500">
+                                <p className="text-[13.125px] text-slate-500">
                                     Submit a clear title, goal description, and
                                     deadline.
                                 </p>
@@ -163,7 +163,7 @@ export default function CreateGoalMarketModal({
                             <div className="space-y-2">
                                 <label
                                     htmlFor="prediction-market-title"
-                                    className="text-sm font-medium text-slate-700"
+                                    className="text-[13.125px] font-medium text-slate-700"
                                 >
                                     Title
                                 </label>
@@ -184,18 +184,18 @@ export default function CreateGoalMarketModal({
                             <div className="space-y-2">
                                 <label
                                     htmlFor="prediction-market-goal"
-                                    className="text-sm font-medium text-slate-700"
+                                    className="text-[13.125px] font-medium text-slate-700"
                                 >
                                     Goal text
                                 </label>
                                 <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-                                    <div className="mb-2 inline-flex items-center gap-2 text-xs font-medium text-slate-500">
+                                    <div className="mb-2 inline-flex items-center gap-2 text-[11.25px] font-medium text-slate-500">
                                         <FileText className="h-4 w-4" />
                                         Goal details
                                     </div>
                                     <textarea
                                         id="prediction-market-goal"
-                                        className="min-h-32 w-full resize-y border-0 bg-transparent text-sm text-slate-900 outline-none"
+                                        className="min-h-32 w-full resize-y border-0 bg-transparent text-[13.125px] text-slate-900 outline-none"
                                         placeholder="Describe the goal clearly and concretely."
                                         value={form.goal_text}
                                         disabled={isSubmitting}
@@ -216,7 +216,7 @@ export default function CreateGoalMarketModal({
                                 minValue={today(getLocalTimeZone())}
                                 isDisabled={isSubmitting}
                             >
-                                <Label className="text-sm font-medium text-slate-700">
+                                <Label className="text-[13.125px] font-medium text-slate-700">
                                     End date
                                 </Label>
 
@@ -228,7 +228,7 @@ export default function CreateGoalMarketModal({
                                         {(segment) => (
                                             <DateField.Segment
                                                 segment={segment}
-                                                className="rounded-md px-0.5 text-sm text-slate-900 data-[placeholder=true]:text-slate-400"
+                                                className="rounded-md px-0.5 text-[13.125px] text-slate-900 data-[placeholder=true]:text-slate-400"
                                             />
                                         )}
                                     </DateField.Input>
@@ -286,7 +286,7 @@ export default function CreateGoalMarketModal({
                             </DatePicker>
 
                             {(validationError || error) && (
-                                <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                                <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-[13.125px] text-rose-700">
                                     {validationError ?? error}
                                 </div>
                             )}

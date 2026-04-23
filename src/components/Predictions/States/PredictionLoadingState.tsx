@@ -14,7 +14,7 @@ export default function PredictionLoadingState({
             <Card className="border border-default-200 shadow-sm">
                 <div className="flex items-center gap-3 p-6">
                     <Spinner color="accent" size="md" />
-                    <p className="text-sm font-medium text-foreground/70">{message}</p>
+                    <p className="text-[13.125px] font-medium text-foreground/70">{message}</p>
                 </div>
             </Card>
 

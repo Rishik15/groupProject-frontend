@@ -56,8 +56,8 @@ export default function WalletSurveyBanner({
                     </div>
 
                     <div>
-                        <h3 className="text-lg font-semibold tracking-tight text-foreground">Claim your daily 100-point reward</h3>
-                        <p className="mt-1 text-sm leading-6 text-foreground/65">{rewardCopy}</p>
+                        <h3 className="text-[18.75px] font-semibold tracking-tight text-foreground">Claim your daily 100-point reward</h3>
+                        <p className="mt-1 text-[13.125px] leading-6 text-foreground/65">{rewardCopy}</p>
                     </div>
                 </div>
 
@@ -73,7 +73,7 @@ export default function WalletSurveyBanner({
                             {rewardResult?.already_awarded ? "Reward claimed" : "Claim reward"}
                         </span>
                     </Button>
-                    <p className="text-xs text-foreground/50">Reward call uses the finalized daily-reward endpoint.</p>
+                    <p className="text-[11.25px] text-foreground/50">Reward call uses the finalized daily-reward endpoint.</p>
                 </div>
             </div>
         </Card>

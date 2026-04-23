@@ -159,20 +159,20 @@ export default function CreatedMarketCard({
                     <div className="space-y-3">
                         <div className="flex flex-wrap items-center gap-2">
                             <span
-                                className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${reviewBadge.className}`}
+                                className={`inline-flex rounded-full px-3 py-1 text-[11.25px] font-semibold ${reviewBadge.className}`}
                             >
                                 {reviewBadge.label}
                             </span>
 
                             <span
-                                className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${lifecycleBadge.className}`}
+                                className={`inline-flex rounded-full px-3 py-1 text-[11.25px] font-semibold ${lifecycleBadge.className}`}
                             >
                                 {lifecycleBadge.label}
                             </span>
 
                             {cancelBadge ? (
                                 <span
-                                    className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${cancelBadge.className}`}
+                                    className={`inline-flex rounded-full px-3 py-1 text-[11.25px] font-semibold ${cancelBadge.className}`}
                                 >
                                     {cancelBadge.label}
                                 </span>
@@ -180,10 +180,10 @@ export default function CreatedMarketCard({
                         </div>
 
                         <div>
-                            <h3 className="text-xl font-semibold text-slate-900">
+                            <h3 className="text-[18.75px] font-semibold text-slate-900">
                                 {market.title}
                             </h3>
-                            <p className="mt-2 text-sm text-slate-600">
+                            <p className="mt-2 text-[13.125px] text-slate-600">
                                 {market.goal_text}
                             </p>
                         </div>
@@ -192,7 +192,7 @@ export default function CreatedMarketCard({
 
                 <div className="grid gap-3 md:grid-cols-3">
                     <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                        <div className="mb-2 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        <div className="mb-2 inline-flex items-center gap-2 text-[11.25px] font-semibold uppercase tracking-wide text-slate-500">
                             <CalendarDays className="h-4 w-4 text-[#5B5EF4]" />
                             Deadline
                         </div>
@@ -202,7 +202,7 @@ export default function CreatedMarketCard({
                     </div>
 
                     <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                        <div className="mb-2 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        <div className="mb-2 inline-flex items-center gap-2 text-[11.25px] font-semibold uppercase tracking-wide text-slate-500">
                             <Clock3 className="h-4 w-4 text-[#5B5EF4]" />
                             Total points
                         </div>
@@ -212,7 +212,7 @@ export default function CreatedMarketCard({
                     </div>
 
                     <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                        <div className="mb-2 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        <div className="mb-2 inline-flex items-center gap-2 text-[11.25px] font-semibold uppercase tracking-wide text-slate-500">
                             <Flag className="h-4 w-4 text-[#5B5EF4]" />
                             Total bets
                         </div>
@@ -226,7 +226,7 @@ export default function CreatedMarketCard({
                     market.settlement_note ||
                     market.cancel_request_reason ||
                     market.cancel_review_note) && (
-                        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-[13.125px] text-slate-600">
                             {market.review_note ? (
                                 <p>
                                     <span className="font-semibold text-slate-800">
