@@ -19,7 +19,7 @@ export default function MyBetCard({ bet, onViewResult }: MyBetCardProps) {
     const statusTone = statusToneMap[marketStatus] ?? "bg-slate-100 text-slate-700";
 
     return (
-        <Card className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <Card className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm max-w-[450px]">
             <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="space-y-2">
                     <div className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${statusTone}`}>

@@ -16,14 +16,7 @@ function formatNumber(value?: number | null) {
 
 export default function PredictionSummaryCards({ summary }: PredictionSummaryCardsProps) {
     return (
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
-            <PredictionSummaryCard
-                label="Wallet"
-                value={formatNumber(summary?.wallet_balance)}
-                description="Available points"
-                icon={Coins}
-                tone="accent"
-            />
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
             <PredictionSummaryCard
                 label="Bets placed"
                 value={formatNumber(summary?.total_bets_placed)}
