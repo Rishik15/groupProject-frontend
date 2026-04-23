@@ -9,12 +9,12 @@ import type {
 
 interface BackendWorkoutScheduleEvent {
     event_id: number;
-    title: string;
-    event_date: string;
-    start_time: string;
-    end_time: string;
-    session_type: WorkoutScheduleKind;
-    status: WorkoutScheduleStatus;
+    title: string | null;
+    event_date: string | null;
+    start_time: string | null;
+    end_time: string | null;
+    session_type: WorkoutScheduleKind | null;
+    status: WorkoutScheduleStatus | null;
     notes?: string | null;
     workout_plan_id?: number | null;
     session_id?: number | null;
@@ -56,15 +56,42 @@ function normalizeTimeString(value: string) {
     return trimmed;
 }
 
-function toFrontendEvent(event: BackendWorkoutScheduleEvent): WorkoutCalendarEvent {
+function normalizeBackendClock(value: string | null | undefined) {
+    if (typeof value !== "string") {
+        return null;
+    }
+
+    const trimmed = value.trim();
+    if (!trimmed) {
+        return null;
+    }
+
+    return trimmed.length >= 5 ? trimmed.slice(0, 5) : null;
+}
+
+function toFrontendEvent(
+    event: BackendWorkoutScheduleEvent,
+): WorkoutCalendarEvent | null {
+    if (!event?.event_id || !event?.event_date) {
+        return null;
+    }
+
+    const startTime = normalizeBackendClock(event.start_time);
+    const endTime = normalizeBackendClock(event.end_time) ?? startTime;
+
+    if (!startTime || !endTime) {
+        console.warn("[Workout Schedule] skipping invalid backend event", event);
+        return null;
+    }
+
     return {
         id: String(event.event_id),
-        title: event.title,
+        title: event.title?.trim() || "Workout Session",
         date: event.event_date,
-        startTime: event.start_time.slice(0, 5),
-        endTime: event.end_time.slice(0, 5),
-        kind: event.session_type,
-        status: event.status,
+        startTime,
+        endTime,
+        kind: event.session_type ?? "strength",
+        status: event.status ?? "scheduled",
         notes: event.notes ?? "",
         source: "database",
         sessionId: event.session_id ?? undefined,
@@ -123,7 +150,9 @@ export async function getWorkoutSchedule(startDate: string, endDate: string) {
         },
     );
 
-    return (data.events ?? []).map(toFrontendEvent);
+    return (data.events ?? [])
+        .map(toFrontendEvent)
+        .filter((event): event is WorkoutCalendarEvent => event !== null);
 }
 
 export async function createWorkoutScheduleEvent(
@@ -140,7 +169,12 @@ export async function createWorkoutScheduleEvent(
         },
     );
 
-    return toFrontendEvent(data.event);
+    const created = toFrontendEvent(data.event);
+    if (!created) {
+        throw new Error("Backend returned an invalid workout schedule event after create.");
+    }
+
+    return created;
 }
 
 export async function updateWorkoutScheduleEvent(
@@ -163,7 +197,12 @@ export async function updateWorkoutScheduleEvent(
         },
     );
 
-    return toFrontendEvent(data.event);
+    const updated = toFrontendEvent(data.event);
+    if (!updated) {
+        throw new Error("Backend returned an invalid workout schedule event after update.");
+    }
+
+    return updated;
 }
 
 export async function deleteWorkoutScheduleEvent(eventId: string | number) {
