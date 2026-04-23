@@ -80,7 +80,7 @@ const ClientTooltip = ({ active, payload, label }: any) => {
     return (
       <div className="bg-white px-4 py-2 rounded-xl shadow-md border text-sm">
         <p className="font-semibold">{label}</p>
-        <p className="text-[#38f76b]">New Clients: {payload[0].value}</p>
+        <p className="text-[#31d447]">New Clients: {payload[0].value}</p>
       </div>
     );
   }
@@ -109,7 +109,7 @@ export default function CoachMetricPlot() {
 
   return (
     <section className="flex gap-6 px-38">
-      <div className="bg-white py-6 px-10 rounded-3xl flex flex-col gap-6 w-full">
+      <div className="bg-white py-8 px-10 rounded-3xl flex flex-col gap-10 w-full shadow-sm">
         <div className="flex justify-between items-center">
           <div className="font-semibold text-[14px]">
             Revenue (Last 6 Months)
@@ -159,7 +159,7 @@ export default function CoachMetricPlot() {
         </ResponsiveContainer>
       </div>
 
-      <div className="bg-white py-6 px-6 rounded-3xl flex flex-col gap-4 w-full">
+      <div className="bg-white shadow-sm py-8 px-8 rounded-3xl flex flex-col gap-10 w-200 mx-auto">
         <div className="flex justify-between items-center">
           <div className="font-semibold text-[14px]">Client Growth</div>
 
@@ -188,11 +188,12 @@ export default function CoachMetricPlot() {
               axisLine={false}
               tickLine={false}
               tick={{ fill: "#6b7280", fontSize: 12 }}
+              allowDecimals={false}
             />
 
             <Tooltip content={<ClientTooltip />} />
 
-            <Bar dataKey="clients" fill="#38f76b" radius={[6, 6, 0, 0]} />
+            <Bar dataKey="clients" fill="#31d447" radius={[6, 6, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>

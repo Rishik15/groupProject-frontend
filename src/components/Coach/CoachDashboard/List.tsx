@@ -1,9 +1,9 @@
 import type { Contract } from "../../../utils/Interfaces/Dashboard/Coach/types";
 
-function formatDate(dateString: string) {
+function formatDate(dateString?: string | null) {
+  if (!dateString) return "Not started";
   return new Date(dateString).toLocaleDateString();
 }
-
 const List = ({
   data,
   renderActions,
@@ -33,12 +33,14 @@ const List = ({
               <p className="font-medium text-[14px]">{item.name}</p>
 
               <p className="text-[12px] text-gray-500">
-                {item.details}  ${item.price}
+                {item.details} ${item.price}
               </p>
 
               <p className="text-[11px] text-gray-400">
-                {formatDate(item.start_date)}
-                {item.end_date && ` - ${formatDate(item.end_date)}`}
+                {formatDate(item.start_date)}{" "}
+                {item.end_date
+                  ? `- ${formatDate(item.end_date)}`
+                  : " - Ongoing"}
               </p>
             </div>
           </div>

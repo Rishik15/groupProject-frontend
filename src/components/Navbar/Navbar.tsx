@@ -136,7 +136,7 @@ export default function Navbar({
                   <p className="text-xs text-gray-500 truncate w-full">
                     {email}
                   </p>
-                  <span className="inline-block mt-2 text-[12px] font-medium px-1.5 py-0.5 rounded-xl bg-indigo-100 text-indigo-600">
+                  <span className="inline-block mt-2 text-[12px] font-medium px-1.5 py-0.5 rounded-lg bg-indigo-100 text-indigo-600">
                     {activeMode}
                   </span>
                 </div>

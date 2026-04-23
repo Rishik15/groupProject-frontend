@@ -5,13 +5,12 @@ import CoachMetricPlot from "../../components/Coach/CoachDashboard/MetricPlot";
 
 const CoachDashBoard = () => {
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col gap-8 pb-4">
       <CoachHeader />
       <CoachMetricRow />
-      <CoachContractsPanel />
       <CoachMetricPlot />
+      <CoachContractsPanel />
     </section>
   );
 };
-
 export default CoachDashBoard;

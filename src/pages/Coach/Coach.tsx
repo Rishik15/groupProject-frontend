@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { toast } from "@heroui/react";
 import { getNotifications } from "../../services/notifications/getNotifications";
 import { useRef } from "react";
+import ManageClients from "./ManageClient";
 
 const CoachLayout = () => {
   const { user, activeMode } = useAuth();
@@ -76,6 +77,7 @@ const CoachLayout = () => {
             element={<Settings role="coach" tab="info" />}
           />
           <Route path="chat" element={<Chat />} />
+          <Route path="clients" element={<ManageClients />} />
         </Routes>
       </div>
     </section>
