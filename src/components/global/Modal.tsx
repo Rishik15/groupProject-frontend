@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Modal, Button } from "@heroui/react";
+import { Button, Modal } from "@heroui/react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -10,26 +10,27 @@ interface ModalProps {
 
 const CustomModal = ({ isOpen, onClose, title, children }: ModalProps) => {
   return (
-    <Modal
-      isOpen={isOpen}
-      onOpenChange={(open) => {
-        if (!open) onClose();
-      }}
-    >
-      <Modal.Backdrop className="backdrop-blur-sm">
+    <Modal>
+      <Modal.Backdrop
+        isOpen={isOpen}
+        onOpenChange={(open) => {
+          if (!open) onClose();
+        }}
+        className="backdrop-blur-sm"
+      >
         <Modal.Container>
           <Modal.Dialog className="sm:max-w-105 p-6">
             <Modal.Header className="flex flex-col items-start gap-3">
-              <Modal.CloseTrigger />
-
-              {title && (
+              {title ? (
                 <Modal.Heading className="text-2xl font-semibold text-foreground">
                   {title}
                 </Modal.Heading>
-              )}
-
-              <p className="text-md text-muted leading-relaxed">{children}</p>
+              ) : null}
             </Modal.Header>
+
+            <Modal.Body>
+              <div className="text-md text-muted leading-relaxed">{children}</div>
+            </Modal.Body>
 
             <Modal.Footer className="mt-6">
               <Button

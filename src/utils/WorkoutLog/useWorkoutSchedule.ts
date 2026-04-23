@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
+    finishWorkoutSession,
     getActiveWorkoutSession,
     startWorkoutSession,
 } from "../../services/WorkoutLog/workoutLogService";
@@ -119,24 +120,40 @@ export function combineDateAndTime(dateValue: string, timeValue: string) {
     return new Date(`${dateValue}T${timeValue}:00`);
 }
 
+export function deriveSystemStatus(
+    dateValue: string,
+    startTime: string,
+    endTime: string,
+    persistedStatus?: WorkoutScheduleStatus | null,
+) {
+    const normalizedPersistedStatus =
+        persistedStatus === "complete" ? "done" : persistedStatus;
+
+    if (normalizedPersistedStatus === "done") {
+        return "done" as WorkoutScheduleStatus;
+    }
+
+    const now = new Date();
+    const startDateTime = combineDateAndTime(dateValue, startTime);
+    const endDateTime = combineDateAndTime(dateValue, endTime);
+
+    if (startDateTime.getTime() <= now.getTime() && endDateTime.getTime() > now.getTime()) {
+        return "active";
+    }
+
+    if (startDateTime.getTime() > now.getTime()) {
+        return "scheduled";
+    }
+
+    return "missed";
+}
+
 export function getAllowedStatusOptions(
     dateValue: string,
     startTime: string,
     endTime: string,
 ) {
-    const now = new Date();
-    const startDateTime = combineDateAndTime(dateValue, startTime);
-    const endDateTime = combineDateAndTime(dateValue, endTime);
-
-    if (endDateTime.getTime() <= now.getTime()) {
-        return ["missed", "done"] as WorkoutScheduleStatus[];
-    }
-
-    if (startDateTime.getTime() <= now.getTime() && endDateTime.getTime() > now.getTime()) {
-        return ["active", "done", "missed"] as WorkoutScheduleStatus[];
-    }
-
-    return ["scheduled", "done", "missed"] as WorkoutScheduleStatus[];
+    return [deriveSystemStatus(dateValue, startTime, endTime)];
 }
 
 export function normalizeStatusForRange(
@@ -145,22 +162,7 @@ export function normalizeStatusForRange(
     startTime: string,
     endTime: string,
 ) {
-    const normalizedStatus = status === "complete" ? "done" : status;
-    const allowedStatusOptions = getAllowedStatusOptions(dateValue, startTime, endTime);
-
-    if (allowedStatusOptions.includes(normalizedStatus)) {
-        return normalizedStatus;
-    }
-
-    if (allowedStatusOptions.includes("scheduled")) {
-        return "scheduled";
-    }
-
-    if (allowedStatusOptions.includes("active")) {
-        return "active";
-    }
-
-    return allowedStatusOptions[0] ?? "scheduled";
+    return deriveSystemStatus(dateValue, startTime, endTime, status);
 }
 
 export function getEffectiveStatus(event: WorkoutCalendarEvent): WorkoutScheduleStatus {
@@ -168,26 +170,12 @@ export function getEffectiveStatus(event: WorkoutCalendarEvent): WorkoutSchedule
         return "active";
     }
 
-    if (event.status === "complete" || event.status === "done") {
-        return "done";
-    }
-
-    if (event.status === "missed") {
-        return "missed";
-    }
-
-    const now = new Date();
-    const endDateTime = combineDateAndTime(event.date, event.endTime);
-
-    if (event.status === "active") {
-        return "active";
-    }
-
-    if (endDateTime.getTime() <= now.getTime()) {
-        return "missed";
-    }
-
-    return "scheduled";
+    return deriveSystemStatus(
+        event.date,
+        event.startTime,
+        event.endTime,
+        event.status,
+    );
 }
 
 function getEventDurationMinutes(event: WorkoutCalendarEvent) {
@@ -202,6 +190,10 @@ function sortEvents(events: WorkoutCalendarEvent[]) {
 
         return first.startTime.localeCompare(second.startTime);
     });
+}
+
+function isSystemActiveScheduleEvent(event: WorkoutCalendarEvent) {
+    return event.source === "database" && getEffectiveStatus(event) === "active";
 }
 
 export default function useWorkoutSchedule(
@@ -375,10 +367,39 @@ export default function useWorkoutSchedule(
     }, [scheduleEvents]);
 
     const removeLocalEvent = useCallback(async (eventId: string) => {
+        const targetEvent = scheduleEvents.find((event) => event.id === eventId);
+
+        const targetSessionId =
+            targetEvent?.sessionId ??
+            (
+                attachedActiveEventIdRef.current === eventId
+                    ? activeSessionIdRef.current
+                    : null
+            );
+
+        if (typeof targetSessionId === "number" && Number.isFinite(targetSessionId)) {
+            try {
+                await finishWorkoutSession({
+                    session_id: targetSessionId,
+                });
+            } catch (error) {
+                console.error("[Workout Schedule] failed to finish linked workout session on delete", error);
+            }
+        }
+
         await deleteWorkoutScheduleEvent(eventId);
+
         setScheduleEvents((previous) => previous.filter((event) => event.id !== eventId));
         setAttachedActiveEventId((previous) => (previous === eventId ? null : previous));
-    }, []);
+
+        if (
+            typeof targetSessionId === "number" &&
+            Number.isFinite(targetSessionId) &&
+            activeSessionIdRef.current === targetSessionId
+        ) {
+            setActiveSessionEvent(null);
+        }
+    }, [scheduleEvents]);
 
     const setEventActive = useCallback(async (eventId: string) => {
         const targetEvent = scheduleEvents.find((event) => event.id === eventId);
@@ -475,26 +496,53 @@ export default function useWorkoutSchedule(
         return sortEvents(merged);
     }, [activeSessionEvent, activeSessionId, attachedActiveEventId, scheduleEvents]);
 
-    const activeEvent = useMemo(() => {
+    const activeScheduleEvents = useMemo(
+        () => sortEvents(events.filter(isSystemActiveScheduleEvent)),
+        [events],
+    );
+
+    const activeEvents = useMemo(() => {
         if (activeSessionId != null) {
-            const attachedEvent = events.find(
-                (event) =>
-                    event.source === "database" &&
-                    ((attachedActiveEventId != null && event.id === attachedActiveEventId) ||
-                        (event.sessionId != null && event.sessionId === activeSessionId)),
+            const attachedEvents = sortEvents(
+                events.filter(
+                    (event) =>
+                        event.source === "database" &&
+                        ((attachedActiveEventId != null && event.id === attachedActiveEventId) ||
+                            (event.sessionId != null && event.sessionId === activeSessionId)),
+                ),
             );
 
-            if (attachedEvent) {
-                return attachedEvent;
+            if (attachedEvents.length > 0) {
+                return attachedEvents;
+            }
+
+            if (activeSessionEvent) {
+                return [activeSessionEvent];
             }
         }
 
-        return activeSessionEvent;
-    }, [activeSessionEvent, activeSessionId, attachedActiveEventId, events]);
+        return activeScheduleEvents;
+    }, [
+        activeScheduleEvents,
+        activeSessionEvent,
+        activeSessionId,
+        attachedActiveEventId,
+        events,
+    ]);
+
+    const activeEvent = useMemo(() => {
+        if (activeEvents.length > 0) {
+            return activeEvents[0];
+        }
+
+        return null;
+    }, [activeEvents]);
 
     return {
         events,
         activeEvent,
+        activeEvents,
+        loggableEvents: activeEvents,
         activeSessionId,
         isLoading,
         errorMessage,
