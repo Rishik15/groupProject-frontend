@@ -38,22 +38,27 @@ export const getNavItems = (activeMode: string | null, parent: string) => {
       { label: "Home", route: `${parent}/dashboard`, icon: <House className="w-4 h-4" /> },
       {
         label: "Accounts",
-        route: `${parent}/accounts/users`,
+        route: `${parent}/accounts/`,
         icon: <UserCog className="w-4 h-4" />,
       },
       {
         label: "Coach Governance",
-        route: `${parent}/coach-governance/applications`,
+        route: `${parent}/coach-governance/`,
         icon: <ShieldCheck className="w-4 h-4" />,
       },
       {
+        label: "Predictions",
+        route: `${parent}/prediction/`,
+        icon: <CircleStar className="w-4 h-4" />,
+      },
+      {
         label: "Reports",
-        route: `${parent}/reports/open`,
+        route: `${parent}/reports/`,
         icon: <ClipboardList className="w-4 h-4" />,
       },
       {
         label: "Exercises",
-        route: `${parent}/exercises/management`,
+        route: `${parent}/exercises/`,
         icon: <Wrench className="w-4 h-4" />,
       },
       {
