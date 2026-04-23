@@ -7,7 +7,7 @@ import type {
     WorkoutScheduleStatus,
 } from "../../utils/Interfaces/WorkoutLog/workoutLog";
 import {
-    getAllowedStatusOptions,
+    deriveSystemStatus,
     normalizeStatusForRange,
 } from "../../utils/WorkoutLog/useWorkoutSchedule";
 import {
@@ -22,9 +22,10 @@ interface AddSessionModalProps {
     defaultDate: string;
     defaultStartTime: string;
     editingEvent?: WorkoutCalendarEvent | null;
-    onCreate: (input: CreateWorkoutCalendarEventInput) => void;
-    onUpdate: (eventId: string, input: CreateWorkoutCalendarEventInput) => void;
-    onDelete: (eventId: string) => void;
+    onCreate: (input: CreateWorkoutCalendarEventInput) => void | Promise<unknown>;
+    onUpdate: (eventId: string, input: CreateWorkoutCalendarEventInput) => void | Promise<unknown>;
+    onDelete: (eventId: string) => void | Promise<unknown>;
+    onSetActive?: (eventId: string) => void | Promise<unknown>;
 }
 
 interface AddSessionFormState {
@@ -33,24 +34,23 @@ interface AddSessionFormState {
     startTime: string;
     endTime: string;
     kind: CreateWorkoutCalendarEventInput["kind"];
-    status: WorkoutScheduleStatus;
     notes: string;
 }
 
-function getStatusHelpText(statusOptions: WorkoutScheduleStatus[]) {
-    if (
-        statusOptions.length === 2 &&
-        statusOptions.includes("complete") &&
-        statusOptions.includes("missed")
-    ) {
-        return "Past sessions can only be marked complete or missed.";
+function getStatusHelpText(status: WorkoutScheduleStatus) {
+    if (status === "active") {
+        return "Active is system-determined when the current time overlaps this session window.";
     }
 
-    if (statusOptions.includes("active") && !statusOptions.includes("scheduled")) {
-        return "Sessions happening right now can be marked active, complete, done, or missed.";
+    if (status === "done") {
+        return "Done is preserved from completed session data returned by the system.";
     }
 
-    return "Future sessions can stay scheduled or be updated manually.";
+    if (status === "missed") {
+        return "Missed is system-determined for sessions in the past that are not marked done.";
+    }
+
+    return "Scheduled is system-determined for sessions in the future.";
 }
 
 export default function AddSessionModal({
@@ -62,6 +62,7 @@ export default function AddSessionModal({
     onCreate,
     onUpdate,
     onDelete,
+    onSetActive,
 }: AddSessionModalProps) {
     const initialState = useMemo<AddSessionFormState>(
         () => ({
@@ -74,57 +75,33 @@ export default function AddSessionModal({
                 editingEvent?.endTime ?? addOneHourToTime(defaultStartTime),
             ),
             kind: editingEvent?.kind ?? "strength",
-            status: editingEvent?.status ?? "scheduled",
             notes: editingEvent?.notes ?? "",
         }),
         [defaultDate, defaultStartTime, editingEvent],
     );
 
     const [form, setForm] = useState<AddSessionFormState>(initialState);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
             setForm(initialState);
+            setIsSubmitting(false);
         }
     }, [initialState, isOpen]);
 
-    useEffect(() => {
-        setForm((previous) => {
-            const safeStartTime = normalizeTimeForInput(previous.startTime);
-            const safeEndTime = normalizeTimeForInput(previous.endTime);
+    const normalizedStartTime = normalizeTimeForInput(form.startTime);
+    const normalizedEndTime = normalizeTimeForInput(form.endTime);
 
-            const nextStatus = normalizeStatusForRange(
-                previous.status,
-                previous.date,
-                safeStartTime,
-                safeEndTime,
-            );
-
-            if (
-                nextStatus === previous.status &&
-                safeStartTime === previous.startTime &&
-                safeEndTime === previous.endTime
-            ) {
-                return previous;
-            }
-
-            return {
-                ...previous,
-                startTime: safeStartTime,
-                endTime: safeEndTime,
-                status: nextStatus,
-            };
-        });
-    }, [form.date, form.startTime, form.endTime]);
-
-    const statusOptions = useMemo(
+    const systemStatus = useMemo(
         () =>
-            getAllowedStatusOptions(
+            deriveSystemStatus(
                 form.date,
-                normalizeTimeForInput(form.startTime),
-                normalizeTimeForInput(form.endTime),
+                normalizedStartTime,
+                normalizedEndTime,
+                editingEvent?.status,
             ),
-        [form.date, form.startTime, form.endTime],
+        [editingEvent?.status, form.date, normalizedEndTime, normalizedStartTime],
     );
 
     const isEditing = Boolean(editingEvent && editingEvent.source !== "active-session");
@@ -139,59 +116,83 @@ export default function AddSessionModal({
         }));
     }
 
-    function handleSubmit() {
-        if (!form.title.trim()) {
+    async function handleSubmit() {
+        if (!form.title.trim() || isSubmitting) {
             return;
         }
 
-        const safeStartTime = normalizeTimeForInput(form.startTime);
-        const safeEndTime = normalizeTimeForInput(form.endTime);
+        setIsSubmitting(true);
 
-        const payload: CreateWorkoutCalendarEventInput = {
-            title: form.title.trim(),
-            date: form.date,
-            startTime: safeStartTime,
-            endTime: safeEndTime,
-            kind: form.kind,
-            status: normalizeStatusForRange(
-                form.status,
-                form.date,
-                safeStartTime,
-                safeEndTime,
-            ),
-            notes: form.notes.trim() || undefined,
-        };
+        try {
+            const payload: CreateWorkoutCalendarEventInput = {
+                title: form.title.trim(),
+                date: form.date,
+                startTime: normalizedStartTime,
+                endTime: normalizedEndTime,
+                kind: form.kind,
+                status: normalizeStatusForRange(
+                    editingEvent?.status ?? systemStatus,
+                    form.date,
+                    normalizedStartTime,
+                    normalizedEndTime,
+                ),
+                notes: form.notes.trim() || undefined,
+            };
 
-        if (isEditing && editingEvent) {
-            onUpdate(editingEvent.id, payload);
-        } else {
-            onCreate(payload);
+            if (isEditing && editingEvent) {
+                await onUpdate(editingEvent.id, payload);
+            } else {
+                await onCreate(payload);
+            }
+
+            onOpenChange(false);
+        } finally {
+            setIsSubmitting(false);
         }
-
-        onOpenChange(false);
     }
 
-    function handleDelete() {
-        if (!editingEvent || editingEvent.source === "active-session") {
+    async function handleDelete() {
+        if (!editingEvent || editingEvent.source === "active-session" || isSubmitting) {
             return;
         }
 
-        onDelete(editingEvent.id);
-        onOpenChange(false);
+        setIsSubmitting(true);
+
+        try {
+            await onDelete(editingEvent.id);
+            onOpenChange(false);
+        } finally {
+            setIsSubmitting(false);
+        }
+    }
+
+    async function handleSetActive() {
+        if (!editingEvent || !onSetActive || isSubmitting) {
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            await onSetActive(editingEvent.id);
+            onOpenChange(false);
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     return (
         <Modal>
             <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpenChange}>
-                <Modal.Container placement="center" size="md" scroll="inside" className="p-4">
+                <Modal.Container placement="center" size="md" scroll="inside">
                     <Modal.Dialog
                         aria-label={isEditing ? "Edit workout session" : "Add workout session"}
-                        className="w-full max-w-[680px] overflow-hidden rounded-3xl bg-white"
-                        style={{ border: "1px solid #5E5EF44D" }}
+                        className="flex max-h-[92vh] w-full max-w-[680px] flex-col overflow-hidden rounded-4xl bg-white"
+                        style={{ border: "1px solid #E5E7EB" }}
                     >
                         <div
-                            className="bg-white px-5 py-5"
-                            style={{ borderBottom: "1px solid #5E5EF44D" }}
+                            className="shrink-0 bg-white py-2 px-4"
+                            style={{ borderBottom: "1px solid #ECEEF2" }}
                         >
                             <div className="flex items-start justify-between gap-4">
                                 <div>
@@ -205,48 +206,52 @@ export default function AddSessionModal({
 
                                     <p className="mt-2 text-[11.25px] text-[#72728A]">
                                         {isEditing
-                                            ? "Update the scheduled block, move its timing, or change the status."
-                                            : "Create a schedule block for a workout session."}
+                                            ? "Update the scheduled block and the system will recalculate its status."
+                                            : "Create a schedule block and let the system determine its status."}
                                     </p>
                                 </div>
 
                                 <button
                                     type="button"
                                     className="rounded-xl px-3 py-2 text-[11.25px] font-semibold text-[#0F0F14] transition"
-                                    style={{ border: "1px solid #5E5EF466" }}
+                                    style={{
+                                        border: "1px solid #E5E7EB",
+                                        backgroundColor: "#FFFFFF",
+                                    }}
                                     onClick={() => onOpenChange(false)}
+                                    disabled={isSubmitting}
                                 >
                                     Close
                                 </button>
                             </div>
                         </div>
 
-                        <AddSessionForm
-                            title={form.title}
-                            date={form.date}
-                            startTime={form.startTime}
-                            endTime={form.endTime}
-                            kind={form.kind}
-                            status={form.status}
-                            notes={form.notes}
-                            statusOptions={statusOptions}
-                            statusHelpText={getStatusHelpText(statusOptions)}
-                            onTitleChange={(value) => updateField("title", value)}
-                            onDateChange={(value) => updateField("date", value)}
-                            onStartTimeChange={(value) =>
-                                updateField("startTime", normalizeTimeForInput(value))
-                            }
-                            onEndTimeChange={(value) =>
-                                updateField("endTime", normalizeTimeForInput(value))
-                            }
-                            onKindChange={(value) => updateField("kind", value)}
-                            onStatusChange={(value) => updateField("status", value)}
-                            onNotesChange={(value) => updateField("notes", value)}
-                        />
+                        <div className="min-h-0 flex-1 overflow-y-auto bg-white">
+                            <AddSessionForm
+                                title={form.title}
+                                date={form.date}
+                                startTime={form.startTime}
+                                endTime={form.endTime}
+                                kind={form.kind}
+                                systemStatus={systemStatus}
+                                statusHelpText={getStatusHelpText(systemStatus)}
+                                notes={form.notes}
+                                onTitleChange={(value) => updateField("title", value)}
+                                onDateChange={(value) => updateField("date", value)}
+                                onStartTimeChange={(value) =>
+                                    updateField("startTime", normalizeTimeForInput(value))
+                                }
+                                onEndTimeChange={(value) =>
+                                    updateField("endTime", normalizeTimeForInput(value))
+                                }
+                                onKindChange={(value) => updateField("kind", value)}
+                                onNotesChange={(value) => updateField("notes", value)}
+                            />
+                        </div>
 
                         <div
-                            className="bg-white px-5 py-4"
-                            style={{ borderTop: "1px solid #5E5EF44D" }}
+                            className="shrink-0 bg-white px-4 pt-4"
+                            style={{ borderTop: "1px solid #ECEEF2" }}
                         >
                             <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
                                 <div className="order-2 sm:order-1">
@@ -254,27 +259,37 @@ export default function AddSessionModal({
                                         <Button
                                             variant="ghost"
                                             onPress={handleDelete}
+                                            isDisabled={isSubmitting}
                                             className="w-full sm:w-auto text-[11.25px] font-semibold text-[#0F0F14]"
-                                            style={{ border: "1px solid #5E5EF466" }}
+                                            style={{
+                                                border: "1px solid #E5E7EB",
+                                                backgroundColor: "#FFFFFF",
+                                            }}
                                         >
                                             Delete Session
                                         </Button>
                                     ) : null}
                                 </div>
 
-                                <div className="order-1 sm:order-2 flex flex-col gap-3 sm:flex-row sm:justify-end">
+                                <div className="order-1 flex flex-col gap-3 sm:order-2 sm:flex-row sm:justify-end">
                                     <Button
                                         variant="ghost"
                                         onPress={() => onOpenChange(false)}
+                                        isDisabled={isSubmitting}
                                         className="w-full sm:w-auto text-[11.25px] font-semibold text-[#0F0F14]"
-                                        style={{ border: "1px solid #5E5EF466" }}
+                                        style={{
+                                            border: "1px solid #E5E7EB",
+                                            backgroundColor: "#FFFFFF",
+                                        }}
                                     >
                                         Cancel
                                     </Button>
 
+
                                     <Button
                                         variant="primary"
                                         onPress={handleSubmit}
+                                        isDisabled={isSubmitting}
                                         className="w-full sm:w-auto text-[11.25px] font-semibold text-white"
                                         style={{ backgroundColor: "#5E5EF4" }}
                                     >

@@ -41,21 +41,23 @@ export default function ScheduleSelectField({
             }}
             placeholder={placeholder}
         >
-            <Label className="text-[11.25px] font-semibold text-[#0F0F14]">{label}</Label>
+            <Label className="text-[13.125px] font-medium text-[#0F0F14]">
+                {label}
+            </Label>
 
-            <Select.Trigger className="min-h-[42px] rounded-2xl border border-[#5E5EF44D] bg-white px-3 py-2.5 shadow-none">
-                <Select.Value className="text-[11.25px] text-[#0F0F14]" />
+            <Select.Trigger className="min-h-[44px] rounded-xl border border-[#E5E7EB] bg-white px-3 py-2.5 shadow-none">
+                <Select.Value className="text-[13.125px] text-[#0F0F14]" />
                 <Select.Indicator className="text-[#72728A]" />
             </Select.Trigger>
 
-            <Select.Popover className="rounded-2xl border border-[#5E5EF44D] bg-white p-1 shadow-lg">
+            <Select.Popover className="rounded-xl border border-[#E5E7EB] bg-white p-1 shadow-lg">
                 <ListBox className="outline-none">
                     {options.map((option) => (
                         <ListBox.Item
                             key={option.value}
                             id={option.value}
                             textValue={option.label}
-                            className="rounded-xl px-3 py-2 text-[11.25px] text-[#0F0F14] data-[focused=true]:bg-[#5E5EF40A]"
+                            className="rounded-lg px-3 py-2 text-[13.125px] text-[#0F0F14] data-[focused=true]:bg-[#F8FAFC]"
                         >
                             {option.label}
                             <ListBox.ItemIndicator />
