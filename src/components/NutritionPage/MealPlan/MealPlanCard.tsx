@@ -1,19 +1,90 @@
-import { Card } from "@heroui/react";
+import { Card, ScrollShadow } from "@heroui/react";
+import DayCard from "./DayCard";
+import type { MealPlanDetail, DayOfWeek } from "./type";
 
-const MealPlanCard = () => {
+type Prop = {
+    mealPlan: MealPlanDetail;
+};
 
+const days: { key: DayOfWeek; label: string }[] = [
+    { key: "Mon", label: "Monday" },
+    { key: "Tue", label: "Tuesday" },
+    { key: "Wed", label: "Wednesday" },
+    { key: "Thu", label: "Thursday" },
+    { key: "Fri", label: "Friday" },
+    { key: "Sat", label: "Saturday" },
+    { key: "Sun", label: "Sunday" },
+];
+
+
+
+
+const MealPlanCard = ({ mealPlan }: Prop) => {
     return (
         <Card className="w-full border">
-            <div className="flex flex-col h-full w-full justify-center bg-[#fafbff] rounded-xl">
-                <p className="mx-auto text-[#707286] mb-2 font-extrabold text-xl">No Meal Plan Selected</p>
-                <div>
-                    <p className="mb-2 w-[50%] mx-auto text-[#707286] text-medium">Select a meal plan from the left to view its weekly breakdown, meals, and macros.</p>
-                </div>
-                <div className="mx-auto rounded-2xl bg-[#ede9ff] text-[14px] px-2 py-1 font-bold text-indigo-500">Start by clicking a plan</div>
-            </div>
+            <div>
+                <div className="flex">
+                    <div className="flex flex-col gap-2 p-2">
+                        <h2
+                            style={{ fontFamily: "Inter, system-ui" }}
+                            className="text-xs font-bold tracking-[2px] text-indigo-500"
+                        >
+                            SELECTED MEAL PLAN
+                        </h2>
 
+                        <p className="text-3xl font-bold">
+                            {mealPlan.plan_name.split(" - ")[0]}
+                        </p>
+
+                        <div className="w-fit text-gray-400">
+                            <p>Full weekly breakdown with meals grouped by day and type.</p>
+                        </div>
+                    </div>
+
+                    <div className="ml-auto flex gap-2">
+                        <Card className="h-20 w-30 border border-gray-300 bg-[#fafaff]">
+                            <div className="mx-1 flex flex-col gap-2">
+                                <p className="text-xs font-light text-gray-600">Total Calories</p>
+                                <p className="text-lg font-bold">{mealPlan.total_calories}</p>
+                            </div>
+                        </Card>
+
+                        <Card className="h-20 w-30 border border-gray-300 bg-[#fafaff]">
+                            <div className="mx-1 flex flex-col gap-2">
+                                <p className="text-xs font-light text-gray-600">Meals</p>
+                                <p className="text-lg font-bold">{mealPlan.meals.length}</p>
+                            </div>
+                        </Card>
+                    </div>
+                </div>
+
+                <div className="w-full">
+                    <ScrollShadow className="max-h-[500px] p-4">
+                        <div className="space-y-4">
+
+                            <div className="mt-4 grid grid-cols-2 gap-4">
+                                {days.map((day) => {
+                                    const mealsForDay = mealPlan.meals.filter(
+                                        (meal) => meal.day_of_week === day.key
+                                    );
+
+                                    return (
+                                        <DayCard
+                                            key={day.key}
+                                            day={day.label}
+                                            meals={mealsForDay}
+                                        />
+
+                                    );
+                                })}
+                            </div>
+
+                        </div>
+                    </ScrollShadow>
+                </div>
+            </div>
         </Card>
     );
-}
+};
 
 export default MealPlanCard;
