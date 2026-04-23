@@ -18,8 +18,8 @@ import CustomModal from "../../components/global/Modal";
 
 export default function CreateWorkoutPlan() {
   const navigate = useNavigate();
-  const { role } = useAuth();
-  const isCoach = role === "coach";
+  const { activeMode } = useAuth();
+  const isCoach = activeMode === "coach";
 
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -220,7 +220,7 @@ export default function CreateWorkoutPlan() {
               {selectedExercises.length !== 1 ? "s" : ""} added
             </p>
           </div>
-          <div className="flex-1 overflow-y-auto max-h-[45vh]">
+          <div className="flex-1 overflow-y-auto max-h-[40vh]">
             <SelectedExerciseList
               selected={selectedExercises}
               onRemove={handleRemove}
