@@ -54,7 +54,7 @@ const getValidMode = (
   if (preferred && roles.includes(preferred)) {
     return preferred as Mode;
   }
-
+  if (roles.includes("admin")) return "admin";
   if (roles.includes("coach")) return "coach";
   if (roles.includes("client")) return "client";
   if (roles.includes("admin")) return "admin";
