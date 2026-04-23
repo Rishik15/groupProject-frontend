@@ -1,5 +1,5 @@
 import { Button } from "@heroui/react";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, ClipboardPlus } from "lucide-react";
 import { useMemo } from "react";
 
 import type { WorkoutCalendarEvent } from "../../utils/Interfaces/WorkoutLog/workoutLog";
@@ -7,6 +7,7 @@ import { toDateString } from "../../utils/WorkoutLog/useWorkoutSchedule";
 import { CalendarDndProvider } from "../event-calendar/calendar-dnd-context";
 import { MonthView } from "../event-calendar/month-view";
 import type { CalendarEvent } from "../event-calendar/types";
+import { useNavigate } from "react-router-dom";
 
 type CalendarEventWithDrag = CalendarEvent & {
   isDraggable?: boolean;
@@ -148,6 +149,7 @@ export default function CossWorkoutCalendar({
     onEditSession(originalEvent);
   }
 
+  const navigate = useNavigate();
   return (
     <section
       className="coss-calendar-scope overflow-hidden rounded-3xl bg-white"
@@ -156,7 +158,7 @@ export default function CossWorkoutCalendar({
       <style>
         {`
                     .coss-calendar-scope {
-                        --calendar-row-min-height: 132px;
+                        --calendar-row-min-height: 100px;
                     }
 
                     .coss-calendar-scope .coss-calendar-shell {
@@ -246,13 +248,14 @@ export default function CossWorkoutCalendar({
             </>
           ) : null}
           <Button
-            variant="primary"
-            onPress={() => onAddSession(withDefaultStartTime(currentDate))}
-            className="rounded-xl border-0 text-[11.25px] font-semibold text-white"
-            style={{ backgroundColor: "#5E5EF4" }}
+            variant="outline"
+            onPress={() => navigate("/client/createWorkout")}
+            className="rounded-xl text-[11.25px] font-semibold border border-[#E5E7EB]"
           >
-            <Plus className="h-4 w-4" />
-            
+            <span className="inline-flex items-center gap-2">
+              <ClipboardPlus className="h-4 w-4" />
+              <span>View Exercise Library</span>
+            </span>
           </Button>
           <Button
             variant="primary"
