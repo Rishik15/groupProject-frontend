@@ -39,6 +39,7 @@ const DashboardHeader = () => {
           </div>
         </Button>
         <WellnessCheck />
+
       </div>
     </section>
   );
