@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { useAuth } from "../../utils/auth/AuthContext";
 import CategoryFilter from "../../components/CreateWorkoutPlan/CategoryFilter";
 import ExerciseCard, {
@@ -13,8 +14,9 @@ import ExerciseModal from "../../components/CreateWorkoutPlan/ExerciseModal";
 import MyPlans from "../../components/CreateWorkoutPlan/MyPlans";
 import CreateExerciseForm from "../../components/CreateExercises/CreateExerciseForm";
 import { getExercises } from "../../services/workout/getExercises";
-import { createWorkout } from "../../services/workout/createWorkout";
-import CustomModal from "../../components/global/Modal";
+import MyExercises from "../../components/CreateExercises/MyExercises";
+
+const BASE_URL = "http://localhost:8080";
 
 export default function CreateWorkoutPlan() {
   const navigate = useNavigate();
@@ -29,28 +31,19 @@ export default function CreateWorkoutPlan() {
   >([]);
   const [planName, setPlanName] = useState("");
   const [previewExercise, setPreviewExercise] = useState<Exercise | null>(null);
-  const [activeTab, setActiveTab] = useState<"browse" | "plans" | "create">(
-    "browse",
-  );
-  const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
+  const [activeTab, setActiveTab] = useState<
+    "exercises" | "browse" | "plans" | "create"
+  >("browse");
 
   useEffect(() => {
     async function load() {
-      const data = await getExercises();
+      const equipmentFilter =
+        selectedCategory === "All" ? [] : [selectedCategory];
+      const data = await getExercises(search, equipmentFilter);
       setExercises(data);
     }
     load();
-  }, []);
-
-  const filteredExercises = exercises.filter((ex) => {
-    const matchesCategory =
-      selectedCategory === "All" || ex.equipment === selectedCategory;
-    const matchesSearch = ex.exercise_name
-      .toLowerCase()
-      .includes(search.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  }, [selectedCategory, search]);
 
   const addedIds = new Set(
     selectedExercises.map((s) => s.exercise.exercise_id),
@@ -80,22 +73,24 @@ export default function CreateWorkoutPlan() {
 
   async function handleSave() {
     try {
-      await createWorkout(
-        planName,
-        selectedExercises.map(({ exercise, sets, reps }) => ({
-          exercise_id: exercise.exercise_id,
-          sets,
-          reps,
-        })),
+      await axios.post(
+        `${BASE_URL}/workouts/create`,
+        {
+          name: planName,
+          exercises: selectedExercises.map(({ exercise, sets, reps }) => ({
+            exercise_id: exercise.exercise_id,
+            sets,
+            reps,
+          })),
+        },
+        { withCredentials: true },
       );
-
       setSelectedExercises([]);
       setPlanName("");
       setActiveTab("plans");
     } catch (err: any) {
-      const message = err?.message || "Failed to save plan";
-      setModalMessage(message);
-      setShowModal(true);
+      const message = err?.response?.data?.error || "Failed to save plan";
+      alert(message);
     }
   }
 
@@ -126,7 +121,9 @@ export default function CreateWorkoutPlan() {
         </div>
       </div>
 
-      <div className="flex gap-6 items-start">
+      <div
+        className={`flex gap-6 items-start ${activeTab === "create" ? "justify-center" : ""}`}
+      >
         <div className="flex-1 min-w-0 flex flex-col gap-4">
           <div className="flex gap-0 border-b border-[#E6E6EE]">
             <button
@@ -162,7 +159,34 @@ export default function CreateWorkoutPlan() {
                 Create Exercise
               </button>
             )}
+            {isCoach && (
+              <button
+                onClick={() => setActiveTab("exercises")}
+                className="px-5 py-2.5 text-sm font-medium transition-colors border-b-2"
+                style={{
+                  borderColor:
+                    activeTab === "exercises" ? "#5B5EF4" : "transparent",
+                  color: activeTab === "exercises" ? "#5B5EF4" : "#72728A",
+                }}
+              >
+                My Exercises
+              </button>
+            )}
           </div>
+
+          {activeTab === "exercises" && (
+            <>
+              <div>
+                <h1 className="text-2xl font-bold text-black">
+                  Created Exercises
+                </h1>
+                <p className="text-sm text-[#72728A] mt-1">
+                  Repository of all created exercises.
+                </p>
+              </div>
+              <MyExercises />
+            </>
+          )}
 
           {activeTab === "browse" && (
             <>
@@ -191,10 +215,10 @@ export default function CreateWorkoutPlan() {
                 onSelect={setSelectedCategory}
               />
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {filteredExercises.length === 0 ? (
+                {exercises.length === 0 ? (
                   <p className="text-sm text-[#72728A]">No exercises found.</p>
                 ) : (
-                  filteredExercises.map((exercise) => (
+                  exercises.map((exercise) => (
                     <ExerciseCard
                       key={exercise.exercise_id}
                       exercise={exercise}
@@ -212,42 +236,39 @@ export default function CreateWorkoutPlan() {
           {activeTab === "create" && isCoach && <CreateExerciseForm />}
         </div>
 
-        <div className="w-80 shrink-0 bg-white border border-[#E6E6EE] mt-14.5 rounded-2xl p-5 flex flex-col gap-4 sticky top-18">
-          <div>
-            <p className="text-base font-semibold text-black">Your Plan</p>
-            <p className="text-xs text-[#72728A] mt-0.5">
-              {selectedExercises.length} exercise
-              {selectedExercises.length !== 1 ? "s" : ""} added
-            </p>
-          </div>
-          <div className="flex-1 overflow-y-auto max-h-[40vh]">
-            <SelectedExerciseList
-              selected={selectedExercises}
-              onRemove={handleRemove}
-              onUpdateSets={handleUpdateSets}
-              onUpdateReps={handleUpdateReps}
-            />
-          </div>
-          <PlanSummary
-            selected={selectedExercises}
-            planName={planName}
-            onPlanNameChange={setPlanName}
-            onSave={handleSave}
-          />
-        </div>
+        {activeTab !== "create" &&
+          activeTab !== "exercises" &&
+          activeTab !== "plans" && (
+            <div className="w-80 shrink-0 bg-white border border-[#E6E6EE] rounded-2xl p-5 flex flex-col gap-4 sticky top-18 mt-15">
+              <div>
+                <p className="text-base font-semibold text-black">Your Plan</p>
+                <p className="text-xs text-[#72728A] mt-0.5">
+                  {selectedExercises.length} exercise
+                  {selectedExercises.length !== 1 ? "s" : ""} added
+                </p>
+              </div>
+              <div className="flex-1 overflow-y-auto max-h-[30vh] ">
+                <SelectedExerciseList
+                  selected={selectedExercises}
+                  onRemove={handleRemove}
+                  onUpdateSets={handleUpdateSets}
+                  onUpdateReps={handleUpdateReps}
+                />
+              </div>
+              <PlanSummary
+                selected={selectedExercises}
+                planName={planName}
+                onPlanNameChange={setPlanName}
+                onSave={handleSave}
+              />
+            </div>
+          )}
       </div>
+
       <ExerciseModal
         exercise={previewExercise}
         onClose={() => setPreviewExercise(null)}
       />
-
-      <CustomModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        title="Error"
-      >
-        {modalMessage}
-      </CustomModal>
     </div>
   );
 }
