@@ -25,7 +25,7 @@ type TabItem = {
 const clientOptions = [
   { label: "Messages", icon: MessageCircle, route: "/client/messages" },
   { label: "Browse Coaches", icon: UserRound, route: "/client/coaches" },
-  { label: "Payments & Billing", icon: CreditCard, route: "/billing" },
+  { label: "Payments & Billing", icon: CreditCard, route: "/client/billing" },
   { label: "Notifications", icon: Bell, route: "/notifications" },
 ];
 
