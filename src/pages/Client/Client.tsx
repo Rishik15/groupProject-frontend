@@ -14,6 +14,7 @@ import CreateWorkoutPlan from "../CreateWorkoutPlan/CreateWorkoutPlan";
 import { useAuth } from "../../utils/auth/AuthContext";
 import Recommendation from "./Recommendation";
 import ExerciseLibrary from "../ExerciseLibrary/ExerciseLibrary";
+import Billing from "../Billing/Billing";
 
 const ClientLayout = () => {
   const { user, activeMode } = useAuth();
@@ -78,6 +79,8 @@ const ClientLayout = () => {
             element={<Settings role="client" tab="info" />}
           />
           <Route path="recommendation" element={<Recommendation />} />
+          <Route path="billing" element={<Billing />} />
+
         </Routes>
       </div>
     </section>
