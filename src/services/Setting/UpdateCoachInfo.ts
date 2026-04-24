@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Coach } from "../../types/Coach";
+import type { Coach } from "./Coach";
 
 export async function updateCoachProfile(payload: Partial<Coach>) {
   const res = await axios.patch(

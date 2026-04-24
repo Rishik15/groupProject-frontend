@@ -29,7 +29,7 @@ const AuthComplete = () => {
 
         setAuth({
           user: data.user,
-          roles,
+          roles: roles,
         });
 
         if (data.needs_onboarding) {
