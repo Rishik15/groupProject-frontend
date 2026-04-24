@@ -1,15 +1,10 @@
 import { Tabs } from "@heroui/react";
 import { InfoTab } from "./InfoTab";
-import ProgressPhotos from "./ProgressPhotos";
+import ProgressPhotos from "../ProgressPhotos";
+
 import SettingOptions from "./SettingsOptions";
-import {
-  MessageCircle,
-  UserRound,
-  CreditCard,
-  Bell,
-  HelpCircle,
-} from "lucide-react";
-import { logout } from "../../services/auth/logout";
+import { MessageCircle, UserRound, CreditCard, Bell } from "lucide-react";
+import { logout } from "../../../services/auth/logout";
 
 type Props = {
   role: string;
@@ -32,7 +27,6 @@ const clientOptions = [
   { label: "Browse Coaches", icon: UserRound, route: "/client/coaches" },
   { label: "Payments & Billing", icon: CreditCard, route: "/billing" },
   { label: "Notifications", icon: Bell, route: "/notifications" },
-  { label: "Help & Support", icon: HelpCircle, route: "/help" },
 ];
 
 const coachOptions = [
@@ -40,7 +34,6 @@ const coachOptions = [
   { label: "Browse Coaches", icon: UserRound, route: "/coaches" },
   { label: "Payments & Billing", icon: CreditCard, route: "/billing" },
   { label: "Notifications", icon: Bell, route: "/notifications" },
-  { label: "Help & Support", icon: HelpCircle, route: "/help" },
 ];
 
 const SettingTab = ({
@@ -57,12 +50,7 @@ const SettingTab = ({
         id: "info",
         label: "Info",
         component: (
-          <InfoTab
-            role="client"
-            form={form}
-            setForm={setForm}
-            edit={edit}
-          />
+          <InfoTab role="client" form={form} setForm={setForm} edit={edit} />
         ),
       },
       {
@@ -73,9 +61,7 @@ const SettingTab = ({
       {
         id: "settings",
         label: "Settings",
-        component: (
-          <SettingOptions options={clientOptions} onLogout={logout} />
-        ),
+        component: <SettingOptions options={clientOptions} onLogout={logout} />,
       },
     ],
     coach: [
@@ -83,20 +69,13 @@ const SettingTab = ({
         id: "info",
         label: "Info",
         component: (
-          <InfoTab
-            role="coach"
-            form={form}
-            setForm={setForm}
-            edit={edit}
-          />
+          <InfoTab role="coach" form={form} setForm={setForm} edit={edit} />
         ),
       },
       {
         id: "settings",
         label: "Settings",
-        component: (
-          <SettingOptions options={coachOptions} onLogout={logout} />
-        ),
+        component: <SettingOptions options={coachOptions} onLogout={logout} />,
       },
     ],
     admin: [

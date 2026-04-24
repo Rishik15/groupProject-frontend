@@ -37,7 +37,7 @@ function PlanCard({ plan }: { plan: WorkoutPlan }) {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-[#5B5EF4] bg-[#5B5EF4]/10 px-3 py-0.5 rounded-full">
+          <span className="text-xs text-[#5B5EF4] bg-[#5B5EF4]/10 px-3 py-0.5 rounded-full capitalize">
             {plan.source === "authored" ? "Created" : "Assigned"}
           </span>
           <button

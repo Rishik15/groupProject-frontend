@@ -1,13 +1,13 @@
 import axios from "axios";
+import type { WorkoutPlan } from "../../components/CreateWorkoutPlan/MyPlans";
 
 const BASE_URL = "http://localhost:8080";
 
-export interface WorkoutPlan {
-  plan_id: number;
-  plan_name: string;
-  description: string;
-  source: "authored" | "assigned";
-  total_exercises: number;
+export interface PlanExercise {
+  exercise_id: number;
+  exercise_name: string;
+  sets_goal: number;
+  reps_goal: number;
 }
 
 export async function getMyPlans(): Promise<WorkoutPlan[]> {
@@ -15,13 +15,6 @@ export async function getMyPlans(): Promise<WorkoutPlan[]> {
     withCredentials: true,
   });
   return data.workouts;
-}
-
-export interface PlanExercise {
-  exercise_id: number;
-  exercise_name: string;
-  sets_goal: number;
-  reps_goal: number;
 }
 
 export async function getPlanExercises(plan_id: number): Promise<PlanExercise[]> {
