@@ -85,11 +85,10 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                                                 <Card
                                                     key={coach.email}
                                                     onClick={() => setSelectedCoach(coach)}
-                                                    className={`flex cursor-pointer flex-row items-center gap-3 border p-3 transition ${
-                                                        isSelected
+                                                    className={`flex cursor-pointer flex-row items-center gap-3 border p-3 transition ${isSelected
                                                             ? "border-indigo-500 bg-[#eef2ff]"
                                                             : "border-gray-200 bg-white hover:bg-gray-50"
-                                                    }`}
+                                                        }`}
                                                 >
                                                     <Avatar>
                                                         <Avatar.Image
