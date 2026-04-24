@@ -151,7 +151,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // SOCKET LIFECYCLE
   // -------------------------
   useEffect(() => {
-    // if not ready → kill socket
     if (status !== "authenticated" || !user || !activeMode) {
       connectionIdRef.current++;
 
@@ -165,7 +164,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const connectionId = ++connectionIdRef.current;
 
-    // reset
     registeredModeRef.current = null;
     setSocketStatus("connecting");
 
