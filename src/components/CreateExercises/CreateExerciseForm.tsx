@@ -52,12 +52,7 @@ export default function CreateExerciseForm() {
 
   return (
     <div className="flex flex-col gap-6 max-w-2xl w-full mx-auto">
-      <div>
-        <p className="text-base font-semibold text-black">Create New Exercise</p>
-        <p className="text-xs text-[#72728A] mt-0.5">Add a new exercise to the platform for all users to see</p>
-      </div>
-
-
+    
 
       {success && <div className="bg-green-50 border border-green-200 text-green-600 text-sm rounded-xl px-4 py-3">Exercise created successfully!</div>}
       {error && <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3">{error}</div>}
