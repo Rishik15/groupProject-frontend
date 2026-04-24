@@ -9,16 +9,44 @@ type Prop = {
 };
 
 type Coach = {
-    name: string;
+    coach_id: number;
+    full_name: string;
     email: string;
-    image?: string;
 };
 
 const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
-    const [coaches, setCoaches] = useState<Coach[]>([]);
-    const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
+    const [coach, setCoach] = useState<Coach | null>(null);
     const [reason, setReason] = useState<string>("");
     const [details, setDetails] = useState("");
+
+    /**
+     * @client_bp.route("/reportCoach", methods=["POST"])
+        def reportCoach():
+            user_id = session.get("user_id")
+            if not user_id:
+                return jsonify({"error": "Unauthorized"}), 401
+
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "Missing request body"}), 400
+
+            coach_id = data.get("coach_id")
+            formReason = data.get("reason")
+            formDescription = data.get("description") 
+     */
+    const onSubmit = async () => {
+        const res = await axios.post("http://localhost:8080/client/reportCoach",
+            {
+                coach_id: coach?.coach_id,
+                reason: reason,
+                description: details
+            },
+
+            {
+                withCredentials: true,
+
+            });
+    }
 
     useEffect(() => {
         const getClientCoach = async () => {
@@ -26,32 +54,25 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                 withCredentials: true,
             });
 
-            setCoaches(Array.isArray(res.data) ? res.data : []);
+            console.log(res.data)
+            const coaches: Coach[] = Array.isArray(res.data) ? res.data : [];
+            setCoach(coaches[0] ?? null);
         };
+
 
         if (isOpen) {
             getClientCoach();
+            console.log(coach?.full_name)
         }
     }, [isOpen]);
 
     const closeModal = () => {
         setIsOpen(false);
-        setSelectedCoach(null);
+        setCoach(null);
         setReason("");
         setDetails("");
     };
 
-    const handleSubmit = () => {
-        if (!selectedCoach || !reason) return;
-
-        console.log({
-            coach: selectedCoach,
-            reason,
-            details,
-        });
-
-        closeModal();
-    };
 
     return (
         <Modal>
@@ -65,7 +86,7 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                                     Report a Coach
                                 </Modal.Heading>
                                 <p className="text-sm text-gray-500">
-                                    Select a coach first, then tell us what happened.
+                                    Tell us what happened with your coach.
                                 </p>
                             </div>
                         </Modal.Header>
@@ -74,51 +95,35 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                             <div className="flex flex-col gap-2">
                                 <Label>Coach</Label>
 
-                                {coaches.length === 0 ? (
-                                    <p className="text-sm text-gray-500">No coaches found</p>
+                                {coach ? (
+                                    <Card className="flex flex-row items-center gap-3 border border-gray-200 bg-white p-3">
+                                        <Avatar>
+                                            <Avatar.Image
+                                                alt={coach.full_name}
+                                                src={
+                                                    "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg"
+                                                }
+                                            />
+                                        </Avatar>
+
+                                        <div>
+                                            <p className="font-bold text-black">{coach.full_name}</p>
+                                            <p className="text-sm text-gray-500">{coach.email}</p>
+                                        </div>
+                                    </Card>
                                 ) : (
-                                    <div className="flex flex-col gap-3">
-                                        {coaches.map((coach) => {
-                                            const isSelected = selectedCoach?.email === coach.email;
-
-                                            return (
-                                                <Card
-                                                    key={coach.email}
-                                                    onClick={() => setSelectedCoach(coach)}
-                                                    className={`flex cursor-pointer flex-row items-center gap-3 border p-3 transition ${
-                                                        isSelected
-                                                            ? "border-indigo-500 bg-[#eef2ff]"
-                                                            : "border-gray-200 bg-white hover:bg-gray-50"
-                                                    }`}
-                                                >
-                                                    <Avatar>
-                                                        <Avatar.Image
-                                                            alt={coach.name}
-                                                            src={
-                                                                coach.image ||
-                                                                "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg"
-                                                            }
-                                                        />
-                                                    </Avatar>
-
-                                                    <div>
-                                                        <p className="font-bold text-black">{coach.name}</p>
-                                                        <p className="text-sm text-gray-500">{coach.email}</p>
-                                                    </div>
-                                                </Card>
-                                            );
-                                        })}
-                                    </div>
+                                    <p className="text-sm text-gray-500">No coach found</p>
                                 )}
                             </div>
 
-                            {selectedCoach && (
+                            {coach && (
                                 <>
                                     <div className="flex flex-col gap-2">
                                         <Label>Reason</Label>
+
                                         <Select
-                                            selectedKey={reason || undefined}
-                                            onSelectionChange={(key) => setReason(String(key))}
+                                            value={reason || null}
+                                            onChange={(value) => setReason(String(value))}
                                             placeholder="Select a reason"
                                             className="w-full"
                                         >
@@ -129,13 +134,28 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
 
                                             <Select.Popover>
                                                 <ListBox>
-                                                    <ListBox.Item id="harassment">Harassment</ListBox.Item>
-                                                    <ListBox.Item id="spam_scam">Spam / Scam</ListBox.Item>
-                                                    <ListBox.Item id="inappropriate_content">
+                                                    <ListBox.Item id="harassment" textValue="Harassment">
+                                                        Harassment
+                                                    </ListBox.Item>
+
+                                                    <ListBox.Item id="spam_scam" textValue="Spam / Scam">
+                                                        Spam / Scam
+                                                    </ListBox.Item>
+
+                                                    <ListBox.Item
+                                                        id="inappropriate_content"
+                                                        textValue="Inappropriate Content"
+                                                    >
                                                         Inappropriate Content
                                                     </ListBox.Item>
-                                                    <ListBox.Item id="fake_profile">Fake Profile</ListBox.Item>
-                                                    <ListBox.Item id="other">Other</ListBox.Item>
+
+                                                    <ListBox.Item id="fake_profile" textValue="Fake Profile">
+                                                        Fake Profile
+                                                    </ListBox.Item>
+
+                                                    <ListBox.Item id="other" textValue="Other">
+                                                        Other
+                                                    </ListBox.Item>
                                                 </ListBox>
                                             </Select.Popover>
                                         </Select>
@@ -143,6 +163,7 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
 
                                     <div className="flex flex-col gap-2">
                                         <Label>Details</Label>
+
                                         <TextArea
                                             value={details}
                                             onChange={(e) => setDetails(e.target.value)}
@@ -176,10 +197,10 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                                 Close
                             </Button>
 
-                            {selectedCoach && (
+                            {coach && (
                                 <Button
                                     className="rounded-xl bg-indigo-500 text-white"
-                                    onPress={handleSubmit}
+                                    onPress={onSubmit}
                                     isDisabled={!reason}
                                 >
                                     Submit
