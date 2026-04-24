@@ -9,6 +9,7 @@ import { toast } from "@heroui/react";
 import { getNotifications } from "../../services/notifications/getNotifications";
 import CoachContractsPage from "./Contracts";
 import { useRef } from "react";
+import CreateWorkoutPlan from "../CreateWorkoutPlan/CreateWorkoutPlan";
 
 const CoachLayout = () => {
   const { user, activeMode } = useAuth();
@@ -78,6 +79,7 @@ const CoachLayout = () => {
           />
           <Route path="chat" element={<Chat />} />
           <Route path="contracts" element={<CoachContractsPage />} />
+          <Route path="exercises" element={<CreateWorkoutPlan />} />
         </Routes>
       </div>
     </section>
