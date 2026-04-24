@@ -2,6 +2,7 @@ import { Send } from "lucide-react";
 import type { Message } from "../../utils/Interfaces/chat";
 import { useEffect, useRef, useState } from "react";
 import { sendMessage } from "../../services/chat/send_message";
+import { useAuth } from "../../utils/auth/AuthContext";
 
 const ChatWindow = ({
   user,
@@ -17,6 +18,7 @@ const ChatWindow = ({
   const isOnline = user.status === "online";
   const [input, setInput] = useState("");
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const { activeMode } = useAuth();
 
   const groupedMessages = messages.reduce(
     (groups: Record<string, Message[]>, msg) => {
@@ -72,7 +74,11 @@ const ChatWindow = ({
     setInput("");
 
     try {
-      await sendMessage(messageText, user.conversationId);
+      await sendMessage(
+        messageText,
+        user.conversationId,
+        activeMode || "client",
+      );
     } catch (err) {
       console.error(err);
     }

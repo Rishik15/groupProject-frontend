@@ -10,25 +10,28 @@ import { useEffect, useState } from "react";
 import { getNotifications } from "../../services/notifications/getNotifications";
 import { toast } from "@heroui/react";
 import { useRef } from "react";
-import CreateWorkoutPlan from "./CreateWorkoutPlan";
+import CreateWorkoutPlan from "../CreateWorkoutPlan/CreateWorkoutPlan";
 import { useAuth } from "../../utils/auth/AuthContext";
 import Recommendation from "./Recommendation";
 import ExerciseLibrary from "../ExerciseLibrary/ExerciseLibrary";
 
 const ClientLayout = () => {
-  const { user } = useAuth();
-  const hasFetched = useRef(false);
+  const { user, activeMode } = useAuth();
 
   const [notifications, setNotifications] = useState<any[]>([]);
   const count = notifications.length;
 
+  const fetchedModeRef = useRef<string | null>(null);
+
   useEffect(() => {
-    if (hasFetched.current) return;
-    hasFetched.current = true;
+    if (!activeMode) return;
+    if (fetchedModeRef.current === activeMode) return;
+
+    fetchedModeRef.current = activeMode;
 
     const fetchNotifications = async () => {
       try {
-        const data = await getNotifications();
+        const data = await getNotifications(activeMode);
 
         setNotifications(data.notifications || []);
 
@@ -44,7 +47,7 @@ const ClientLayout = () => {
     };
 
     fetchNotifications();
-  }, []);
+  }, [activeMode]);
 
   return (
     <section className="min-h-screen">

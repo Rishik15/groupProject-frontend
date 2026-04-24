@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SignFooter from "../../components/SignIn/Footer";
 import SignHeader from "../../components/SignIn/Header";
@@ -45,9 +45,7 @@ const SignIn = () => {
         roles,
       });
 
-      if (roles.includes("coach")) navigate("/coach");
-      else if (roles.includes("client")) navigate("/client");
-      else navigate("/");
+      navigate("/auth/complete");
     } catch (err: any) {
       let message = "Something went wrong. Please try again.";
 
@@ -79,9 +77,9 @@ const SignIn = () => {
 
           <div className="flex flex-col gap-4">
             <div className="pt-4 flex items-center gap-3">
-              <div className="h-px flex-1 bg-indigo-300" />
+              <div className="h-px flex-1 bg-gray-400" />
               <span className="text-[12px] text-default-500">or</span>
-              <div className="h-px flex-1 bg-indigo-300" />
+              <div className="h-px flex-1 bg-gray-400" />
             </div>
             <GoogleAuthButton onPress={startGoogleLogin} />
           </div>

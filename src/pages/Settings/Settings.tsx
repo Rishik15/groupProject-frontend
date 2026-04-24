@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import SettingHeader from "../../components/Settings/SettingHeader";
-import SettingCard from "../../components/Settings/SettingCard";
-import SettingTab from "../../components/Settings/SettingTabs";
+import SettingHeader from "../../components/Settings/Components/SettingHeader";
+import SettingCard from "../../components/Settings/Components/SettingCard";
+import SettingTab from "../../components/Settings/Components/SettingTabs";
 import { GetUserInfo } from "../../services/Setting/GetUserInfo";
 import { GetCoachInfo } from "../../services/Setting/GetCoachInfo";
 import { updateProfile } from "../../services/Setting/UpdateUserInfo";
 import { Alert, Button, CloseButton } from "@heroui/react";
-import type { User } from "../../types/User";
-import type { Coach } from "../../types/Coach";
+import type { User } from "../../services/Setting/User";
+import type { Coach } from "../../services/Setting/Coach";
 import { updateCoachProfile } from "../../services/Setting/UpdateCoachInfo";
+import { updateCoachAvailability } from "../../services/Setting/saveTime";
 
 type SettingsForm = User & Coach;
 
@@ -41,26 +42,23 @@ const Settings = ({ role, tab }: SettingsProps) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const userData = await GetUserInfo();
+      const userData = await GetUserInfo();
 
-        let mergedForm: SettingsForm = {
+      let mergedForm: SettingsForm = {
+        ...userData.user,
+      };
+
+      if (role === "coach") {
+        const coachData = await GetCoachInfo();
+        mergedForm = {
           ...userData.user,
+          ...coachData.coach,
         };
-
-        if (role === "coach") {
-          const coachData = await GetCoachInfo();
-          mergedForm = {
-            ...userData.user,
-            ...coachData.coach,
-          };
-        }
-
-        setUser(userData.user);
-        setForm(mergedForm);
-      } catch (error) {
-        console.error("Failed to fetch settings data:", error);
       }
+
+      setUser(userData.user);
+      setForm(mergedForm);
+       console.log(mergedForm)
     };
 
     fetchData();
@@ -82,6 +80,8 @@ const Settings = ({ role, tab }: SettingsProps) => {
           Number(form.height),
           Number(form.goal_weight)
         );
+
+
       }
 
       if (role === "coach") {
@@ -89,6 +89,8 @@ const Settings = ({ role, tab }: SettingsProps) => {
           price: form.price === "" || form.price == null ? undefined : Number(form.price),
           coach_description: form.coach_description,
         });
+
+        await updateCoachAvailability(form.availability ?? []);
       }
 
       setUser(form);
@@ -114,8 +116,8 @@ const Settings = ({ role, tab }: SettingsProps) => {
 
         <div
           className={`fixed top-20 right-6 z-50 transition-all duration-300 ${showAlert
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 -translate-y-2 pointer-events-none"
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 -translate-y-2 pointer-events-none"
             }`}
         >
           <Alert status="success" className="rounded-xl bg-[#e5fcf0]">
