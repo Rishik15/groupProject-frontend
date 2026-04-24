@@ -51,13 +51,7 @@ export default function CreateExerciseForm() {
   const inputClass = "w-full text-sm border border-[#E6E6EE] rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#5B5EF4] transition-colors";
 
   return (
-    <div className="flex flex-col gap-6 max-w-2xl w-full mx-auto">
-      <div>
-        <p className="text-base font-semibold text-black">Create New Exercise</p>
-        <p className="text-xs text-[#72728A] mt-0.5">Add a new exercise to the platform for all users to see</p>
-      </div>
-
-
+    <div className="flex flex-col gap-6 max-w-2xl w-full mx-auto py-6">
 
       {success && <div className="bg-green-50 border border-green-200 text-green-600 text-sm rounded-xl px-4 py-3">Exercise created successfully!</div>}
       {error && <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3">{error}</div>}
