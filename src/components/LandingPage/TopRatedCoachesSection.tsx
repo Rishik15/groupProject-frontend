@@ -44,7 +44,7 @@ const TopRatedCoachesSection = () => {
           <TemplateButton
             variant="ghost"
             className="text-[15px] flex items-center gap-0.5"
-            onClick={() => navigate(landingRoute)}
+            onClick={() => navigate("/coaches")}
           >
             View all
             <ArrowRight className="w-4 h-4" />
