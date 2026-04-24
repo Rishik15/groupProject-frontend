@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "@heroui/react";
 import WellnessButton from "./WellnessButton";
 import WellnessForm from "./WellnessForm";
@@ -8,7 +8,7 @@ import { submitSurvey } from "../../../services/WellnessSurvey/submitSurvey";
 import { useAuth } from "../../../utils/auth/AuthContext";
 
 const WellnessCheck = () => {
-  const { authenticated, loading: authLoading } = useAuth();
+  const { status, hasCheckedAuth } = useAuth();
 
   const [moodScore, setMoodScore] = useState<number>(3);
   const [notes, setNotes] = useState<string>("");
@@ -17,8 +17,8 @@ const WellnessCheck = () => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (authLoading) return;
-    if (!authenticated) return;
+    if (!hasCheckedAuth) return;
+    if (status !== "authenticated") return;
 
     const surveyStatus = async () => {
       try {
@@ -31,7 +31,7 @@ const WellnessCheck = () => {
     };
 
     surveyStatus();
-  }, [authenticated, authLoading]);
+  }, [status, hasCheckedAuth]);
 
   const sendWellness = async (): Promise<void> => {
     const payload = {
@@ -52,7 +52,7 @@ const WellnessCheck = () => {
     }
   };
 
-  if (!authenticated) return null;
+  if (status !== "authenticated") return null;
 
   return (
     <Modal isOpen={open} onOpenChange={setOpen}>
@@ -69,7 +69,9 @@ const WellnessCheck = () => {
           <Modal.Dialog className="sm:max-w-105">
             <Modal.CloseTrigger />
             <Modal.Header>
-              <Modal.Heading className="text-[18px] pb-4">Mental Wellness</Modal.Heading>
+              <Modal.Heading className="text-[18px] pb-4">
+                Mental Wellness
+              </Modal.Heading>
             </Modal.Header>
             <Modal.Body>
               <WellnessForm
