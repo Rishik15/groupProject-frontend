@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { getNotifications } from "../../services/notifications/getNotifications";
 import { toast } from "@heroui/react";
 import { useRef } from "react";
-import CreateWorkoutPlan from "./CreateWorkoutPlan";
+import CreateWorkoutPlan from "../CreateWorkoutPlan/CreateWorkoutPlan";
 import { useAuth } from "../../utils/auth/AuthContext";
 import Recommendation from "./Recommendation";
 import ExerciseLibrary from "../ExerciseLibrary/ExerciseLibrary";

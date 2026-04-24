@@ -6,6 +6,7 @@ import {
   CircleStar,
   Search,
   Users,
+  BicepsFlexed,
 } from "lucide-react";
 
 export const getNavItems = (activeMode: string | null, parent: string) => {
@@ -26,6 +27,11 @@ export const getNavItems = (activeMode: string | null, parent: string) => {
         label: "Messages",
         route: `${parent}/chat`,
         icon: <MessageCircle className="w-4 h-4" />,
+      },
+      {
+        label: "Exercises",
+        route: `${parent}/exercises`,
+        icon: <BicepsFlexed className="w-4 h-4" />,
       },
     ];
   }

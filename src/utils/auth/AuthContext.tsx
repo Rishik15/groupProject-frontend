@@ -7,8 +7,7 @@ type User = {
   last_name: string;
   email: string;
 };
-
-type Mode = "client" | "coach";
+type Mode = "client" | "coach" | "admin";
 type AuthStatus = "anonymous" | "checking" | "authenticated";
 type SocketStatus =
   | "disconnected"
@@ -54,7 +53,7 @@ const getValidMode = (
   if (preferred && roles.includes(preferred)) {
     return preferred as Mode;
   }
-
+  if (roles.includes("admin")) return "admin";
   if (roles.includes("coach")) return "coach";
   if (roles.includes("client")) return "client";
 
@@ -152,7 +151,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // SOCKET LIFECYCLE
   // -------------------------
   useEffect(() => {
-    // if not ready → kill socket
     if (status !== "authenticated" || !user || !activeMode) {
       connectionIdRef.current++;
 
@@ -166,7 +164,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const connectionId = ++connectionIdRef.current;
 
-    // reset
     registeredModeRef.current = null;
     setSocketStatus("connecting");
 
