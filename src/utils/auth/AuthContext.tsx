@@ -17,7 +17,7 @@ type User = {
 
 type Mode = "client" | "coach" | "admin";
 type AuthStatus = "anonymous" | "checking" | "authenticated";
-type CoachApplicationStatus = "pending" | "approved" | "rejected";
+type CoachApplicationStatus = "none" | "pending" | "approved" | "rejected";
 
 type SocketStatus =
   | "disconnected"
@@ -41,10 +41,12 @@ type AuthContextType = {
   socketReady: boolean;
   hasCheckedAuth: boolean;
   coachApplicationStatus: CoachApplicationStatus;
+  coachModeActivated: boolean;
   setAuth: (data: {
     user: User;
     roles: string[];
     coachApplicationStatus?: CoachApplicationStatus;
+    coachModeActivated?: boolean;
   }) => void;
   clearAuth: () => void;
   refreshAuth: () => Promise<void>;
@@ -60,7 +62,8 @@ const AuthContext = createContext<AuthContextType>({
   socketStatus: "disconnected",
   socketReady: false,
   hasCheckedAuth: false,
-  coachApplicationStatus: "rejected",
+  coachApplicationStatus: "none",
+  coachModeActivated: false,
   setAuth: () => {},
   clearAuth: () => {},
   refreshAuth: async () => {},
@@ -94,7 +97,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     useState<SocketStatus>("disconnected");
   const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
   const [coachApplicationStatus, setCoachApplicationStatus] =
-    useState<CoachApplicationStatus>("rejected");
+    useState<CoachApplicationStatus>("none");
+  const [coachModeActivated, setCoachModeActivated] = useState(false);
 
   const refreshInFlightRef = useRef(false);
   const connectionIdRef = useRef(0);
@@ -148,13 +152,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       user: User;
       roles: string[];
       coachApplicationStatus?: CoachApplicationStatus;
+      coachModeActivated?: boolean;
     }) => {
       const savedMode = sessionStorage.getItem(MODE_KEY);
       const validMode = getValidMode(data.roles, savedMode);
 
       setUser(data.user);
       setRoles(data.roles);
-      setCoachApplicationStatus(data.coachApplicationStatus ?? "rejected");
+      setCoachApplicationStatus(data.coachApplicationStatus ?? "none");
+      setCoachModeActivated(data.coachModeActivated ?? false);
       setActiveModeState(validMode);
       setStatus("authenticated");
       setHasCheckedAuth(true);
@@ -176,7 +182,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setActiveModeState(null);
     setStatus("anonymous");
     setHasCheckedAuth(true);
-    setCoachApplicationStatus("rejected");
+    setCoachApplicationStatus("none");
+    setCoachModeActivated(false);
 
     sessionStorage.removeItem(MODE_KEY);
   }, [disconnectSocket]);
@@ -194,7 +201,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setAuth({
           user: res.user,
           roles: res.roles || [],
-          coachApplicationStatus: res.coachApplicationStatus,
+          coachApplicationStatus:
+            res.coachApplicationStatus ??
+            res.coachApplicationStatus ??
+            "none",
+          coachModeActivated:
+            res.coachModeActivated ?? res.coachModeActivated ?? false,
         });
       } else {
         clearAuth();
@@ -278,6 +290,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const handleCoachApplicationStatusChanged = (data: {
       status?: CoachApplicationStatus;
       roles?: string[];
+      coachModeActivated?: boolean;
+      coach_mode_activated?: boolean;
     }) => {
       if (connectionIdRef.current !== connectionId) return;
 
@@ -285,19 +299,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setCoachApplicationStatus(data.status);
       }
 
+      if (typeof data.coachModeActivated === "boolean") {
+        setCoachModeActivated(data.coachModeActivated);
+      }
+
+      if (typeof data.coach_mode_activated === "boolean") {
+        setCoachModeActivated(data.coach_mode_activated);
+      }
+
       if (Array.isArray(data.roles)) {
         setRoles(data.roles);
 
-        const savedMode = sessionStorage.getItem(MODE_KEY);
-        const validMode = getValidMode(data.roles, savedMode);
+        setActiveModeState((currentMode) => {
+          if (currentMode && data.roles!.includes(currentMode)) {
+            return currentMode;
+          }
 
-        setActiveModeState(validMode);
+          const savedMode = sessionStorage.getItem(MODE_KEY);
+          const validMode = getValidMode(data.roles!, savedMode);
 
-        if (validMode) {
-          sessionStorage.setItem(MODE_KEY, validMode);
-        } else {
-          sessionStorage.removeItem(MODE_KEY);
-        }
+          if (validMode) {
+            sessionStorage.setItem(MODE_KEY, validMode);
+          } else {
+            sessionStorage.removeItem(MODE_KEY);
+          }
+
+          return validMode;
+        });
       }
     };
 
@@ -349,6 +377,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         socketReady,
         hasCheckedAuth,
         coachApplicationStatus,
+        coachModeActivated,
         setAuth,
         clearAuth,
         refreshAuth,

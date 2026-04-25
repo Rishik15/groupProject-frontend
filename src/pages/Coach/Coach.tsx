@@ -9,6 +9,7 @@ import { toast } from "@heroui/react";
 import { getNotifications } from "../../services/notifications/getNotifications";
 import CreateWorkoutPlan from "../CreateWorkoutPlan/CreateWorkoutPlan";
 import ManageClients from "./ManageClient";
+import CoachModeIntroModal from "../../components/Coach/CoachModeIntroModal";
 
 const CoachLayout = () => {
   const { user } = useAuth();
@@ -17,6 +18,7 @@ const CoachLayout = () => {
 
   const [notifications, setNotifications] = useState<any[]>([]);
   const count = notifications.length;
+  const [showCoachModeIntro, setShowCoachModeIntro] = useState(false);
 
   const hasFetchedRef = useRef(false);
 
@@ -43,6 +45,14 @@ const CoachLayout = () => {
     };
 
     fetchNotifications();
+  }, []);
+
+  useEffect(() => {
+    const shouldShow = sessionStorage.getItem("showCoachModeIntro") === "true";
+
+    if (shouldShow) {
+      setShowCoachModeIntro(true);
+    }
   }, []);
 
   return (
@@ -73,6 +83,11 @@ const CoachLayout = () => {
           <Route path="exercises" element={<CreateWorkoutPlan />} />
         </Routes>
       </div>
+
+      <CoachModeIntroModal
+        isOpen={showCoachModeIntro}
+        setIsOpen={setShowCoachModeIntro}
+      />
     </section>
   );
 };
