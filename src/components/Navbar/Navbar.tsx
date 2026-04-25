@@ -43,14 +43,6 @@ export default function Navbar({
   const isCoachApplicationPending = coachApplicationStatus === "pending";
 
   const shouldShowSwitchRole = canSwitchRole || isCoachApplicationPending;
-  console.log("NAVBAR ROLE DEBUG:", {
-    roles,
-    mode,
-    coachApplicationStatus,
-    canSwitchRole,
-    isCoachApplicationPending,
-    shouldShowSwitchRole,
-  });
 
   const handleSwitchRole = () => {
     if (isCoachApplicationPending) {
@@ -87,20 +79,28 @@ export default function Navbar({
       });
     };
 
-    const handleNotificationsCleared = (data: { conversationId: number }) => {
-      setNotifications((prev) =>
-        prev.filter((n) => n.conversationId !== data.conversationId),
-      );
+    const handleClearNotification = (data: {
+      id: number;
+      notification_id?: number;
+    }) => {
+      const id = data.id ?? data.notification_id;
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    };
+
+    const handleClearNotifications = (data: { ids: number[] }) => {
+      setNotifications((prev) => prev.filter((n) => !data.ids.includes(n.id)));
     };
 
     socket.on("new_notification", handleNotification);
     socket.on("update_notification", handleNotification);
-    socket.on("chat_notifications_cleared", handleNotificationsCleared);
+    socket.on("clear_notification", handleClearNotification);
+    socket.on("clear_notifications", handleClearNotifications);
 
     return () => {
       socket.off("new_notification", handleNotification);
       socket.off("update_notification", handleNotification);
-      socket.off("chat_notifications_cleared", handleNotificationsCleared);
+      socket.off("clear_notification", handleClearNotification);
+      socket.off("clear_notifications", handleClearNotifications);
     };
   }, [setNotifications]);
 

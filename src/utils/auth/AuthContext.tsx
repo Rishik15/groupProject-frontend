@@ -133,6 +133,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     socket.off("connect_error");
     socket.off("mode_registered");
     socket.off("mode_registration_failed");
+    socket.off("coach_application_status_changed");
 
     if (socket.connected) {
       socket.disconnect();
@@ -237,6 +238,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     socket.off("connect_error");
     socket.off("mode_registered");
     socket.off("mode_registration_failed");
+    socket.off("coach_application_status_changed");
 
     const handleConnect = () => {
       if (connectionIdRef.current !== connectionId) return;
@@ -273,11 +275,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setSocketStatus("error");
     };
 
+    const handleCoachApplicationStatusChanged = (data: {
+      status?: CoachApplicationStatus;
+      roles?: string[];
+    }) => {
+      if (connectionIdRef.current !== connectionId) return;
+
+      if (data.status) {
+        setCoachApplicationStatus(data.status);
+      }
+
+      if (Array.isArray(data.roles)) {
+        setRoles(data.roles);
+
+        const savedMode = sessionStorage.getItem(MODE_KEY);
+        const validMode = getValidMode(data.roles, savedMode);
+
+        setActiveModeState(validMode);
+
+        if (validMode) {
+          sessionStorage.setItem(MODE_KEY, validMode);
+        } else {
+          sessionStorage.removeItem(MODE_KEY);
+        }
+      }
+    };
+
     socket.on("connect", handleConnect);
     socket.on("mode_registered", handleModeRegistered);
     socket.on("mode_registration_failed", handleModeRegistrationFailed);
     socket.on("disconnect", handleDisconnect);
     socket.on("connect_error", handleConnectError);
+    socket.on(
+      "coach_application_status_changed",
+      handleCoachApplicationStatusChanged,
+    );
 
     if (!socket.connected) {
       socket.connect();
@@ -293,6 +325,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       socket.off("mode_registration_failed", handleModeRegistrationFailed);
       socket.off("disconnect", handleDisconnect);
       socket.off("connect_error", handleConnectError);
+      socket.off(
+        "coach_application_status_changed",
+        handleCoachApplicationStatusChanged,
+      );
 
       if (socket.connected) {
         socket.disconnect();
