@@ -68,6 +68,16 @@ const NutritionTabs = () => {
                                 Meal Plans
                                 <Tabs.Indicator />
                             </Tabs.Tab>
+
+                            <Tabs.Tab
+                                id="Assigned Plans"
+                                className="whitespace-nowrap rounded-full px-2 py-2 text-sm font-medium text-black"
+                                >
+                                Assigned Plans
+                                <Tabs.Indicator />
+                            </Tabs.Tab>
+
+                           
                         </Tabs.List>
                     </Tabs.ListContainer>
 
@@ -89,6 +99,12 @@ const NutritionTabs = () => {
                     <Tabs.Panel className="mt-5 pt-0 pl-0 pr-0" id="Meal Plans">
                         <div className="rounded-2xl border border-dashed border-neutral-300 bg-white p-6">
                             <MealPlan/>
+                        </div>
+                    </Tabs.Panel>
+
+                    <Tabs.Panel className="mt-5 pt-0 pl-0 pr-0" id="Assigned Plans">
+                        <div className="rounded-2xl border border-dashed border-neutral-300 bg-white p-6">
+                            <p className="text-sm text-gray-400">Assigned plans will go here. still in progress</p>
                         </div>
                     </Tabs.Panel>
                 </Tabs>
