@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Tabs } from "@heroui/react";
+import { Spinner, Tabs } from "@heroui/react";
 import { Check, X, Trash } from "lucide-react";
 import { getContracts } from "../../../services/dashboard/coach/getContracts";
 import type { Contract } from "../../../utils/Interfaces/Dashboard/Coach/types";
@@ -103,7 +103,13 @@ export default function CoachContractsPanel() {
       toast("Failed to terminate contract", { variant: "danger" });
     }
   };
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <section className="flex justify-center items-center py-20 px-38">
+        <Spinner />
+      </section>
+    );
+  }
 
   return (
     <section className="flex flex-col px-38">

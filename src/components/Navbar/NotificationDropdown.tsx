@@ -37,10 +37,17 @@ export default function NotificationDropdown({
   const { activeMode } = useAuth();
 
   const handleClick = async (notif: Notification) => {
-    try {
-      await markAsRead(notif.id, activeMode);
+    const id = notif.id;
 
-      setNotifications((prev) => prev.filter((n) => n.id !== notif.id));
+    if (id == null || !activeMode) {
+      console.error("Missing notification data", { id, activeMode, notif });
+      return;
+    }
+
+    try {
+      await markAsRead(id, activeMode);
+
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
 
       navigate(getRoute(notif));
     } catch (err) {

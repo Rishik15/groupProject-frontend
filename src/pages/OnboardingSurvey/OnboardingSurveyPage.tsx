@@ -24,7 +24,7 @@ import {
 
 import {
   submitClientOnboarding,
-  submitCoachOnboarding,
+  submitCoachApplication,
 } from "../../services/OnboardingSurvey/onboardingService";
 
 type SurveyType = "client" | "coach";
@@ -67,20 +67,15 @@ function OnboardingSurveyPage({
 }: OnboardingSurveyPageProps) {
   const navigate = useNavigate();
 
-  // A coach completes two phases:
-  // 1. coach-specific onboarding
-  // 2. client/personal onboarding
   const [activeFlow, setActiveFlow] = useState<ActiveFlow>(
     surveyType === "coach" ? "coach" : "client",
   );
 
-  // Client state
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [fitnessLevel, setFitnessLevel] = useState<ClientFitnessLevel | "">("");
   const [clientInfo, setClientInfo] =
     useState<ClientInfoValues>(initialClientInfo);
 
-  // Coach state
   const [primarySpecialties, setPrimarySpecialties] = useState<string[]>([]);
   const [secondarySpecialties, setSecondarySpecialties] = useState<string[]>(
     [],
@@ -160,11 +155,7 @@ function OnboardingSurveyPage({
     }));
   };
 
-  const handleCoachPhaseComplete = () => {
-    setActiveFlow("client");
-  };
-
-  const handleSurveyComplete = async () => {
+  const buildCurrentCoachData = () => {
     const profileDescription = buildCoachProfileDescription({
       primarySpecialties,
       secondarySpecialties,
@@ -174,7 +165,20 @@ function OnboardingSurveyPage({
       bio: credentials.bio,
     });
 
-    const combinedData: CombinedOnboardingData = {
+    return {
+      primarySpecialties,
+      secondarySpecialties,
+      clientTypes,
+      availability,
+      sessionFormats,
+      price,
+      credentials,
+      profileDescription,
+    };
+  };
+
+  const buildCurrentCombinedData = (): CombinedOnboardingData => {
+    return {
       client: {
         goals: selectedGoals,
         fitnessLevel,
@@ -182,19 +186,33 @@ function OnboardingSurveyPage({
       },
       ...(surveyType === "coach"
         ? {
-            coach: {
-              primarySpecialties,
-              secondarySpecialties,
-              clientTypes,
-              availability,
-              sessionFormats,
-              price,
-              credentials,
-              profileDescription,
-            },
+            coach: buildCurrentCoachData(),
           }
         : {}),
     };
+  };
+
+  const handleCoachPhaseComplete = async () => {
+    try {
+      setSubmitError(null);
+
+      const coachData = buildCurrentCoachData();
+
+      const response = await submitCoachApplication(coachData);
+      console.log("Coach application saved:", response);
+
+      setActiveFlow("client");
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "Failed to submit coach application.",
+      );
+    }
+  };
+
+  const handleSurveyComplete = async () => {
+    const combinedData = buildCurrentCombinedData();
 
     if (onComplete) {
       onComplete(combinedData);
@@ -204,19 +222,9 @@ function OnboardingSurveyPage({
     try {
       setSubmitError(null);
 
-      if (surveyType === "coach" && combinedData.coach) {
-        const response = await submitCoachOnboarding({
-          client: combinedData.client,
-          coach: combinedData.coach,
-        });
-
-        console.log("Coach onboarding saved:", response);
-        navigate("/coach", { replace: true });
-        return;
-      }
-
       const response = await submitClientOnboarding(combinedData.client.info);
       console.log("Client onboarding saved:", response);
+
       navigate("/client", { replace: true });
     } catch (error) {
       setSubmitError(
