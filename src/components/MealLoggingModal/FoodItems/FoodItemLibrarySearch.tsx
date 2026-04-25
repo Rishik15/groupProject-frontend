@@ -6,8 +6,8 @@ import {
     Label,
     ListBox,
 } from "@heroui/react";
-import type { FoodItemSuggestion } from "../../utils/Interfaces/MealLogging/mealLog";
-import { getFoodItems } from "../../services/MealLogging/mealLogService";
+import type { FoodItemSuggestion } from "../../../utils/Interfaces/MealLogging/mealLog";
+import { getFoodItems } from "../../../services/MealLogging/mealLogService";
 
 interface FoodItemLibrarySearchProps {
     onSelectItem: (item: FoodItemSuggestion) => void;

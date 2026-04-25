@@ -1,5 +1,5 @@
 import { Card } from "@heroui/react";
-import type { MealTotals } from "../../utils/Interfaces/MealLogging/mealLog";
+import type { MealTotals } from "../../../utils/Interfaces/MealLogging/mealLog";
 
 interface SummaryCardProps {
     totals: MealTotals;

@@ -29,6 +29,8 @@ export default function FoodItemsSection({
     onAddItem,
     onFoodItemPhotoChange,
 }: FoodItemsSectionProps) {
+    const hasItem = items.length > 0;
+
     const handleSelectLibraryItem = (item: FoodItemSuggestion) => {
         onAddItem(mapSuggestionToDraft(item));
     };
@@ -41,22 +43,26 @@ export default function FoodItemsSection({
         <div className="space-y-4">
             <div className="space-y-1">
                 <p className="text-[18.75px] font-semibold text-[#0F0F14]">
-                    Food Items
+                    Food Item
                 </p>
                 <p className="text-[13.125px] text-[#72728A]">
-                    Add food items from your saved list or create your own.
+                    Select a saved food item or create a custom one.
                 </p>
             </div>
 
-            <FoodItemLibrarySearch onSelectItem={handleSelectLibraryItem} />
+            {!hasItem && (
+                <>
+                    <FoodItemLibrarySearch onSelectItem={handleSelectLibraryItem} />
 
-            <Button
-                variant="outline"
-                className="border-[#5E5EF4] text-[#5E5EF4]"
-                onPress={handleAddCustomItem}
-            >
-                Add Custom Food Item
-            </Button>
+                    <Button
+                        variant="outline"
+                        className="border-[#5E5EF4] text-[#5E5EF4]"
+                        onPress={handleAddCustomItem}
+                    >
+                        Add Custom Food Item
+                    </Button>
+                </>
+            )}
 
             <div className="space-y-3">
                 {items.map((item) => (
