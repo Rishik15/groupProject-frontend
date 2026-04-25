@@ -54,7 +54,7 @@ export const getCurrentWeekDateRange = () => {
 };
 
 export const buildWeeklyCaloriesSummary = (
-    meals: LoggedMeal[],
+    backendDays: { date: string; calories: number }[],
 ): WeeklyCaloriesSummary => {
     const weekStart = getStartOfWeek(new Date());
 
@@ -66,38 +66,20 @@ export const buildWeeklyCaloriesSummary = (
             currentDay.getMonth() + 1,
         ).padStart(2, "0")}-${String(currentDay.getDate()).padStart(2, "0")}`;
 
+        const match = backendDays.find((d) => d.date === dayKey);
+
         return {
             dayKey,
             dayLabel: label,
-            calories: 0,
+            calories: match ? match.calories : 0,
         };
     });
-
-    for (const meal of meals) {
-        const mealDate = new Date(meal.eaten_at);
-        const localKey = `${mealDate.getFullYear()}-${String(
-            mealDate.getMonth() + 1,
-        ).padStart(2, "0")}-${String(mealDate.getDate()).padStart(2, "0")}`;
-
-        const matchingDay = days.find((day) => day.dayKey === localKey);
-
-        if (matchingDay) {
-            matchingDay.calories += getMealCalories(meal);
-        }
-    }
 
     const totalCalories = days.reduce((sum, day) => sum + day.calories, 0);
     const averageDailyCalories = Math.round(totalCalories / 7);
 
-    const bestDay = days.reduce((closestDay, currentDay) => {
-        const currentDifference = Math.abs(
-            currentDay.calories - DEFAULT_GOAL_CALORIES,
-        );
-        const closestDifference = Math.abs(
-            closestDay.calories - DEFAULT_GOAL_CALORIES,
-        );
-
-        return currentDifference < closestDifference ? currentDay : closestDay;
+    const bestDay = days.reduce((best, current) => {
+        return current.calories > best.calories ? current : best;
     }, days[0]);
 
     return {
