@@ -20,16 +20,17 @@ const AuthComplete = () => {
       try {
         const data = await getAuth();
 
-        if (!data.authenticated) {
+        if (!data.authenticated || !data.user) {
           navigate("/", { replace: true });
           return;
         }
 
-        const roles = data.roles ?? (data.roles ? [data.roles] : []);
+        const roles = data.roles ?? [];
 
         setAuth({
           user: data.user,
-          roles: roles,
+          roles,
+          coachApplicationStatus: data.coachApplicationStatus ?? "rejected",
         });
 
         if (data.needs_onboarding) {
@@ -38,21 +39,29 @@ const AuthComplete = () => {
           return;
         }
 
+        if (roles.includes("admin")) {
+          navigate("/admin", { replace: true });
+          return;
+        }
+
+        if (roles.includes("client")) {
+          navigate("/client", { replace: true });
+          return;
+        }
+
         if (roles.includes("coach")) {
           navigate("/coach", { replace: true });
-        } else if (roles.includes("client")) {
-          navigate("/client", { replace: true });
-        } else if (roles.includes("admin")) {
-          navigate("/admin", { replace: true });
-        } else {
-          navigate("/", { replace: true });
+          return;
         }
+
+        navigate("/", { replace: true });
       } catch {
         navigate("/", { replace: true });
       }
     };
+
     finishAuth();
-  }, [navigate]);
+  }, [navigate, setAuth]);
 
   const handleContinue = async () => {
     if (!selectedRole || submittingRole) return;
@@ -67,9 +76,13 @@ const AuthComplete = () => {
       setAuth({
         user: data.user,
         roles,
+        coachApplicationStatus:
+          data.coachApplicationStatus ??
+          data.coach_application_status ??
+          "rejected",
       });
 
-      if (roles.includes("coach")) {
+      if (selectedRole === "coach") {
         navigate("/onboarding/coach", { replace: true });
       } else {
         navigate("/onboarding/client", { replace: true });
@@ -91,11 +104,12 @@ const AuthComplete = () => {
 
   if (showRoleSelection) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <section className="w-full max-w-md items-center flex flex-col ">
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <section className="w-full max-w-md items-center flex flex-col px-10">
           <h1 className="text-2xl font-semibold text-center mb-2">
             Finish setting up your account
           </h1>
+
           <p className="text-sm text-gray-500 text-center mb-6">
             Choose how you want to use the app.
           </p>
@@ -105,7 +119,7 @@ const AuthComplete = () => {
           <Button
             onPress={handleContinue}
             variant="primary"
-            className="w-full mt-6"
+            className="w-full mt-10 bg-indigo-500 hover:bg-indigo-600"
             isDisabled={!selectedRole || submittingRole}
           >
             {submittingRole ? "Saving..." : "Continue"}

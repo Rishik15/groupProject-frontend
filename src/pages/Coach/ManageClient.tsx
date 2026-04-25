@@ -26,7 +26,7 @@ export default function ManageClients() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#F5F7FB] px-38 py-12">
+    <div className="bg-[#F5F7FB] px-38 py-12">
       <div className="mb-8">
         <h1 className="text-3xl font-semibold text-[#111]">Manage Clients</h1>
         <p className="text-[14px] text-gray-500 mt-2">

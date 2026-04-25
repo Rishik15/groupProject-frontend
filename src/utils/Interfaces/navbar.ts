@@ -2,7 +2,7 @@ export type NavbarInterface = {
   parent: string;
   name: string;
   email: string;
-
+  mode: "client" | "coach" | "admin";
   notifications: Notification[];
   count: number;
 

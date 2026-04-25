@@ -4,44 +4,34 @@ import { useAuth } from "../../utils/auth/AuthContext";
 import CoachDashBoard from "./DashBoard";
 import Settings from "../Settings/Settings";
 import Chat from "../Chat/Chat";
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "@heroui/react";
 import { getNotifications } from "../../services/notifications/getNotifications";
-import { useRef } from "react";
 import CreateWorkoutPlan from "../CreateWorkoutPlan/CreateWorkoutPlan";
 import ManageClients from "./ManageClient";
 
 const CoachLayout = () => {
-  const { user, activeMode } = useAuth();
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const { user } = useAuth();
 
+  const mode = "coach" as const;
+
+  const [notifications, setNotifications] = useState<any[]>([]);
   const count = notifications.length;
 
-  const fetchedModeRef = useRef<string | null>(null);
+  const hasFetchedRef = useRef(false);
 
   useEffect(() => {
-    console.log("EFFECT RUNNING:", activeMode);
+    if (hasFetchedRef.current) return;
 
-    if (!activeMode) return;
-    if (fetchedModeRef.current === activeMode) {
-      console.log("SKIPPED (same mode):", activeMode);
-      return;
-    }
-
-    fetchedModeRef.current = activeMode;
-
-    console.log("FETCHING NOTIFS FOR:", activeMode);
+    hasFetchedRef.current = true;
 
     const fetchNotifications = async () => {
       try {
-        const data = await getNotifications(activeMode);
-
-        console.log("NOTIFICATIONS RECEIVED:", data.notifications);
+        const data = await getNotifications(mode);
 
         setNotifications(data.notifications || []);
 
         data.notifications.forEach((notif: any) => {
-          console.log("TOAST:", notif.title);
           toast(notif.title, {
             description: notif.body,
             timeout: 5000,
@@ -53,12 +43,13 @@ const CoachLayout = () => {
     };
 
     fetchNotifications();
-  }, [activeMode]);
+  }, []);
 
   return (
     <section className="min-h-screen">
       <Navbar
         parent="/coach"
+        mode={mode}
         name={user ? `${user.first_name} ${user.last_name}` : ""}
         email={user?.email || ""}
         notifications={notifications}

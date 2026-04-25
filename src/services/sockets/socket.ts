@@ -1,9 +1,15 @@
-import { io, Socket } from "socket.io-client";
+import { io } from "socket.io-client";
 
-const SOCKET_URL = "http://localhost:8080";
-
-export const socket: Socket = io(SOCKET_URL, {
-  withCredentials: true,
+export const socket = io("http://localhost:8080", {
   autoConnect: false,
-  transports: ["websocket"],
+  withCredentials: true,
+
+  reconnection: true,
+  reconnectionAttempts: Infinity,
+  reconnectionDelay: 500,
+  reconnectionDelayMax: 3000,
+
+  timeout: 10000,
+
+  transports: ["websocket", "polling"],
 });

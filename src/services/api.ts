@@ -8,20 +8,28 @@ const api = axios.create({
   },
 });
 
+let isRedirecting = false;
+
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
-      console.log("Session expired → redirecting to signin");
-      window.location.href = "/signin";
+    const status = err.response?.status;
+
+    if (status === 401) {
+      if (!isRedirecting && window.location.pathname !== "/signin") {
+        isRedirecting = true;
+        window.location.href = "/signin";
+      }
+
+      return Promise.reject(err);
     }
 
-    else if (!err.response) {
+    if (!err.response) {
       console.error("Server unreachable or network error");
     }
 
     return Promise.reject(err);
-  }
+  },
 );
 
 export default api;
