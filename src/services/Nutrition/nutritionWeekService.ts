@@ -1,40 +1,26 @@
-import { getLoggedMeals } from "../MealLogging/mealLogService";
-import type { LoggedMeal } from "../../utils/Interfaces/Nutrition/nutrition";
+import axios from "axios";
 import {
-  buildWeeklyCaloriesSummary,
-  getCurrentWeekDateRange,
-  type WeeklyCaloriesSummary,
+    buildWeeklyCaloriesSummary,
+    getCurrentWeekDateRange,
+    type WeeklyCaloriesSummary,
 } from "../../utils/Nutrition/nutritionWeek";
 
-const normalizeLoggedMeal = (meal: any): LoggedMeal => ({
-  log_id: Number(meal.log_id),
-  user_id: Number(meal.user_id),
-  meal_id: meal.meal_id == null ? null : Number(meal.meal_id),
-  food_item_id: meal.food_item_id == null ? null : Number(meal.food_item_id),
-  eaten_at: String(meal.eaten_at ?? ""),
-  servings: Number(meal.servings ?? 0),
-  notes: meal.notes ?? null,
-  photo_url: String(meal.photo_url ?? ""),
-  created_at: String(meal.created_at ?? ""),
-  updated_at: String(meal.updated_at ?? ""),
-  meal_name: String(meal.meal_name ?? ""),
-  calories: Number(meal.calories ?? 0),
-  protein: Number(meal.protein ?? 0),
-  carbs: Number(meal.carbs ?? 0),
-  fats: Number(meal.fats ?? 0),
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
+
+const nutritionApi = axios.create({
+    baseURL: API_BASE_URL,
+    withCredentials: true,
 });
 
-export const getWeeklyCaloriesSummary =
-  async (): Promise<WeeklyCaloriesSummary> => {
+export const getWeeklyCaloriesSummary = async (): Promise<WeeklyCaloriesSummary> => {
     const { start_datetime, end_datetime } = getCurrentWeekDateRange();
 
-    const loggedMeals = await getLoggedMeals(start_datetime, end_datetime);
+    const response = await nutritionApi.post("/nutrition/weekly-calories", {
+        start_datetime,
+        end_datetime,
+    });
 
-    const normalizedMeals = Array.isArray(loggedMeals)
-      ? loggedMeals
-          .filter((meal) => meal.meal_id !== null)
-          .map(normalizeLoggedMeal)
-      : [];
+    const days = response.data?.days ?? [];
 
-    return buildWeeklyCaloriesSummary(normalizedMeals);
-  };
+    return buildWeeklyCaloriesSummary(days);
+};

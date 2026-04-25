@@ -13,10 +13,8 @@ export const getTodayNutritionSummary =
     const loggedMeals = await getLoggedMeals(start_datetime, end_datetime);
 
     const normalizedMeals = Array.isArray(loggedMeals)
-      ? loggedMeals
-          .filter((meal) => meal.meal_id !== null)
-          .map(normalizeLoggedMeal)
-      : [];
+        ? loggedMeals.map(normalizeLoggedMeal)
+        : [];
 
     return buildTodayNutritionSummary(normalizedMeals);
   };
