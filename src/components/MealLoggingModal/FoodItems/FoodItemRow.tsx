@@ -1,6 +1,6 @@
 import { type ChangeEvent } from "react";
 import { Button, Card, Input } from "@heroui/react";
-import type { FoodItemDraft } from "../../utils/Interfaces/MealLogging/mealLog";
+import type { FoodItemDraft } from "../../../utils/Interfaces/MealLogging/mealLog";
 
 interface FoodItemRowProps {
     item: FoodItemDraft;
