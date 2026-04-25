@@ -49,7 +49,7 @@ const Register = () => {
         coachApplicationStatus:
           data.coachApplicationStatus ??
           data.coach_application_status ??
-          "rejected",
+          "none",
       });
 
       if (selectedRole === "coach") {

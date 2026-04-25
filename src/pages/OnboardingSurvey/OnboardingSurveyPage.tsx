@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "@heroui/react";
 
 import ClientOnboardingPage from "./ClientOnboardingPage";
 import CoachOnboardingPage from "./CoachOnboardingPage";
+import CoachClientInfoModal from "@/components/OnboardingSurvey/Coach/CoachClientInfoModal";
 
 import type {
   ClientFitnessLevel,
@@ -26,6 +28,8 @@ import {
   submitClientOnboarding,
   submitCoachApplication,
 } from "../../services/OnboardingSurvey/onboardingService";
+
+import { useAuth } from "../../utils/auth/AuthContext";
 
 type SurveyType = "client" | "coach";
 type ActiveFlow = "coach" | "client";
@@ -66,10 +70,17 @@ function OnboardingSurveyPage({
   onComplete,
 }: OnboardingSurveyPageProps) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { refreshAuth } = useAuth();
+
+  const source = searchParams.get("source");
+  const isClientBecomingCoach = surveyType === "coach" && source === "client";
 
   const [activeFlow, setActiveFlow] = useState<ActiveFlow>(
     surveyType === "coach" ? "coach" : "client",
   );
+
+  const [showClientInfoModal, setShowClientInfoModal] = useState(false);
 
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [fitnessLevel, setFitnessLevel] = useState<ClientFitnessLevel | "">("");
@@ -201,7 +212,20 @@ function OnboardingSurveyPage({
       const response = await submitCoachApplication(coachData);
       console.log("Coach application saved:", response);
 
-      setActiveFlow("client");
+      await refreshAuth();
+
+      if (isClientBecomingCoach) {
+        toast("Coach application submitted", {
+          description:
+            "Your application is in review. We will get back to you as soon as possible.",
+          timeout: 5000,
+        });
+
+        navigate("/client", { replace: true });
+        return;
+      }
+
+      setShowClientInfoModal(true);
     } catch (error) {
       setSubmitError(
         error instanceof Error
@@ -233,6 +257,11 @@ function OnboardingSurveyPage({
     }
   };
 
+  const handleContinueToClientInfo = () => {
+    setShowClientInfoModal(false);
+    setActiveFlow("client");
+  };
+
   const errorBanner = submitError ? (
     <div className="px-4 pt-4 sm:px-6">
       <p className="rounded-medium border border-danger-200 bg-danger-50 px-3 py-2 text-sm text-danger-700">
@@ -245,6 +274,7 @@ function OnboardingSurveyPage({
     return (
       <>
         {errorBanner}
+
         <CoachOnboardingPage
           primarySpecialties={primarySpecialties}
           secondarySpecialties={secondarySpecialties}
@@ -263,6 +293,16 @@ function OnboardingSurveyPage({
           onCertificationCountChange={handleCertificationCountChange}
           onCertificationChange={handleCertificationChange}
           onComplete={handleCoachPhaseComplete}
+          finalButtonLabel={
+            isClientBecomingCoach ? "Submit Application" : "Submit Application"
+          }
+          isClientBecomingCoach={isClientBecomingCoach}
+        />
+
+        <CoachClientInfoModal
+          isOpen={showClientInfoModal}
+          setIsOpen={setShowClientInfoModal}
+          onContinue={handleContinueToClientInfo}
         />
       </>
     );
@@ -271,6 +311,7 @@ function OnboardingSurveyPage({
   return (
     <>
       {errorBanner}
+
       <ClientOnboardingPage
         selectedGoals={selectedGoals}
         fitnessLevel={fitnessLevel}
@@ -280,6 +321,12 @@ function OnboardingSurveyPage({
         onClientInfoChange={handleClientInfoChange}
         onComplete={handleSurveyComplete}
         isCoachFlow={surveyType === "coach"}
+      />
+
+      <CoachClientInfoModal
+        isOpen={showClientInfoModal}
+        setIsOpen={setShowClientInfoModal}
+        onContinue={handleContinueToClientInfo}
       />
     </>
   );

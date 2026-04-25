@@ -32,18 +32,32 @@ export interface CoachProfile {
 
 export type ContractStatus = "none" | "active" | "pending" | "closed";
 
-// sends coach_id to backend and returns full coach profile
+export interface ClientCoachStatus {
+  has_active_contract: boolean;
+  active_coach_id: number | null;
+}
+
+export interface ContractRequestPayload {
+  coach_id: number;
+  training_reason: string;
+  goals: string;
+  preferred_schedule: string;
+  notes: string;
+}
+
 export async function getCoachProfile(coach_id: number): Promise<CoachProfile> {
   const { data } = await axios.post(
     `${BASE_URL}/coach/profile`,
     { coach_id },
-    { withCredentials: true }
+    { withCredentials: true },
   );
+
   return data.coach;
 }
 
-// gets the current contract status between logged-in user and selected coach
-export async function getContractStatus(coach_id: number): Promise<ContractStatus> {
+export async function getContractStatus(
+  coach_id: number,
+): Promise<ContractStatus> {
   const { data } = await axios.get(`${BASE_URL}/contract/contractStatus`, {
     params: { coach_id },
     withCredentials: true,
@@ -52,12 +66,19 @@ export async function getContractStatus(coach_id: number): Promise<ContractStatu
   return data.status;
 }
 
-// sends coach_id to the clientContracts route so the contract request is saved in the database
-export async function requestCoachContract(coach_id: number) {
+export async function getClientCoachStatus(): Promise<ClientCoachStatus> {
+  const { data } = await axios.get(`${BASE_URL}/contract/clientCoachStatus`, {
+    withCredentials: true,
+  });
+
+  return data;
+}
+
+export async function requestCoachContract(payload: ContractRequestPayload) {
   const { data } = await axios.post(
     `${BASE_URL}/contract/requestContract`,
-    { coach_id },
-    { withCredentials: true }
+    payload,
+    { withCredentials: true },
   );
 
   return data;

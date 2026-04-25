@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from "react";
-import { Input, Button, Chip } from "@heroui/react";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { Input, Button, Chip, Pagination } from "@heroui/react";
 import CoachCard, {
   SkeletonCard,
 } from "../../components/LandingPage/CoachCard";
@@ -11,6 +11,7 @@ import { Search } from "lucide-react";
 import { CircleAlert } from "lucide-react";
 
 const MAX_PRICE_LIMIT = 300;
+const COACHES_PER_PAGE = 6;
 
 export default function BrowseCoaches() {
   const [nameSearch, setNameSearch] = useState("");
@@ -22,9 +23,11 @@ export default function BrowseCoaches() {
 
   const [coaches, setCoaches] = useState<Coach[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
 
   const loadCoaches = useCallback(async () => {
     setLoading(true);
+
     const query: CoachQuery = {
       name: nameSearch.trim(),
       filters: selectedTags,
@@ -33,8 +36,10 @@ export default function BrowseCoaches() {
       min_rating: minRating,
       sort_by: "rating",
     };
+
     const { coaches } = await searchCoaches(query);
     setCoaches(coaches);
+    setPage(1);
     setLoading(false);
   }, [nameSearch, selectedTags, minRating, maxPrice, certifiedOnly]);
 
@@ -55,7 +60,20 @@ export default function BrowseCoaches() {
     setMinRating(0);
     setMaxPrice(MAX_PRICE_LIMIT);
     setCertifiedOnly(false);
+    setPage(1);
   }
+
+  const totalPages = Math.max(1, Math.ceil(coaches.length / COACHES_PER_PAGE));
+
+  const paginatedCoaches = useMemo(() => {
+    const start = (page - 1) * COACHES_PER_PAGE;
+    return coaches.slice(start, start + COACHES_PER_PAGE);
+  }, [coaches, page]);
+
+  const startItem =
+    coaches.length === 0 ? 0 : (page - 1) * COACHES_PER_PAGE + 1;
+
+  const endItem = Math.min(page * COACHES_PER_PAGE, coaches.length);
 
   const activeFilterCount =
     selectedTags.length +
@@ -64,13 +82,15 @@ export default function BrowseCoaches() {
     (certifiedOnly ? 1 : 0);
 
   return (
-    <div className="min-h-screen bg-default-100 px-42 py-8">
+    <div className="bg-default-100 px-42 py-8">
       <h1 className="text-2xl font-bold text-foreground mb-1">
         Browse Expert Coaches
       </h1>
+
       <p className="text-sm text-[#72728A] mb-5">
         Find the perfect coach for your fitness journey
       </p>
+
       <div className="flex items-center gap-3 mb-6">
         <div className="flex-1 max-w-2xl relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-default-400 pointer-events-none" />
@@ -82,6 +102,7 @@ export default function BrowseCoaches() {
             className="pl-9 w-full"
           />
         </div>
+
         <Button
           variant={showFilterPanel ? "primary" : "ghost"}
           onPress={() => setShowFilterPanel((v) => !v)}
@@ -138,16 +159,64 @@ export default function BrowseCoaches() {
                 <p className="text-sm font-medium text-foreground">
                   No coaches found
                 </p>
+
                 <p className="text-xs text-default-400 mt-1">
                   Try adjusting your filters or search
                 </p>
               </div>
             ) : (
-              coaches.map((coach, i) => (
+              paginatedCoaches.map((coach, i) => (
                 <CoachCard key={coach.coach_id ?? i} coach={coach} />
               ))
             )}
           </div>
+
+          {!loading && coaches.length > COACHES_PER_PAGE && (
+            <div className="mt-8">
+              <Pagination className="w-full">
+                <Pagination.Summary>
+                  Showing {startItem}-{endItem} of {coaches.length} coaches
+                </Pagination.Summary>
+
+                <Pagination.Content>
+                  <Pagination.Item>
+                    <Pagination.Previous
+                      isDisabled={page === 1}
+                      onPress={() => setPage((p) => Math.max(1, p - 1))}
+                    >
+                      <Pagination.PreviousIcon />
+                      <span>Previous</span>
+                    </Pagination.Previous>
+                  </Pagination.Item>
+
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (p) => (
+                      <Pagination.Item key={p}>
+                        <Pagination.Link
+                          isActive={p === page}
+                          onPress={() => setPage(p)}
+                        >
+                          {p}
+                        </Pagination.Link>
+                      </Pagination.Item>
+                    ),
+                  )}
+
+                  <Pagination.Item>
+                    <Pagination.Next
+                      isDisabled={page === totalPages}
+                      onPress={() =>
+                        setPage((p) => Math.min(totalPages, p + 1))
+                      }
+                    >
+                      <span>Next</span>
+                      <Pagination.NextIcon />
+                    </Pagination.Next>
+                  </Pagination.Item>
+                </Pagination.Content>
+              </Pagination>
+            </div>
+          )}
         </div>
       </div>
     </div>
