@@ -37,9 +37,6 @@ export default function MyBetsTabContent({
                             My Bets
                         </div>
                         <h2 className="text-[18.75px] font-semibold text-slate-900">Track every prediction you placed</h2>
-                        <p className="max-w-3xl text-[13.125px] text-slate-500">
-                            This tab groups your participation by active, pending, and completed market lifecycle states.
-                        </p>
                     </div>
 
                     {onRefresh && (

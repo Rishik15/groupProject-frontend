@@ -8,6 +8,10 @@ import type {
 export type PredictionAdminTabState = "review" | "settlement" | "cancel-review" | "history";
 
 export interface AdminPredictionItem {
+  yes_bets: number;
+  no_bets: number;
+  yes_points: number;
+  no_points: number;
   market_id: number;
   creator_name: string;
   creator_email: string | null;

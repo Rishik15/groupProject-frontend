@@ -39,8 +39,8 @@ export default function PredictionMarketCard({
 
     return (
         <Card className="border border-default-200 shadow-sm">
-            <div className="space-y-6 p-6">
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="space-y-6">
+                <div className="flex flex-col lg:flex-row lg:items-start">
                     <div className="min-w-0 flex-1">
                         <div className="mb-3 flex flex-wrap items-center gap-2">
                             <PredictionStatusBadge
@@ -63,10 +63,10 @@ export default function PredictionMarketCard({
                             ) : null}
                         </div>
 
-                        <h3 className="text-xl font-semibold tracking-tight text-foreground">
+                        <h3 className="text-[18.75px] font-semibold text-foreground">
                             {market.title}
                         </h3>
-                        <p className="mt-3 max-w-3xl text-sm leading-7 text-foreground/70">
+                        <p className="mt-3 max-w-3xl text-[13.125px] leading-7 text-foreground/70">
                             {market.goal_text}
                         </p>
                     </div>
@@ -74,44 +74,44 @@ export default function PredictionMarketCard({
                     <TimeLeftBadge endDate={market.end_date} status={market.status} />
                 </div>
 
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                    <div className="flex items-center gap-3 rounded-3xl border border-default-200 bg-content2/50 p-4">
+                <div className="grid grid-cols-3 gap-1">
+                    <div className="flex items-center gap-1 rounded-3xl border border-default-200 bg-content2/50 p-4">
                         <div className="rounded-2xl bg-[#5B5EF4]/10 p-2.5 text-[#5B5EF4]">
                             <UserRound className="h-4 w-4" strokeWidth={2.2} />
                         </div>
                         <div>
-                            <p className="text-xs font-medium uppercase tracking-wide text-foreground/55">
+                            <p className="text-[11.25px] font-medium uppercase tracking-wide text-foreground/55">
                                 Creator
                             </p>
-                            <p className="text-sm font-semibold text-foreground">
+                            <p className="text-[11.25px] font-semibold text-foreground">
                                 {market.creator_name || market.creator_email}
                             </p>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3 rounded-3xl border border-default-200 bg-content2/50 p-4">
+                    <div className="flex items-center gap-1 rounded-3xl border border-default-200 bg-content2/50 p-4">
                         <div className="rounded-2xl bg-amber-500/10 p-2.5 text-amber-600">
                             <CalendarDays className="h-4 w-4" strokeWidth={2.2} />
                         </div>
                         <div>
-                            <p className="text-xs font-medium uppercase tracking-wide text-foreground/55">
+                            <p className="text-[11.25px] font-medium uppercase tracking-wide text-foreground/55">
                                 Deadline
                             </p>
-                            <p className="text-sm font-semibold text-foreground">
+                            <p className="text-[11.25px] font-semibold text-foreground">
                                 {formatDate(market.end_date)}
                             </p>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3 rounded-3xl border border-default-200 bg-content2/50 p-4">
+                    <div className="flex items-center gap-1 rounded-3xl border border-default-200 bg-content2/50 p-4">
                         <div className="rounded-2xl bg-emerald-500/10 p-2.5 text-emerald-600">
                             <Users className="h-4 w-4" strokeWidth={2.2} />
                         </div>
                         <div>
-                            <p className="text-xs font-medium uppercase tracking-wide text-foreground/55">
+                            <p className="text-[11.25px] font-medium uppercase tracking-wide text-foreground/55">
                                 Participation
                             </p>
-                            <p className="text-sm font-semibold text-foreground">
+                            <p className="text-[11.25px] font-semibold text-foreground">
                                 {market.total_bets} total bets
                             </p>
                         </div>
@@ -126,10 +126,10 @@ export default function PredictionMarketCard({
                 <div className="space-y-3">
                     <div className="flex items-center justify-between gap-3">
                         <div>
-                            <p className="text-sm font-semibold text-foreground">
+                            <p className="text-[11.25px] font-semibold text-foreground">
                                 Prediction sides
                             </p>
-                            <p className="text-xs text-foreground/55">
+                            <p className="text-[11.25px] text-foreground/55">
                                 Live yes/no participation based on current bets.
                             </p>
                         </div>
@@ -142,7 +142,7 @@ export default function PredictionMarketCard({
                         </Chip>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+                    <div className="grid gap-1 grid-cols-2">
                         <PredictionOptionCard
                             side="yes"
                             points={market.yes_points}

@@ -65,7 +65,7 @@ const CoachGovernance = () => {
                                 <p className="mt-1 text-sm text-default-600">{currentTab.description}</p>
                             </div>
 
-                            <div className="flex flex-wrap gap-3">
+                            <div className="flex flex-wrap gap-2">
                                 {governanceTabs.map((tab) => {
                                     const Icon = tab.icon;
                                     const active = currentTab.key === tab.key;
@@ -74,7 +74,7 @@ const CoachGovernance = () => {
                                         <Button
                                             key={tab.key}
                                             onPress={() => setSelectedTab(tab.key)}
-                                            className={active ? "bg-[#5B5EF4] font-semibold" : "bg-default-100 text-default-700"}
+                                            className={active ? "bg-[#5B5EF4] font-semibold" : "bg-[#5B5EF4] text-default-700"}
                                         >
                                             <span className="inline-flex items-center gap-2">
                                                 <Icon className="h-4 w-4" />

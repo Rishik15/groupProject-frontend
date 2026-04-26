@@ -139,9 +139,9 @@ const Dashboard = () => {
                     onNavigateToCoachGovernance={() =>
                         navigate("/admin/coach-governance")
                     }
-                    onNavigateToReports={() => navigate("/admin/reports")}
-                    onNavigateToExercises={() => navigate("/admin/exercises")}
-                    onNavigateToWorkouts={() => navigate("/admin/workouts")}
+                    onNavigateToReports={() => navigate("/admin/reports/")}
+                    onNavigateToExercises={() => navigate("/admin/exercises/")}
+                    onNavigateToWorkouts={() => navigate("/admin/workouts/")}
                     onScrollToOverview={() => scrollToSection(overviewRef.current)}
                     onScrollToEngagement={() => scrollToSection(engagementRef.current)}
                     onScrollToReviews={() => scrollToSection(reviewsRef.current)}
@@ -211,10 +211,10 @@ const Dashboard = () => {
                                     totalPendingReviewsIncludingPredictions
                                 }
                                 onNavigateToCoachGovernance={() =>
-                                    navigate("/admin/coach-governance")
+                                    navigate("/admin/coach-governance/")
                                 }
-                                onNavigateToReports={() => navigate("/admin/reports")}
-                                onNavigateToPredictions={() => navigate("/admin/prediction")}
+                                onNavigateToReports={() => navigate("/admin/reports/")}
+                                onNavigateToPredictions={() => navigate("/admin/prediction/")}
                             />
                         </div>
                     </>

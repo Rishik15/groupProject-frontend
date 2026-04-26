@@ -292,7 +292,7 @@ const WorkoutManagementTab = () => {
                   No workouts matched your current search and visibility filters.
                 </div>
               ) : (
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-4 grid-cols-2">
                   {filteredWorkouts.map((workout) => (
                     <WorkoutCard
                       key={workout.plan_id}

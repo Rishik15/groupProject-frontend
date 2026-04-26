@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Card, Spinner } from "@heroui/react";
 import {
-    LayoutDashboard,
     RefreshCcw,
     ShieldCheck,
     Sparkles
@@ -394,10 +393,6 @@ export default function Predictions() {
                         <div className="space-y-5 p-5">
                             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                                 <div>
-                                    <div className="inline-flex items-center gap-2 rounded-full bg-[#5B5EF4]/10 px-3 py-1 text-xs font-semibold text-[#5B5EF4]">
-                                        <LayoutDashboard className="h-4 w-4" strokeWidth={2.2} />
-                                        Client workspace
-                                    </div>
                                     <h2 className="mt-3 text-2xl font-semibold tracking-tight text-foreground">
                                         Predictions workspace
                                     </h2>

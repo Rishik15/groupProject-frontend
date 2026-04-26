@@ -26,16 +26,9 @@ export default function PredictionAdminHeaderBlock({
     onRefresh,
 }: PredictionAdminHeaderBlockProps) {
     return (
-        <Card className="rounded-3xl border border-slate-200 bg-white shadow-sm">
-            <div className="flex flex-col gap-6 p-8 md:flex-row md:items-start md:justify-between">
-                <div className="space-y-4">
-                    <Chip
-                        variant="soft"
-                        className="border border-[#5B5EF4]/20 bg-[#EEF0FF] text-[#5B5EF4]"
-                    >
-                        Admin Moderation
-                    </Chip>
-
+        <div>
+            <div className="px-36 border-b border-neutral-200 bg-white">
+                <div className="flex flex-col gap-6 p-3 flex-row items-start justify-between">
                     <div className="space-y-2">
                         <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
                             Prediction Control Center
@@ -46,38 +39,38 @@ export default function PredictionAdminHeaderBlock({
                             moderation workspace.
                         </p>
                     </div>
-                </div>
 
-                <div className="flex flex-wrap items-center gap-3">
-                    <Button
-                        variant="outline"
-                        onPress={onRefresh}
-                        isDisabled={isLoading || isRefreshing}
-                    >
-                        <span className="inline-flex items-center gap-2">
-                            {isRefreshing ? (
-                                <Spinner size="sm" />
-                            ) : (
-                                <RefreshCcw className="h-4 w-4" />
-                            )}
-                            {isRefreshing ? "Refreshing..." : "Refresh queues"}
-                        </span>
-                    </Button>
+                    <div className="flex flex-wrap items-center gap-3">
+                        <Button
+                            variant="outline"
+                            onPress={onRefresh}
+                            isDisabled={isLoading || isRefreshing}
+                        >
+                            <span className="inline-flex items-center gap-2">
+                                {isRefreshing ? (
+                                    <Spinner size="sm" />
+                                ) : (
+                                    <RefreshCcw className="h-4 w-4" />
+                                )}
+                                {isRefreshing ? "Refreshing..." : "Refresh queues"}
+                            </span>
+                        </Button>
 
-                    <Button
-                        className="font-medium text-white"
-                        style={{ backgroundColor: "#5B5EF4" }}
-                        isDisabled
-                    >
-                        <span className="inline-flex items-center gap-2">
-                            <Gavel className="h-4 w-4" />
-                            Moderation workspace
-                        </span>
-                    </Button>
+                        <Button
+                            className="font-medium text-white"
+                            style={{ backgroundColor: "#5B5EF4" }}
+                            isDisabled
+                        >
+                            <span className="inline-flex items-center gap-2">
+                                <Gavel className="h-4 w-4" />
+                                Moderation workspace
+                            </span>
+                        </Button>
+                    </div>
                 </div>
             </div>
 
-            <div className="grid gap-4 px-8 pb-8 md:grid-cols-3">
+            <div className="grid gap-4 px-36 grid-cols-3 py-4">
                 {summaryCards.map(({ id, title, value, icon: Icon, description }) => (
                     <Card
                         key={id}
@@ -100,6 +93,6 @@ export default function PredictionAdminHeaderBlock({
                     </Card>
                 ))}
             </div>
-        </Card>
+        </div>
     );
 }

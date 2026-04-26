@@ -149,7 +149,7 @@ const VideoModerationTab = () => {
             />
 
             <div className="flex flex-wrap gap-2">
-              <Button onPress={() => void loadVideos()} isDisabled={loading}>
+              <Button onPress={() => void loadVideos()} isDisabled={loading} className={"bg-[#5B5EF4]"}>
                 <span className="inline-flex items-center gap-2">
                   <RefreshCw className={loading ? "h-4 w-4 animate-spin" : "h-4 w-4"} />
                   Refresh
