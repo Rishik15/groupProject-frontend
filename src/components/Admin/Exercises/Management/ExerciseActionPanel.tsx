@@ -16,6 +16,53 @@ interface ExerciseActionPanelProps {
   onCancel: () => void;
 }
 
+const getExercisePreviewSrc = (videoUrl: string) => {
+  const trimmed = videoUrl.trim();
+
+  if (!trimmed) {
+    return null;
+  }
+
+  if (
+    trimmed.startsWith("http://") ||
+    trimmed.startsWith("https://") ||
+    trimmed.startsWith("/")
+  ) {
+    return trimmed;
+  }
+
+  return `/src/assets/gifs/${trimmed}`;
+};
+
+const getMediaType = (src: string | null): "image" | "video" | null => {
+  if (!src) {
+    return null;
+  }
+
+  const cleaned = src.split("?")[0].toLowerCase();
+
+  if (
+    cleaned.endsWith(".mp4") ||
+    cleaned.endsWith(".mov") ||
+    cleaned.endsWith(".webm") ||
+    cleaned.endsWith(".ogg")
+  ) {
+    return "video";
+  }
+
+  if (
+    cleaned.endsWith(".gif") ||
+    cleaned.endsWith(".png") ||
+    cleaned.endsWith(".jpg") ||
+    cleaned.endsWith(".jpeg") ||
+    cleaned.endsWith(".webp")
+  ) {
+    return "image";
+  }
+
+  return "image";
+};
+
 const ExerciseActionPanel = ({
   selectedExercise,
   actionMode,
@@ -46,6 +93,8 @@ const ExerciseActionPanel = ({
 
   const showForm = actionMode === "create" || actionMode === "edit";
   const showDelete = actionMode === "delete";
+  const previewSrc = getExercisePreviewSrc(formState.video_url);
+  const mediaType = getMediaType(previewSrc);
 
   return (
     <Card className="rounded-[24px] border border-default-200 bg-white shadow-sm">
@@ -78,39 +127,97 @@ const ExerciseActionPanel = ({
             {showForm ? (
               <div className="space-y-3">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-default-700" htmlFor="exercise-name">
+                  <label
+                    className="text-sm font-medium text-default-700"
+                    htmlFor="exercise-name"
+                  >
                     Exercise name
                   </label>
                   <input
                     id="exercise-name"
                     value={formState.exercise_name}
-                    onChange={(event) => onFormChange({ exercise_name: event.target.value })}
+                    onChange={(event) =>
+                      onFormChange({ exercise_name: event.target.value })
+                    }
                     className="w-full rounded-[16px] border border-default-200 px-4 py-2.5 text-sm outline-none transition focus:border-default-400"
                     placeholder="Push Up"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-default-700" htmlFor="exercise-equipment">
+                  <label
+                    className="text-sm font-medium text-default-700"
+                    htmlFor="exercise-equipment"
+                  >
                     Equipment
                   </label>
                   <input
                     id="exercise-equipment"
                     value={formState.equipment}
-                    onChange={(event) => onFormChange({ equipment: event.target.value })}
+                    onChange={(event) =>
+                      onFormChange({ equipment: event.target.value })
+                    }
                     className="w-full rounded-[16px] border border-default-200 px-4 py-2.5 text-sm outline-none transition focus:border-default-400"
                     placeholder="Bodyweight"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-default-700" htmlFor="exercise-video-url">
+                  <label className="text-sm font-medium text-default-700">
+                    Video preview
+                  </label>
+
+                  {previewSrc ? (
+                    <div className="max-w-sm overflow-hidden rounded-[16px] border border-default-200 bg-default-50">
+                      <div className="aspect-video w-full">
+                        {mediaType === "video" ? (
+                          <video
+                            src={previewSrc}
+                            controls
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <img
+                            src={previewSrc}
+                            alt={formState.exercise_name || "Exercise preview"}
+                            className="h-full w-full object-cover"
+                          />
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex aspect-video max-w-sm w-full flex-col items-center justify-center gap-2 rounded-[16px] border border-dashed border-default-200 bg-default-50 text-center">
+                      <svg
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="#9CA3AF"
+                        strokeWidth="1.5"
+                      >
+                        <rect x="2" y="4" width="20" height="16" rx="2" />
+                        <path d="m10 8 6 4-6 4V8z" />
+                      </svg>
+                      <p className="text-xs text-default-500">
+                        No video available for this exercise
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label
+                    className="text-sm font-medium text-default-700"
+                    htmlFor="exercise-video-url"
+                  >
                     Video URL
                   </label>
                   <input
                     id="exercise-video-url"
                     value={formState.video_url}
-                    onChange={(event) => onFormChange({ video_url: event.target.value })}
+                    onChange={(event) =>
+                      onFormChange({ video_url: event.target.value })
+                    }
                     className="w-full rounded-[16px] border border-default-200 px-4 py-2.5 text-sm outline-none transition focus:border-default-400"
                     placeholder="/uploads/exercise_videos/..."
                   />
@@ -118,13 +225,18 @@ const ExerciseActionPanel = ({
 
                 {actionMode === "create" ? (
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-default-700" htmlFor="exercise-created-by">
+                    <label
+                      className="text-sm font-medium text-default-700"
+                      htmlFor="exercise-created-by"
+                    >
                       Created by user id (optional)
                     </label>
                     <input
                       id="exercise-created-by"
                       value={formState.created_by}
-                      onChange={(event) => onFormChange({ created_by: event.target.value })}
+                      onChange={(event) =>
+                        onFormChange({ created_by: event.target.value })
+                      }
                       className="w-full rounded-[16px] border border-default-200 px-4 py-2.5 text-sm outline-none transition focus:border-default-400"
                       placeholder="12"
                     />
@@ -143,7 +255,8 @@ const ExerciseActionPanel = ({
                   .
                 </p>
                 <p className="mt-2">
-                  If the exercise is still in use, the backend will reject this request.
+                  If the exercise is still in use, the backend will reject this
+                  request.
                 </p>
               </div>
             ) : null}
@@ -155,17 +268,31 @@ const ExerciseActionPanel = ({
             ) : null}
 
             <div className="flex flex-wrap gap-2">
-              <Button className={"bg-[#5B5EF4]"} onPress={onSubmit} isDisabled={submitting}>
-                {submitting ? "Saving..." : actionMode === "delete" ? "Confirm delete" : "Confirm action"}
+              <Button
+                className="bg-[#5B5EF4] text-white"
+                onPress={onSubmit}
+                isDisabled={submitting}
+              >
+                {submitting
+                  ? "Saving..."
+                  : actionMode === "delete"
+                    ? "Confirm delete"
+                    : "Confirm action"}
               </Button>
-              <Button className={"bg-[#5B5EF4]"} onPress={onCancel} isDisabled={submitting}>
+
+              <Button
+                className="bg-[#5B5EF4] text-white"
+                onPress={onCancel}
+                isDisabled={submitting}
+              >
                 Cancel
               </Button>
             </div>
           </>
         ) : (
           <div className="rounded-[20px] border border-default-200 bg-default-50 p-5 text-sm text-default-600">
-            Select New Exercise, Edit, or Delete on a card to open the exercise management form.
+            Select New Exercise, Edit, or Delete on a card to open the
+            exercise management form.
           </div>
         )}
       </div>

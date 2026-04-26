@@ -59,12 +59,6 @@ const UserAccountCard = ({
 
       <div className="mt-auto border-t border-default-200 pt-4">
         <div className="flex flex-wrap items-center gap-2 md:flex-nowrap">
-          <Button className={"bg-[#5B5EF4]"} onPress={() => onSuspend(user)}>
-            <span className="inline-flex items-center gap-2">
-              <ShieldAlert className="h-4 w-4" />
-              Suspend
-            </span>
-          </Button>
 
           <Button className={"bg-[#5B5EF4]"} onPress={() => onDeactivate(user)}>
             <span className="inline-flex items-center gap-2">

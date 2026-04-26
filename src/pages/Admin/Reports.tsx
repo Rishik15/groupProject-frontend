@@ -35,12 +35,12 @@ const Reports = () => {
 
     return (
         <div>
-            <div className="py-6 px-36 border-b border-neutral-200 bg-white">
+            <div className="justify-between items-center px-38 py-4 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
                 <div>
-                    <h1 className="text-3xl font-semibold tracking-tight text-default-900">
+                    <h1 className="text-[24px] font-semibold tracking-tight text-default-900">
                         Conduct moderation
                     </h1>
-                    <p className="mt-2 max-w-3xl text-sm text-default-600">
+                    <p className="mt-2 max-w-3xl text-[13.125px] text-default-600">
                         Review open platform reports, record moderation outcomes, and reference closed report history.
                     </p>
                 </div>
