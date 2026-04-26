@@ -1,51 +1,83 @@
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/event-calendar/ui/select";
-import type { UserMealPlan } from "../../../services/MealLogging/mealPlanLogService";
+import { Label, ListBox, Select } from "@heroui/react";
+import type { Key } from "react";
+import type { UserMealPlan } from "../../../services/meallogging/logMealService";
 
 interface MealPlanSelectorProps {
-    plans: UserMealPlan[];
-    selectedPlanId: number | null;
-    onChange: (planId: number) => void;
-    isLoading: boolean;
+  plans: UserMealPlan[];
+  selectedPlanId: number | null;
+  onChange: (planId: number) => void;
+  isLoading: boolean;
 }
+
 export default function MealPlanSelector({
-    plans,
-    selectedPlanId,
-    onChange,
-    isLoading,
+  plans,
+  selectedPlanId,
+  onChange,
+  isLoading,
 }: MealPlanSelectorProps) {
-    return (
-        <div className="space-y-1">
-            <label className="block text-[13.125px] font-semibold text-[#0F0F14]">
-                Select Meal Plan
-            </label>
+  const selectedKey = selectedPlanId ? String(selectedPlanId) : null;
 
-            <select
-                disabled={isLoading || plans.length === 0}
-                value={selectedPlanId ? String(selectedPlanId) : ""}
-                onChange={(e) => onChange(Number(e.target.value))}
-                className="w-full rounded-xl border border-default-200 bg-white px-3 py-2 text-[13.125px] text-[#0F0F14] outline-none focus:border-[#5E5EF4]"
-            >
-                <option value="" disabled>
-                    {isLoading ? "Loading plans..." : "Choose a meal plan"}
-                </option>
-                {plans.map((plan) => (
-                    <option key={plan.meal_plan_id} value={String(plan.meal_plan_id)}>
-                        {plan.plan_name}{plan.total_calories ? ` — ${plan.total_calories} kcal` : ""}
-                    </option>
-                ))}
-            </select>
+  const handleChange = (key: Key | Key[] | null) => {
+    if (key === null || Array.isArray(key)) return;
 
-            {!isLoading && plans.length === 0 && (
-                <p className="text-[11.25px] text-[#72728A]">
-                    No meal plans found. Create one in the Meal Plans tab.
-                </p>
-            )}
-        </div>
-    );
+    const planId = Number(key);
+
+    if (!Number.isNaN(planId)) {
+      onChange(planId);
+    }
+  };
+
+  return (
+    <div className="space-y-1">
+      <Select
+        className="w-full"
+        fullWidth
+        variant="secondary"
+        placeholder={isLoading ? "Loading plans..." : "Choose a meal plan"}
+        value={selectedKey}
+        onChange={handleChange}
+        isDisabled={isLoading || plans.length === 0}
+      >
+        <Label className="text-[13.125px] font-semibold text-[#0F0F14]">
+          Select Meal Plan
+        </Label>
+
+        <Select.Trigger className="rounded-xl border border-default-200 bg-white px-3 py-2">
+          <Select.Value />
+          <Select.Indicator />
+        </Select.Trigger>
+
+        <Select.Popover className="rounded-xl bg-white p-2 shadow-lg">
+          <ListBox>
+            {plans.map((plan) => (
+              <ListBox.Item
+                key={String(plan.meal_plan_id)}
+                id={String(plan.meal_plan_id)}
+                textValue={plan.plan_name}
+                className="rounded-xl px-3 py-2"
+              >
+                <div className="flex flex-col">
+                  <span className="text-[13.125px] font-medium text-[#0F0F14]">
+                    {plan.plan_name}
+                  </span>
+
+                  {plan.total_calories !== null && (
+                    <span className="text-[11.25px] text-[#72728A]">
+                      {plan.total_calories} kcal
+                    </span>
+                  )}
+                </div>
+
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </Select.Popover>
+      </Select>
+
+      {!isLoading && plans.length === 0 && (
+        <p className="text-[11.25px] text-[#72728A]">No meal plans found.</p>
+      )}
+    </div>
+  );
 }

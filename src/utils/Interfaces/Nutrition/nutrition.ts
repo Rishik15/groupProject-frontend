@@ -10,6 +10,8 @@ export interface LoggedMeal {
   created_at?: string;
   updated_at?: string;
   meal_name: string;
+  meal_type?: string;
+  time_label?: string;
   calories: number;
   protein: number;
   carbs: number;
