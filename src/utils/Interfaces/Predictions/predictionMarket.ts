@@ -28,6 +28,10 @@ export interface PredictionMarket {
   cancel_reviewed_at: string | null;
   cancel_review_note: string | null;
   result: PredictionResult;
+  yes_bets: number;
+  no_bets: number;
+  yes_points: number;
+  no_points: number;
   total_bets: number;
   total_points: number;
   created_at: string | null;
