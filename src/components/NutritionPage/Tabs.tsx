@@ -72,7 +72,6 @@ const NutritionTabs = () => {
           <button style={tabStyle(activeTab === "today")} onClick={() => setActiveTab("today")}>Today</button>
           <button style={tabStyle(activeTab === "week")} onClick={() => setActiveTab("week")}>This Week</button>
           <button style={tabStyle(activeTab === "plans")} onClick={() => setActiveTab("plans")}>Plans</button>
-          <button style={tabStyle(activeTab === "food")} onClick={() => setActiveTab("food")}>Food</button>
         </div>
       </div>
 

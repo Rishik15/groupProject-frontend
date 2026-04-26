@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Select } from "@heroui/react";
 
 const BASE_URL = "http://localhost:8080";
-const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"];
 
 interface Meal {
@@ -40,25 +39,18 @@ function MealBrowser({ onSelect, onClose }: { onSelect: (meal: Meal) => void; on
           <p className="text-sm font-semibold text-black">Select a Meal</p>
           <button onClick={onClose} className="text-[#72728A] hover:text-black">✕</button>
         </div>
-        <input
-          placeholder="Search meals..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full text-sm border border-[#E6E6EE] rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#5B5EF4]"
-        />
+        <input placeholder="Search meals..." value={search} onChange={(e) => setSearch(e.target.value)}
+          className="w-full text-sm border border-[#E6E6EE] rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#5B5EF4]" />
         <div className="flex flex-col gap-2 overflow-y-auto">
           {filtered.map((meal) => (
-            <button
-              key={meal.meal_id}
-              onClick={() => onSelect(meal)}
-              className="flex items-center justify-between text-left px-4 py-3 border border-[#E6E6EE] rounded-xl hover:border-[#5B5EF4] transition-colors"
-            >
+            <button key={meal.meal_id} onClick={() => onSelect(meal)}
+              className="flex items-center justify-between text-left px-4 py-3 border border-[#E6E6EE] rounded-xl hover:border-[#5B5EF4] transition-colors">
               <p className="text-sm font-medium text-black">{meal.name}</p>
               <div className="flex gap-4 text-xs text-[#72728A]">
-                <span>{meal.calories} calories</span>
-                <span>{meal.protein}g Protein</span>
-                <span>{meal.carbs}g Carbs</span>
-                <span>{meal.fats}g Fats</span>
+                <span>{meal.calories} kcal</span>
+                <span>{meal.protein}g P</span>
+                <span>{meal.carbs}g C</span>
+                <span>{meal.fats}g F</span>
               </div>
             </button>
           ))}
@@ -70,7 +62,7 @@ function MealBrowser({ onSelect, onClose }: { onSelect: (meal: Meal) => void; on
 
 export default function CreateMealPlan() {
   const [planName, setPlanName] = useState("");
-  const [selectedDay, setSelectedDay] = useState("Monday");
+  const [selectedDay, setSelectedDay] = useState("Mon");
   const [selectedType, setSelectedType] = useState("breakfast");
   const [slots, setSlots] = useState<MealSlot[]>([]);
   const [showBrowser, setShowBrowser] = useState(false);
@@ -91,7 +83,15 @@ export default function CreateMealPlan() {
     if (slots.length === 0) { setError("Add at least one meal."); return; }
     setError(null);
     try {
-      await axios.post(`${BASE_URL}/nutrition/meal-plans/create`, { plan_name: planName, meals: slots }, { withCredentials: true });
+      await axios.post(`${BASE_URL}/nutrition/meal-plans/create`, {
+        plan_name: planName,
+        meals: slots.map(({ day, meal_type, meal_id, servings }) => ({
+          day_of_week: day,
+          meal_type,
+          meal_id,
+          servings,
+        }))
+      }, { withCredentials: true });
       setSuccess(true);
       setPlanName("");
       setSlots([]);
@@ -113,29 +113,28 @@ export default function CreateMealPlan() {
       {error && <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3">{error}</div>}
 
       <div className="flex gap-6 items-start">
-
         <div className="flex flex-col gap-4 flex-1">
-  <div className="flex flex-col gap-1.5">
-    <label className="text-xs font-semibold text-[#72728A] uppercase tracking-wider">Plan Name</label>
-    <input placeholder="e.g. High Protein Week" value={planName} onChange={(e) => { setPlanName(e.target.value); setSuccess(false); }} className={inputClass} />
-  </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-[#72728A] uppercase tracking-wider">Plan Name</label>
+            <input placeholder="e.g. High Protein Week" value={planName} onChange={(e) => { setPlanName(e.target.value); setSuccess(false); }} className={inputClass} />
+          </div>
 
-  <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-[#72728A] uppercase tracking-wider">Add a Meal</label>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-[#72728A] uppercase tracking-wider">Add a Meal</label>
             <p className="text-xs text-[#72728A]">Select a day and meal type, then click Add Meal to pick from the library.</p>
             <div className="flex gap-3">
-            <select value={selectedDay} onChange={(e) => setSelectedDay(e.target.value)} className={inputClass}>
+              <select value={selectedDay} onChange={(e) => setSelectedDay(e.target.value)} className={inputClass}>
                 {DAYS.map((d) => <option key={d}>{d}</option>)}
-            </select>
-            <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)} className={`${inputClass} capitalize`}>
+              </select>
+              <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)} className={`${inputClass} capitalize`}>
                 {MEAL_TYPES.map((t) => <option key={t}>{t}</option>)}
-            </select>
-            <button onClick={() => setShowBrowser(true)} className="shrink-0 bg-[#5B5EF4] text-white text-sm font-medium px-4 py-2.5 rounded-xl hover:bg-[#4B4EE4] transition-colors">
+              </select>
+              <button onClick={() => setShowBrowser(true)} className="shrink-0 bg-[#5B5EF4] text-white text-sm font-medium px-4 py-2.5 rounded-xl hover:bg-[#4B4EE4] transition-colors">
                 + Add Meal
-            </button>
+              </button>
             </div>
+          </div>
         </div>
-    </div>
 
         <div className="w-80 shrink-0 bg-white border border-[#E6E6EE] rounded-2xl p-5 flex flex-col gap-3">
           <p className="text-sm font-semibold text-black">
