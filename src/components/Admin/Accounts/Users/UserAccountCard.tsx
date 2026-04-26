@@ -19,14 +19,14 @@ const UserAccountCard = ({
   const showRestore = user.account_status === "suspended" || user.account_status === "deactivated";
 
   return (
-    <div className="flex h-full flex-col rounded-[20px] border border-default-200 bg-default-50 p-4">
-      <div className="space-y-3">
-        <div className="flex items-start justify-between gap-3">
+    <div className="flex h-full flex-col rounded-[20px] border border-default-200 bg-default-50 p-3">
+      <div className="space-y-2">
+        <div className="flex items-start justify-between gap-1">
           <div className="min-w-0">
-            <h3 className="truncate text-base font-semibold text-default-900">
+            <h3 className="truncate text-[16px] font-semibold text-default-900">
               {user.name || `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim() || "Unknown user"}
             </h3>
-            <p className="truncate text-sm text-default-600">{user.email}</p>
+            <p className="truncate text-[13.125px] text-default-600">{user.email}</p>
           </div>
 
           <span className="shrink-0 rounded-full border border-default-200 bg-white px-3 py-1 text-xs font-medium text-default-700">
@@ -34,7 +34,7 @@ const UserAccountCard = ({
           </span>
         </div>
 
-        <div className="flex flex-wrap gap-2 text-xs text-default-600">
+        <div className="flex flex-wrap gap-2 text-[13.125px] text-default-600">
           <span className="rounded-full border border-default-200 bg-white px-2.5 py-1">
             Coach: {formatBooleanLabel(user.is_coach)}
           </span>

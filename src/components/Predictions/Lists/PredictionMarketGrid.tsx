@@ -28,7 +28,7 @@ export default function PredictionMarketGrid({
     }
 
     return (
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <div className="grid grid-cols-2 gap-2">
             {markets.map((market) => (
                 <PredictionMarketCard
                     key={market.market_id}

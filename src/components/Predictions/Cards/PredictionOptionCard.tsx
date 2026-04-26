@@ -46,7 +46,7 @@ export default function PredictionOptionCard({
                 : "border-rose-200 bg-rose-50/60"
                 }`}
         >
-            <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start justify-between gap-1">
                 <div className="flex items-center gap-3">
                     <div
                         className={`rounded-2xl p-2.5 ${isYes
@@ -57,7 +57,7 @@ export default function PredictionOptionCard({
                         <Icon className="h-4 w-4" strokeWidth={2.2} />
                     </div>
                     <div>
-                        <p className="text-base font-semibold text-foreground">
+                        <p className="text-[13.125px] font-semibold text-foreground">
                             {label}
                         </p>
                         <p className="text-[11.25px] text-foreground/55">

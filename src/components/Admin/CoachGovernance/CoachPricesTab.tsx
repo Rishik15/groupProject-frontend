@@ -138,7 +138,7 @@ const CoachPricesTab = () => {
             </p>
           </div>
 
-          <div className="flex flex-col gap-3 lg:min-w-[340px]">
+          <div className="flex flex-col gap-3">
             <input
               value={searchValue}
               onChange={(event) => setSearchValue(event.target.value)}
@@ -147,7 +147,7 @@ const CoachPricesTab = () => {
             />
 
             <div className="flex flex-wrap gap-2">
-              <Button onPress={() => void loadRequests()} isDisabled={loading}>
+              <Button onPress={() => void loadRequests()} isDisabled={loading} className={"bg-[#5B5EF4]"}>
                 <span className="inline-flex items-center gap-2">
                   <RefreshCw className={loading ? "h-4 w-4 animate-spin" : "h-4 w-4"} />
                   Refresh

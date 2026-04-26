@@ -43,9 +43,9 @@ const EngagementAnalytics = ({ analytics }: EngagementAnalyticsProps) => {
   const maxValue = Math.max(...metrics.map((metric) => metric.value), 1);
 
   return (
-    <section className="space-y-4" aria-labelledby="dashboard-engagement-heading">
+    <section className="space-y-2" aria-labelledby="dashboard-engagement-heading">
       <div>
-        <h2 id="dashboard-engagement-heading" className="text-xl font-semibold text-default-900">
+        <h2 id="dashboard-engagement-heading" className="text-[16px] font-semibold text-default-900">
           Engagement Analytics
         </h2>
         <p className="mt-1 text-sm text-default-600">
@@ -53,18 +53,18 @@ const EngagementAnalytics = ({ analytics }: EngagementAnalyticsProps) => {
         </p>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid gap-2 grid-cols-3">
         {metrics.map((metric) => {
           const Icon = metric.icon;
           const percentage = Math.max(8, Math.round((metric.value / maxValue) * 100));
 
           return (
             <Card key={metric.id} className="rounded-[24px] border border-default-200 bg-white shadow-sm">
-              <div className="flex h-full flex-col gap-4 p-5">
+              <div className="flex flex-col gap-4 p-1">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-sm font-medium text-default-600">{metric.title}</p>
-                    <p className="mt-3 text-3xl font-semibold tracking-tight text-default-900">
+                    <p className="text-[13.125px] font-medium text-default-600">{metric.title}</p>
+                    <p className="mt-3 text-[24px] font-semibold tracking-tight text-default-900">
                       {metric.value.toLocaleString()}
                     </p>
                   </div>
@@ -73,14 +73,14 @@ const EngagementAnalytics = ({ analytics }: EngagementAnalyticsProps) => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
+                <div className="">
                   <div className="h-3 overflow-hidden rounded-full bg-default-100">
                     <div
                       className="h-full rounded-full bg-default-900 transition-all"
                       style={{ width: `${percentage}%` }}
                     />
                   </div>
-                  <p className="text-sm leading-6 text-default-500">{metric.helperText}</p>
+                  <p className="text-[13.125px] leading-6 text-default-500">{metric.helperText}</p>
                 </div>
               </div>
             </Card>

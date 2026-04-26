@@ -28,7 +28,7 @@ const WorkoutCard = ({
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-2 text-xs text-default-600">
+        <div className="flex flex-wrap gap-2 text-xs text-default-600 pb-2">
           <span className="rounded-full border border-default-200 bg-white px-3 py-1">
             {visibilityLabel}
           </span>

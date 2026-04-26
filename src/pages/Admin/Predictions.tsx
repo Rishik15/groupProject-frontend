@@ -41,6 +41,10 @@ const toPredictionMarket = (market: AdminPrediction): PredictionMarket => ({
     cancel_reviewed_at: null,
     cancel_review_note: market.cancel_review_note,
     result: market.settlement_result,
+    yes_bets: market.yes_bets,
+    no_bets: market.no_bets,
+    yes_points: market.yes_points,
+    no_points: market.no_points,
     total_bets: market.total_bets,
     total_points: market.total_points,
     created_at: market.created_at,
@@ -280,59 +284,62 @@ export default function Predictions() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 px-36 py-10">
-            <div className="mx-auto flex max-w-7xl flex-col gap-8">
-                <PredictionAdminHeaderBlock
-                    summaryCards={summaryCards}
-                    isLoading={isLoading}
-                    isRefreshing={isRefreshing}
-                    onRefresh={handleRefresh}
-                />
+        <div>
+            <PredictionAdminHeaderBlock
+                summaryCards={summaryCards}
+                isLoading={isLoading}
+                isRefreshing={isRefreshing}
+                onRefresh={handleRefresh}
+            />
 
-                <PredictionAdminContent
-                    activeTab={activeTab}
-                    reviewMarkets={queues.review}
-                    settlementMarkets={queues.settlement}
-                    cancelReviewMarkets={queues.cancelReview}
-                    pendingMarketId={pendingMarketId}
-                    pageError={pageError}
-                    isLoading={isLoading}
-                    onTabChange={setActiveTab}
-                    onApprove={handleApprove}
-                    onReject={handleReject}
-                    onOpenSettlement={openSettlementModal}
-                    onApproveCancel={(market) =>
-                        openCancelReviewModal(market, "approve")
-                    }
-                    onRejectCancel={(market) =>
-                        openCancelReviewModal(market, "reject")
-                    }
+            <div className="min-h-screen bg-slate-50 px-36 py-4">
+                <div className="mx-auto flex max-w-7xl flex-col gap-8">
+
+                    <PredictionAdminContent
+                        activeTab={activeTab}
+                        reviewMarkets={queues.review}
+                        settlementMarkets={queues.settlement}
+                        cancelReviewMarkets={queues.cancelReview}
+                        pendingMarketId={pendingMarketId}
+                        pageError={pageError}
+                        isLoading={isLoading}
+                        onTabChange={setActiveTab}
+                        onApprove={handleApprove}
+                        onReject={handleReject}
+                        onOpenSettlement={openSettlementModal}
+                        onApproveCancel={(market) =>
+                            openCancelReviewModal(market, "approve")
+                        }
+                        onRejectCancel={(market) =>
+                            openCancelReviewModal(market, "reject")
+                        }
+                    />
+                </div>
+
+                <PredictionAdminModals
+                    settlementMarket={settlementMarket}
+                    cancelReviewMarket={cancelReviewMarket}
+                    cancelReviewMode={cancelReviewMode}
+                    settlementError={settlementError}
+                    cancelReviewError={cancelReviewError}
+                    isSettlementSubmitting={isSettlementSubmitting}
+                    isCancelReviewSubmitting={isCancelReviewSubmitting}
+                    onCloseSettlementModal={() => {
+                        if (!isSettlementSubmitting) {
+                            setSettlementMarket(null);
+                            setSettlementError(null);
+                        }
+                    }}
+                    onCloseCancelReviewModal={() => {
+                        if (!isCancelReviewSubmitting) {
+                            setCancelReviewMarket(null);
+                            setCancelReviewError(null);
+                        }
+                    }}
+                    onSettlementSubmit={handleSettlementSubmit}
+                    onCancelReviewSubmit={handleCancelReviewSubmit}
                 />
             </div>
-
-            <PredictionAdminModals
-                settlementMarket={settlementMarket}
-                cancelReviewMarket={cancelReviewMarket}
-                cancelReviewMode={cancelReviewMode}
-                settlementError={settlementError}
-                cancelReviewError={cancelReviewError}
-                isSettlementSubmitting={isSettlementSubmitting}
-                isCancelReviewSubmitting={isCancelReviewSubmitting}
-                onCloseSettlementModal={() => {
-                    if (!isSettlementSubmitting) {
-                        setSettlementMarket(null);
-                        setSettlementError(null);
-                    }
-                }}
-                onCloseCancelReviewModal={() => {
-                    if (!isCancelReviewSubmitting) {
-                        setCancelReviewMarket(null);
-                        setCancelReviewError(null);
-                    }
-                }}
-                onSettlementSubmit={handleSettlementSubmit}
-                onCancelReviewSubmit={handleCancelReviewSubmit}
-            />
         </div>
     );
 }
