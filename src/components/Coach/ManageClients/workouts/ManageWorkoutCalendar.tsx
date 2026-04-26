@@ -122,7 +122,7 @@ export default function ManageWorkoutCalendar({
 
   return (
     <section
-      className="coss-calendar-scope overflow-hidden rounded-2xl bg-white shadow-sm"
+      className="coss-calendar-scope overflow-hidden rounded-2xl bg-white shadow-sm "
       style={{ border: "1px solid #E5E7EB" }}
     >
       <style>
