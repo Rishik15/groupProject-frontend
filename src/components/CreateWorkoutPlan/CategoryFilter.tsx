@@ -2,14 +2,14 @@
 
 const CATEGORIES = [
   "All",
-  "Strength",
-  "Cardio",
-  "HIIT",
-  "Yoga",
-  "Flexibility",
-  "Calisthenics",
-  "Boxing",
-  "Powerlifting",
+  "Barbell",
+  "Dumbbell",
+  "Kettlebell",
+  "Machine",
+  "Cable",
+  "Bodyweight",
+  "Resistance Band",
+  "Treadmill",
 ];
 
 interface CategoryFilterProps {

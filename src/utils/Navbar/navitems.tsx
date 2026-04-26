@@ -31,6 +31,11 @@ export const getNavItems = (activeMode: string | null, parent: string) => {
         route: `${parent}/chat`,
         icon: <MessageCircle className="w-4 h-4" />,
       },
+      {
+        label: "Exercises",
+        route: `${parent}/exercises`,
+        icon: <BicepsFlexed className="w-4 h-4" />,
+      },
     ];
   }
   else if (activeMode === "admin") {

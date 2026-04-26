@@ -1,30 +1,18 @@
-import axios from "axios";
-import type { Coach } from "../../utils/Interfaces/coachquery.ts";
-import type { CoachQuery } from "../../utils/Interfaces/coachquery.ts";
+import api from "../api";
+import type { Coach, CoachQuery } from "../../utils/Interfaces/coachquery";
 
-const BASE_URL = "http://localhost:8080";
-
-// sends filter payload to backend and returns matching coaches
 export async function searchCoaches(
   query: CoachQuery,
 ): Promise<{ coaches: Coach[]; count: number }> {
   console.log("sending to backend:", query);
-  const { data } = await axios.post(
-    `${BASE_URL}/coach/search`,
+
+  const { data } = await api.post(
+    "/coach/search",
     query,
     {
-      withCredentials: true,
-      headers: { "Content-Type": "application/json" },
-    },
+      skipAuthGate: true,
+    } as any,
   );
+
   return data;
 }
-
-/*
-
-const { data } = await axios.post(`${BASE_URL}/coach/search`, query, {
-  withCredentials: true,
-  headers: { "Content-Type": "application/json" },
-});
-
-*/

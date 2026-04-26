@@ -6,33 +6,33 @@ import Workouts from "../Workouts/Workouts";
 import ClientDashBoard from "./Dashboard";
 import Settings from "../Settings/Settings";
 import Chat from "../Chat/Chat";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getNotifications } from "../../services/notifications/getNotifications";
 import { toast } from "@heroui/react";
-import { useRef } from "react";
-import CreateWorkoutPlan from "./CreateWorkoutPlan";
+import CreateWorkoutPlan from "../CreateWorkoutPlan/CreateWorkoutPlan";
 import { useAuth } from "../../utils/auth/AuthContext";
 import Recommendation from "./Recommendation";
 import ExerciseLibrary from "../ExerciseLibrary/ExerciseLibrary";
 import Predictions from "./Predictions";
 
 const ClientLayout = () => {
-  const { user, activeMode } = useAuth();
+  const { user } = useAuth();
+
+  const mode = "client" as const;
 
   const [notifications, setNotifications] = useState<any[]>([]);
   const count = notifications.length;
 
-  const fetchedModeRef = useRef<string | null>(null);
+  const hasFetchedRef = useRef(false);
 
   useEffect(() => {
-    if (!activeMode) return;
-    if (fetchedModeRef.current === activeMode) return;
+    if (hasFetchedRef.current) return;
 
-    fetchedModeRef.current = activeMode;
+    hasFetchedRef.current = true;
 
     const fetchNotifications = async () => {
       try {
-        const data = await getNotifications(activeMode);
+        const data = await getNotifications(mode);
 
         setNotifications(data.notifications || []);
 
@@ -48,12 +48,13 @@ const ClientLayout = () => {
     };
 
     fetchNotifications();
-  }, [activeMode]);
+  }, []);
 
   return (
     <section className="min-h-screen">
       <Navbar
         parent="/client"
+        mode={mode}
         name={user ? `${user.first_name} ${user.last_name}` : ""}
         email={user?.email || ""}
         notifications={notifications}

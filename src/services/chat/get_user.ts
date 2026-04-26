@@ -1,10 +1,11 @@
-import axios from "axios";
+import api from "../api";
 
 export async function get_users(activeMode: "client" | "coach") {
   try {
-    const res = await axios.get("http://localhost:8080/chat/get_users", {
-      params: { mode: activeMode },
-      withCredentials: true,
+    const res = await api.get("/chat/get_users", {
+      params: {
+        mode: activeMode,
+      },
     });
 
     return res.data;

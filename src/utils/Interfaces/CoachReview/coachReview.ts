@@ -17,6 +17,7 @@ export interface CoachReviewResponse {
   reviews: CoachReview[];
   coach_first_name: string;
   coach_last_name: string;
+  can_review: boolean; 
 }
 
 export interface LeaveCoachReviewPayload {

@@ -27,6 +27,7 @@ interface CoachSummaryStepProps {
   bio: string;
   certifications: CoachCertificationValues[];
   profileDescription: string;
+  isClientBecomingCoach?: boolean;
 }
 
 const summaryCardClassName =
@@ -77,8 +78,8 @@ function CoachSummaryStep({
   bio,
   certifications,
   profileDescription,
+  isClientBecomingCoach = false,
 }: CoachSummaryStepProps) {
-  // Group availability by day so the summary is easier to scan than one long list.
   const availabilityByDay = coachDaysOfWeek
     .map((dayOfWeek) => ({
       dayOfWeek,
@@ -98,7 +99,7 @@ function CoachSummaryStep({
 
           <div className="flex-1">
             <h2 className="text-[13.125px] font-semibold text-black">
-              Coach Profile Created
+              Coach Application Ready
             </h2>
 
             <p className="mt-1 text-[13.125px] text-[#6E728C]">
@@ -312,12 +313,15 @@ function CoachSummaryStep({
 
           <div>
             <h3 className="text-[13.125px] font-semibold text-black">
-              Next: Personal Profile
+              {isClientBecomingCoach
+                ? "Ready to Submit"
+                : "Next: Basic Profile"}
             </h3>
 
             <p className="mt-1 max-w-130 text-[13.125px] leading-7 text-[#6E728C]">
-              Your coaching details are saved. Continue to your personal profile
-              so we can collect the shared information needed for onboarding.
+              {isClientBecomingCoach
+                ? "Your coach application will be sent to the admin with all the information you provided."
+                : "Your coach application will be sent to the admin. Before finishing, we also need your basic client profile info so your account works across the platform."}
             </p>
           </div>
         </div>

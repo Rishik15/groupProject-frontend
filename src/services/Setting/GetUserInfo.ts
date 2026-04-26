@@ -1,9 +1,7 @@
-import axios from "axios";
+import api from "../api";
 
 export async function GetUserInfo() {
-  const res = await axios.get("http://localhost:8080/client/getInfo", {
-    withCredentials: true,
-  });
+  const res = await api.get("/client/getInfo");
 
   return res.data;
 }
