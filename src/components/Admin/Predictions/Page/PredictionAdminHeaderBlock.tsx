@@ -27,13 +27,13 @@ export default function PredictionAdminHeaderBlock({
 }: PredictionAdminHeaderBlockProps) {
     return (
         <div>
-            <div className="px-36 border-b border-neutral-200 bg-white">
-                <div className="flex flex-col gap-6 p-3 flex-row items-start justify-between">
+            <div className="justify-between items-center px-38 py-4 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+                <div className="flex flex-col gap-6 flex-row items-start justify-between">
                     <div className="space-y-2">
-                        <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
+                        <h1 className="text-[24px] font-semibold tracking-tight">
                             Prediction Control Center
                         </h1>
-                        <p className="max-w-3xl text-base text-slate-600">
+                        <p className="max-w-3xl text-[13.125px] leading-6">
                             Review submitted markets, settle finalized outcomes,
                             and manage pending cancellation requests from one
                             moderation workspace.

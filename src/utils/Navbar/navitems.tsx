@@ -61,11 +61,6 @@ export const getNavItems = (activeMode: string | null, parent: string) => {
         route: `${parent}/exercises/`,
         icon: <Wrench className="w-4 h-4" />,
       },
-      {
-        label: "Workouts",
-        route: `${parent}/workouts/`,
-        icon: <Dumbbell className="w-4 h-4" />,
-      },
     ];
   }
 

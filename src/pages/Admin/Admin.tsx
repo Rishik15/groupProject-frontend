@@ -6,7 +6,6 @@ import CoachGovernance from "./CoachGovernance";
 import Predictions from "./Predictions";
 import Reports from "./Reports";
 import Exercises from "./Exercises";
-import Workouts from "./Workouts";
 
 const AdminLayout = () => {
     return (
@@ -29,7 +28,6 @@ const AdminLayout = () => {
                     <Route path="prediction" element={<Predictions />} />
                     <Route path="reports" element={<Reports />} />
                     <Route path="exercises" element={<Exercises />} />
-                    <Route path="workouts" element={<Workouts />} />
                 </Routes>
             </div>
         </section>

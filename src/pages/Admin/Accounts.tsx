@@ -25,11 +25,11 @@ const Accounts = () => {
     const [selectedTab, setSelectedTab] = useState<AccountsTab>("users");
     return (
         <div>
-            <div className="py-6 px-36 border-b border-neutral-200 bg-white">
-                <h1 className="text-3xl font-semibold tracking-tight text-default-900">
+            <div className="justify-between items-center px-38 py-4 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+                <h1 className="text-[24px] font-semibold tracking-tight">
                     Account oversight
                 </h1>
-                <p className="mt-2 max-w-3xl text-sm leading-6 text-default-600">
+                <p className="mt-2 text-[13.125px] leading-6">
                     Review platform accounts, manage suspension and deactivation
                     flows, and inspect the active coach roster from one shared page.
                 </p>
@@ -45,7 +45,7 @@ const Accounts = () => {
                                     <Button
                                         key={tab.key}
                                         onPress={() => setSelectedTab(tab.key)}
-                                        className={isActive ? "bg-[#5B5EF4] font-semibold" : "bg-[#5B5EF4] text-default-700"}
+                                        className={isActive ? "bg-[#5B5EF4] font-semibold" : "bg-[#5B5EF4]"}
                                     >
                                         {tab.label}
                                     </Button>

@@ -34,7 +34,6 @@ const accountStatusOptions: Array<{
 }> = [
     { value: "all", label: "All standings" },
     { value: "active", label: "Active" },
-    { value: "suspended", label: "Suspended" },
     { value: "deactivated", label: "Deactivated" },
   ];
 
