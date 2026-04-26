@@ -80,7 +80,7 @@ const NutritionTabs = () => {
       {activeTab === "plans" && (
         <div style={{ display: "flex", gap: "8px", paddingLeft: "4px" }}>
           <button style={subTabStyle(activeSubTab === "meal-plans")} onClick={() => setActiveSubTab("meal-plans")}>Meal Plans</button>
-          <button style={subTabStyle(activeSubTab === "assigned-plans")} onClick={() => setActiveSubTab("assigned-plans")}>Assigned Plans</button>
+          <button style={subTabStyle(activeSubTab === "assigned-plans")} onClick={() => setActiveSubTab("assigned-plans")}>My Plans</button>
           <button style={subTabStyle(activeSubTab === "create-plan")} onClick={() => setActiveSubTab("create-plan")}>Create Plan</button>
         </div>
       )}
