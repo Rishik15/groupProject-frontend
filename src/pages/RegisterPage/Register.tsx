@@ -41,14 +41,18 @@ const Register = () => {
 
       const data = await register(name, email, password, selectedRole);
 
-      const roles = data.roles ?? (data.role ? [data.role] : []);
+      const roles = data.roles ?? [];
 
       setAuth({
         user: data.user,
         roles,
+        coachApplicationStatus:
+          data.coachApplicationStatus ??
+          data.coach_application_status ??
+          "none",
       });
 
-      if (roles.includes("coach")) {
+      if (selectedRole === "coach") {
         navigate("/onboarding/coach");
       } else {
         navigate("/onboarding/client");

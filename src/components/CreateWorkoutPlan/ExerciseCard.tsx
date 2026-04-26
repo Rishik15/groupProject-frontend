@@ -3,6 +3,7 @@ export interface Exercise {
   exercise_name: string;
   equipment: string;
   video_url: string | null;
+  description: string
 }
 
 interface ExerciseCardProps {

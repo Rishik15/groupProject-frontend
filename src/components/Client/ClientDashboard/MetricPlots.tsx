@@ -13,6 +13,10 @@ import { getWeight } from "../../../services/dashboard/client/getWeight";
 import { getNutrition } from "../../../services/dashboard/client/getNutrition";
 import { useNavigate } from "react-router-dom";
 
+interface MetricPlotsProps {
+  refreshKey?: number;
+}
+
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
@@ -22,6 +26,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
       </div>
     );
   }
+
   return null;
 };
 
@@ -34,7 +39,8 @@ const ProgressBar = ({
   max: number;
   color: string;
 }) => {
-  const percent = (value / max) * 100;
+  const safeMax = max || 1;
+  const percent = Math.min((value / safeMax) * 100, 100);
 
   return (
     <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -46,9 +52,10 @@ const ProgressBar = ({
   );
 };
 
-const MetricPlots = () => {
+const MetricPlots = ({ refreshKey }: MetricPlotsProps) => {
   const [data, setData] = useState<any[]>([]);
   const [nutrition, setNutrition] = useState<any>(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -68,23 +75,28 @@ const MetricPlots = () => {
     };
 
     const fetchNutrition = async () => {
-      const nutritionData = await getNutrition();
-      setNutrition(nutritionData);
+      try {
+        const nutritionData = await getNutrition();
+        setNutrition(nutritionData);
+      } catch (err) {
+        console.error("Failed to fetch nutrition:", err);
+      }
     };
 
     fetchNutrition();
     fetchWeight();
-  }, []);
+  }, [refreshKey]);
 
   const consumed = nutrition?.consumed || {};
   const target = nutrition?.target || {};
 
-  const formatMacro = (value: any, target: any) => {
+  const formatMacro = (value: any, targetValue: any) => {
     const v = Math.round(Number(value || 0));
-    const t = target ? Math.round(Number(target)) : null;
+    const t = targetValue ? Math.round(Number(targetValue)) : null;
 
     return t ? `${v}g / ${t}g` : `${v}g`;
   };
+
   const format = (val: any) => Math.round(Number(val || 0));
 
   return (
@@ -92,13 +104,15 @@ const MetricPlots = () => {
       <div className="bg-white py-6 px-10 rounded-3xl flex flex-col gap-8 w-full">
         <div className="flex justify-between items-center">
           <div className="font-semibold text-[14px]">Weight Progress</div>
+
           <div className="text-[12px] bg-gray-300 px-2 rounded-2xl flex flex-col items-center">
             {data.length > 0
-              ? data[data.length - 1].weight - data[0].weight
+              ? Math.round(data[data.length - 1].weight - data[0].weight)
               : 0}
             lbs
           </div>
         </div>
+
         <ResponsiveContainer width="100%" height={180}>
           <LineChart
             data={data}
@@ -140,13 +154,14 @@ const MetricPlots = () => {
       </div>
 
       <div className="bg-white p-8 rounded-3xl flex flex-col gap-3 w-120 mx-auto">
-        <div className="font-semibold text-[13px]">Today's Macros</div>
+        <div className="font-semibold text-[13px]">Today&apos;s Macros</div>
 
         <div className="flex flex-col gap-1">
           <div className="flex justify-between text-[12px]">
             <span className="text-gray-600">Protein</span>
             <span>{formatMacro(consumed.protein, target.protein)}</span>
           </div>
+
           <ProgressBar
             value={consumed.protein || 0}
             max={target.protein || 150}
@@ -159,6 +174,7 @@ const MetricPlots = () => {
             <span className="text-gray-600">Carbs</span>
             <span>{formatMacro(consumed.carbs, target.carbs)}</span>
           </div>
+
           <ProgressBar
             value={consumed.carbs || 0}
             max={target.carbs || 200}
@@ -171,6 +187,7 @@ const MetricPlots = () => {
             <span className="text-gray-600">Fat</span>
             <span>{formatMacro(consumed.fat, target.fat)}</span>
           </div>
+
           <ProgressBar
             value={consumed.fat || 0}
             max={target.fat || 65}

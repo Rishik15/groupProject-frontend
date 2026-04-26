@@ -1,13 +1,11 @@
-import axios from "axios";
+import api from "../api";
 
 export const getNotifications = async (mode: string | null) => {
-  const res = await axios.get(
-    "http://localhost:8080/notifications/getNotifications",
-    {
-      params: { mode }, 
-      withCredentials: true,
+  const res = await api.get("/notifications/getNotifications", {
+    params: {
+      mode,
     },
-  );
+  });
 
   return res.data;
 };

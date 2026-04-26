@@ -1,89 +1,86 @@
 import { Meter, Label } from "@heroui/react";
 
 interface MacroValue {
-    current: number;
-    goal: number;
+  current: number;
+  goal: number | null;
 }
 
 interface MacrosProps {
-    protein: MacroValue;
-    carbs: MacroValue;
-    fats: MacroValue;
+  protein: MacroValue;
+  carbs: MacroValue;
+  fats: MacroValue;
 }
 
+interface MacroRowProps {
+  label: string;
+  value: MacroValue;
+  fallbackMax: number;
+  fillClassName: string;
+}
+
+const MacroRow = ({
+  label,
+  value,
+  fallbackMax,
+  fillClassName,
+}: MacroRowProps) => {
+  const hasGoal = typeof value.goal === "number" && value.goal > 0;
+
+  const meterMaxValue = hasGoal ? value.goal! : fallbackMax;
+  const meterValue = Math.min(value.current, meterMaxValue);
+
+  return (
+    <Meter
+      aria-label={label}
+      className="w-full"
+      value={meterValue}
+      maxValue={meterMaxValue}
+      size="sm"
+    >
+      <div className="mb-1 flex items-center justify-between">
+        <Label className="text-[11.25px] text-[#72728A]">{label}</Label>
+
+        <span className="text-[11.25px] font-medium text-[#0F0F14]">
+          {hasGoal ? `${value.current}g / ${value.goal}g` : `${value.current}g`}
+        </span>
+      </div>
+
+      <Meter.Track className="rounded-full bg-[#E9E9F4]">
+        <Meter.Fill className={`rounded-full ${fillClassName}`} />
+      </Meter.Track>
+    </Meter>
+  );
+};
+
 const Macros = ({ protein, carbs, fats }: MacrosProps) => {
-    return (
-        <div className="rounded-2xl border border-neutral-300 bg-white p-6 w-full">
-            <div className="text-[15px] font-semibold text-[#0F0F14]">
-                Macronutrients
-            </div>
+  return (
+    <div className="rounded-2xl border border-neutral-300 bg-white p-6 w-full">
+      <div className="text-[15px] font-semibold text-[#0F0F14]">
+        Macronutrients
+      </div>
 
-            <div className="mt-6 space-y-4">
-                <Meter
-                    aria-label="Protein"
-                    className="w-full"
-                    value={protein.current}
-                    maxValue={protein.goal}
-                    size="sm"
-                >
-                    <div className="mb-1 flex items-center justify-between">
-                        <Label className="text-[11.25px] text-[#72728A]">
-                            Protein
-                        </Label>
-                        <span className="text-[11.25px] font-medium text-[#0F0F14]">
-                            {protein.current}g / {protein.goal}g
-                        </span>
-                    </div>
-
-                    <Meter.Track className="rounded-full bg-[#E9E9F4]">
-                        <Meter.Fill className="rounded-full bg-[#5E5EF4]" />
-                    </Meter.Track>
-                </Meter>
-
-                <Meter
-                    aria-label="Carbs"
-                    className="w-full"
-                    value={carbs.current}
-                    maxValue={carbs.goal}
-                    size="sm"
-                >
-                    <div className="mb-1 flex items-center justify-between">
-                        <Label className="text-[11.25px] text-[#72728A]">
-                            Carbs
-                        </Label>
-                        <span className="text-[11.25px] font-medium text-[#0F0F14]">
-                            {carbs.current}g / {carbs.goal}g
-                        </span>
-                    </div>
-
-                    <Meter.Track className="rounded-full bg-[#E9E9F4]">
-                        <Meter.Fill className="rounded-full bg-[#22C55E]" />
-                    </Meter.Track>
-                </Meter>
-
-                <Meter
-                    aria-label="Fat"
-                    className="w-full"
-                    value={fats.current}
-                    maxValue={fats.goal}
-                    size="sm"
-                >
-                    <div className="mb-1 flex items-center justify-between">
-                        <Label className="text-[11.25px] text-[#72728A]">
-                            Fat
-                        </Label>
-                        <span className="text-[11.25px] font-medium text-[#0F0F14]">
-                            {fats.current}g / {fats.goal}g
-                        </span>
-                    </div>
-
-                    <Meter.Track className="rounded-full bg-[#E9E9F4]">
-                        <Meter.Fill className="rounded-full bg-[#F59E0B]" />
-                    </Meter.Track>
-                </Meter>
-            </div>
-        </div>
-    );
+      <div className="mt-6 space-y-4">
+        <MacroRow
+          label="Protein"
+          value={protein}
+          fallbackMax={150}
+          fillClassName="bg-[#5E5EF4]"
+        />
+        <MacroRow
+          label="Carbs"
+          value={carbs}
+          fallbackMax={200}
+          fillClassName="bg-[#22C55E]"
+        />
+        <MacroRow
+          label="Fat"
+          value={fats}
+          fallbackMax={65}
+          fillClassName="bg-[#F59E0B]"
+        />
+      </div>
+    </div>
+  );
 };
 
 export default Macros;

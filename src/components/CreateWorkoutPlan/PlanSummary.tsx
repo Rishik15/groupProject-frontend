@@ -27,7 +27,8 @@ export default function PlanSummary({
         disabled={selected.length === 0 || !planName.trim()}
         className="w-full bg-[#5B5EF4] text-white text-sm font-medium py-2.5 rounded-xl hover:bg-[#4B4EE4] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        Save Workout Plan ({selected.length} exercise{selected.length !== 1 ? "s" : ""})
+        Save Workout Plan ({selected.length} exercise
+        {selected.length !== 1 ? "s" : ""})
       </button>
     </div>
   );

@@ -24,8 +24,8 @@ const WellnessCheck = () => {
   const [rewardOpen, setRewardOpen] = useState(false);
 
   useEffect(() => {
-    if (authLoading) return;
-    if (!authenticated) return;
+    if (!hasCheckedAuth) return;
+    if (status !== "authenticated") return;
 
     const surveyStatus = async () => {
       try {
@@ -38,7 +38,7 @@ const WellnessCheck = () => {
     };
 
     surveyStatus();
-  }, [authenticated, authLoading]);
+  }, [status, hasCheckedAuth]);
 
   const sendWellness = async (): Promise<void> => {
     const payload = {
@@ -64,7 +64,7 @@ const WellnessCheck = () => {
     }
   };
 
-  if (!authenticated) return null;
+  if (status !== "authenticated") return null;
 
   return (
     <>
