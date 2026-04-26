@@ -1,37 +1,63 @@
 import { Tabs } from "@heroui/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CalorieCount from "./Today/CalorieCount";
 import Macros from "./Today/Macros";
 import MealsToday from "./Today/MealsToday";
 import WeeklyCalories from "./Week/WeeklyCalories";
-import { getTodayNutritionSummary } from "@/services/ManageClients/nutrition/getNutrition";
 import type { TodayNutritionSummary } from "@/utils/Interfaces/Nutrition/nutrition";
+import {
+  getTodayNutritionSummary,
+  getWeeklyCaloriesSummary,
+  type WeeklyCaloriesSummary,
+} from "@/services/ManageClients/nutrition/getNutrition";
 import { socket } from "@/services/sockets/socket";
 
-const NutritionTabs = ({ contract_Id }: { contract_Id: number }) => {
-  const [summary, setSummary] = useState<TodayNutritionSummary | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+interface NutritionTabsProps {
+  contract_Id: number;
+  refreshKey?: number;
+}
 
-  const fetchTodayNutrition = async () => {
+const NutritionTabs = ({ contract_Id, refreshKey = 0 }: NutritionTabsProps) => {
+  const [todaySummary, setTodaySummary] =
+    useState<TodayNutritionSummary | null>(null);
+
+  const [weeklySummary, setWeeklySummary] =
+    useState<WeeklyCaloriesSummary | null>(null);
+
+  const [isTodayLoading, setIsTodayLoading] = useState(true);
+  const [isWeeklyLoading, setIsWeeklyLoading] = useState(true);
+
+  const fetchNutritionData = useCallback(async () => {
+    if (!contract_Id) return;
+
     try {
-      setIsLoading(true);
-      const data = await getTodayNutritionSummary(contract_Id);
-      setSummary(data);
-    } catch (error) {
-      console.error("Failed to load today nutrition summary", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      setIsTodayLoading(true);
+      setIsWeeklyLoading(true);
 
-  useEffect(() => {
-    fetchTodayNutrition();
+      const [todayData, weeklyData] = await Promise.all([
+        getTodayNutritionSummary(contract_Id),
+        getWeeklyCaloriesSummary(contract_Id),
+      ]);
+
+      setTodaySummary(todayData);
+      setWeeklySummary(weeklyData);
+    } catch (error) {
+      console.error("Failed to load managed nutrition data", error);
+      setTodaySummary(null);
+      setWeeklySummary(null);
+    } finally {
+      setIsTodayLoading(false);
+      setIsWeeklyLoading(false);
+    }
   }, [contract_Id]);
 
   useEffect(() => {
+    fetchNutritionData();
+  }, [fetchNutritionData, refreshKey]);
+
+  useEffect(() => {
     const handleUpdate = () => {
-      console.log("nutrition updated → refetching");
-      fetchTodayNutrition();
+      fetchNutritionData();
     };
 
     socket.on("nutrition_updated", handleUpdate);
@@ -39,24 +65,24 @@ const NutritionTabs = ({ contract_Id }: { contract_Id: number }) => {
     return () => {
       socket.off("nutrition_updated", handleUpdate);
     };
-  }, [contract_Id]);
+  }, [fetchNutritionData]);
 
-  const calorieCurrent = summary?.calories.current ?? 0;
-  const calorieGoal = summary?.calories.goal ?? 2000;
+  const calorieCurrent = todaySummary?.calories.current ?? 0;
+  const calorieGoal = todaySummary?.calories.goal ?? null;
 
-  const protein = summary?.macros.protein ?? { current: 0, goal: 150 };
-  const carbs = summary?.macros.carbs ?? { current: 0, goal: 200 };
-  const fats = summary?.macros.fats ?? { current: 0, goal: 65 };
+  const protein = todaySummary?.macros.protein ?? { current: 0, goal: null };
+  const carbs = todaySummary?.macros.carbs ?? { current: 0, goal: null };
+  const fats = todaySummary?.macros.fats ?? { current: 0, goal: null };
 
-  const todayMeals = summary?.meals ?? [];
+  const todayMeals = todaySummary?.meals ?? [];
 
   return (
     <div className="mx-auto flex w-full flex-col gap-4 py-4">
-      <div className="w-full flex justify-center">
+      <div className="flex w-full justify-center">
         <Tabs className="w-full">
           <Tabs.ListContainer>
             <Tabs.List
-              aria-label="Today"
+              aria-label="Nutrition tabs"
               className="inline-flex w-fit items-center gap-1 rounded-full bg-transparent p-0"
             >
               <Tabs.Tab
@@ -85,25 +111,26 @@ const NutritionTabs = ({ contract_Id }: { contract_Id: number }) => {
             </Tabs.List>
           </Tabs.ListContainer>
 
-          <Tabs.Panel className="mt-5 pt-0 pl-0 pr-0" id="Today">
+          <Tabs.Panel className="mt-5 p-0" id="Today">
             <div className="flex w-full gap-6">
               <CalorieCount Current={calorieCurrent} Goal={calorieGoal} />
               <Macros protein={protein} carbs={carbs} fats={fats} />
             </div>
 
             <div className="mt-6">
-              <MealsToday meals={todayMeals} isLoading={isLoading} />
+              <MealsToday meals={todayMeals} isLoading={isTodayLoading} />
             </div>
           </Tabs.Panel>
 
-          <Tabs.Panel className="mt-5 pt-0 pl-0 pr-0" id="This Week">
-            <WeeklyCalories contract_Id={contract_Id} />
+          <Tabs.Panel className="mt-5 p-0" id="This Week">
+            <WeeklyCalories
+              summary={weeklySummary}
+              isLoading={isWeeklyLoading}
+            />
           </Tabs.Panel>
 
-          <Tabs.Panel className="mt-5 pt-0 pl-0 pr-0" id="Meal Plans">
-            <div className="rounded-2xl border border-dashed border-neutral-300 bg-white p-6">
-              <span className="text-base font-normal text-black">Temp</span>
-            </div>
+          <Tabs.Panel className="mt-5 p-0" id="Meal Plans">
+            <div className="rounded-2xl border border-dashed border-neutral-300 bg-white p-6" />
           </Tabs.Panel>
         </Tabs>
       </div>

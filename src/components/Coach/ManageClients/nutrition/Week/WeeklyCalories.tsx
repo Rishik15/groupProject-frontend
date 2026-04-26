@@ -1,33 +1,19 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Card } from "@heroui/react";
-import { getWeeklyCaloriesSummary } from "@/services/ManageClients/nutrition/getNutrition";
-import type { WeeklyCaloriesSummary } from "@/utils/Nutrition/nutritionWeek";
+import type { WeeklyCaloriesSummary } from "@/services/ManageClients/nutrition/getNutrition";
 
-const WeeklyCalories = ({ contract_Id }: { contract_Id: number }) => {
-  const [summary, setSummary] = useState<WeeklyCaloriesSummary | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+interface WeeklyCaloriesProps {
+  summary: WeeklyCaloriesSummary | null;
+  isLoading: boolean;
+}
 
-  useEffect(() => {
-    const fetchWeeklyData = async () => {
-      try {
-        const data = await getWeeklyCaloriesSummary(contract_Id);
-        setSummary(data);
-      } catch (error) {
-        console.error("Failed to load weekly nutrition summary", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchWeeklyData();
-  }, []);
-
+const WeeklyCalories = ({ summary, isLoading }: WeeklyCaloriesProps) => {
   const maxCalories = useMemo(() => {
     const highestDay = Math.max(
       ...(summary?.days.map((day) => day.calories) ?? [0]),
     );
 
-    return Math.max(highestDay, summary?.goalCalories ?? 2000, 2400);
+    return Math.max(highestDay, summary?.goalCalories ?? 0, 2400);
   }, [summary]);
 
   if (isLoading || !summary) {
@@ -51,7 +37,7 @@ const WeeklyCalories = ({ contract_Id }: { contract_Id: number }) => {
 
         <div className="mt-8">
           <div className="grid grid-cols-[48px_1fr] gap-2">
-            <div className="relative h-[320px] text-[12px] text-[#72728A]">
+            <div className="relative h-80 text-[12px] text-[#72728A]">
               {[2400, 1800, 1200, 600, 0].map((value, index) => (
                 <div
                   key={value}
@@ -72,7 +58,7 @@ const WeeklyCalories = ({ contract_Id }: { contract_Id: number }) => {
               ))}
             </div>
 
-            <div className="relative h-[320px]">
+            <div className="relative h-80">
               {[0, 1, 2, 3, 4].map((line) => (
                 <div
                   key={line}
@@ -88,25 +74,32 @@ const WeeklyCalories = ({ contract_Id }: { contract_Id: number }) => {
                   const heightPercent =
                     maxCalories > 0 ? (day.calories / maxCalories) * 100 : 0;
 
+                  const barHeightPercent = Math.max(heightPercent, 2);
+
                   return (
                     <div
                       key={day.dayKey}
                       className="group relative flex min-w-0 flex-1 flex-col items-center justify-end"
                     >
-                      <div className="pointer-events-none absolute bottom-[88px] z-20 hidden rounded-2xl border border-[#D9D9E8] bg-white px-5 py-3 text-center shadow-md group-hover:block">
-                        <div className="text-[13.125px] font-medium text-[#0F0F14]">
-                          {day.dayLabel}
-                        </div>
-                        <div className="text-[13.125px] font-medium text-[#0F0F14]">
-                          {day.calories} kcal
-                        </div>
-                      </div>
-
-                      <div className="flex h-[280px] w-full items-end justify-center">
+                      <div className="relative flex h-70 w-full items-end justify-center">
                         <div
-                          className="w-full max-w-[120px] rounded-t-[6px] bg-[#5E5EF4] transition-opacity duration-150 group-hover:opacity-90"
+                          className="pointer-events-none absolute z-20 hidden -translate-y-3 rounded-2xl border border-[#D9D9E8] bg-white px-5 py-3 text-center shadow-md group-hover:block"
                           style={{
-                            height: `${Math.max(heightPercent, 2)}%`,
+                            bottom: `${barHeightPercent}%`,
+                          }}
+                        >
+                          <div className="text-[13.125px] font-medium text-[#0F0F14]">
+                            {day.dayLabel}
+                          </div>
+                          <div className="text-[13.125px] font-medium text-[#0F0F14]">
+                            {day.calories} kcal
+                          </div>
+                        </div>
+
+                        <div
+                          className="w-full max-w-30 rounded-t-xl bg-[#5E5EF4] transition-opacity duration-150 group-hover:opacity-90"
+                          style={{
+                            height: `${barHeightPercent}%`,
                           }}
                         />
                       </div>
@@ -139,7 +132,9 @@ const WeeklyCalories = ({ contract_Id }: { contract_Id: number }) => {
 
           <div className="flex h-[60px] flex-1 flex-col items-center justify-center rounded-2xl bg-[#F6F6FA] px-4">
             <div className="text-[13.125px] font-semibold text-[#0F0F14]">
-              {summary.goalCalories.toLocaleString()} kcal
+              {summary.goalCalories !== null
+                ? `${summary.goalCalories.toLocaleString()} kcal`
+                : "No goal set"}
             </div>
             <div className="text-[11.25px] text-[#72728A]">Goal</div>
           </div>

@@ -10,26 +10,7 @@ interface MealsTodayProps {
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
 
-const formatMealTime = (isoString: string) => {
-  const date = new Date(isoString);
-
-  return date.toLocaleTimeString([], {
-    hour: "numeric",
-    minute: "2-digit",
-  });
-};
-
-const getMealTypeFromTime = (isoString: string) => {
-  const date = new Date(isoString);
-  const hour = date.getHours();
-
-  if (hour < 11) return "Breakfast";
-  if (hour < 15) return "Lunch";
-  if (hour < 18) return "Snack";
-  return "Dinner";
-};
-
-const getMealIcon = (mealType: string) => {
+const getMealIcon = (mealType?: string) => {
   switch (mealType) {
     case "Breakfast":
       return Coffee;
@@ -39,16 +20,14 @@ const getMealIcon = (mealType: string) => {
       return Apple;
     case "Dinner":
       return Moon;
+    case "Food":
+      return Utensils;
     default:
       return Utensils;
   }
 };
 
-const formatMacroValue = (value: number) => {
-  return Number.isInteger(value) ? value.toString() : value.toFixed(1);
-};
-
-const formatServings = (value: number) => {
+const formatNumber = (value: number) => {
   return Number.isInteger(value) ? value.toString() : value.toFixed(1);
 };
 
@@ -64,16 +43,12 @@ const getMealPhotoSrc = (photoUrl?: string | null) => {
 
 const MealsToday = ({ meals, isLoading = false }: MealsTodayProps) => {
   const [selectedPhotoUrl, setSelectedPhotoUrl] = useState<string | null>(null);
-  const [selectedMealName, setSelectedMealName] = useState<string>("");
+  const [selectedMealName, setSelectedMealName] = useState("");
 
-  const sortedMeals = [...meals].sort(
-    (a, b) => new Date(b.eaten_at).getTime() - new Date(a.eaten_at).getTime(),
+  const totalCalories = meals.reduce(
+    (sum, meal) => sum + Number(meal.calories ?? 0),
+    0,
   );
-
-  const totalCalories = sortedMeals.reduce((sum, meal) => {
-    const servings = Number(meal.servings ?? 1);
-    return sum + Number(meal.calories ?? 0) * servings;
-  }, 0);
 
   const openPhotoModal = (meal: LoggedMeal) => {
     const src = getMealPhotoSrc(meal.photo_url);
@@ -109,33 +84,26 @@ const MealsToday = ({ meals, isLoading = false }: MealsTodayProps) => {
           <h2 className="text-[15px] font-semibold text-[#0F0F14]">
             Today&apos;s Meals
           </h2>
+
           <span className="text-[11.25px] text-[#72728A]">
             {Math.round(totalCalories)} kcal total
           </span>
         </div>
 
-        {sortedMeals.length === 0 ? (
+        {meals.length === 0 ? (
           <div className="mt-6 text-[13.125px] text-[#72728A]">
             No meals logged today.
           </div>
         ) : (
           <div className="mt-6 space-y-4">
-            {sortedMeals.map((meal) => {
-              const mealType = getMealTypeFromTime(meal.eaten_at);
-              const Icon = getMealIcon(mealType);
-
-              const servings = Number(meal.servings ?? 1);
-              const totalMealCalories = Number(meal.calories ?? 0) * servings;
-              const totalProtein = Number(meal.protein ?? 0) * servings;
-              const totalCarbs = Number(meal.carbs ?? 0) * servings;
-              const totalFats = Number(meal.fats ?? 0) * servings;
-
+            {meals.map((meal) => {
+              const Icon = getMealIcon(meal.meal_type);
               const hasPhoto = Boolean(meal.photo_url);
 
               return (
                 <div
                   key={meal.log_id}
-                  className="flex min-h-[60px] items-center justify-between gap-6"
+                  className="flex min-h-15 items-center justify-between gap-6"
                 >
                   <div className="flex min-w-0 items-center gap-4">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#F3F2FF]">
@@ -151,9 +119,11 @@ const MealsToday = ({ meals, isLoading = false }: MealsTodayProps) => {
                           {meal.meal_name}
                         </span>
 
-                        <span className="rounded-xl bg-[#F3F3F7] px-3 py-1 text-[11.25px] font-medium text-[#0F0F14]">
-                          {mealType}
-                        </span>
+                        {meal.meal_type && (
+                          <span className="rounded-xl bg-[#F3F3F7] px-3 py-1 text-[11.25px] font-medium text-[#0F0F14]">
+                            {meal.meal_type}
+                          </span>
+                        )}
 
                         {hasPhoto && (
                           <button
@@ -167,18 +137,18 @@ const MealsToday = ({ meals, isLoading = false }: MealsTodayProps) => {
                       </div>
 
                       <div className="mt-1 text-[13.125px] text-[#72728A]">
-                        {formatMealTime(meal.eaten_at)} ·{" "}
-                        {formatServings(servings)} serving
-                        {servings !== 1 ? "s" : ""} · P:{" "}
-                        {formatMacroValue(totalProtein)}g · C:{" "}
-                        {formatMacroValue(totalCarbs)}g · F:{" "}
-                        {formatMacroValue(totalFats)}g
+                        {meal.time_label ?? ""} ·{" "}
+                        {formatNumber(Number(meal.servings ?? 1))} serving
+                        {Number(meal.servings ?? 1) !== 1 ? "s" : ""} · P:{" "}
+                        {formatNumber(Number(meal.protein ?? 0))}g · C:{" "}
+                        {formatNumber(Number(meal.carbs ?? 0))}g · F:{" "}
+                        {formatNumber(Number(meal.fats ?? 0))}g
                       </div>
                     </div>
                   </div>
 
                   <div className="shrink-0 text-[13.125px] font-medium text-[#0F0F14]">
-                    {Math.round(totalMealCalories)} kcal
+                    {Math.round(Number(meal.calories ?? 0))} kcal
                   </div>
                 </div>
               );
