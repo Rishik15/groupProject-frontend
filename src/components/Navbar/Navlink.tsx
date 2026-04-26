@@ -12,7 +12,7 @@ const NavLink = ({
   icon?: ReactNode;
 }) => {
   const location = useLocation();
-  const isActive = location.pathname === route || location.pathname.startsWith(route);
+  const isActive = location.pathname === route;
 
   return (
     <Link

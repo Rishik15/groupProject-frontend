@@ -42,7 +42,7 @@ export const getNavItems = (activeMode: string | null, parent: string) => {
         icon: <UserCog className="w-4 h-4" />,
       },
       {
-        label: "Coach Governance",
+        label: "Coaches",
         route: `${parent}/coach-governance/`,
         icon: <ShieldCheck className="w-4 h-4" />,
       },
@@ -63,7 +63,7 @@ export const getNavItems = (activeMode: string | null, parent: string) => {
       },
       {
         label: "Workouts",
-        route: `${parent}/workouts/workout-management`,
+        route: `${parent}/workouts/`,
         icon: <Dumbbell className="w-4 h-4" />,
       },
     ];

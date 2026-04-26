@@ -364,149 +364,150 @@ export default function Predictions() {
     };
 
     return (
-        <div className="min-h-screen bg-[#F7F8FC] px-36 py-10 text-foreground">
-            <div className="mx-auto flex w-full max-w-[1700px] flex-col gap-6">
-                <PredictionHeader
-                    walletBalance={data.wallet?.balance ?? null}
-                    isLoading={isInitialLoading || isRefreshing}
-                    onRefresh={handleRefresh}
-                />
+        <div>
+            <PredictionHeader
+                walletBalance={data.wallet?.balance ?? null}
+                isLoading={isInitialLoading || isRefreshing}
+                onRefresh={handleRefresh}
+            />
+            <div className="min-h-screen bg-[#F7F8FC] px-36 py-10 text-foreground">
+                <div className="mx-auto flex w-full max-w-[1700px] flex-col gap-6">
+                    {pageError ? (
+                        <Card className="border border-amber-200 bg-amber-50 shadow-sm">
+                            <div className="flex items-start gap-3 p-4">
+                                <div className="rounded-2xl bg-amber-100 p-2 text-amber-700">
+                                    <ShieldCheck className="h-4 w-4" strokeWidth={2.2} />
+                                </div>
+                                <div>
+                                    <p className="text-[13.125px] font-semibold text-amber-900">
+                                        Prediction page notice
+                                    </p>
+                                    <p className="mt-1 text-[13.125px] text-amber-800">{pageError}</p>
+                                </div>
+                            </div>
+                        </Card>
+                    ) : null}
 
-                {pageError ? (
-                    <Card className="border border-amber-200 bg-amber-50 shadow-sm">
-                        <div className="flex items-start gap-3 p-4">
-                            <div className="rounded-2xl bg-amber-100 p-2 text-amber-700">
-                                <ShieldCheck className="h-4 w-4" strokeWidth={2.2} />
+                    <PredictionSummaryCards summary={data.summary} />
+
+                    <Card className="border border-default-200 bg-white shadow-sm">
+                        <div className="space-y-5 p-5">
+                            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                                <div>
+                                    <div className="inline-flex items-center gap-2 rounded-full bg-[#5B5EF4]/10 px-3 py-1 text-xs font-semibold text-[#5B5EF4]">
+                                        <LayoutDashboard className="h-4 w-4" strokeWidth={2.2} />
+                                        Client workspace
+                                    </div>
+                                    <h2 className="mt-3 text-2xl font-semibold tracking-tight text-foreground">
+                                        Predictions workspace
+                                    </h2>
+                                    <p className="mt-2 max-w-3xl text-[13.125px] leading-6 text-foreground/65">
+                                        Browse bettable markets in Gambling Den, track your participation in My Bets, manage creator workflows in My Markets, and monitor ranking in Leaderboard.
+                                    </p>
+                                </div>
+
+                                <div className="flex flex-wrap items-center gap-3">
+                                    <Button
+                                        className="text-white"
+                                        style={{ backgroundColor: "#5B5EF4" }}
+                                        onPress={() => {
+                                            setCreateError(null);
+                                            setIsCreateModalOpen(true);
+                                        }}
+                                    >
+                                        <span className="inline-flex items-center gap-2">
+                                            <Sparkles className="h-4 w-4" strokeWidth={2.2} />
+                                            Create market
+                                        </span>
+                                    </Button>
+
+                                    <Button
+                                        variant="outline"
+                                        onPress={handleRefresh}
+                                        isDisabled={isRefreshing}
+                                    >
+                                        <span className="inline-flex items-center gap-2">
+                                            {isRefreshing ? (
+                                                <Spinner size="sm" />
+                                            ) : (
+                                                <RefreshCcw className="h-4 w-4" strokeWidth={2.2} />
+                                            )}
+                                            Refresh page
+                                        </span>
+                                    </Button>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-[13.125px] font-semibold text-amber-900">
-                                    Prediction page notice
+
+                            <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+                                <PredictionPageTabs
+                                    activeTab={activeTab}
+                                    onChange={setActiveTab}
+                                />
+
+                                <p className="text-[11.25px] text-foreground/50">
+                                    {lastUpdatedAt
+                                        ? `Last updated ${new Date(lastUpdatedAt).toLocaleString()}`
+                                        : "Loading predictions data…"}
                                 </p>
-                                <p className="mt-1 text-[13.125px] text-amber-800">{pageError}</p>
                             </div>
+
+                            {renderActiveTabContent()}
                         </div>
                     </Card>
-                ) : null}
+                </div>
 
-                <PredictionSummaryCards summary={data.summary} />
+                <CreateGoalMarketModal
+                    isOpen={isCreateModalOpen}
+                    isSubmitting={isCreateSubmitting}
+                    error={createError}
+                    onClose={() => {
+                        if (isCreateSubmitting) return;
+                        setIsCreateModalOpen(false);
+                        setCreateError(null);
+                    }}
+                    onSubmit={handleCreateMarket}
+                />
 
-                <Card className="border border-default-200 bg-white shadow-sm">
-                    <div className="space-y-5 p-5">
-                        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                            <div>
-                                <div className="inline-flex items-center gap-2 rounded-full bg-[#5B5EF4]/10 px-3 py-1 text-xs font-semibold text-[#5B5EF4]">
-                                    <LayoutDashboard className="h-4 w-4" strokeWidth={2.2} />
-                                    Client workspace
-                                </div>
-                                <h2 className="mt-3 text-2xl font-semibold tracking-tight text-foreground">
-                                    Predictions workspace
-                                </h2>
-                                <p className="mt-2 max-w-3xl text-[13.125px] leading-6 text-foreground/65">
-                                    Browse bettable markets in Gambling Den, track your participation in My Bets, manage creator workflows in My Markets, and monitor ranking in Leaderboard.
-                                </p>
-                            </div>
+                <PlacePredictionModal
+                    isOpen={isBetModalOpen}
+                    market={selectedMarket}
+                    walletBalance={data.wallet?.balance ?? 0}
+                    isSubmitting={isBetSubmitting}
+                    error={betError}
+                    onClose={() => {
+                        if (isBetSubmitting) return;
+                        setIsBetModalOpen(false);
+                        setSelectedMarket(null);
+                        setBetError(null);
+                    }}
+                    onSubmit={handlePlaceBet}
+                />
 
-                            <div className="flex flex-wrap items-center gap-3">
-                                <Button
-                                    className="text-white"
-                                    style={{ backgroundColor: "#5B5EF4" }}
-                                    onPress={() => {
-                                        setCreateError(null);
-                                        setIsCreateModalOpen(true);
-                                    }}
-                                >
-                                    <span className="inline-flex items-center gap-2">
-                                        <Sparkles className="h-4 w-4" strokeWidth={2.2} />
-                                        Create market
-                                    </span>
-                                </Button>
+                <RequestCancellationModal
+                    isOpen={isCancelModalOpen}
+                    market={selectedMarket}
+                    isSubmitting={isCancelSubmitting}
+                    error={cancelError}
+                    onClose={() => {
+                        if (isCancelSubmitting) return;
+                        setIsCancelModalOpen(false);
+                        setSelectedMarket(null);
+                        setCancelError(null);
+                    }}
+                    onSubmit={handleRequestCancel}
+                />
 
-                                <Button
-                                    variant="outline"
-                                    onPress={handleRefresh}
-                                    isDisabled={isRefreshing}
-                                >
-                                    <span className="inline-flex items-center gap-2">
-                                        {isRefreshing ? (
-                                            <Spinner size="sm" />
-                                        ) : (
-                                            <RefreshCcw className="h-4 w-4" strokeWidth={2.2} />
-                                        )}
-                                        Refresh page
-                                    </span>
-                                </Button>
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-                            <PredictionPageTabs
-                                activeTab={activeTab}
-                                onChange={setActiveTab}
-                            />
-
-                            <p className="text-[11.25px] text-foreground/50">
-                                {lastUpdatedAt
-                                    ? `Last updated ${new Date(lastUpdatedAt).toLocaleString()}`
-                                    : "Loading predictions data…"}
-                            </p>
-                        </div>
-
-                        {renderActiveTabContent()}
-                    </div>
-                </Card>
+                <CompletedMarketResultModal
+                    isOpen={isCompletedModalOpen}
+                    market={selectedCompletedMarket}
+                    onOpenChange={(open) => {
+                        setIsCompletedModalOpen(open);
+                        if (!open) {
+                            setSelectedCompletedMarket(null);
+                        }
+                    }}
+                />
             </div>
-
-            <CreateGoalMarketModal
-                isOpen={isCreateModalOpen}
-                isSubmitting={isCreateSubmitting}
-                error={createError}
-                onClose={() => {
-                    if (isCreateSubmitting) return;
-                    setIsCreateModalOpen(false);
-                    setCreateError(null);
-                }}
-                onSubmit={handleCreateMarket}
-            />
-
-            <PlacePredictionModal
-                isOpen={isBetModalOpen}
-                market={selectedMarket}
-                walletBalance={data.wallet?.balance ?? 0}
-                isSubmitting={isBetSubmitting}
-                error={betError}
-                onClose={() => {
-                    if (isBetSubmitting) return;
-                    setIsBetModalOpen(false);
-                    setSelectedMarket(null);
-                    setBetError(null);
-                }}
-                onSubmit={handlePlaceBet}
-            />
-
-            <RequestCancellationModal
-                isOpen={isCancelModalOpen}
-                market={selectedMarket}
-                isSubmitting={isCancelSubmitting}
-                error={cancelError}
-                onClose={() => {
-                    if (isCancelSubmitting) return;
-                    setIsCancelModalOpen(false);
-                    setSelectedMarket(null);
-                    setCancelError(null);
-                }}
-                onSubmit={handleRequestCancel}
-            />
-
-            <CompletedMarketResultModal
-                isOpen={isCompletedModalOpen}
-                market={selectedCompletedMarket}
-                onOpenChange={(open) => {
-                    setIsCompletedModalOpen(open);
-                    if (!open) {
-                        setSelectedCompletedMarket(null);
-                    }
-                }}
-            />
         </div>
     );
 }
