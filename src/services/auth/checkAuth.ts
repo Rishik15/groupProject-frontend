@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../api";
 
 export type CoachApplicationStatus =
   | "none"
@@ -8,9 +8,9 @@ export type CoachApplicationStatus =
 
 export async function getAuth() {
   try {
-    const { data } = await axios.get("http://localhost:8080/auth/me", {
-      withCredentials: true,
-    });
+    const { data } = await api.get("/auth/me", {
+      skipAuthGate: true,
+    } as any);
 
     console.log("AUTH ME RESPONSE:", data);
 

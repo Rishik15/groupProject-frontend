@@ -2,7 +2,7 @@ import axios from "axios";
 
 import type { ClientInfoValues } from "../../utils/Interfaces/OnboardingSurvey/client";
 
-import apiClient from "./apiClient";
+import api from "../api";
 
 import {
   buildClientOnboardingPayload,
@@ -24,10 +24,7 @@ async function postOnboarding(
   console.log("Onboarding payload JSON:", JSON.stringify(payload, null, 2));
 
   try {
-    const response = await apiClient.post<OnboardingSuccessResponse>(
-      path,
-      payload,
-    );
+    const response = await api.post<OnboardingSuccessResponse>(path, payload);
 
     return response.data ?? { message: "Onboarding completed successfully." };
   } catch (error) {

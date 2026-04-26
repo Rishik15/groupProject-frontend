@@ -1,14 +1,8 @@
-import axios from "axios";
+import api from "../api";
 import type { Coach } from "./Coach";
 
 export async function updateCoachProfile(payload: Partial<Coach>) {
-  const res = await axios.patch(
-    "http://localhost:8080/coach/update",
-    payload,
-    {
-      withCredentials: true,
-    }
-  );
+  const res = await api.patch("/coach/update", payload);
 
   return res.data;
 }

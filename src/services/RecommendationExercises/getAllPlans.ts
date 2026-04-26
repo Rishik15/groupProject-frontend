@@ -1,11 +1,9 @@
-import axios from "axios";
-const get_all_plans = async () => {
-    const res = await axios.post(
-        "http://localhost:8080/workouts/predefined",
-        {},
-        { withCredentials: true }
-    );
+import api from "../api";
 
-    return res;
-}
+const get_all_plans = async () => {
+  const res = await api.post("/workouts/predefined", {});
+
+  return res;
+};
+
 export default get_all_plans;

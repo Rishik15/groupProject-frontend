@@ -1,12 +1,13 @@
-import axios from "axios";
+import api from "../api";
 
 export const markAsRead = async (id: number, mode: string) => {
-  const response = await axios.post(
-    "http://localhost:8080/notifications/markAsRead",
+  const response = await api.post(
+    "/notifications/markAsRead",
     { id },
     {
-      params: { mode },
-      withCredentials: true,
+      params: {
+        mode,
+      },
     },
   );
 

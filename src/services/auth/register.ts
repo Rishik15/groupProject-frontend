@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../api";
 
 export async function register(
   name: string,
@@ -7,8 +7,8 @@ export async function register(
   role: string,
 ) {
   try {
-    const response = await axios.post(
-      "http://localhost:8080/auth/register",
+    const response = await api.post(
+      "/auth/register",
       {
         name,
         email,
@@ -16,11 +16,8 @@ export async function register(
         role,
       },
       {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
+        skipAuthGate: true,
+      } as any,
     );
 
     return response.data;

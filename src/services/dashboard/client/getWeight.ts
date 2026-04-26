@@ -1,10 +1,6 @@
-import axios from "axios";
+import api from "../../api";
 
 export const getWeight = async () => {
-  const res = await axios.get(
-    "http://localhost:8080/dashboard/client/weight",
-    { withCredentials: true }
-  );
-
+  const res = await api.get("/dashboard/client/weight");
   return res.data;
 };

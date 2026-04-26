@@ -5,24 +5,30 @@ import type {
   LeaveCoachReviewPayload,
 } from "../../utils/Interfaces/CoachReview/coachReview";
 
-// Fetch the main coach profile info for the header/body card.
 export async function getCoachInfo(
   coachId: number,
 ): Promise<CoachInfoResponse> {
-  const response = await api.get<CoachInfoResponse>("/coach/get_coach_info", {
-    params: { coach_id: coachId },
-  });
+  const response = await api.get<CoachInfoResponse>(
+    "/coach/get_coach_info",
+    {
+      params: { coach_id: coachId },
+      skipAuthGate: true,
+    } as any,
+  );
 
   return response.data;
 }
 
-// Fetch all reviews and the average rating for one coach.
 export async function getCoachReviews(
   coachId: number,
 ): Promise<CoachReviewResponse> {
-  const response = await api.get<CoachReviewResponse>("/coach/get_review", {
-    params: { coach_id: coachId },
-  });
+  const response = await api.get<CoachReviewResponse>(
+    "/coach/get_review",
+    {
+      params: { coach_id: coachId },
+      skipAuthGate: true,
+    } as any,
+  );
 
   return response.data;
 }
