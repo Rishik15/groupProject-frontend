@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   UserCog,
   Wrench,
+  BicepsFlexed
 } from "lucide-react";
 
 export const getNavItems = (activeMode: string | null, parent: string) => {
