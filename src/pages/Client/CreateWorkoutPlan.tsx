@@ -26,6 +26,7 @@ export default function CreateWorkoutPlan() {
   const [planName, setPlanName] = useState("");
   const [previewExercise, setPreviewExercise] = useState<Exercise | null>(null);
   const [activeTab, setActiveTab] = useState<"exercises" | "browse" | "plans" | "create">("browse");
+  const [assignDate, setAssignDate] = useState("");
 
   useEffect(() => {
     async function load() {
@@ -60,24 +61,31 @@ export default function CreateWorkoutPlan() {
 
   async function handleSave() {
     try {
-      await axios.post(
-        `${BASE_URL}/workouts/create`,
-        {
-          name: planName,
-          exercises: selectedExercises.map(({ exercise, sets, reps }) => ({
-            exercise_id: exercise.exercise_id,
-            sets,
-            reps,
-          })),
-        },
-        { withCredentials: true }
-      );
+      const res = await axios.post(`${BASE_URL}/workouts/create`, {
+        name: planName,
+        exercises: selectedExercises.map(({ exercise, sets, reps }) => ({
+          exercise_id: exercise.exercise_id, sets, reps,
+        })),
+      }, { withCredentials: true });
+
+      if (assignDate) {
+        const planId = res.data.plan_id;
+        const days = await axios.post(`${BASE_URL}/workouts/plan-days`, { plan_id: planId }, { withCredentials: true });
+        const dayId = days.data[0]?.day_id;
+        if (dayId) {
+          await axios.post(`${BASE_URL}/workouts/assign`, {
+            plan_id: planId,
+            day_assignments: [{ day_id: dayId, date: assignDate }]
+          }, { withCredentials: true });
+        }
+      }
+
       setSelectedExercises([]);
       setPlanName("");
+      setAssignDate("");
       setActiveTab("plans");
     } catch (err: any) {
-      const message = err?.response?.data?.error || "Failed to save plan";
-      alert(message);
+      alert(err?.response?.data?.error || "Failed to save plan");
     }
   }
 
@@ -216,6 +224,8 @@ export default function CreateWorkoutPlan() {
               selected={selectedExercises}
               planName={planName}
               onPlanNameChange={setPlanName}
+              assignDate={assignDate}
+              onAssignDateChange={setAssignDate}
               onSave={handleSave}
             />
           </div>
