@@ -10,6 +10,8 @@ import { socket } from "../../services/sockets/socket";
 import { getNavItems } from "../../utils/Navbar/navitems";
 import { useAuth } from "../../utils/auth/AuthContext";
 
+type Mode = "client" | "coach" | "admin";
+
 const truncate = (text: string, max = 40) => {
   if (!text) return "";
   return text.length > max ? text.slice(0, max) + "..." : text;
@@ -33,18 +35,43 @@ export default function Navbar({
   const navItems = getNavItems(mode, parent);
   const navigate = useNavigate();
 
+  const availableModes: Mode[] = [];
+
+  if (roles.includes("client")) {
+    availableModes.push("client");
+  }
+
+  if (roles.includes("coach") && coachModeActivated) {
+    availableModes.push("coach");
+  }
+
+  if (roles.includes("admin")) {
+    availableModes.push("admin");
+  }
+
   const canSwitchRole =
-    roles.includes("client") && roles.includes("coach") && coachModeActivated;
+    availableModes.filter((role) => role !== mode).length > 0;
 
-  const handleSwitchRole = () => {
-    if (!canSwitchRole) return;
+  const handleSwitchMode = (newMode: Mode) => {
+    if (!availableModes.includes(newMode)) return;
 
-    const newMode = mode === "coach" ? "client" : "coach";
-
+    setOpen(false);
     setActiveMode(newMode);
 
-    const newParent = newMode === "coach" ? "/coach" : "/client";
-    navigate(newParent);
+    if (newMode === "client") {
+      navigate("/client");
+      return;
+    }
+
+    if (newMode === "coach") {
+      navigate("/coach");
+      return;
+    }
+
+    if (newMode === "admin") {
+      navigate("/admin");
+      return;
+    }
   };
 
   useEffect(() => {
@@ -135,6 +162,7 @@ export default function Navbar({
                   <p className="text-sm font-medium text-indigo-500 truncate w-full">
                     {name}
                   </p>
+
                   <p className="text-xs text-gray-500 truncate w-full">
                     {email}
                   </p>
@@ -146,11 +174,32 @@ export default function Navbar({
 
                 <div className="p-2 text-sm flex flex-col items-center">
                   {canSwitchRole && (
-                    <Dropdownaction
-                      label="Switch Role"
-                      type="action"
-                      onClick={handleSwitchRole}
-                    />
+                    <>
+                      {availableModes.includes("client") &&
+                        mode !== "client" && (
+                          <Dropdownaction
+                            label="Switch to Client"
+                            type="action"
+                            onClick={() => handleSwitchMode("client")}
+                          />
+                        )}
+
+                      {availableModes.includes("coach") && mode !== "coach" && (
+                        <Dropdownaction
+                          label="Switch to Coach"
+                          type="action"
+                          onClick={() => handleSwitchMode("coach")}
+                        />
+                      )}
+
+                      {availableModes.includes("admin") && mode !== "admin" && (
+                        <Dropdownaction
+                          label="Switch to Admin"
+                          type="action"
+                          onClick={() => handleSwitchMode("admin")}
+                        />
+                      )}
+                    </>
                   )}
 
                   <Dropdownaction
