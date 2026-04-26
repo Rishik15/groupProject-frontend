@@ -1,9 +1,6 @@
-import axios from "axios";
+import api from "../../api";
 
 export const getCoachMetrics = async () => {
-  const res = await axios.get("http://localhost:8080/dashboard/coach/metric", {
-    withCredentials: true,
-  });
-
+  const res = await api.get("/dashboard/coach/metric");
   return res.data;
 };

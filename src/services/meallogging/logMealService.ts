@@ -81,11 +81,7 @@ export const logFoodItem = async ({
     formData.append("photo", photoFile);
   }
 
-  const response = await api.post("/nutrition/log-food-item", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  const response = await api.post("/nutrition/log-food-item", formData);
 
   return response.data;
 };
@@ -108,11 +104,7 @@ export const logMealFromPlan = async ({
     formData.append("photo", photoFile);
   }
 
-  const response = await api.post("/nutrition/meal-plans/log-meal", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  const response = await api.post("/nutrition/meal-plans/log-meal", formData);
 
   return response.data;
 };

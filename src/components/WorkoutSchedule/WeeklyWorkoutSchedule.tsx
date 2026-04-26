@@ -1,216 +1,193 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import type {
-    CreateWorkoutCalendarEventInput,
-    WorkoutCalendarEvent,
-} from "../../utils/Interfaces/WorkoutLog/workoutLog";
-import useWorkoutSchedule, {
-    toDateString,
-} from "../../utils/WorkoutLog/useWorkoutSchedule";
+  CalendarEvent,
+  CreateWorkoutEventInput,
+  UpdateWorkoutEventInput,
+} from "../../utils/Interfaces/Calendar/calendar";
+
+import {
+  createWorkoutEvent,
+  deleteWorkoutEvent,
+  getCalendarEvents,
+  updateWorkoutEvent,
+} from "../../services/Calendar/calendarEventService";
+
 import AddSessionModal from "./AddSessionModal";
 import CossWorkoutCalendar from "./CossWorkoutCalendar";
 
-interface WeeklyWorkoutScheduleProps {
-    refreshToken?: number;
-    onOpenWorkoutLog: (event?: WorkoutCalendarEvent | null) => void;
+function toDateString(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 }
 
 function startOfMonth(date: Date) {
-    return new Date(date.getFullYear(), date.getMonth(), 1);
+  return new Date(date.getFullYear(), date.getMonth(), 1);
 }
 
 function endOfMonth(date: Date) {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0);
 }
 
 function startOfWeek(date: Date) {
-    const nextDate = new Date(date);
-    nextDate.setHours(0, 0, 0, 0);
-    nextDate.setDate(nextDate.getDate() - nextDate.getDay());
-    return nextDate;
+  const nextDate = new Date(date);
+  nextDate.setHours(0, 0, 0, 0);
+  nextDate.setDate(nextDate.getDate() - nextDate.getDay());
+  return nextDate;
 }
 
 function endOfWeek(date: Date) {
-    const nextDate = startOfWeek(date);
-    nextDate.setDate(nextDate.getDate() + 6);
-    return nextDate;
+  const nextDate = startOfWeek(date);
+  nextDate.setDate(nextDate.getDate() + 6);
+  return nextDate;
 }
 
-function getHourFromTime(time: string) {
-    const [hours = "0"] = time.split(":");
-    const parsed = Number(hours);
-    return Number.isFinite(parsed) ? parsed : 0;
-}
+export default function WeeklyWorkoutSchedule() {
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-export default function WeeklyWorkoutSchedule({
-    refreshToken = 0,
-    onOpenWorkoutLog,
-}: WeeklyWorkoutScheduleProps) {
-    const [currentDate, setCurrentDate] = useState(new Date());
-    const [isAddSessionOpen, setIsAddSessionOpen] = useState(false);
-    const [selectedDate, setSelectedDate] = useState(() => toDateString(new Date()));
-    const [selectedStartTime, setSelectedStartTime] = useState("06:00");
-    const [editingEvent, setEditingEvent] = useState<WorkoutCalendarEvent | null>(null);
+  const [isAddSessionOpen, setIsAddSessionOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(toDateString(new Date()));
+  const [selectedStartTime, setSelectedStartTime] = useState("06:00");
+  const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
 
-    const rangeStart = useMemo(
-        () => toDateString(startOfWeek(startOfMonth(currentDate))),
-        [currentDate],
+  const rangeStart = useMemo(
+    () => toDateString(startOfWeek(startOfMonth(currentDate))),
+    [currentDate],
+  );
+
+  const rangeEnd = useMemo(
+    () => toDateString(endOfWeek(endOfMonth(currentDate))),
+    [currentDate],
+  );
+
+  useEffect(() => {
+    async function loadEvents() {
+      try {
+        setIsLoading(true);
+        setErrorMessage("");
+
+        const data = await getCalendarEvents(rangeStart, rangeEnd);
+        setEvents(data);
+      } catch (error) {
+        console.error("Failed to load calendar events", error);
+        setErrorMessage("Failed to load calendar events.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadEvents();
+  }, [rangeStart, rangeEnd]);
+
+  function handleOpenAddSession(date: Date) {
+    setEditingEvent(null);
+    setSelectedDate(toDateString(date));
+    setSelectedStartTime("06:00");
+    setIsAddSessionOpen(true);
+  }
+
+  function handleOpenEditSession(event: CalendarEvent) {
+    if (event.eventType !== "workout") {
+      return;
+    }
+
+    setEditingEvent(event);
+    setSelectedDate(event.date);
+    setSelectedStartTime(event.startTime.slice(0, 5));
+    setIsAddSessionOpen(true);
+  }
+
+  async function handleCreateSession(input: CreateWorkoutEventInput) {
+    const created = await createWorkoutEvent(input);
+    setEvents((previous) => [...previous, created]);
+  }
+
+  async function handleUpdateSession(
+    eventId: number,
+    input: UpdateWorkoutEventInput,
+  ) {
+    const updated = await updateWorkoutEvent(eventId, input);
+
+    setEvents((previous) =>
+      previous.map((event) => (event.eventId === eventId ? updated : event)),
     );
+  }
 
-    const rangeEnd = useMemo(
-        () => toDateString(endOfWeek(endOfMonth(currentDate))),
-        [currentDate],
+  async function handleDeleteSession(eventId: number) {
+    await deleteWorkoutEvent(eventId);
+
+    setEvents((previous) =>
+      previous.filter((event) => event.eventId !== eventId),
     );
+  }
 
-    const {
-        events,
-        activeEvent,
-        loggableEvents,
-        activeSessionId,
-        isLoading,
-        errorMessage,
-        addLocalEvent,
-        updateLocalEvent,
-        moveLocalEvent,
-        removeLocalEvent,
-        setEventActive,
-        refreshActiveSession,
-        refreshSchedule,
-    } = useWorkoutSchedule(refreshToken, rangeStart, rangeEnd);
+  async function handleMoveEventToDate(eventId: number, nextDate: string) {
+    const event = events.find((item) => item.eventId === eventId);
 
-    function handleOpenAddSession(date: Date) {
-        setEditingEvent(null);
-        setSelectedDate(toDateString(date));
-        setSelectedStartTime("06:00");
-        setIsAddSessionOpen(true);
+    if (!event || event.eventType !== "workout") {
+      return;
     }
 
-    function handleOpenEditSession(event: WorkoutCalendarEvent) {
-        if (event.source === "active-session") {
-            onOpenWorkoutLog(activeEvent);
-            return;
-        }
-
-        setEditingEvent(event);
-        setSelectedDate(event.date);
-        setSelectedStartTime(event.startTime);
-        setIsAddSessionOpen(true);
+    if (!event.workoutPlanId || !event.workoutDayId) {
+      return;
     }
 
-    async function refreshWorkoutScheduleState() {
-        await refreshActiveSession();
-        await refreshSchedule();
-    }
+    await handleUpdateSession(eventId, {
+      event_date: nextDate,
+      start_time: event.startTime,
+      end_time: event.endTime,
+      description: event.description || "",
+      workout_plan_id: event.workoutPlanId,
+      workout_day_id: event.workoutDayId,
+    });
+  }
 
-    async function handleCreateSession(input: CreateWorkoutCalendarEventInput) {
-        await addLocalEvent(input);
-        await refreshWorkoutScheduleState();
-    }
+  return (
+    <>
+      {errorMessage ? (
+        <div
+          className="mb-4 rounded-2xl px-4 py-3 text-[11.25px] text-[#72728A]"
+          style={{
+            border: "1px solid #E5E7EB",
+            backgroundColor: "#F8FAFC",
+          }}
+        >
+          {errorMessage}
+        </div>
+      ) : null}
 
-    async function handleUpdateSession(
-        eventId: string,
-        input: CreateWorkoutCalendarEventInput,
-    ) {
-        await updateLocalEvent(eventId, input);
-        await refreshWorkoutScheduleState();
-    }
+      <CossWorkoutCalendar
+        currentDate={currentDate}
+        events={events}
+        isLoading={isLoading}
+        onCurrentDateChange={setCurrentDate}
+        onAddSession={handleOpenAddSession}
+        onEditSession={handleOpenEditSession}
+        onMoveEventToDate={handleMoveEventToDate}
+      />
 
-    async function handleDeleteSession(eventId: string) {
-        await removeLocalEvent(eventId);
-        await refreshWorkoutScheduleState();
-    }
+      <AddSessionModal
+        isOpen={isAddSessionOpen}
+        onOpenChange={(open) => {
+          setIsAddSessionOpen(open);
 
-    async function handleSetActiveSession(eventId: string) {
-        await setEventActive(eventId);
-        await refreshWorkoutScheduleState();
-    }
-
-    async function handleMoveEventToDate(eventId: string, nextDate: string) {
-        const targetEvent = events.find((event: WorkoutCalendarEvent) => event.id === eventId);
-        if (!targetEvent) {
-            return;
-        }
-
-        const isAttachedActive =
-            activeSessionId != null &&
-            targetEvent.sessionId != null &&
-            targetEvent.sessionId === activeSessionId;
-
-        if (targetEvent.source === "active-session" || isAttachedActive) {
-            return;
-        }
-
-        const nextHour = getHourFromTime(targetEvent.startTime);
-
-        try {
-            await moveLocalEvent(eventId, nextDate, nextHour);
-            await refreshWorkoutScheduleState();
-        } catch (error) {
-            console.error("[Workout Schedule] failed to move schedule event", error);
-        }
-    }
-
-    async function handleLogWorkoutFromHeader(event: WorkoutCalendarEvent) {
-        const isAttachedActive =
-            activeSessionId != null &&
-            event.sessionId != null &&
-            event.sessionId === activeSessionId;
-
-        try {
-            if (!isAttachedActive && event.source !== "active-session") {
-                await setEventActive(event.id);
-                await refreshWorkoutScheduleState();
-            }
-
-            onOpenWorkoutLog(event);
-        } catch (error) {
-            console.error("[Workout Schedule] failed to open workout logger", error);
-        }
-    }
-
-    return (
-        <>
-            {errorMessage ? (
-                <div
-                    className="mb-4 rounded-2xl px-4 py-3 text-[11.25px] text-[#72728A]"
-                    style={{
-                        border: "1px solid #E5E7EB",
-                        backgroundColor: "#F8FAFC",
-                    }}
-                >
-                    {errorMessage}
-                </div>
-            ) : null}
-
-            <CossWorkoutCalendar
-                currentDate={currentDate}
-                events={events}
-                activeSessionId={activeSessionId}
-                isLoading={isLoading}
-                loggableEvents={loggableEvents}
-                onCurrentDateChange={setCurrentDate}
-                onAddSession={handleOpenAddSession}
-                onEditSession={handleOpenEditSession}
-                onMoveEventToDate={handleMoveEventToDate}
-                onLogWorkout={handleLogWorkoutFromHeader}
-            />
-
-            <AddSessionModal
-                isOpen={isAddSessionOpen}
-                onOpenChange={(open) => {
-                    setIsAddSessionOpen(open);
-                    if (!open) {
-                        setEditingEvent(null);
-                    }
-                }}
-                defaultDate={selectedDate}
-                defaultStartTime={selectedStartTime}
-                editingEvent={editingEvent}
-                onCreate={handleCreateSession}
-                onUpdate={handleUpdateSession}
-                onDelete={handleDeleteSession}
-                onSetActive={handleSetActiveSession}
-            />
-        </>
-    );
+          if (!open) {
+            setEditingEvent(null);
+          }
+        }}
+        defaultDate={selectedDate}
+        defaultStartTime={selectedStartTime}
+        editingEvent={editingEvent}
+        onCreate={handleCreateSession}
+        onUpdate={handleUpdateSession}
+        onDelete={handleDeleteSession}
+      />
+    </>
+  );
 }

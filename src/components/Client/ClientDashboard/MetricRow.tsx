@@ -9,7 +9,11 @@ type Metrics = {
   streak: number;
 };
 
-const MetricRow = () => {
+interface MetricRowProps {
+  refreshKey?: number;
+}
+
+const MetricRow = ({ refreshKey }: MetricRowProps) => {
   const [metrics, setMetrics] = useState<Metrics>({
     calories: 0,
     steps: 0,
@@ -28,7 +32,7 @@ const MetricRow = () => {
     };
 
     fetchMetrics();
-  }, []);
+  }, [refreshKey]);
 
   return (
     <section className="flex px-38 py-4 mx-auto gap-10 grid-cols-4">
@@ -36,6 +40,7 @@ const MetricRow = () => {
         <div className="flex items-center justify-center p-2 bg-[#e8e8ff] rounded-xl">
           <Flame className="w-4 h-4 text-[#7273a2]" />
         </div>
+
         <div className="flex flex-col">
           <div className="text-[14px] text-gray-500">Calories</div>
           <div className="text-[16px] font-semibold">{metrics.calories}</div>
@@ -46,6 +51,7 @@ const MetricRow = () => {
         <div className="flex items-center justify-center p-2 bg-[#e8e8ff] rounded-xl">
           <Activity className="w-4 h-4 text-[#7273a2]" />
         </div>
+
         <div className="flex flex-col">
           <div className="text-[14px] text-gray-500">Steps</div>
           <div className="text-[16px] font-semibold">{metrics.steps}</div>
@@ -56,6 +62,7 @@ const MetricRow = () => {
         <div className="flex items-center justify-center p-2 bg-[#e8e8ff] rounded-xl">
           <Dumbbell className="w-4 h-4 text-[#7273a2]" />
         </div>
+
         <div className="flex flex-col">
           <div className="text-[14px] text-gray-500">Workouts</div>
           <div className="text-[16px] font-semibold">{metrics.workouts}</div>
@@ -66,6 +73,7 @@ const MetricRow = () => {
         <div className="flex items-center justify-center p-2 bg-[#e8e8ff] rounded-xl">
           <Target className="w-4 h-4 text-[#7273a2]" />
         </div>
+
         <div className="flex flex-col">
           <div className="text-[14px] text-gray-500">Streak</div>
           <div className="text-[16px] font-semibold">{metrics.streak} days</div>

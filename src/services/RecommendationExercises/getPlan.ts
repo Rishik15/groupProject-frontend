@@ -1,16 +1,10 @@
-import axios from "axios";
+import api from "../api";
 import type { Filters } from "./types";
 
-
-
 const get_plans = async (filters: Filters) => {
-    const res = await axios.post(
-        "http://localhost:8080/workouts/predefined",
-        filters,
-        { withCredentials: true }
-    );
+  const res = await api.post("/workouts/predefined", filters);
 
-    return res.data;
+  return res.data;
 };
 
 export default get_plans;

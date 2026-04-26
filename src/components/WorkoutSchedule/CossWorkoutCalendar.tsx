@@ -1,13 +1,18 @@
 import { Button } from "@heroui/react";
-import { ChevronLeft, ChevronRight, Plus, ClipboardPlus } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ClipboardPlus,
+  Dumbbell,
+  Plus,
+} from "lucide-react";
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
-import type { WorkoutCalendarEvent } from "../../utils/Interfaces/WorkoutLog/workoutLog";
-import { toDateString } from "../../utils/WorkoutLog/useWorkoutSchedule";
+import type { CalendarEvent as AppCalendarEvent } from "../../utils/Interfaces/Calendar/calendar";
 import { CalendarDndProvider } from "../event-calendar/calendar-dnd-context";
 import { MonthView } from "../event-calendar/month-view";
 import type { CalendarEvent } from "../event-calendar/types";
-import { useNavigate } from "react-router-dom";
 
 type CalendarEventWithDrag = CalendarEvent & {
   isDraggable?: boolean;
@@ -15,28 +20,24 @@ type CalendarEventWithDrag = CalendarEvent & {
 
 interface CossWorkoutCalendarProps {
   currentDate: Date;
-  events: WorkoutCalendarEvent[];
-  activeSessionId?: number | null;
+  events: AppCalendarEvent[];
   isLoading?: boolean;
-  loggableEvents?: WorkoutCalendarEvent[];
   onCurrentDateChange: (date: Date) => void;
   onAddSession: (date: Date) => void;
-  onEditSession: (event: WorkoutCalendarEvent) => void;
+  onEditSession: (event: AppCalendarEvent) => void;
   onMoveEventToDate: (
-    eventId: string,
+    eventId: number,
     nextDate: string,
   ) => void | Promise<void>;
-  onLogWorkout?: (event: WorkoutCalendarEvent) => void | Promise<void>;
 }
 
-const COLOR_BY_KIND: Record<string, CalendarEvent["color"]> = {
-  strength: "violet",
-  cardio: "sky",
-  yoga: "emerald",
-  rest: "amber",
-  nutrition: "orange",
-  other: "rose",
-};
+function toDateString(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
 
 function toDateTime(date: string, time: string) {
   const [year, month, day] = date.split("-").map(Number);
@@ -58,32 +59,15 @@ function formatMonthYear(date: Date) {
   }).format(date);
 }
 
-function formatEventTimeLabel(event: WorkoutCalendarEvent) {
-  const [hoursString = "0", minutesString = "00"] = event.startTime.split(":");
-  const parsedHours = Number(hoursString);
-  const parsedMinutes = Number(minutesString);
-
-  if (!Number.isFinite(parsedHours) || !Number.isFinite(parsedMinutes)) {
-    return event.startTime;
-  }
-
-  const date = new Date();
-  date.setHours(parsedHours, parsedMinutes, 0, 0);
-
-  return new Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(date);
-}
-
-function toCalendarEvent(event: WorkoutCalendarEvent): CalendarEvent {
+function toCalendarEvent(event: AppCalendarEvent): CalendarEventWithDrag {
   return {
     id: event.id,
     title: event.title,
-    description: event.notes?.trim() || undefined,
+    description: event.description || undefined,
     start: toDateTime(event.date, event.startTime),
     end: toDateTime(event.date, event.endTime),
-    color: COLOR_BY_KIND[event.kind] ?? "rose",
+    color: event.eventType === "coach_session" ? "sky" : "violet",
+    isDraggable: event.eventType === "workout",
   };
 }
 
@@ -96,52 +80,43 @@ function withDefaultStartTime(date: Date) {
 export default function CossWorkoutCalendar({
   currentDate,
   events,
-  activeSessionId = null,
   isLoading = false,
-  loggableEvents = [],
   onCurrentDateChange,
   onAddSession,
   onEditSession,
   onMoveEventToDate,
-  onLogWorkout,
 }: CossWorkoutCalendarProps) {
+  const navigate = useNavigate();
+
   const eventMap = useMemo(
     () => new Map(events.map((event) => [event.id, event])),
     [events],
   );
 
-  const calendarEvents = useMemo<CalendarEventWithDrag[]>(
-    () =>
-      events.map((event) => {
-        const isAttachedActive =
-          activeSessionId != null &&
-          event.sessionId != null &&
-          event.sessionId === activeSessionId;
-
-        return {
-          ...toCalendarEvent(event),
-          isDraggable: !(event.source === "active-session" || isAttachedActive),
-        };
-      }),
-    [activeSessionId, events],
+  const calendarEvents = useMemo(
+    () => events.map((event) => toCalendarEvent(event)),
+    [events],
   );
 
   function handleEventUpdate(updatedEvent: CalendarEvent) {
     const originalEvent = eventMap.get(updatedEvent.id);
-    if (!originalEvent) {
+
+    if (!originalEvent || originalEvent.eventType !== "workout") {
       return;
     }
 
     const nextDate = toDateString(updatedEvent.start);
+
     if (nextDate === originalEvent.date) {
       return;
     }
 
-    void onMoveEventToDate(originalEvent.id, nextDate);
+    onMoveEventToDate(originalEvent.eventId, nextDate);
   }
 
   function handleEventSelect(selectedEvent: CalendarEvent) {
     const originalEvent = eventMap.get(selectedEvent.id);
+
     if (!originalEvent) {
       return;
     }
@@ -149,52 +124,39 @@ export default function CossWorkoutCalendar({
     onEditSession(originalEvent);
   }
 
-  const navigate = useNavigate();
   return (
     <section
-      className="coss-calendar-scope overflow-hidden rounded-3xl bg-white"
+      className="coss-calendar-scope overflow-hidden rounded-2xl bg-white shadow-sm"
       style={{ border: "1px solid #E5E7EB" }}
     >
       <style>
         {`
-                    .coss-calendar-scope {
-                        --calendar-row-min-height: 100px;
-                    }
+          .coss-calendar-scope {
+            --calendar-body-height: 650px;
+          }
 
-                    .coss-calendar-scope .coss-calendar-shell {
-                        width: 100%;
-                    }
+          .coss-calendar-scope .coss-calendar-shell {
+            width: 100%;
+            height: var(--calendar-body-height);
+            min-height: var(--calendar-body-height);
+          }
 
-                    .coss-calendar-scope .coss-calendar-shell > div {
-                        display: flex;
-                        flex-direction: column;
-                        width: 100%;
-                    }
-
-                    .coss-calendar-scope .coss-calendar-shell > div > .grid:first-of-type {
-                        flex: 0 0 auto;
-                    }
-
-                    .coss-calendar-scope .coss-calendar-shell > div > .grid:last-of-type {
-                        grid-auto-rows: minmax(var(--calendar-row-min-height), auto);
-                        align-content: start;
-                    }
-
-                    .coss-calendar-scope .coss-calendar-shell > div > .grid:last-of-type > * {
-                        min-height: var(--calendar-row-min-height);
-                    }
-                `}
+          .coss-calendar-scope [data-slot="month-view"] {
+            height: 100%;
+            min-height: var(--calendar-body-height);
+          }
+        `}
       </style>
 
       <div
-        className="flex flex-col gap-3 px-6 py-5 sm:flex-row sm:items-center sm:justify-between"
+        className="flex flex-col gap-4 bg-white px-6 py-5 sm:flex-row sm:items-center sm:justify-between"
         style={{ borderBottom: "1px solid #ECEEF2" }}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="outline"
             onPress={() => onCurrentDateChange(new Date())}
-            className="min-w-fit rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] text-[11.25px] font-semibold text-[#4F46E5]"
+            className="min-w-fit rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-2 text-[12px] font-semibold text-indigo-600"
           >
             Today
           </Button>
@@ -223,45 +185,32 @@ export default function CossWorkoutCalendar({
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-2">
-          {loggableEvents.length === 1 && onLogWorkout ? (
-            <Button
-              variant="outline"
-              onPress={() => void onLogWorkout(loggableEvents[0])}
-              className="rounded-xl border border-[#E5E7EB] bg-white text-[11.25px] font-semibold text-[#0F0F14]"
-            >
-              Log Active Workout
-            </Button>
-          ) : null}
+          <Button
+            variant="outline"
+            onPress={() => navigate("/client/recommendation")}
+            className="rounded-xl border border-[#E5E7EB] bg-white px-4 py-2 text-[12px] font-semibold text-[#0F0F14]"
+          >
+            <span className="inline-flex items-center gap-2">
+              <Dumbbell className="h-4 w-4 text-indigo-500" />
+              <span>Recommended Plans</span>
+            </span>
+          </Button>
 
-          {loggableEvents.length > 1 && onLogWorkout ? (
-            <>
-              {loggableEvents.map((event) => (
-                <Button
-                  key={event.id}
-                  variant="outline"
-                  onPress={() => void onLogWorkout(event)}
-                  className="rounded-xl border border-[#E5E7EB] bg-white text-[11.25px] font-semibold text-[#0F0F14]"
-                >
-                  {`Log ${event.title} • ${formatEventTimeLabel(event)}`}
-                </Button>
-              ))}
-            </>
-          ) : null}
           <Button
             variant="outline"
             onPress={() => navigate("/client/createWorkout")}
-            className="rounded-xl text-[11.25px] font-semibold border border-[#E5E7EB]"
+            className="rounded-xl border border-[#E5E7EB] bg-white px-4 py-2 text-[12px] font-semibold text-[#0F0F14]"
           >
             <span className="inline-flex items-center gap-2">
-              <ClipboardPlus className="h-4 w-4" />
-              <span>View Exercise Library</span>
+              <ClipboardPlus className="h-4 w-4 text-indigo-500" />
+              <span>Create Plan</span>
             </span>
           </Button>
+
           <Button
             variant="primary"
             onPress={() => onAddSession(withDefaultStartTime(currentDate))}
-            className="rounded-xl border-0 text-[11.25px] font-semibold text-white"
-            style={{ backgroundColor: "#5E5EF4" }}
+            className="rounded-xl border-0 bg-indigo-500 px-4 py-2 text-[12px] font-semibold text-white"
           >
             <Plus className="h-4 w-4" />
             Add Session
@@ -270,7 +219,11 @@ export default function CossWorkoutCalendar({
       </div>
 
       <CalendarDndProvider onEventUpdate={handleEventUpdate}>
-        <div className="coss-calendar-shell relative">
+        <div
+          className={`coss-calendar-shell relative transition-opacity duration-200 ease-out ${
+            isLoading ? "opacity-85" : "opacity-100"
+          }`}
+        >
           <MonthView
             currentDate={currentDate}
             events={calendarEvents}
@@ -279,10 +232,6 @@ export default function CossWorkoutCalendar({
               onAddSession(withDefaultStartTime(date))
             }
           />
-
-          {isLoading ? (
-            <div className="absolute inset-0 z-20 bg-[#FFFFFF80]" />
-          ) : null}
         </div>
       </CalendarDndProvider>
     </section>

@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const BASE_URL = "http://localhost:8080";
+import api from "../api";
 
 export interface Availability {
   day_of_week: string;
@@ -46,11 +44,9 @@ export interface ContractRequestPayload {
 }
 
 export async function getCoachProfile(coach_id: number): Promise<CoachProfile> {
-  const { data } = await axios.post(
-    `${BASE_URL}/coach/profile`,
-    { coach_id },
-    { withCredentials: true },
-  );
+  const { data } = await api.post("/coach/profile", { coach_id }, {
+    skipAuthGate: true,
+  } as any);
 
   return data.coach;
 }
@@ -58,28 +54,21 @@ export async function getCoachProfile(coach_id: number): Promise<CoachProfile> {
 export async function getContractStatus(
   coach_id: number,
 ): Promise<ContractStatus> {
-  const { data } = await axios.get(`${BASE_URL}/contract/contractStatus`, {
+  const { data } = await api.get("/contract/contractStatus", {
     params: { coach_id },
-    withCredentials: true,
   });
 
   return data.status;
 }
 
 export async function getClientCoachStatus(): Promise<ClientCoachStatus> {
-  const { data } = await axios.get(`${BASE_URL}/contract/clientCoachStatus`, {
-    withCredentials: true,
-  });
+  const { data } = await api.get("/contract/clientCoachStatus");
 
   return data;
 }
 
 export async function requestCoachContract(payload: ContractRequestPayload) {
-  const { data } = await axios.post(
-    `${BASE_URL}/contract/requestContract`,
-    payload,
-    { withCredentials: true },
-  );
+  const { data } = await api.post("/contract/requestContract", payload);
 
   return data;
 }

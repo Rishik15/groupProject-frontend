@@ -8,6 +8,7 @@ import {
 } from "react";
 import { getAuth } from "../../services/auth/checkAuth";
 import { socket } from "../../services/sockets/socket";
+import { markAuthChecking, markAuthReady } from "../../services/api";
 
 type User = {
   first_name: string;
@@ -189,36 +190,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [disconnectSocket]);
 
   const refreshAuth = useCallback(async () => {
-    if (refreshInFlightRef.current) return;
+  if (refreshInFlightRef.current) return;
 
-    refreshInFlightRef.current = true;
-    setStatus("checking");
+  refreshInFlightRef.current = true;
+  markAuthChecking();
+  setStatus("checking");
 
-    try {
-      const res = await getAuth();
+  try {
+    const res = await getAuth();
 
-      if (res?.authenticated && res.user) {
-        setAuth({
-          user: res.user,
-          roles: res.roles || [],
-          coachApplicationStatus:
-            res.coachApplicationStatus ??
-            res.coachApplicationStatus ??
-            "none",
-          coachModeActivated:
-            res.coachModeActivated ?? res.coachModeActivated ?? false,
-        });
-      } else {
-        clearAuth();
-      }
-    } catch (err) {
-      console.error("Auth failed:", err);
+    if (res?.authenticated && res.user) {
+      setAuth({
+        user: res.user,
+        roles: res.roles || [],
+        coachApplicationStatus: res.coachApplicationStatus ?? "none",
+        coachModeActivated: res.coachModeActivated ?? false,
+      });
+    } else {
       clearAuth();
-    } finally {
-      refreshInFlightRef.current = false;
-      setHasCheckedAuth(true);
     }
-  }, [setAuth, clearAuth]);
+  } catch (err) {
+    console.error("Auth failed:", err);
+    clearAuth();
+  } finally {
+    refreshInFlightRef.current = false;
+    setHasCheckedAuth(true);
+    markAuthReady();
+  }
+}, [setAuth, clearAuth]);
 
   const setActiveMode = useCallback(
     (mode: Mode) => {

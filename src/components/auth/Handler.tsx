@@ -5,6 +5,7 @@ import { getAuth } from "../../services/auth/checkAuth";
 import { updateRole } from "../../services/auth/updateRole";
 import RoleSelector from "../Register/RoleSelection";
 import { useAuth } from "../../utils/auth/AuthContext";
+import { Spinner } from "@heroui/react";
 
 const AuthComplete = () => {
   const navigate = useNavigate();
@@ -97,7 +98,7 @@ const AuthComplete = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        Signing you in...
+        <Spinner />
       </div>
     );
   }
