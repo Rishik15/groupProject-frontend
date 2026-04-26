@@ -24,7 +24,7 @@ export default function ExerciseCard({ exercise, onAdd, isAdded, onPreview }: Ex
         <button
           onClick={() => onPreview(exercise)}
           className="text-xs font-medium px-3 py-1 rounded-lg border border-[#5B5EF4] text-[#5B5EF4] hover:bg-[#5B5EF4]/10 transition-colors shrink-0"
-        >
+        > 
           View Demo
         </button>
       </div>
