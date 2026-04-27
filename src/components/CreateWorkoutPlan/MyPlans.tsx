@@ -49,9 +49,6 @@ function PlanCard({ plan }: { plan: WorkoutPlan }) {
           >
             {expanded ? "Collapse" : "Expand"}
           </button>
-          <button onClick={() => setShowAssign(true)} className="text-xs border border-[#5B5EF4] text-[#5B5EF4] rounded-lg px-3 py-1">
-            Assign
-          </button>
         </div>
       </div>
 
