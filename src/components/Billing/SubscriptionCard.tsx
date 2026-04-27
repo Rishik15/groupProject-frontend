@@ -16,9 +16,7 @@ const SubscriptionCard = ({ contract }: Props) => {
       </div>
 
       {!contract ? (
-        <div className="text-sm text-gray-500">
-          No active subscription
-        </div>
+        <div className="text-sm text-gray-500">No active subscription</div>
       ) : (
         <Card className="rounded-xl border p-5 shadow-none">
           <div className="flex items-center">
@@ -39,12 +37,6 @@ const SubscriptionCard = ({ contract }: Props) => {
                   ${Number(contract.agreed_price).toFixed(2)} / month
                 </p>
               </div>
-            </div>
-
-            <div className="ml-auto">
-              <Button className="rounded-lg border border-red-300 bg-white px-6 text-red-500">
-                Cancel
-              </Button>
             </div>
           </div>
         </Card>
