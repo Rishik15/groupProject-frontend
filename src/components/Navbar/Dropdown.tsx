@@ -20,27 +20,27 @@ const Dropdownaction = ({
   const { clearAuth } = useAuth();
 
   const handleClick = () => {
-  onClick?.();
+    onClick?.();
 
-  setTimeout(async () => {
-    if (type === "logout") {
-      await logout();
-      clearAuth();
+    setTimeout(async () => {
+      if (type === "logout") {
+        await logout();
+        clearAuth();
 
-      if (socket.connected) {
-        socket.disconnect();
+        if (socket.connected) {
+          socket.disconnect();
+        }
+
+        navigate("/");
+        return;
       }
 
-      navigate("/");
-      return;
-    }
-
-    if (type === "link" && route) {
-      navigate(route);
-      return;
-    }
-  }, 0);
-};
+      if (type === "link" && route) {
+        navigate(route);
+        return;
+      }
+    }, 0);
+  };
 
   return (
     <button

@@ -8,30 +8,30 @@ import Reports from "./Reports";
 import Exercises from "./Exercises";
 
 const AdminLayout = () => {
-    return (
-        <section className="min-h-screen bg-default-50">
-            <Navbar
-                parent="/admin"
-                name="Admin"
-                email="admin@email.com"
-                notifications={[]}
-                count={0}
-                setNotifications={() => { }}
-            />
+  return (
+    <section className="min-h-screen bg-default-50">
+      <Navbar
+        parent="/admin"
+        name="Admin"
+        email="admin@email.com"
+        notifications={[]}
+        count={0}
+        setNotifications={() => {}}
+      />
 
-            <div className="pt-14">
-                <Routes>
-                    <Route index element={<Navigate to="dashboard" replace />} />
-                    <Route path="dashboard" element={<Dashboard />} />
-                    <Route path="accounts" element={<Accounts />} />
-                    <Route path="coach-governance" element={<CoachGovernance />} />
-                    <Route path="prediction" element={<Predictions />} />
-                    <Route path="reports" element={<Reports />} />
-                    <Route path="exercises" element={<Exercises />} />
-                </Routes>
-            </div>
-        </section>
-    );
+      <div className="pt-14">
+        <Routes>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="accounts" element={<Accounts />} />
+          <Route path="coach-governance" element={<CoachGovernance />} />
+          <Route path="prediction" element={<Predictions />} />
+          <Route path="reports" element={<Reports />} />
+          <Route path="exercises" element={<Exercises />} />
+        </Routes>
+      </div>
+    </section>
+  );
 };
 
 export default AdminLayout;

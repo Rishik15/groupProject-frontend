@@ -1,6 +1,10 @@
 import { Button } from "@heroui/react";
 import { CheckCircle2, XCircle } from "lucide-react";
-import { formatAdminCurrency, formatAdminDateTime, formatCoachApplicationStatusLabel } from "../../../../utils/Admin/adminFormatters";
+import {
+  formatAdminCurrency,
+  formatAdminDateTime,
+  formatCoachApplicationStatusLabel,
+} from "../../../../utils/Admin/adminFormatters";
 import type { AdminCoachApplication } from "../../../../utils/Interfaces/Admin/adminCoachApplication";
 
 interface ApplicationCardProps {
@@ -9,7 +13,11 @@ interface ApplicationCardProps {
   onReject: (application: AdminCoachApplication) => void;
 }
 
-const ApplicationCard = ({ application, onApprove, onReject }: ApplicationCardProps) => {
+const ApplicationCard = ({
+  application,
+  onApprove,
+  onReject,
+}: ApplicationCardProps) => {
   const canAct = application.status === "pending";
 
   return (
@@ -70,13 +78,19 @@ const ApplicationCard = ({ application, onApprove, onReject }: ApplicationCardPr
 
         {canAct ? (
           <div className="mt-auto flex flex-wrap gap-2 border-t border-default-200 pt-4">
-            <Button className={"bg-[#5B5EF4]"} onPress={() => onApprove(application)}>
+            <Button
+              className={"bg-[#5B5EF4]"}
+              onPress={() => onApprove(application)}
+            >
               <span className="inline-flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4" />
                 Approve
               </span>
             </Button>
-            <Button className={"bg-[#5B5EF4]"} onPress={() => onReject(application)}>
+            <Button
+              className={"bg-[#5B5EF4]"}
+              onPress={() => onReject(application)}
+            >
               <span className="inline-flex items-center gap-2">
                 <XCircle className="h-4 w-4" />
                 Reject

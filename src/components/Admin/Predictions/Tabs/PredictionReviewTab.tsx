@@ -2,12 +2,12 @@ import type { PredictionMarket } from "../../../../utils/Interfaces/Predictions/
 import PredictionReviewList from "../Lists/PredictionReviewList";
 
 export interface PredictionReviewTabProps {
-    markets: PredictionMarket[];
-    pendingMarketId?: number | null;
-    onApprove: (market: PredictionMarket) => void;
-    onReject: (market: PredictionMarket) => void;
+  markets: PredictionMarket[];
+  pendingMarketId?: number | null;
+  onApprove: (market: PredictionMarket) => void;
+  onReject: (market: PredictionMarket) => void;
 }
 
 export default function PredictionReviewTab(props: PredictionReviewTabProps) {
-    return <PredictionReviewList {...props} />;
+  return <PredictionReviewList {...props} />;
 }

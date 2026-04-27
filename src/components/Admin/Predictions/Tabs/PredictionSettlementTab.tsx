@@ -2,13 +2,13 @@ import type { PredictionMarket } from "../../../../utils/Interfaces/Predictions/
 import PredictionSettlementList from "../Lists/PredictionSettlementList";
 
 export interface PredictionSettlementTabProps {
-    markets: PredictionMarket[];
-    pendingMarketId?: number | null;
-    onOpenSettlement: (market: PredictionMarket) => void;
+  markets: PredictionMarket[];
+  pendingMarketId?: number | null;
+  onOpenSettlement: (market: PredictionMarket) => void;
 }
 
 export default function PredictionSettlementTab(
-    props: PredictionSettlementTabProps,
+  props: PredictionSettlementTabProps,
 ) {
-    return <PredictionSettlementList {...props} />;
+  return <PredictionSettlementList {...props} />;
 }

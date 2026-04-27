@@ -1,6 +1,10 @@
 import { Button, Card } from "@heroui/react";
 import { CheckCircle2, ClipboardList, XCircle } from "lucide-react";
-import { formatAdminCurrency, formatAdminDateTime, formatCoachApplicationStatusLabel } from "../../../../utils/Admin/adminFormatters";
+import {
+  formatAdminCurrency,
+  formatAdminDateTime,
+  formatCoachApplicationStatusLabel,
+} from "../../../../utils/Admin/adminFormatters";
 import type { AdminCoachApplication } from "../../../../utils/Interfaces/Admin/adminCoachApplication";
 
 type ActionMode = "approve" | "reject" | null;
@@ -46,18 +50,24 @@ const ApplicationActionPanel = ({
               <p className="text-sm font-semibold text-default-900">
                 {selectedApplication.name || selectedApplication.email}
               </p>
-              <p className="mt-1 text-sm text-default-600">{selectedApplication.email}</p>
+              <p className="mt-1 text-sm text-default-600">
+                {selectedApplication.email}
+              </p>
               <div className="mt-3 space-y-1 text-sm text-default-600">
                 <p>
                   <span className="font-medium text-default-800">Status:</span>{" "}
-                  {formatCoachApplicationStatusLabel(selectedApplication.status)}
+                  {formatCoachApplicationStatusLabel(
+                    selectedApplication.status,
+                  )}
                 </p>
                 <p>
                   <span className="font-medium text-default-800">Applied:</span>{" "}
                   {formatAdminDateTime(selectedApplication.appliedLabel)}
                 </p>
                 <p>
-                  <span className="font-medium text-default-800">Desired price:</span>{" "}
+                  <span className="font-medium text-default-800">
+                    Desired price:
+                  </span>{" "}
                   {formatAdminCurrency(selectedApplication.desired_price)}
                 </p>
               </div>
@@ -70,15 +80,21 @@ const ApplicationActionPanel = ({
                 ) : (
                   <XCircle className="h-4 w-4" />
                 )}
-                {actionMode === "approve" ? "Approve application" : "Reject application"}
+                {actionMode === "approve"
+                  ? "Approve application"
+                  : "Reject application"}
               </div>
               <p className="mt-2 text-sm text-default-600">
-                Record the review note that should be stored with this application decision.
+                Record the review note that should be stored with this
+                application decision.
               </p>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-default-700" htmlFor="application-admin-action">
+              <label
+                className="text-sm font-medium text-default-700"
+                htmlFor="application-admin-action"
+              >
                 Admin note
               </label>
               <textarea
@@ -98,10 +114,18 @@ const ApplicationActionPanel = ({
             ) : null}
 
             <div className="flex flex-wrap gap-2">
-              <Button className={"bg-[#5B5EF4]"} onPress={onSubmit} isDisabled={submitting}>
+              <Button
+                className={"bg-[#5B5EF4]"}
+                onPress={onSubmit}
+                isDisabled={submitting}
+              >
                 {submitting ? "Saving..." : "Confirm action"}
               </Button>
-              <Button className={"bg-[#5B5EF4]"} onPress={onCancel} isDisabled={submitting}>
+              <Button
+                className={"bg-[#5B5EF4]"}
+                onPress={onCancel}
+                isDisabled={submitting}
+              >
                 Cancel
               </Button>
             </div>
@@ -113,7 +137,8 @@ const ApplicationActionPanel = ({
               No active application selection
             </div>
             <p className="mt-2">
-              Use Approve or Reject on a pending application card to load the action panel.
+              Use Approve or Reject on a pending application card to load the
+              action panel.
             </p>
           </div>
         )}

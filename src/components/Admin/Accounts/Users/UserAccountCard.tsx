@@ -1,6 +1,9 @@
 import { Button } from "@heroui/react";
 import { ShieldAlert, UserCheck, UserX } from "lucide-react";
-import { formatAccountStatusLabel, formatBooleanLabel } from "../../../../utils/Admin/adminFormatters";
+import {
+  formatAccountStatusLabel,
+  formatBooleanLabel,
+} from "../../../../utils/Admin/adminFormatters";
 import type { AdminManagedUser } from "../../../../utils/Interfaces/Admin/adminAccountModeration";
 
 interface UserAccountCardProps {
@@ -16,7 +19,9 @@ const UserAccountCard = ({
   onDeactivate,
   onRestore,
 }: UserAccountCardProps) => {
-  const showRestore = user.account_status === "suspended" || user.account_status === "deactivated";
+  const showRestore =
+    user.account_status === "suspended" ||
+    user.account_status === "deactivated";
 
   return (
     <div className="flex h-full flex-col rounded-[20px] border border-default-200 bg-default-50 p-3">
@@ -24,9 +29,13 @@ const UserAccountCard = ({
         <div className="flex items-start justify-between gap-1">
           <div className="min-w-0">
             <h3 className="truncate text-[16px] font-semibold text-default-900">
-              {user.name || `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim() || "Unknown user"}
+              {user.name ||
+                `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim() ||
+                "Unknown user"}
             </h3>
-            <p className="truncate text-[13.125px] text-default-600">{user.email}</p>
+            <p className="truncate text-[13.125px] text-default-600">
+              {user.email}
+            </p>
           </div>
 
           <span className="shrink-0 rounded-full border border-default-200 bg-white px-3 py-1 text-xs font-medium text-default-700">
@@ -50,7 +59,8 @@ const UserAccountCard = ({
 
         {user.suspension_reason ? (
           <p className="line-clamp-2 text-sm leading-6 text-default-600">
-            <span className="font-medium text-default-800">Reason:</span> {user.suspension_reason}
+            <span className="font-medium text-default-800">Reason:</span>{" "}
+            {user.suspension_reason}
           </p>
         ) : (
           <p className="text-sm text-default-500">No policy reason recorded.</p>
@@ -59,7 +69,6 @@ const UserAccountCard = ({
 
       <div className="mt-auto border-t border-default-200 pt-4">
         <div className="flex flex-wrap items-center gap-2 md:flex-nowrap">
-
           <Button className={"bg-[#5B5EF4]"} onPress={() => onDeactivate(user)}>
             <span className="inline-flex items-center gap-2">
               <UserX className="h-4 w-4" />

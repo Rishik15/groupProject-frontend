@@ -72,7 +72,9 @@ const PendingReviewSummary = ({
         <Card className="rounded-[24px] border border-default-200 bg-white shadow-sm">
           <div className="flex h-full flex-col justify-between gap-3 p-5">
             <div>
-              <p className="text-[13.125px] font-medium text-default-600">Report share</p>
+              <p className="text-[13.125px] font-medium text-default-600">
+                Report share
+              </p>
               <p className="mt-3 text-[24px] font-semibold tracking-tight text-default-900">
                 {formatShare(
                   stats.open_reports,
@@ -118,8 +120,8 @@ const PendingReviewSummary = ({
                   Review backlog status
                 </p>
                 <p className="text-[24px] font-semibold tracking-tight text-default-900">
-                  {totalPendingReviewsIncludingPredictions.toLocaleString()} items
-                  pending
+                  {totalPendingReviewsIncludingPredictions.toLocaleString()}{" "}
+                  items pending
                 </p>
               </div>
             </div>

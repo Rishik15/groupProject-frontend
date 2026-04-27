@@ -30,7 +30,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/event-calendar/ui/popover";
-import { RadioGroup, RadioGroupItem } from "@/components/event-calendar/ui/radio-group";
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from "@/components/event-calendar/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -193,43 +196,43 @@ export function EventDialog({
     bgClass: string;
     borderClass: string;
   }> = [
-      {
-        bgClass: "bg-sky-400 data-[state=checked]:bg-sky-400",
-        borderClass: "border-sky-400 data-[state=checked]:border-sky-400",
-        label: "Sky",
-        value: "sky",
-      },
-      {
-        bgClass: "bg-amber-400 data-[state=checked]:bg-amber-400",
-        borderClass: "border-amber-400 data-[state=checked]:border-amber-400",
-        label: "Amber",
-        value: "amber",
-      },
-      {
-        bgClass: "bg-violet-400 data-[state=checked]:bg-violet-400",
-        borderClass: "border-violet-400 data-[state=checked]:border-violet-400",
-        label: "Violet",
-        value: "violet",
-      },
-      {
-        bgClass: "bg-rose-400 data-[state=checked]:bg-rose-400",
-        borderClass: "border-rose-400 data-[state=checked]:border-rose-400",
-        label: "Rose",
-        value: "rose",
-      },
-      {
-        bgClass: "bg-emerald-400 data-[state=checked]:bg-emerald-400",
-        borderClass: "border-emerald-400 data-[state=checked]:border-emerald-400",
-        label: "Emerald",
-        value: "emerald",
-      },
-      {
-        bgClass: "bg-orange-400 data-[state=checked]:bg-orange-400",
-        borderClass: "border-orange-400 data-[state=checked]:border-orange-400",
-        label: "Orange",
-        value: "orange",
-      },
-    ];
+    {
+      bgClass: "bg-sky-400 data-[state=checked]:bg-sky-400",
+      borderClass: "border-sky-400 data-[state=checked]:border-sky-400",
+      label: "Sky",
+      value: "sky",
+    },
+    {
+      bgClass: "bg-amber-400 data-[state=checked]:bg-amber-400",
+      borderClass: "border-amber-400 data-[state=checked]:border-amber-400",
+      label: "Amber",
+      value: "amber",
+    },
+    {
+      bgClass: "bg-violet-400 data-[state=checked]:bg-violet-400",
+      borderClass: "border-violet-400 data-[state=checked]:border-violet-400",
+      label: "Violet",
+      value: "violet",
+    },
+    {
+      bgClass: "bg-rose-400 data-[state=checked]:bg-rose-400",
+      borderClass: "border-rose-400 data-[state=checked]:border-rose-400",
+      label: "Rose",
+      value: "rose",
+    },
+    {
+      bgClass: "bg-emerald-400 data-[state=checked]:bg-emerald-400",
+      borderClass: "border-emerald-400 data-[state=checked]:border-emerald-400",
+      label: "Emerald",
+      value: "emerald",
+    },
+    {
+      bgClass: "bg-orange-400 data-[state=checked]:bg-orange-400",
+      borderClass: "border-orange-400 data-[state=checked]:border-orange-400",
+      label: "Orange",
+      value: "orange",
+    },
+  ];
 
   return (
     <Dialog onOpenChange={(open) => !open && onClose()} open={isOpen}>

@@ -7,10 +7,7 @@ type ProfileSectionProps = {
   role: string;
 };
 
-export default function ProfileSection({
-  form,
-  role,
-}: ProfileSectionProps) {
+export default function ProfileSection({ form, role }: ProfileSectionProps) {
   const fullName = `${form.first_name ?? ""} ${form.last_name ?? ""}`.trim();
 
   return (

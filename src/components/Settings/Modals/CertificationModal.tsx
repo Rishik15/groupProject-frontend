@@ -6,211 +6,212 @@ import axios from "axios";
 import CertificationCard from "../Components/CertificationCard";
 import { Plus } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
-import {
-    GetCoachInfo
-
-} from "../../../services/Setting/GetCoachInfo";
+import { GetCoachInfo } from "../../../services/Setting/GetCoachInfo";
 import { GetUserInfo } from "../../../services/Setting/GetUserInfo";
 import { useEffect } from "react";
 export type CertificationForm = {
-    id?: number;
-    name: string;
-    provider: string;
-    description: string;
-    issued_date: CalendarDate | null;
-    expires_date: CalendarDate | null;
+  id?: number;
+  name: string;
+  provider: string;
+  description: string;
+  issued_date: CalendarDate | null;
+  expires_date: CalendarDate | null;
 };
 
 type Props = {
-    form: User;
-    setForm: Dispatch<SetStateAction<User | null>>;
+  form: User;
+  setForm: Dispatch<SetStateAction<User | null>>;
 };
 
 export default function CertificationModal({ form, setForm }: Props) {
-    const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
-    const initialCerts = useMemo(() => {
-        return (form.certifications || []).map((c: any) => ({
-            id: c.id,
-            name: c.name || "",
-            provider: c.provider || "",
-            description: c.description || "",
-            issued_date: c.issued_date ? parseDate(c.issued_date) : null,
-            expires_date: c.expires_date ? parseDate(c.expires_date) : null,
-        }));
-    }, [form]);
+  const initialCerts = useMemo(() => {
+    return (form.certifications || []).map((c: any) => ({
+      id: c.id,
+      name: c.name || "",
+      provider: c.provider || "",
+      description: c.description || "",
+      issued_date: c.issued_date ? parseDate(c.issued_date) : null,
+      expires_date: c.expires_date ? parseDate(c.expires_date) : null,
+    }));
+  }, [form]);
 
-    const [certs, setCerts] = useState<CertificationForm[]>(initialCerts);
+  const [certs, setCerts] = useState<CertificationForm[]>(initialCerts);
 
-    const updateField = (
-        index: number,
-        field: keyof CertificationForm,
-        value: string | CalendarDate | null
-    ) => {
-        setCerts((prev) =>
-            prev.map((cert, i) =>
-                i === index ? { ...cert, [field]: value } : cert
-            )
-        );
-    };
-    useEffect(() => {
-        setCerts(initialCerts);
-    }, [initialCerts]);
-
-    const addCertificate = () => {
-        setCerts((prev) => [
-            ...prev,
-            {
-                id: undefined,
-                name: "",
-                provider: "",
-                description: "",
-                issued_date: null,
-                expires_date: null,
-            },
-        ]);
-    };
-
-    const removeCertificate = async (index: number) => {
-        const cert = certs[index];
-        if (!cert) return;
-
-        if (cert.id != null) {
-            await axios.delete("http://localhost:8080/coach/certifications/delete", {
-                data: {
-                    role: "coach",
-                    cert_id: cert.id,
-                },
-                withCredentials: true,
-            });
-        }
-
-        setCerts((prev) => prev.filter((_, i) => i !== index));
-    };
-
-    const isValid = () => {
-        return certs.every(
-            (c) =>
-                c.name.trim() !== "" &&
-                c.provider.trim() !== "" &&
-                c.issued_date !== null
-        );
-    };
-
-    const handleSave = async () => {
-        if (!isValid()) return;
-
-        for (const c of certs) {
-            if (c.id != null) {
-                await axios.patch(
-                    "http://localhost:8080/coach/certifications/update",
-                    {
-                        role: "coach",
-                        cert_id: c.id,
-                        cert_name: c.name,
-                        provider_name: c.provider,
-                        description: c.description,
-                        issued_date: c.issued_date ? c.issued_date.toString() : null,
-                        expires_date: c.expires_date ? c.expires_date.toString() : null,
-                    },
-                    { withCredentials: true }
-                );
-            } else {
-                await axios.post(
-                    "http://localhost:8080/coach/certificates",
-                    {
-                        role: "coach",
-                        cert_name: c.name,
-                        provider_name: c.provider,
-                        description: c.description,
-                        issued_date: c.issued_date ? c.issued_date.toString() : null,
-                        expires_date: c.expires_date ? c.expires_date.toString() : null,
-                    },
-                    { withCredentials: true }
-                );
-            }
-        }
-
-        const userData = await GetUserInfo();
-        const coachData = await GetCoachInfo();
-
-        setForm({
-            ...userData.user,
-            ...coachData.coach,
-        });
-        setOpen(false);
-    };
-
-    return (
-        <Modal>
-            <Button
-                className="ml-auto rounded-xl border border-gray-300 bg-white text-black"
-                onPress={() => setOpen(true)}
-            >
-                Edit Certifications
-            </Button>
-
-            <Modal.Backdrop isOpen={open} onOpenChange={setOpen}>
-                <Modal.Container>
-                    <Modal.Dialog className="max-h-[90vh] overflow-hidden">
-                        <Modal.CloseTrigger />
-
-                        <Modal.Header>
-                            <div className="flex flex-col">
-                                <p className="text-lg font-semibold">Edit Certifications</p>
-                                <p className="text-sm text-gray-500">
-                                    Update your existing certifications.
-                                </p>
-                            </div>
-                        </Modal.Header>
-
-                        <Modal.Body className="max-h-[70vh] overflow-y-auto">
-                            <div className="flex flex-col gap-4">
-                                {certs.length === 0 ? (
-                                    <Card className="rounded-2xl bg-gray-100 p-4">
-                                        <p className="text-sm text-gray-500">
-                                            No certifications found.
-                                        </p>
-                                    </Card>
-                                ) : (
-                                    certs.map((cert, index) => (
-                                        <CertificationCard
-                                            key={cert.id ?? index}
-                                            cert={cert}
-                                            index={index}
-                                            updateField={updateField}
-                                            removeCertificate={removeCertificate}
-                                        />
-                                    ))
-                                )}
-                            </div>
-                        </Modal.Body>
-
-                        <Modal.Footer>
-                            <div className="flex w-full items-center justify-between gap-3">
-                                <Button className="bg-indigo-500 rounded-xl text-white" onPress={addCertificate}>
-                                    <Plus />
-                                    Add Certification
-                                </Button>
-
-                                <div className="flex gap-2">
-                                    <Button className="border border-gray-300 rounded-xl bg-white text-black" onPress={() => setOpen(false)}>
-                                        Cancel
-                                    </Button>
-
-                                    <Button
-                                        className="bg-indigo-500 rounded-xl text-white"
-                                        onPress={handleSave}
-                                        isDisabled={!isValid()}
-                                    >
-                                        Save
-                                    </Button>
-                                </div>
-                            </div>
-                        </Modal.Footer>
-                    </Modal.Dialog>
-                </Modal.Container>
-            </Modal.Backdrop>
-        </Modal>
+  const updateField = (
+    index: number,
+    field: keyof CertificationForm,
+    value: string | CalendarDate | null,
+  ) => {
+    setCerts((prev) =>
+      prev.map((cert, i) => (i === index ? { ...cert, [field]: value } : cert)),
     );
+  };
+  useEffect(() => {
+    setCerts(initialCerts);
+  }, [initialCerts]);
+
+  const addCertificate = () => {
+    setCerts((prev) => [
+      ...prev,
+      {
+        id: undefined,
+        name: "",
+        provider: "",
+        description: "",
+        issued_date: null,
+        expires_date: null,
+      },
+    ]);
+  };
+
+  const removeCertificate = async (index: number) => {
+    const cert = certs[index];
+    if (!cert) return;
+
+    if (cert.id != null) {
+      await axios.delete("http://localhost:8080/coach/certifications/delete", {
+        data: {
+          role: "coach",
+          cert_id: cert.id,
+        },
+        withCredentials: true,
+      });
+    }
+
+    setCerts((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const isValid = () => {
+    return certs.every(
+      (c) =>
+        c.name.trim() !== "" &&
+        c.provider.trim() !== "" &&
+        c.issued_date !== null,
+    );
+  };
+
+  const handleSave = async () => {
+    if (!isValid()) return;
+
+    for (const c of certs) {
+      if (c.id != null) {
+        await axios.patch(
+          "http://localhost:8080/coach/certifications/update",
+          {
+            role: "coach",
+            cert_id: c.id,
+            cert_name: c.name,
+            provider_name: c.provider,
+            description: c.description,
+            issued_date: c.issued_date ? c.issued_date.toString() : null,
+            expires_date: c.expires_date ? c.expires_date.toString() : null,
+          },
+          { withCredentials: true },
+        );
+      } else {
+        await axios.post(
+          "http://localhost:8080/coach/certificates",
+          {
+            role: "coach",
+            cert_name: c.name,
+            provider_name: c.provider,
+            description: c.description,
+            issued_date: c.issued_date ? c.issued_date.toString() : null,
+            expires_date: c.expires_date ? c.expires_date.toString() : null,
+          },
+          { withCredentials: true },
+        );
+      }
+    }
+
+    const userData = await GetUserInfo();
+    const coachData = await GetCoachInfo();
+
+    setForm({
+      ...userData.user,
+      ...coachData.coach,
+    });
+    setOpen(false);
+  };
+
+  return (
+    <Modal>
+      <Button
+        className="ml-auto rounded-xl border border-gray-300 bg-white text-black"
+        onPress={() => setOpen(true)}
+      >
+        Edit Certifications
+      </Button>
+
+      <Modal.Backdrop isOpen={open} onOpenChange={setOpen}>
+        <Modal.Container>
+          <Modal.Dialog className="max-h-[90vh] overflow-hidden">
+            <Modal.CloseTrigger />
+
+            <Modal.Header>
+              <div className="flex flex-col">
+                <p className="text-lg font-semibold">Edit Certifications</p>
+                <p className="text-sm text-gray-500">
+                  Update your existing certifications.
+                </p>
+              </div>
+            </Modal.Header>
+
+            <Modal.Body className="max-h-[70vh] overflow-y-auto">
+              <div className="flex flex-col gap-4">
+                {certs.length === 0 ? (
+                  <Card className="rounded-2xl bg-gray-100 p-4">
+                    <p className="text-sm text-gray-500">
+                      No certifications found.
+                    </p>
+                  </Card>
+                ) : (
+                  certs.map((cert, index) => (
+                    <CertificationCard
+                      key={cert.id ?? index}
+                      cert={cert}
+                      index={index}
+                      updateField={updateField}
+                      removeCertificate={removeCertificate}
+                    />
+                  ))
+                )}
+              </div>
+            </Modal.Body>
+
+            <Modal.Footer>
+              <div className="flex w-full items-center justify-between gap-3">
+                <Button
+                  className="bg-indigo-500 rounded-xl text-white"
+                  onPress={addCertificate}
+                >
+                  <Plus />
+                  Add Certification
+                </Button>
+
+                <div className="flex gap-2">
+                  <Button
+                    className="border border-gray-300 rounded-xl bg-white text-black"
+                    onPress={() => setOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+
+                  <Button
+                    className="bg-indigo-500 rounded-xl text-white"
+                    onPress={handleSave}
+                    isDisabled={!isValid()}
+                  >
+                    Save
+                  </Button>
+                </div>
+              </div>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
+  );
 }

@@ -9,7 +9,7 @@ type CoachAvailabilitySectionProps = {
   updateAvailabilityField: (
     index: number,
     key: keyof AvailabilitySlot,
-    value: string
+    value: string,
   ) => void;
   addAvailability: () => void;
   removeAvailability: (index: number) => void;

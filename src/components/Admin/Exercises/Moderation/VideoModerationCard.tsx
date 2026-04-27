@@ -21,8 +21,12 @@ const VideoModerationCard = ({
     <div className="flex h-full flex-col rounded-[20px] border border-default-200 bg-default-50 p-5">
       <div className="space-y-3">
         <div>
-          <h3 className="text-lg font-semibold text-default-900">{video.exercise_name}</h3>
-          <p className="mt-1 text-sm text-default-600">Creator ID: {video.created_by}</p>
+          <h3 className="text-lg font-semibold text-default-900">
+            {video.exercise_name}
+          </h3>
+          <p className="mt-1 text-sm text-default-600">
+            Creator ID: {video.created_by}
+          </p>
         </div>
 
         <div className="flex flex-wrap gap-2 text-xs text-default-600">

@@ -26,7 +26,9 @@ const ActiveCoachesTab = () => {
         return;
       }
 
-      setError(err instanceof Error ? err.message : "Failed to load active coaches.");
+      setError(
+        err instanceof Error ? err.message : "Failed to load active coaches.",
+      );
       setCoaches([]);
     } finally {
       if (!signal?.aborted) {
@@ -70,10 +72,12 @@ const ActiveCoachesTab = () => {
       <Card className="rounded-[24px] border border-default-200 bg-white shadow-sm">
         <div className="flex flex-col gap-4 p-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h2 className="text-2xl font-semibold text-default-900">Active Coaches</h2>
+            <h2 className="text-2xl font-semibold text-default-900">
+              Active Coaches
+            </h2>
             <p className="mt-1 text-sm text-default-600">
-              Review the current coach roster, pricing, certifications, and contract
-              volume from the dedicated active coach endpoint.
+              Review the current coach roster, pricing, certifications, and
+              contract volume from the dedicated active coach endpoint.
             </p>
           </div>
 
@@ -84,7 +88,10 @@ const ActiveCoachesTab = () => {
               placeholder="Search coaches by name, email, certification, or specialty"
               className="min-w-[280px] rounded-[16px] border border-default-200 px-4 py-2.5 text-sm outline-none transition focus:border-default-400"
             />
-            <Button className={"bg-[#5B5EF4]"} onPress={() => void loadCoaches()}>
+            <Button
+              className={"bg-[#5B5EF4]"}
+              onPress={() => void loadCoaches()}
+            >
               <span className="inline-flex items-center gap-2">
                 <RefreshCw className="h-4 w-4" />
                 Refresh
@@ -98,7 +105,9 @@ const ActiveCoachesTab = () => {
         <Card className="rounded-[24px] border border-default-200 bg-white shadow-sm">
           <div className="flex items-center justify-between gap-4 p-6">
             <div>
-              <p className="text-lg font-semibold text-default-900">Loading coaches</p>
+              <p className="text-lg font-semibold text-default-900">
+                Loading coaches
+              </p>
               <p className="mt-1 text-sm text-default-600">
                 Pulling active coach data, certifications, and contract totals.
               </p>
@@ -138,9 +147,13 @@ const ActiveCoachesTab = () => {
                   <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                     <div>
                       <h3 className="text-xl font-semibold text-default-900">
-                        {coach.name || `${coach.first_name ?? ""} ${coach.last_name ?? ""}`.trim() || "Unknown coach"}
+                        {coach.name ||
+                          `${coach.first_name ?? ""} ${coach.last_name ?? ""}`.trim() ||
+                          "Unknown coach"}
                       </h3>
-                      <p className="mt-1 text-sm text-default-600">{coach.email}</p>
+                      <p className="mt-1 text-sm text-default-600">
+                        {coach.email}
+                      </p>
                     </div>
 
                     <div className="rounded-full border border-default-200 px-3 py-1 text-sm text-default-700">
@@ -175,7 +188,8 @@ const ActiveCoachesTab = () => {
                       Coach description
                     </p>
                     <p className="mt-2 text-sm leading-6 text-default-700">
-                      {coach.coach_description ?? "No coach description provided."}
+                      {coach.coach_description ??
+                        "No coach description provided."}
                     </p>
                   </div>
 
@@ -200,13 +214,24 @@ const ActiveCoachesTab = () => {
                                   {certification.cert_name}
                                 </p>
                                 <p className="text-sm text-default-600">
-                                  {certification.provider_name ?? "Provider not listed"}
+                                  {certification.provider_name ??
+                                    "Provider not listed"}
                                 </p>
                               </div>
 
                               <div className="text-sm text-default-500 md:text-right">
-                                <p>Issued: {formatAdminDateTime(certification.issued_date)}</p>
-                                <p>Expires: {formatAdminDateTime(certification.expires_date)}</p>
+                                <p>
+                                  Issued:{" "}
+                                  {formatAdminDateTime(
+                                    certification.issued_date,
+                                  )}
+                                </p>
+                                <p>
+                                  Expires:{" "}
+                                  {formatAdminDateTime(
+                                    certification.expires_date,
+                                  )}
+                                </p>
                               </div>
                             </div>
 

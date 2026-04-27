@@ -43,7 +43,10 @@ const CoachApplicationsTab = () => {
     setError(null);
 
     try {
-      const response = await getCoachApplications({ status: nextStatus }, signal);
+      const response = await getCoachApplications(
+        { status: nextStatus },
+        signal,
+      );
       setApplications(response.applications ?? []);
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") {
@@ -51,7 +54,9 @@ const CoachApplicationsTab = () => {
       }
 
       setError(
-        err instanceof Error ? err.message : "Failed to load coach applications.",
+        err instanceof Error
+          ? err.message
+          : "Failed to load coach applications.",
       );
       setApplications([]);
     } finally {
@@ -172,7 +177,8 @@ const CoachApplicationsTab = () => {
                 Loading applications
               </p>
               <p className="mt-1 text-sm text-default-600">
-                Pulling the latest coach application dataset for the selected status bucket.
+                Pulling the latest coach application dataset for the selected
+                status bucket.
               </p>
             </div>
             <RefreshCw className="h-5 w-5 animate-spin text-default-500" />
@@ -209,7 +215,11 @@ const CoachApplicationsTab = () => {
                 </div>
 
                 {actionIsOpen ? (
-                  <Button className={"bg-[#5B5EF4]"} onPress={closeAction} isDisabled={submitting}>
+                  <Button
+                    className={"bg-[#5B5EF4]"}
+                    onPress={closeAction}
+                    isDisabled={submitting}
+                  >
                     Back to roster
                   </Button>
                 ) : null}
@@ -229,12 +239,15 @@ const CoachApplicationsTab = () => {
                   </p>
                   <p className="mt-3">
                     Selected application timestamp:{" "}
-                    {formatAdminDateTime(selectedApplication?.appliedLabel ?? null)}
+                    {formatAdminDateTime(
+                      selectedApplication?.appliedLabel ?? null,
+                    )}
                   </p>
                 </div>
               ) : filteredApplications.length === 0 ? (
                 <div className="rounded-[20px] border border-default-200 bg-default-50 p-5 text-sm text-default-600">
-                  No applications matched your current search and status selection.
+                  No applications matched your current search and status
+                  selection.
                 </div>
               ) : (
                 <div className="grid gap-4 md:grid-cols-2">

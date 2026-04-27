@@ -9,8 +9,11 @@ type Prop = {
   edit: boolean;
 };
 
-
-export default function CoachCertificationsSection({ setForm, form, edit }: Prop) {
+export default function CoachCertificationsSection({
+  setForm,
+  form,
+  edit,
+}: Prop) {
   const certifications = form.certifications ?? [];
 
   return (
@@ -32,7 +35,9 @@ export default function CoachCertificationsSection({ setForm, form, edit }: Prop
         <Card className="rounded-xl bg-gray-100 p-4">
           <div className="flex flex-col gap-2">
             <div>
-              <p className="font-semibold text-gray-800">Saved Certifications</p>
+              <p className="font-semibold text-gray-800">
+                Saved Certifications
+              </p>
               <p className="text-xs text-gray-500">
                 {certifications.length} certification
                 {certifications.length !== 1 ? "s" : ""} added

@@ -17,7 +17,10 @@ interface VideoActionPanelProps {
 }
 
 const getBackendOrigin = () => {
-  if (ADMIN_API_BASE.startsWith("http://") || ADMIN_API_BASE.startsWith("https://")) {
+  if (
+    ADMIN_API_BASE.startsWith("http://") ||
+    ADMIN_API_BASE.startsWith("https://")
+  ) {
     return ADMIN_API_BASE.replace(/\/admin$/, "");
   }
 
@@ -26,7 +29,8 @@ const getBackendOrigin = () => {
 
 const getVideoSrc = (videoUrl: string | null) => {
   if (!videoUrl) return null;
-  if (videoUrl.startsWith("http://") || videoUrl.startsWith("https://")) return videoUrl;
+  if (videoUrl.startsWith("http://") || videoUrl.startsWith("https://"))
+    return videoUrl;
   return `${getBackendOrigin()}${videoUrl.startsWith("/") ? videoUrl : `/${videoUrl}`}`;
 };
 
@@ -83,8 +87,12 @@ const VideoActionPanel = ({
                 )}
                 {title}
               </div>
-              <p className="mt-2 text-sm text-default-600">{selectedVideo.exercise_name}</p>
-              <p className="mt-1 text-sm text-default-600">Creator ID: {selectedVideo.created_by}</p>
+              <p className="mt-2 text-sm text-default-600">
+                {selectedVideo.exercise_name}
+              </p>
+              <p className="mt-1 text-sm text-default-600">
+                Creator ID: {selectedVideo.created_by}
+              </p>
             </div>
 
             <div className="rounded-[20px] border border-default-200 bg-default-50 p-4">
@@ -104,7 +112,10 @@ const VideoActionPanel = ({
 
             {actionMode === "reject" ? (
               <div className="space-y-2">
-                <label className="text-sm font-medium text-default-700" htmlFor="video-review-note">
+                <label
+                  className="text-sm font-medium text-default-700"
+                  htmlFor="video-review-note"
+                >
                   Review note
                 </label>
                 <textarea
@@ -125,17 +136,26 @@ const VideoActionPanel = ({
             ) : null}
 
             <div className="flex flex-wrap gap-2">
-              <Button className={"bg-[#5B5EF4]"} onPress={onSubmit} isDisabled={submitting}>
+              <Button
+                className={"bg-[#5B5EF4]"}
+                onPress={onSubmit}
+                isDisabled={submitting}
+              >
                 {submitting ? "Saving..." : "Confirm action"}
               </Button>
-              <Button className={"bg-[#5B5EF4]"} onPress={onCancel} isDisabled={submitting}>
+              <Button
+                className={"bg-[#5B5EF4]"}
+                onPress={onCancel}
+                isDisabled={submitting}
+              >
                 Cancel
               </Button>
             </div>
           </>
         ) : (
           <div className="rounded-[20px] border border-default-200 bg-default-50 p-5 text-sm text-default-600">
-            Select Approve, Reject, or Remove on a card to open the moderation panel.
+            Select Approve, Reject, or Remove on a card to open the moderation
+            panel.
           </div>
         )}
       </div>

@@ -8,7 +8,10 @@ import {
   sessionLengthItems,
 } from "../../services/RecommendationExercises/filters";
 
-import type { Filters, Plan } from "../../services/RecommendationExercises/types";
+import type {
+  Filters,
+  Plan,
+} from "../../services/RecommendationExercises/types";
 import get_plans from "../../services/RecommendationExercises/getPlan";
 
 type Props = {
@@ -19,15 +22,21 @@ type Props = {
   setPlan: (plan: Plan) => void;
 };
 
-const FilterModal = ({ filters, setFilters, isOpen, setIsOpen, setPlan }: Props) => {
+const FilterModal = ({
+  filters,
+  setFilters,
+  isOpen,
+  setIsOpen,
+  setPlan,
+}: Props) => {
   const [draftFilters, setDraftFilters] = useState<Filters>(filters);
 
   const handleApply = async () => {
-    console.log(draftFilters)
+    console.log(draftFilters);
     const data = await get_plans(draftFilters);
-    console.log(data.plans)
+    console.log(data.plans);
     setFilters(draftFilters);
-    setPlan(data.plans[0])
+    setPlan(data.plans[0]);
     setIsOpen(false);
   };
 
@@ -53,8 +62,8 @@ const FilterModal = ({ filters, setFilters, isOpen, setIsOpen, setPlan }: Props)
 
           <Modal.Body>
             <p className="text-[13px]">
-              These fields are the only ones used to match the plan shown on this
-              page.
+              These fields are the only ones used to match the plan shown on
+              this page.
             </p>
 
             <div className="mt-4 grid grid-cols-2 gap-4">

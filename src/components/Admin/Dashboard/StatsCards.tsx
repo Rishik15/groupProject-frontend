@@ -51,11 +51,15 @@ const StatsCards = ({ stats }: StatsCardsProps) => {
   return (
     <section className="space-y-3" aria-labelledby="dashboard-overview-heading">
       <div>
-        <h2 id="dashboard-overview-heading" className="text-xl font-semibold text-default-900">
+        <h2
+          id="dashboard-overview-heading"
+          className="text-xl font-semibold text-default-900"
+        >
           Overview
         </h2>
         <p className="mt-1 text-sm text-default-600">
-          High-level platform health metrics pulled from the admin stats endpoint.
+          High-level platform health metrics pulled from the admin stats
+          endpoint.
         </p>
       </div>
 
@@ -71,7 +75,9 @@ const StatsCards = ({ stats }: StatsCardsProps) => {
               <div className="flex flex-col justify-between gap-3 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-sm font-medium text-default-600">{item.title}</p>
+                    <p className="text-sm font-medium text-default-600">
+                      {item.title}
+                    </p>
                     <p className="mt-2 text-2xl font-semibold tracking-tight text-default-900">
                       {item.value}
                     </p>
@@ -81,7 +87,9 @@ const StatsCards = ({ stats }: StatsCardsProps) => {
                   </div>
                 </div>
 
-                <p className="text-xs leading-5 text-default-500">{item.helperText}</p>
+                <p className="text-xs leading-5 text-default-500">
+                  {item.helperText}
+                </p>
               </div>
             </Card>
           );

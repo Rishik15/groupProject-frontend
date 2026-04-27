@@ -27,10 +27,11 @@ const ReportCard = ({
 }: ReportCardProps) => {
   return (
     <div
-      className={`rounded-[20px] border p-5 transition ${isSelected
+      className={`rounded-[20px] border p-5 transition ${
+        isSelected
           ? "border-default-900 bg-white shadow-sm"
           : "border-default-200 bg-default-50"
-        }`}
+      }`}
     >
       <div className="flex h-full flex-col gap-4">
         <div className="flex items-start justify-between gap-3">
@@ -40,7 +41,9 @@ const ReportCard = ({
               {toLabel(report.status)}
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-default-900">{report.title}</h3>
+              <h3 className="text-lg font-semibold text-default-900">
+                {report.title}
+              </h3>
               <p className="mt-1 line-clamp-3 text-sm text-default-600">
                 {report.description}
               </p>
@@ -63,7 +66,9 @@ const ReportCard = ({
           </p>
           <p>
             <span className="font-medium text-default-800">Submitted:</span>{" "}
-            {formatAdminDateTime(report.submittedLabel ?? report.updated_at ?? null)}
+            {formatAdminDateTime(
+              report.submittedLabel ?? report.updated_at ?? null,
+            )}
           </p>
           <p>
             <span className="font-medium text-default-800">Admin note:</span>{" "}
@@ -72,10 +77,17 @@ const ReportCard = ({
         </div>
 
         <div className="mt-auto flex flex-wrap gap-2 border-t border-default-200 pt-4">
-          <Button className={"bg-[#5B5EF4]"} onPress={() => onSelect?.(report)}>View details</Button>
+          <Button className={"bg-[#5B5EF4]"} onPress={() => onSelect?.(report)}>
+            View details
+          </Button>
 
           {showCloseAction ? (
-            <Button className={"bg-[#5B5EF4]"} onPress={() => onClose?.(report)}>Close report</Button>
+            <Button
+              className={"bg-[#5B5EF4]"}
+              onPress={() => onClose?.(report)}
+            >
+              Close report
+            </Button>
           ) : null}
         </div>
       </div>

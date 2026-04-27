@@ -103,10 +103,7 @@ const WellnessCheck = () => {
         </Modal.Backdrop>
       </Modal>
 
-      <CustomModal
-        isOpen={rewardOpen}
-        onClose={() => setRewardOpen(false)}
-      >
+      <CustomModal isOpen={rewardOpen} onClose={() => setRewardOpen(false)}>
         <div className="flex items-start gap-4 pt-4">
           <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">
             <Coins size={24} strokeWidth={2.2} />
@@ -116,7 +113,8 @@ const WellnessCheck = () => {
             You have earned{" "}
             <span className="font-semibold text-foreground">100 Points</span>{" "}
             available for use in the{" "}
-            <span className="font-semibold text-foreground">Prediction</span> tab.
+            <span className="font-semibold text-foreground">Prediction</span>{" "}
+            tab.
           </p>
         </div>
       </CustomModal>

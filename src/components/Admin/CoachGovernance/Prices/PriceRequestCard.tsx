@@ -1,6 +1,10 @@
 import { Button } from "@heroui/react";
 import { CheckCircle2, TrendingUp, XCircle } from "lucide-react";
-import { formatAdminCurrency, formatAdminDateTime, formatCoachPriceStatusLabel } from "../../../../utils/Admin/adminFormatters";
+import {
+  formatAdminCurrency,
+  formatAdminDateTime,
+  formatCoachPriceStatusLabel,
+} from "../../../../utils/Admin/adminFormatters";
 import type { AdminCoachPriceRequest } from "../../../../utils/Interfaces/Admin/adminCoachPrice";
 
 interface PriceRequestCardProps {
@@ -9,7 +13,11 @@ interface PriceRequestCardProps {
   onReject: (request: AdminCoachPriceRequest) => void;
 }
 
-const PriceRequestCard = ({ request, onApprove, onReject }: PriceRequestCardProps) => {
+const PriceRequestCard = ({
+  request,
+  onApprove,
+  onReject,
+}: PriceRequestCardProps) => {
   const delta =
     request.current_price !== null && request.current_price !== undefined
       ? request.proposed_price - request.current_price
@@ -20,8 +28,12 @@ const PriceRequestCard = ({ request, onApprove, onReject }: PriceRequestCardProp
       <div className="flex h-full flex-col gap-4">
         <div className="space-y-3">
           <div>
-            <h3 className="text-lg font-semibold text-default-900">{request.coach_name}</h3>
-            <p className="text-sm text-default-600">Coach ID: {request.coach_id}</p>
+            <h3 className="text-lg font-semibold text-default-900">
+              {request.coach_name}
+            </h3>
+            <p className="text-sm text-default-600">
+              Coach ID: {request.coach_id}
+            </p>
           </div>
 
           <div className="flex flex-wrap gap-2 text-xs text-default-600">

@@ -12,7 +12,9 @@ const ClosedReportsTab = () => {
   const [searchValue, setSearchValue] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedReport, setSelectedReport] = useState<AdminReport | null>(null);
+  const [selectedReport, setSelectedReport] = useState<AdminReport | null>(
+    null,
+  );
 
   const loadReports = async (signal?: AbortSignal) => {
     setLoading(true);
@@ -26,7 +28,9 @@ const ClosedReportsTab = () => {
         return;
       }
 
-      setError(err instanceof Error ? err.message : "Failed to load report history.");
+      setError(
+        err instanceof Error ? err.message : "Failed to load report history.",
+      );
       setReports([]);
     } finally {
       if (!signal?.aborted) {
@@ -46,7 +50,10 @@ const ClosedReportsTab = () => {
       setSelectedReport(reports[0]);
     }
 
-    if (selectedReport && !reports.some((report) => report.report_id === selectedReport.report_id)) {
+    if (
+      selectedReport &&
+      !reports.some((report) => report.report_id === selectedReport.report_id)
+    ) {
       setSelectedReport(reports[0] ?? null);
     }
   }, [reports, selectedReport]);
@@ -84,7 +91,9 @@ const ClosedReportsTab = () => {
         <Card className="rounded-[24px] border border-default-200 bg-white shadow-sm">
           <div className="flex items-center justify-between gap-4 p-6">
             <div>
-              <p className="text-lg font-semibold text-default-900">Loading closed reports</p>
+              <p className="text-lg font-semibold text-default-900">
+                Loading closed reports
+              </p>
               <p className="mt-1 text-sm text-default-600">
                 Pulling report history and previous admin actions.
               </p>
@@ -115,7 +124,8 @@ const ClosedReportsTab = () => {
                   Closed report history
                 </p>
                 <p className="mt-1 text-sm text-default-600">
-                  Review previously handled reports and the admin notes stored on each one.
+                  Review previously handled reports and the admin notes stored
+                  on each one.
                 </p>
               </div>
 
@@ -129,7 +139,9 @@ const ClosedReportsTab = () => {
                     <ReportCard
                       key={report.report_id}
                       report={report}
-                      isSelected={selectedReport?.report_id === report.report_id}
+                      isSelected={
+                        selectedReport?.report_id === report.report_id
+                      }
                       onSelect={setSelectedReport}
                     />
                   ))}
@@ -145,58 +157,84 @@ const ClosedReportsTab = () => {
                   Report detail
                 </p>
                 <p className="mt-1 text-sm text-default-600">
-                  Closed reports are read-only here so moderators can review what was previously handled.
+                  Closed reports are read-only here so moderators can review
+                  what was previously handled.
                 </p>
               </div>
 
               {selectedReport ? (
                 <>
                   <div className="rounded-[20px] border border-default-200 bg-default-50 p-4">
-                    <p className="text-sm font-semibold text-default-900">{selectedReport.title}</p>
-                    <p className="mt-1 text-sm text-default-600">{selectedReport.description}</p>
+                    <p className="text-sm font-semibold text-default-900">
+                      {selectedReport.title}
+                    </p>
+                    <p className="mt-1 text-sm text-default-600">
+                      {selectedReport.description}
+                    </p>
                   </div>
 
                   <div className="rounded-[20px] border border-default-200 bg-default-50 p-4">
                     <div className="space-y-2 text-sm text-default-600">
                       <p>
-                        <span className="font-medium text-default-800">Report ID:</span>{" "}
+                        <span className="font-medium text-default-800">
+                          Report ID:
+                        </span>{" "}
                         {selectedReport.report_id}
                       </p>
                       <p>
-                        <span className="font-medium text-default-800">Status:</span>{" "}
+                        <span className="font-medium text-default-800">
+                          Status:
+                        </span>{" "}
                         {selectedReport.status}
                       </p>
                       <p>
-                        <span className="font-medium text-default-800">Reporter:</span>{" "}
+                        <span className="font-medium text-default-800">
+                          Reporter:
+                        </span>{" "}
                         {selectedReport.reporter_user_id}
                       </p>
                       <p>
-                        <span className="font-medium text-default-800">Reported user:</span>{" "}
+                        <span className="font-medium text-default-800">
+                          Reported user:
+                        </span>{" "}
                         {selectedReport.reported_user_id}
                       </p>
                       <p>
-                        <span className="font-medium text-default-800">Submitted:</span>{" "}
+                        <span className="font-medium text-default-800">
+                          Submitted:
+                        </span>{" "}
                         {formatAdminDateTime(
-                          selectedReport.submittedLabel ?? selectedReport.updated_at ?? null,
+                          selectedReport.submittedLabel ??
+                            selectedReport.updated_at ??
+                            null,
                         )}
                       </p>
                     </div>
                   </div>
 
                   <div className="rounded-[20px] border border-default-200 bg-default-50 p-4">
-                    <p className="text-sm font-medium text-default-800">Admin action note</p>
+                    <p className="text-sm font-medium text-default-800">
+                      Admin action note
+                    </p>
                     <p className="mt-2 text-sm text-default-600">
-                      {selectedReport.admin_action ?? "No admin note was stored for this report."}
+                      {selectedReport.admin_action ??
+                        "No admin note was stored for this report."}
                     </p>
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    <Button className={"bg-[#5B5EF4]"} onPress={() => setSelectedReport(null)}>Clear selection</Button>
+                    <Button
+                      className={"bg-[#5B5EF4]"}
+                      onPress={() => setSelectedReport(null)}
+                    >
+                      Clear selection
+                    </Button>
                   </div>
                 </>
               ) : (
                 <div className="rounded-[20px] border border-default-200 bg-default-50 p-5 text-sm text-default-600">
-                  Select a closed report card to review its details and stored admin note.
+                  Select a closed report card to review its details and stored
+                  admin note.
                 </div>
               )}
             </div>

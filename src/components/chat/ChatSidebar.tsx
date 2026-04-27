@@ -16,7 +16,6 @@ const ChatSidebar = ({
   );
 
   return (
-
     <section className=" flex flex-col gap-4 w-84">
       <h1 className="font-bold text-[20px]">Messages</h1>
 
