@@ -46,9 +46,6 @@ const shouldSkipAuthGate = (config: AxiosRequestConfig) => {
 const api = axios.create({
   baseURL: "http://localhost:8080",
   withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 api.interceptors.request.use(
@@ -66,6 +63,7 @@ api.interceptors.request.use(
       withCredentials: config.withCredentials,
       currentPath: window.location.pathname,
       authReady,
+      headers: config.headers,
     });
 
     return config;

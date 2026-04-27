@@ -10,7 +10,6 @@ interface Props {
   onSuccess: () => void;
 }
 
-
 export default function AssignModal({
   mealPlanId,
   planName,
@@ -24,7 +23,10 @@ export default function AssignModal({
   const [success, setSuccess] = useState(false);
 
   async function handleAssign(force = false) {
-    if (!startDate) { setError("Please select a date."); return; }
+    if (!startDate) {
+      setError("Please select a date.");
+      return;
+    }
     setLoading(true);
     try {
       await axios.post(
