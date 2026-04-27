@@ -1,11 +1,13 @@
-import axios from "axios";
+import api from "../api";
 
 export async function logout() {
   try {
-    await axios.post(
-      "http://localhost:8080/auth/logout",
+    await api.post(
+      "/auth/logout",
       {},
-      { withCredentials: true },
+      {
+        skipAuthGate: true,
+      } as any,
     );
   } catch (err) {
     console.error("Logout failed", err);

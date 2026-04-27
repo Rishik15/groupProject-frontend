@@ -1,7 +1,22 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { Spinner } from "@heroui/react";
 import { useAuth } from "./AuthContext";
+
+const getDefaultRoute = (
+  roles: string[],
+  activeMode: string | null,
+): string => {
+  if (activeMode === "admin" && roles.includes("admin")) return "/admin";
+  if (activeMode === "coach" && roles.includes("coach")) return "/coach";
+  if (activeMode === "client" && roles.includes("client")) return "/client";
+
+  if (roles.includes("admin")) return "/admin";
+  if (roles.includes("coach")) return "/coach";
+  if (roles.includes("client")) return "/client";
+
+  return "/";
+};
 
 const ProtectedRoute = ({
   children,
@@ -10,17 +25,15 @@ const ProtectedRoute = ({
   children: React.ReactNode;
   allowedRoles?: string[];
 }) => {
-  const { status, roles, refreshAuth, hasCheckedAuth, socketReady } = useAuth();
+  const { status, roles, activeMode, hasCheckedAuth } = useAuth();
 
   const navigate = useNavigate();
-  const hasTriggeredAuth = useRef(false);
 
-  useEffect(() => {
-    if (!hasCheckedAuth && !hasTriggeredAuth.current) {
-      hasTriggeredAuth.current = true;
-      refreshAuth();
-    }
-  }, [hasCheckedAuth, refreshAuth]);
+  const hasAllowedRole =
+    !allowedRoles || allowedRoles.some((role) => roles.includes(role));
+
+  const activeModeAllowed =
+    !allowedRoles || (!!activeMode && allowedRoles.includes(activeMode));
 
   useEffect(() => {
     if (!hasCheckedAuth) return;
@@ -30,28 +43,20 @@ const ProtectedRoute = ({
       return;
     }
 
-    if (
-      status === "authenticated" &&
-      allowedRoles &&
-      !allowedRoles.some((r) => roles.includes(r))
-    ) {
-      if (roles.includes("admin")) {
-        navigate("/admin", { replace: true });
-      } else if (roles.includes("coach")) {
-        navigate("/coach", { replace: true });
-      } else if (roles.includes("client")) {
-        navigate("/client", { replace: true });
-      } else {
-        navigate("/", { replace: true });
-      }
+    if (status === "authenticated" && (!hasAllowedRole || !activeModeAllowed)) {
+      navigate(getDefaultRoute(roles, activeMode), { replace: true });
     }
-  }, [status, roles, allowedRoles, hasCheckedAuth, navigate]);
+  }, [
+    status,
+    roles,
+    activeMode,
+    hasAllowedRole,
+    activeModeAllowed,
+    hasCheckedAuth,
+    navigate,
+  ]);
 
-  if (
-    !hasCheckedAuth ||
-    status === "checking" ||
-    (status === "authenticated" && !socketReady)
-  ) {
+  if (!hasCheckedAuth || status === "checking") {
     return (
       <div className="h-screen flex items-center justify-center">
         <Spinner size="lg" />
@@ -60,6 +65,8 @@ const ProtectedRoute = ({
   }
 
   if (status !== "authenticated") return null;
+
+  if (!hasAllowedRole || !activeModeAllowed) return null;
 
   return <>{children}</>;
 };

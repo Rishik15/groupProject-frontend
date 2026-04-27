@@ -1,15 +1,17 @@
 import type { ClientInfoValues } from "../../utils/Interfaces/OnboardingSurvey/client";
+
 import type {
   CoachAvailabilityBlock,
   CoachCertificationValues,
 } from "../../utils/Interfaces/OnboardingSurvey/coach";
+
 import { buildCoachProfileDescription } from "../../utils/OnboardingSurvey/coachHelpers";
 import { isAvailabilityBlockValid } from "../../utils/OnboardingSurvey/coachHelpers";
+
 import type {
   BackendClientOnboardingPayload,
-  BackendCoachOnboardingPayload,
+  BackendCoachApplicationPayload,
   CoachPayloadInput,
-  CombinedCoachOnboardingInput,
 } from "./onboardingTypes";
 
 const TEMP_PROFILE_PICTURE = "temp-profile-picture";
@@ -95,10 +97,10 @@ export function buildClientOnboardingPayload(
   };
 }
 
-export function buildCoachOnboardingPayload(
-  data: CombinedCoachOnboardingInput,
-): BackendCoachOnboardingPayload {
-  const certifications = data.coach.credentials.certifications
+export function buildCoachApplicationPayload(
+  coach: CoachPayloadInput,
+): BackendCoachApplicationPayload {
+  const certifications = coach.credentials.certifications
     .filter(hasAnyCertificationValue)
     .map((certification) => ({
       cert_name: certification.cert_name.trim(),
@@ -108,7 +110,7 @@ export function buildCoachOnboardingPayload(
       expires_date: toBackendDateTime(certification.expires_date),
     }));
 
-  const availabilityBlocks = data.coach.availability
+  const availabilityBlocks = coach.availability
     .filter((block) => block.active)
     .filter(isAvailabilityBlockValid)
     .map((block) => ({
@@ -120,9 +122,16 @@ export function buildCoachOnboardingPayload(
     }));
 
   return {
-    ...buildClientOnboardingPayload(data.client.info),
-    coach_description: buildCoachDescription(data.coach),
-    price: toRequiredNumber(data.coach.price),
+    coach_description: buildCoachDescription(coach),
+    price: toRequiredNumber(coach.price),
+    years_experience: toNumberOrNull(coach.credentials.yearsExperience),
+
+    primary_specialties: coach.primarySpecialties,
+    secondary_specialties: coach.secondarySpecialties,
+    client_types: coach.clientTypes,
+    session_formats: coach.sessionFormats,
+    bio: coach.credentials.bio.trim(),
+
     num_cert: certifications.length,
     cert_name: certifications.map((certification) => certification.cert_name),
     provider_name: certifications.map(
@@ -137,6 +146,7 @@ export function buildCoachOnboardingPayload(
     expires_date: certifications.map(
       (certification) => certification.expires_date,
     ),
+
     num_days: availabilityBlocks.length,
     day_of_week: availabilityBlocks.map((block) => block.day_of_week),
     start_time: availabilityBlocks.map((block) => block.start_time),

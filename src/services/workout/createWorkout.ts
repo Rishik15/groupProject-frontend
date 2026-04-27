@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const BASE_URL = "http://localhost:8080";
+import api from "../api";
 
 export const createWorkout = async (
   name: string,
@@ -11,11 +9,10 @@ export const createWorkout = async (
   }[],
 ) => {
   try {
-    const res = await axios.post(
-      `${BASE_URL}/workouts/create`,
-      { name, exercises },
-      { withCredentials: true },
-    );
+    const res = await api.post("/workouts/create", {
+      name,
+      exercises,
+    });
 
     return res.data;
   } catch (err: any) {

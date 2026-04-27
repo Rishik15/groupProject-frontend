@@ -1,10 +1,11 @@
-import axios from "axios";
+import api from "../api";
 
 export const getMessages = async (convId: number) => {
   try {
-    const res = await axios.get("http://localhost:8080/chat/getMessages", {
-      params: { conv_id: convId },
-      withCredentials: true,
+    const res = await api.get("/chat/getMessages", {
+      params: {
+        conv_id: convId,
+      },
     });
 
     return res.data;

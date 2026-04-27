@@ -1,27 +1,30 @@
 import axios from "axios";
+
 import type { ClientInfoValues } from "../../utils/Interfaces/OnboardingSurvey/client";
-import apiClient from "./apiClient";
+
+import api from "../api";
+
 import {
   buildClientOnboardingPayload,
-  buildCoachOnboardingPayload,
+  buildCoachApplicationPayload,
 } from "./onboardingPayloadBuilders";
+
 import type {
-  CombinedCoachOnboardingInput,
+  CoachPayloadInput,
   OnboardingSuccessResponse,
 } from "./onboardingTypes";
 
-const ONBOARDING_PATH = "/onboard/";
+const CLIENT_ONBOARDING_PATH = "/onboard/";
+const COACH_APPLICATION_PATH = "/onboard/coachApplication";
 
 async function postOnboarding(
+  path: string,
   payload: unknown,
 ): Promise<OnboardingSuccessResponse> {
   console.log("Onboarding payload JSON:", JSON.stringify(payload, null, 2));
 
   try {
-    const response = await apiClient.post<OnboardingSuccessResponse>(
-      ONBOARDING_PATH,
-      payload,
-    );
+    const response = await api.post<OnboardingSuccessResponse>(path, payload);
 
     return response.data ?? { message: "Onboarding completed successfully." };
   } catch (error) {
@@ -33,7 +36,9 @@ async function postOnboarding(
       }
 
       throw new Error(
-        `Onboarding request failed with status ${error.response?.status ?? "unknown"}.`,
+        `Onboarding request failed with status ${
+          error.response?.status ?? "unknown"
+        }.`,
       );
     }
 
@@ -43,12 +48,10 @@ async function postOnboarding(
 
 export async function submitClientOnboarding(clientInfo: ClientInfoValues) {
   const payload = buildClientOnboardingPayload(clientInfo);
-  return postOnboarding(payload);
+  return postOnboarding(CLIENT_ONBOARDING_PATH, payload);
 }
 
-export async function submitCoachOnboarding(
-  data: CombinedCoachOnboardingInput,
-) {
-  const payload = buildCoachOnboardingPayload(data);
-  return postOnboarding(payload);
+export async function submitCoachApplication(coach: CoachPayloadInput) {
+  const payload = buildCoachApplicationPayload(coach);
+  return postOnboarding(COACH_APPLICATION_PATH, payload);
 }

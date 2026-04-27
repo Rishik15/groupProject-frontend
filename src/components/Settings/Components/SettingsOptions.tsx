@@ -1,19 +1,17 @@
 import { Button } from "@heroui/react";
-import {
-  ChevronRight,
-  LogOut,
-} from "lucide-react";
+import { ChevronRight, LogOut, HelpCircle } from "lucide-react";
 import { AccountDeletion } from "./AccountDeletion";
 import type { LucideIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { HelpCircle } from "lucide-react";
 import HelpModal from "../Modals/HelpModal";
+import BecomeCoachModal from "../Modals/BecomeCoachModal";
 
 type OptionItem = {
   label: string;
   icon: LucideIcon;
-  route: string;
+  route?: string;
+  action?: "become_coach";
 };
 
 type Props = {
@@ -23,7 +21,20 @@ type Props = {
 
 const SettingOptions = ({ options, onLogout }: Props) => {
   const navigate = useNavigate();
+
   const [openModal, setOpenModal] = useState(false);
+  const [becomeCoachOpen, setBecomeCoachOpen] = useState(false);
+
+  const handleOptionClick = (option: OptionItem) => {
+    if (option.action === "become_coach") {
+      setBecomeCoachOpen(true);
+      return;
+    }
+
+    if (option.route) {
+      navigate(option.route);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-10 w-165">
