@@ -8,12 +8,14 @@ type Props = {
     payment_methods: PaymentMethod[];
     addCardToList: (method: PaymentMethod) => void;
     removePaymentMethod: (id: number) => void;
+    setDefault: (id: number) => void;
 };
 
 const PaymentMethodCard = ({
     payment_methods,
     addCardToList,
-    removePaymentMethod
+    removePaymentMethod,
+    setDefault
 }: Props) => {
 
     return (
@@ -46,6 +48,9 @@ const PaymentMethodCard = ({
                                 key={paymentMethod.payment_method_id}
                                 method={paymentMethod}
                                 isDefault={paymentMethod.is_default === 1}
+                                onRemove={removePaymentMethod}
+                                setDefault={setDefault}
+                                
                             />
                         ))}
                     </div>
