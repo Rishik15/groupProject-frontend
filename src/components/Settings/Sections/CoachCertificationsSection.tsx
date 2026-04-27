@@ -1,13 +1,16 @@
 import { Card } from "@heroui/react";
 import type { User } from "../../../services/Setting/User";
 import CertificationModal from "../Modals/CertificationModal";
+import type { Dispatch, SetStateAction } from "react";
 
 type Prop = {
   form: User;
+  setForm: Dispatch<SetStateAction<User | null>>;
   edit: boolean;
 };
 
-export default function CoachCertificationsSection({ form, edit }: Prop) {
+
+export default function CoachCertificationsSection({ setForm, form, edit }: Prop) {
   const certifications = form.certifications ?? [];
 
   return (
@@ -23,7 +26,7 @@ export default function CoachCertificationsSection({ form, edit }: Prop) {
             </p>
           </div>
 
-          {edit && <CertificationModal form={form} />}
+          {edit && <CertificationModal setForm={setForm} form={form} />}
         </div>
 
         <Card className="rounded-xl bg-gray-100 p-4">

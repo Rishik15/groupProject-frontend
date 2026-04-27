@@ -4,6 +4,9 @@ import CalorieCount from "./Today/CalorieCount";
 import Macros from "./Today/Macros";
 import MealsToday from "./Today/MealsToday";
 import WeeklyCalories from "./Week/WeeklyCalories";
+import MealPlan from "./MealPlan/MealPlan";
+import CreateMealPlan from "../NutritionPage/MealPlan/CreateMealPlan";
+import AssignedPlans from "./MealPlan/AssignedPlans";
 import type { TodayNutritionSummary } from "../../utils/Interfaces/Nutrition/nutrition";
 import {
   getWeeklyCaloriesSummary,
@@ -15,6 +18,8 @@ interface NutritionTabsProps {
   refreshKey?: number;
 }
 
+type PlansSubTab = "meal-plans" | "assigned-plans" | "create-plan";
+
 const NutritionTabs = ({ refreshKey = 0 }: NutritionTabsProps) => {
   const [todaySummary, setTodaySummary] =
     useState<TodayNutritionSummary | null>(null);
@@ -24,6 +29,8 @@ const NutritionTabs = ({ refreshKey = 0 }: NutritionTabsProps) => {
 
   const [isTodayLoading, setIsTodayLoading] = useState(true);
   const [isWeeklyLoading, setIsWeeklyLoading] = useState(true);
+
+  const [activeSubTab, setActiveSubTab] = useState<PlansSubTab>("meal-plans");
 
   const fetchNutritionData = useCallback(async () => {
     try {
@@ -66,7 +73,7 @@ const NutritionTabs = ({ refreshKey = 0 }: NutritionTabsProps) => {
         <Tabs className="w-full">
           <Tabs.ListContainer>
             <Tabs.List
-              aria-label="Today"
+              aria-label="Nutrition tabs"
               className="inline-flex w-fit items-center gap-1 rounded-full bg-transparent p-0"
             >
               <Tabs.Tab
@@ -114,7 +121,44 @@ const NutritionTabs = ({ refreshKey = 0 }: NutritionTabsProps) => {
           </Tabs.Panel>
 
           <Tabs.Panel className="mt-5 pt-0 pl-0 pr-0" id="Meal Plans">
-            <div className="rounded-2xl border border-dashed border-neutral-300 bg-white p-6" />
+            <div className="mb-4 flex gap-2">
+              <button
+                className={`rounded-full px-4 py-2 text-sm font-medium ${
+                  activeSubTab === "meal-plans"
+                    ? "bg-indigo-100 text-indigo-600"
+                    : "bg-neutral-100 text-neutral-500"
+                }`}
+                onClick={() => setActiveSubTab("meal-plans")}
+              >
+                Meal Plans
+              </button>
+
+              <button
+                className={`rounded-full px-4 py-2 text-sm font-medium ${
+                  activeSubTab === "assigned-plans"
+                    ? "bg-indigo-100 text-indigo-600"
+                    : "bg-neutral-100 text-neutral-500"
+                }`}
+                onClick={() => setActiveSubTab("assigned-plans")}
+              >
+                My Plans
+              </button>
+
+              <button
+                className={`rounded-full px-4 py-2 text-sm font-medium ${
+                  activeSubTab === "create-plan"
+                    ? "bg-indigo-100 text-indigo-600"
+                    : "bg-neutral-100 text-neutral-500"
+                }`}
+                onClick={() => setActiveSubTab("create-plan")}
+              >
+                Create Plan
+              </button>
+            </div>
+
+            {activeSubTab === "meal-plans" && <MealPlan />}
+            {activeSubTab === "assigned-plans" && <AssignedPlans />}
+            {activeSubTab === "create-plan" && <CreateMealPlan />}
           </Tabs.Panel>
         </Tabs>
       </div>

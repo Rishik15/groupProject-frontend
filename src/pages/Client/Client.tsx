@@ -14,6 +14,7 @@ import { useAuth } from "../../utils/auth/AuthContext";
 import Recommendation from "./Recommendation";
 import ExerciseLibrary from "../ExerciseLibrary/ExerciseLibrary";
 import Predictions from "./Predictions";
+import Billing from "../Billing/Billing";
 
 const ClientLayout = () => {
   const { user } = useAuth();
@@ -82,6 +83,7 @@ const ClientLayout = () => {
             element={<Settings role="client" tab="info" />}
           />
           <Route path="recommendation" element={<Recommendation />} />
+          <Route path="billing" element={<Billing />} />
         </Routes>
       </div>
     </section>
