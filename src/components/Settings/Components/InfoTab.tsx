@@ -126,7 +126,7 @@ export function InfoTab({ form, setForm, edit, role }: InfoTabProps) {
               removeAvailability={removeAvailability}
             />
 
-            <CoachCertificationsSection form={form} edit={edit} />
+            <CoachCertificationsSection form={form} edit={edit} setForm={setForm} />
 
             <CoachDescriptionBlock
               form={form}

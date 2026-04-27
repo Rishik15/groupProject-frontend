@@ -5,7 +5,13 @@ import type { User } from "../../../services/Setting/User";
 import axios from "axios";
 import CertificationCard from "../Components/CertificationCard";
 import { Plus } from "lucide-react";
+import type { Dispatch, SetStateAction } from "react";
+import {
+    GetCoachInfo
 
+} from "../../../services/Setting/GetCoachInfo";
+import { GetUserInfo } from "../../../services/Setting/GetUserInfo";
+import { useEffect } from "react";
 export type CertificationForm = {
     id?: number;
     name: string;
@@ -17,9 +23,10 @@ export type CertificationForm = {
 
 type Props = {
     form: User;
+    setForm: Dispatch<SetStateAction<User | null>>;
 };
 
-export default function CertificationModal({ form }: Props) {
+export default function CertificationModal({ form, setForm }: Props) {
     const [open, setOpen] = useState(false);
 
     const initialCerts = useMemo(() => {
@@ -46,6 +53,9 @@ export default function CertificationModal({ form }: Props) {
             )
         );
     };
+    useEffect(() => {
+        setCerts(initialCerts);
+    }, [initialCerts]);
 
     const addCertificate = () => {
         setCerts((prev) => [
@@ -90,27 +100,45 @@ export default function CertificationModal({ form }: Props) {
     const handleSave = async () => {
         if (!isValid()) return;
 
-        const newCerts = certs.filter((c) => c.id == null);
-
-        for (const c of newCerts) {
-            await axios.post(
-                "http://localhost:8080/coach/certificates",
-                {
-                    role: "coach",
-                    cert_name: c.name,
-                    provider_name: c.provider,
-                    description: c.description,
-                    issued_date: c.issued_date?.toString() || "",
-                    expires_date: c.expires_date?.toString() || "",
-                },
-                {
-                    withCredentials: true,
-                }
-            );
+        for (const c of certs) {
+            if (c.id != null) {
+                await axios.patch(
+                    "http://localhost:8080/coach/certifications/update",
+                    {
+                        role: "coach",
+                        cert_id: c.id,
+                        cert_name: c.name,
+                        provider_name: c.provider,
+                        description: c.description,
+                        issued_date: c.issued_date ? c.issued_date.toString() : null,
+                        expires_date: c.expires_date ? c.expires_date.toString() : null,
+                    },
+                    { withCredentials: true }
+                );
+            } else {
+                await axios.post(
+                    "http://localhost:8080/coach/certificates",
+                    {
+                        role: "coach",
+                        cert_name: c.name,
+                        provider_name: c.provider,
+                        description: c.description,
+                        issued_date: c.issued_date ? c.issued_date.toString() : null,
+                        expires_date: c.expires_date ? c.expires_date.toString() : null,
+                    },
+                    { withCredentials: true }
+                );
+            }
         }
 
+        const userData = await GetUserInfo();
+        const coachData = await GetCoachInfo();
+
+        setForm({
+            ...userData.user,
+            ...coachData.coach,
+        });
         setOpen(false);
-        window.location.reload();
     };
 
     return (
@@ -160,7 +188,7 @@ export default function CertificationModal({ form }: Props) {
 
                         <Modal.Footer>
                             <div className="flex w-full items-center justify-between gap-3">
-                                <Button  className="bg-indigo-500 rounded-xl text-white" onPress={addCertificate}>
+                                <Button className="bg-indigo-500 rounded-xl text-white" onPress={addCertificate}>
                                     <Plus />
                                     Add Certification
                                 </Button>
@@ -171,7 +199,7 @@ export default function CertificationModal({ form }: Props) {
                                     </Button>
 
                                     <Button
-                                    className="bg-indigo-500 rounded-xl text-white"
+                                        className="bg-indigo-500 rounded-xl text-white"
                                         onPress={handleSave}
                                         isDisabled={!isValid()}
                                     >
