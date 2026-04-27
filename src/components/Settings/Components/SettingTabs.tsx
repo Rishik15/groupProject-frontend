@@ -3,7 +3,7 @@ import { InfoTab } from "./InfoTab";
 import ProgressPhotos from "../ProgressPhotos";
 
 import SettingOptions from "./SettingsOptions";
-import { MessageCircle, UserRound, CreditCard, Bell } from "lucide-react";
+import { MessageCircle, UserRound, CreditCard, Bell, HelpCircle } from "lucide-react";
 import { logout } from "../../../services/auth/logout";
 
 type Props = {
@@ -27,14 +27,15 @@ const clientOptions = [
   { label: "Browse Coaches", icon: UserRound, route: "/client/coaches" },
   { label: "Payments & Billing", icon: CreditCard, route: "/client/billing" },
   { label: "Notifications", icon: Bell, route: "/notifications" },
+  { label: "Help & Support", icon: HelpCircle, route: "help" },
+
 ];
 
 const coachOptions = [
   { label: "Messages", icon: MessageCircle, route: "/messages" },
   { label: "Browse Coaches", icon: UserRound, route: "/coaches" },
   { label: "Payments & Billing", icon: CreditCard, route: "/billing" },
-  { label: "Notifications", icon: Bell, route: "/notifications" },
-];
+  { label: "Notifications", icon: Bell, route: "/notifications" },];
 
 const SettingTab = ({
   role,

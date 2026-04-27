@@ -33,31 +33,43 @@ export default function CertificationDatePicker({
                 </DateField.Suffix>
             </DateField.Group>
 
-            <DatePicker.Popover>
-                <Calendar aria-label={label}>
+            <DatePicker.Popover className="w-fit">
+                <Calendar aria-label={label} className="p-4">
                     <Calendar.Header>
                         <Calendar.YearPickerTrigger>
                             <Calendar.YearPickerTriggerHeading />
                             <Calendar.YearPickerTriggerIndicator />
                         </Calendar.YearPickerTrigger>
 
-                        <Calendar.NavButton slot="previous" />
-                        <Calendar.NavButton slot="next" />
+                        <div className="flex gap-2">
+                            <Calendar.NavButton slot="previous" />
+                            <Calendar.NavButton slot="next" />
+                        </div>
                     </Calendar.Header>
 
-                    <Calendar.Grid>
+                    <Calendar.Grid className="mt-3">
                         <Calendar.GridHeader>
-                            {(day) => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}
+                            {(day) => (
+                                <Calendar.HeaderCell className="text-gray-500 text-sm">
+                                    {day}
+                                </Calendar.HeaderCell>
+                            )}
                         </Calendar.GridHeader>
 
                         <Calendar.GridBody>
-                            {(date) => <Calendar.Cell date={date} />}
+                            {(date) => (
+                                <Calendar.Cell
+                                    date={date}
+                                />
+                            )}
                         </Calendar.GridBody>
                     </Calendar.Grid>
 
                     <Calendar.YearPickerGrid>
                         <Calendar.YearPickerGridBody>
-                            {({ year }) => <Calendar.YearPickerCell year={year} />}
+                            {({ year }) => (
+                                <Calendar.YearPickerCell year={year} />
+                            )}
                         </Calendar.YearPickerGridBody>
                     </Calendar.YearPickerGrid>
                 </Calendar>
