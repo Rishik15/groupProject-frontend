@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import CustomModal from "../../global/Modal";
 
 const BASE_URL = "http://localhost:8080";
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -75,6 +76,8 @@ export default function CreateMealPlan() {
   const [showBrowser, setShowBrowser] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showConflictModal, setShowConflictModal] = useState(false);
+  const [pendingPlanId, setPendingPlanId] = useState<number | null>(null);
 
   function handleSelectMeal(meal: Meal) {
     setSlots((prev) => [...prev, { day: selectedDay, meal_type: selectedType, meal_id: meal.meal_id, meal_name: meal.name, servings: 1 }]);
@@ -83,6 +86,12 @@ export default function CreateMealPlan() {
 
   function removeSlot(index: number) {
     setSlots((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  async function handleAssign(planId: number, force = false) {
+    await axios.post(`${BASE_URL}/nutrition/meal-plans/assign`, {
+      meal_plan_id: planId, start_date: startDate, force,
+    }, { withCredentials: true });
   }
 
   async function handleSave() {
@@ -95,7 +104,7 @@ export default function CreateMealPlan() {
     setError(null);
 
     try {
-      await axios.post(`${BASE_URL}/nutrition/meal-plans/create`, {
+      const res = await axios.post(`${BASE_URL}/nutrition/meal-plans/create`, {
         plan_name: planName,
         start_date: startDate,
         end_date: endDate,
@@ -104,10 +113,34 @@ export default function CreateMealPlan() {
         }))
       }, { withCredentials: true });
 
-      setSuccess(true);
-      setPlanName(""); setSlots([]); setStartDate(""); setEndDate("");
+      const planId = res.data.meal_plan_id;
+
+      try {
+        await handleAssign(planId);
+        setSuccess(true);
+        setPlanName(""); setSlots([]); setStartDate(""); setEndDate("");
+      } catch (assignErr: any) {
+        if (assignErr?.response?.status === 409) {
+          setPendingPlanId(planId);
+          setShowConflictModal(true);
+        } else {
+          setError("Plan created but failed to assign.");
+        }
+      }
     } catch (err: any) {
       setError(err?.response?.data?.error || "Failed to create plan.");
+    }
+  }
+
+  async function handleForceAssign() {
+    if (!pendingPlanId) return;
+    setShowConflictModal(false);
+    try {
+      await handleAssign(pendingPlanId, true);
+      setSuccess(true);
+      setPlanName(""); setSlots([]); setStartDate(""); setEndDate(""); setPendingPlanId(null);
+    } catch {
+      setError("Failed to assign plan.");
     }
   }
 
@@ -120,7 +153,7 @@ export default function CreateMealPlan() {
         <p className="text-xs text-[#72728A] mt-0.5">Build a weekly meal plan from your meal library</p>
       </div>
 
-      {success && <div className="bg-green-50 border border-green-200 text-green-600 text-sm rounded-xl px-4 py-3">Plan created successfully!</div>}
+      {success && <div className="bg-green-50 border border-green-200 text-green-600 text-sm rounded-xl px-4 py-3">Plan created and assigned successfully!</div>}
       {error && <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3">{error}</div>}
 
       <div className="flex gap-6 items-start">
@@ -182,6 +215,20 @@ export default function CreateMealPlan() {
       </div>
 
       {showBrowser && <MealBrowser onSelect={handleSelectMeal} onClose={() => setShowBrowser(false)} />}
+
+      <CustomModal isOpen={showConflictModal} onClose={() => setShowConflictModal(false)} title="Meal Plan Conflict">
+        <div className="flex flex-col gap-4">
+          <p>There is already a meal plan assigned for this week. Do you want to replace it?</p>
+          <div className="flex gap-3 mt-2">
+            <button onClick={handleForceAssign} className="flex-1 bg-[#5B5EF4] text-white text-sm font-medium py-2.5 rounded-xl hover:bg-[#4B4EE4]">
+              Yes, Replace
+            </button>
+            <button onClick={() => setShowConflictModal(false)} className="flex-1 border border-[#E6E6EE] text-[#72728A] text-sm font-medium py-2.5 rounded-xl">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </CustomModal>
     </div>
   );
 }

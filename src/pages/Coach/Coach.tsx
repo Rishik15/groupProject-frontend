@@ -10,6 +10,7 @@ import { getNotifications } from "../../services/notifications/getNotifications"
 import CreateWorkoutPlan from "../CreateWorkoutPlan/CreateWorkoutPlan";
 import ManageClients from "./ManageClient";
 import CoachModeIntroModal from "../../components/Coach/CoachModeIntroModal";
+import CoachSession from "./CoachSession";
 
 const CoachLayout = () => {
   const { user } = useAuth();
@@ -80,6 +81,7 @@ const CoachLayout = () => {
           />
           <Route path="chat" element={<Chat />} />
           <Route path="clients" element={<ManageClients />} />
+          <Route path="session" element={<CoachSession />} />
           <Route path="exercises" element={<CreateWorkoutPlan />} />
         </Routes>
       </div>
