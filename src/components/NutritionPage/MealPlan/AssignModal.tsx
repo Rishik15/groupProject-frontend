@@ -9,9 +9,7 @@ interface Props {
   onClose: () => void;
   onSuccess: () => void;
 }
-function isMonday(dateStr: string) {
-  return new Date(dateStr).getDay() === 1;
-}
+
 
 export default function AssignModal({ mealPlanId, planName, onClose, onSuccess }: Props) {
   const [startDate, setStartDate] = useState("");
@@ -22,7 +20,6 @@ export default function AssignModal({ mealPlanId, planName, onClose, onSuccess }
 
   async function handleAssign(force = false) {
     if (!startDate) { setError("Please select a date."); return; }
-    if (!isMonday(startDate)) { setError("Please select a Monday."); return; }
     setLoading(true);
     try {
       await axios.post(`${BASE_URL}/nutrition/meal-plans/assign`, { meal_plan_id: mealPlanId, start_date: startDate, force }, { withCredentials: true });
