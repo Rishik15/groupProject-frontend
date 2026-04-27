@@ -9,11 +9,18 @@ export type NavbarInterface = {
   setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
 };
 
-export type Notification = {
+export interface Notification {
   id: number;
+  type: string;
   title: string;
   body: string;
-  type: string;
-  is_read: boolean;
-  conversationId?: number;
-};
+  conversationId?: number | null;
+  referenceId?: number | null;
+  metadata?: {
+    route?: string;
+    event_id?: number;
+    action?: string;
+    [key: string]: any;
+  };
+  isRead?: boolean;
+}
