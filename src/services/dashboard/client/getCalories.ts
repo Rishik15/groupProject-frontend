@@ -1,12 +1,6 @@
-import axios from "axios";
+import api from "../../api";
 
 export const getCaloriesMetrics = async () => {
-  const res = await axios.get(
-    "http://localhost:8080/dashboard/client/calories",
-    {
-      withCredentials: true,
-    },
-  );
-
+  const res = await api.get("/dashboard/client/calories");
   return res.data.weekly;
 };

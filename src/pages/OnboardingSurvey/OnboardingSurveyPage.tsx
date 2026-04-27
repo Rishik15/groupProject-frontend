@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "@heroui/react";
 
 import ClientOnboardingPage from "./ClientOnboardingPage";
 import CoachOnboardingPage from "./CoachOnboardingPage";
+import CoachClientInfoModal from "@/components/OnboardingSurvey/Coach/CoachClientInfoModal";
 
 import type {
   ClientFitnessLevel,
@@ -24,8 +26,10 @@ import {
 
 import {
   submitClientOnboarding,
-  submitCoachOnboarding,
+  submitCoachApplication,
 } from "../../services/OnboardingSurvey/onboardingService";
+
+import { useAuth } from "../../utils/auth/AuthContext";
 
 type SurveyType = "client" | "coach";
 type ActiveFlow = "coach" | "client";
@@ -66,21 +70,23 @@ function OnboardingSurveyPage({
   onComplete,
 }: OnboardingSurveyPageProps) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { refreshAuth } = useAuth();
 
-  // A coach completes two phases:
-  // 1. coach-specific onboarding
-  // 2. client/personal onboarding
+  const source = searchParams.get("source");
+  const isClientBecomingCoach = surveyType === "coach" && source === "client";
+
   const [activeFlow, setActiveFlow] = useState<ActiveFlow>(
     surveyType === "coach" ? "coach" : "client",
   );
 
-  // Client state
+  const [showClientInfoModal, setShowClientInfoModal] = useState(false);
+
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [fitnessLevel, setFitnessLevel] = useState<ClientFitnessLevel | "">("");
   const [clientInfo, setClientInfo] =
     useState<ClientInfoValues>(initialClientInfo);
 
-  // Coach state
   const [primarySpecialties, setPrimarySpecialties] = useState<string[]>([]);
   const [secondarySpecialties, setSecondarySpecialties] = useState<string[]>(
     [],
@@ -160,11 +166,7 @@ function OnboardingSurveyPage({
     }));
   };
 
-  const handleCoachPhaseComplete = () => {
-    setActiveFlow("client");
-  };
-
-  const handleSurveyComplete = async () => {
+  const buildCurrentCoachData = () => {
     const profileDescription = buildCoachProfileDescription({
       primarySpecialties,
       secondarySpecialties,
@@ -174,7 +176,20 @@ function OnboardingSurveyPage({
       bio: credentials.bio,
     });
 
-    const combinedData: CombinedOnboardingData = {
+    return {
+      primarySpecialties,
+      secondarySpecialties,
+      clientTypes,
+      availability,
+      sessionFormats,
+      price,
+      credentials,
+      profileDescription,
+    };
+  };
+
+  const buildCurrentCombinedData = (): CombinedOnboardingData => {
+    return {
       client: {
         goals: selectedGoals,
         fitnessLevel,
@@ -182,19 +197,46 @@ function OnboardingSurveyPage({
       },
       ...(surveyType === "coach"
         ? {
-            coach: {
-              primarySpecialties,
-              secondarySpecialties,
-              clientTypes,
-              availability,
-              sessionFormats,
-              price,
-              credentials,
-              profileDescription,
-            },
+            coach: buildCurrentCoachData(),
           }
         : {}),
     };
+  };
+
+  const handleCoachPhaseComplete = async () => {
+    try {
+      setSubmitError(null);
+
+      const coachData = buildCurrentCoachData();
+
+      const response = await submitCoachApplication(coachData);
+      console.log("Coach application saved:", response);
+
+      await refreshAuth();
+
+      if (isClientBecomingCoach) {
+        toast("Coach application submitted", {
+          description:
+            "Your application is in review. We will get back to you as soon as possible.",
+          timeout: 5000,
+        });
+
+        navigate("/client", { replace: true });
+        return;
+      }
+
+      setShowClientInfoModal(true);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "Failed to submit coach application.",
+      );
+    }
+  };
+
+  const handleSurveyComplete = async () => {
+    const combinedData = buildCurrentCombinedData();
 
     if (onComplete) {
       onComplete(combinedData);
@@ -204,25 +246,20 @@ function OnboardingSurveyPage({
     try {
       setSubmitError(null);
 
-      if (surveyType === "coach" && combinedData.coach) {
-        const response = await submitCoachOnboarding({
-          client: combinedData.client,
-          coach: combinedData.coach,
-        });
-
-        console.log("Coach onboarding saved:", response);
-        navigate("/coach", { replace: true });
-        return;
-      }
-
       const response = await submitClientOnboarding(combinedData.client.info);
       console.log("Client onboarding saved:", response);
+
       navigate("/client", { replace: true });
     } catch (error) {
       setSubmitError(
         error instanceof Error ? error.message : "Failed to submit onboarding.",
       );
     }
+  };
+
+  const handleContinueToClientInfo = () => {
+    setShowClientInfoModal(false);
+    setActiveFlow("client");
   };
 
   const errorBanner = submitError ? (
@@ -237,6 +274,7 @@ function OnboardingSurveyPage({
     return (
       <>
         {errorBanner}
+
         <CoachOnboardingPage
           primarySpecialties={primarySpecialties}
           secondarySpecialties={secondarySpecialties}
@@ -255,6 +293,16 @@ function OnboardingSurveyPage({
           onCertificationCountChange={handleCertificationCountChange}
           onCertificationChange={handleCertificationChange}
           onComplete={handleCoachPhaseComplete}
+          finalButtonLabel={
+            isClientBecomingCoach ? "Submit Application" : "Submit Application"
+          }
+          isClientBecomingCoach={isClientBecomingCoach}
+        />
+
+        <CoachClientInfoModal
+          isOpen={showClientInfoModal}
+          setIsOpen={setShowClientInfoModal}
+          onContinue={handleContinueToClientInfo}
         />
       </>
     );
@@ -263,6 +311,7 @@ function OnboardingSurveyPage({
   return (
     <>
       {errorBanner}
+
       <ClientOnboardingPage
         selectedGoals={selectedGoals}
         fitnessLevel={fitnessLevel}
@@ -272,6 +321,12 @@ function OnboardingSurveyPage({
         onClientInfoChange={handleClientInfoChange}
         onComplete={handleSurveyComplete}
         isCoachFlow={surveyType === "coach"}
+      />
+
+      <CoachClientInfoModal
+        isOpen={showClientInfoModal}
+        setIsOpen={setShowClientInfoModal}
+        onContinue={handleContinueToClientInfo}
       />
     </>
   );

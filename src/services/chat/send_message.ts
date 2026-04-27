@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../api";
 
 export const sendMessage = async (
   message: string,
@@ -6,17 +6,11 @@ export const sendMessage = async (
   sender_mode: string,
 ) => {
   try {
-    const res = await axios.post(
-      "http://localhost:8080/chat/sendMessage",
-      {
-        message,
-        conv_id,
-        sender_mode,
-      },
-      {
-        withCredentials: true,
-      },
-    );
+    const res = await api.post("/chat/sendMessage", {
+      message,
+      conv_id,
+      sender_mode,
+    });
 
     return res.data.message;
   } catch (err: any) {

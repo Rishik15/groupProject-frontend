@@ -1,7 +1,5 @@
-import axios from "axios";
+import api from "../api";
 import type { WorkoutPlan } from "../../components/CreateWorkoutPlan/MyPlans";
-
-const BASE_URL = "http://localhost:8080";
 
 export interface PlanExercise {
   exercise_id: number;
@@ -11,16 +9,19 @@ export interface PlanExercise {
 }
 
 export async function getMyPlans(): Promise<WorkoutPlan[]> {
-  const { data } = await axios.get(`${BASE_URL}/workouts/my-workouts`, {
-    withCredentials: true,
-  });
+  const { data } = await api.get("/workouts/my-workouts");
+
   return data.workouts;
 }
 
-export async function getPlanExercises(plan_id: number): Promise<PlanExercise[]> {
-  const { data } = await axios.get(`${BASE_URL}/workouts/workout-plan/exercises`, {
-    params: { plan_id },
-    withCredentials: true,
+export async function getPlanExercises(
+  plan_id: number,
+): Promise<PlanExercise[]> {
+  const { data } = await api.get("/workouts/workout-plan/exercises", {
+    params: {
+      plan_id,
+    },
   });
+
   return data.exercises;
 }

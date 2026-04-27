@@ -126,13 +126,13 @@ function CoachPreferencesStep({
                   )
                 }
                 className={[
-                  "w-full rounded-2xl border px-3 py-1 transition-all",
+                  "rounded-2xl border px-3 py-1",
                   isSelected
                     ? "border-[#5B5EF4] ring-2 ring-[#DCDDFE] text-[#5B5EF4]"
                     : "border-[#E4E4EC]",
                 ].join(" ")}
               >
-                <span className="text-[13.125px] text-[#0F0F14] font-semibold">
+                <span className="text-[13px] text-[#0F0F14] font-semibold">
                   {option.label}
                 </span>
               </button>

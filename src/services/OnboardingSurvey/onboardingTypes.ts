@@ -2,6 +2,7 @@ import type {
   ClientInfoValues,
   ClientFitnessLevel,
 } from "../../utils/Interfaces/OnboardingSurvey/client";
+
 import type {
   CoachAvailabilityBlock,
   CoachCredentialsValues,
@@ -37,15 +38,24 @@ export interface BackendClientOnboardingPayload {
   goal_weight: number | null;
 }
 
-export interface BackendCoachOnboardingPayload extends BackendClientOnboardingPayload {
+export interface BackendCoachApplicationPayload {
   coach_description: string;
   price: number;
+  years_experience: number | null;
+
+  primary_specialties: string[];
+  secondary_specialties: string[];
+  client_types: string[];
+  session_formats: string[];
+  bio: string;
+
   num_cert: number;
   cert_name: string[];
   provider_name: string[];
   description: string[];
   issued_date: string[];
   expires_date: string[];
+
   num_days: number;
   day_of_week: string[];
   start_time: string[];

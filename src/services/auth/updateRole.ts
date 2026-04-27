@@ -1,11 +1,7 @@
-import axios from "axios";
+import api from "../api";
 
 export async function updateRole(role: "coach" | "client") {
-  const { data } = await axios.post(
-    "http://localhost:8080/auth/updateRole",
-    { role },
-    { withCredentials: true }
-  );
+  const { data } = await api.post("/auth/updateRole", { role });
 
   return data;
 }
