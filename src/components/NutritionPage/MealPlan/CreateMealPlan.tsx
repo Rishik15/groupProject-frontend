@@ -22,6 +22,11 @@ interface MealSlot {
   servings: number;
 }
 
+function isMonday(date: string) {
+  const [year, month, day] = date.split("-").map(Number);
+  return new Date(year, month - 1, day).getDay() === 1;
+}
+
 function MealBrowser({ onSelect, onClose }: { onSelect: (meal: Meal) => void; onClose: () => void }) {
   const [meals, setMeals] = useState<Meal[]>([]);
   const [search, setSearch] = useState("");
@@ -65,6 +70,8 @@ export default function CreateMealPlan() {
   const [selectedDay, setSelectedDay] = useState("Mon");
   const [selectedType, setSelectedType] = useState("breakfast");
   const [slots, setSlots] = useState<MealSlot[]>([]);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [showBrowser, setShowBrowser] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -81,20 +88,24 @@ export default function CreateMealPlan() {
   async function handleSave() {
     if (!planName.trim()) { setError("Plan name is required."); return; }
     if (slots.length === 0) { setError("Add at least one meal."); return; }
+    if (!startDate) { setError("Please select a start date."); return; }
+    if (!endDate) { setError("Please select an end date."); return; }
+    if (!isMonday(startDate)) { setError("Start date must be a Monday."); return; }
+    if (endDate < startDate) { setError("End date must be after start date."); return; }
     setError(null);
+
     try {
       await axios.post(`${BASE_URL}/nutrition/meal-plans/create`, {
         plan_name: planName,
+        start_date: startDate,
+        end_date: endDate,
         meals: slots.map(({ day, meal_type, meal_id, servings }) => ({
-          day_of_week: day,
-          meal_type,
-          meal_id,
-          servings,
+          day_of_week: day, meal_type, meal_id, servings,
         }))
       }, { withCredentials: true });
+
       setSuccess(true);
-      setPlanName("");
-      setSlots([]);
+      setPlanName(""); setSlots([]); setStartDate(""); setEndDate("");
     } catch (err: any) {
       setError(err?.response?.data?.error || "Failed to create plan.");
     }
@@ -117,6 +128,17 @@ export default function CreateMealPlan() {
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-[#72728A] uppercase tracking-wider">Plan Name</label>
             <input placeholder="e.g. High Protein Week" value={planName} onChange={(e) => { setPlanName(e.target.value); setSuccess(false); }} className={inputClass} />
+          </div>
+
+          <div className="flex gap-3">
+            <div className="flex flex-col gap-1.5 flex-1">
+              <label className="text-xs font-semibold text-[#72728A] uppercase tracking-wider">Start Date (Monday)</label>
+              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputClass} />
+            </div>
+            <div className="flex flex-col gap-1.5 flex-1">
+              <label className="text-xs font-semibold text-[#72728A] uppercase tracking-wider">End Date</label>
+              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputClass} />
+            </div>
           </div>
 
           <div className="flex flex-col gap-1.5">
