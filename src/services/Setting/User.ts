@@ -18,7 +18,7 @@ export type User = {
   last_name?: string;
   email?: string;
   dob?: string;
-
+  price_pending?: boolean;
   weight?: string | number;
   height?: string | number;
   goal_weight?: string | number;

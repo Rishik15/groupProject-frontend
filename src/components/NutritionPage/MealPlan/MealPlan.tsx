@@ -6,7 +6,7 @@ import MealPlanSearch from "./MealPlanSearch";
 import type { MealPlan, MealPlanDetail } from "./type";
 import MealPlanCard from "./MealPlanCard";
 import NoSelectedCard from "./NoSelectedCard";
-
+import AssignModal from "./AssignModal";
 const ITEMS_PER_PAGE = 5;
 
 const MealPlan = () => {
@@ -15,6 +15,8 @@ const MealPlan = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedPlan, setSelectedPlan] = useState<MealPlan | null>(null);
     const [selectedPlanDetail, setPlanDetail] = useState<MealPlanDetail | null>(null);
+    const [showAssignModal, setShowAssignModal] = useState(false);
+    const [assignSuccess, setAssignSuccess] = useState(false);
 
     useEffect(() => {
         const getMeals = async () => {
@@ -118,9 +120,25 @@ const MealPlan = () => {
             {selectedPlanDetail === null ? (
                 <NoSelectedCard />
             ) : (
-                <MealPlanCard mealPlan={selectedPlanDetail} />
+                <MealPlanCard mealPlan={selectedPlanDetail} onAssign={() => setShowAssignModal(true)} />
+            )}
+
+            {showAssignModal && selectedPlan && (
+            <AssignModal
+                mealPlanId={selectedPlan.meal_plan_id}
+                planName={selectedPlan.plan_name}
+                onClose={() => setShowAssignModal(false)}
+                onSuccess={() => { setAssignSuccess(true); setTimeout(() => setAssignSuccess(false), 3000); }}
+            />
+            )}
+            {assignSuccess && (
+            <div className="bg-green-50 border border-green-200 text-green-600 text-sm rounded-xl px-4 py-3 mb-2">
+                Plan assigned successfully!
+            </div>
             )}
         </div>
+
+        
     );
 };
 

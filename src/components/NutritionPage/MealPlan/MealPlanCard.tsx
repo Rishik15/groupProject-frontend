@@ -3,7 +3,8 @@ import DayCard from "./DayCard";
 import type { MealPlanDetail, DayOfWeek } from "./type";
 
 type Prop = {
-    mealPlan: MealPlanDetail;
+  mealPlan: MealPlanDetail;
+  onAssign: () => void;
 };
 
 const days: { key: DayOfWeek; label: string }[] = [
@@ -19,12 +20,12 @@ const days: { key: DayOfWeek; label: string }[] = [
 
 
 
-const MealPlanCard = ({ mealPlan }: Prop) => {
+const MealPlanCard = ({ mealPlan, onAssign }: Prop) => {
     return (
         <Card className="w-full border">
             <div>
                 <div className="flex">
-                    <div className="flex flex-col gap-2 p-2">
+                    <div className="flex flex-col gap-2 p-4">
                         <h2
                             style={{ fontFamily: "Inter, system-ui" }}
                             className="text-xs font-bold tracking-[2px] text-indigo-500"
@@ -42,19 +43,26 @@ const MealPlanCard = ({ mealPlan }: Prop) => {
                     </div>
 
                     <div className="ml-auto flex gap-2">
-                        <Card className="h-20 w-30 border border-gray-300 bg-[#fafaff]">
-                            <div className="mx-1 flex flex-col gap-2">
-                                <p className="text-xs font-light text-gray-600">Total Calories</p>
-                                <p className="text-lg font-bold">{mealPlan.total_calories}</p>
-                            </div>
-                        </Card>
+                    <Card className="h-25 w-30 border border-gray-300 bg-[#fafaff]">
+                        <div className="mx-1 flex flex-col gap-2">
+                        <p className="text-xs font-light text-gray-600">Total Calories</p>
+                        <p className="text-lg font-bold">{mealPlan.total_calories}</p>
+                        </div>
+                    </Card>
 
-                        <Card className="h-20 w-30 border border-gray-300 bg-[#fafaff]">
-                            <div className="mx-1 flex flex-col gap-2">
-                                <p className="text-xs font-light text-gray-600">Meals</p>
-                                <p className="text-lg font-bold">{mealPlan.meals.length}</p>
-                            </div>
-                        </Card>
+                    <Card className="h-25 w-30 border border-gray-300 bg-[#fafaff]">
+                        <div className="mx-1 flex flex-col gap-2">
+                        <p className="text-xs font-light text-gray-600">Meals</p>
+                        <p className="text-lg font-bold">{mealPlan.meals.length}</p>
+                        </div>
+                    </Card>
+
+                    <button
+                        onClick={onAssign}
+                        className="h-25 px-5 bg-[#5B5EF4] text-white text-sm font-medium rounded-xl hover:bg-[#4B4EE4] transition-colors"
+                    >
+                        Assign Plan
+                    </button>
                     </div>
                 </div>
 

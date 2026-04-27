@@ -3,7 +3,7 @@ import { InfoTab } from "./InfoTab";
 import ProgressPhotos from "../ProgressPhotos";
 
 import SettingOptions from "./SettingsOptions";
-import { MessageCircle, UserRound, CreditCard, Bell } from "lucide-react";
+import { MessageCircle, UserRound, CreditCard, Bell, HelpCircle } from "lucide-react";
 import { logout } from "../../../services/auth/logout";
 import type { LucideIcon } from "lucide-react";
 
@@ -30,19 +30,20 @@ type TabItem = {
   component: React.ReactNode;
 };
 
-const clientOptions: SettingOptionItem[] = [
-  { label: "Messages", icon: MessageCircle, route: "/client/chat" },
-  { label: "Become a Coach", icon: UserRound, action: "become_coach" },
-  { label: "Payments & Billing", icon: CreditCard, route: "/billing" },
+const clientOptions = [
+  { label: "Messages", icon: MessageCircle, route: "/client/messages" },
+  { label: "Browse Coaches", icon: UserRound, route: "/client/coaches" },
+  { label: "Payments & Billing", icon: CreditCard, route: "/client/billing" },
   { label: "Notifications", icon: Bell, route: "/notifications" },
+  { label: "Help & Support", icon: HelpCircle, route: "help" },
+
 ];
 
 const coachOptions: SettingOptionItem[] = [
   { label: "Messages", icon: MessageCircle, route: "/coach/chat" },
   { label: "Browse Coaches", icon: UserRound, route: "/coaches" },
   { label: "Payments & Billing", icon: CreditCard, route: "/billing" },
-  { label: "Notifications", icon: Bell, route: "/notifications" },
-];
+  { label: "Notifications", icon: Bell, route: "/notifications" },];
 
 const SettingTab = ({
   role,
