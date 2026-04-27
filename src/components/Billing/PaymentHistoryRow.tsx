@@ -1,10 +1,11 @@
 import type { PaymentHistoryDetail } from "./type";
 
 type Props = {
-    payment: PaymentHistoryDetail;
+  payment: PaymentHistoryDetail;
+  openInvoice: (payment: PaymentHistoryDetail) => void;
 };
 
-const PaymentRow = ({ payment }: Props) => {
+const PaymentRow = ({ payment, openInvoice }: Props) => {
     const date = payment.paid_at
         ? new Date(payment.paid_at).toLocaleDateString("en-US", {
             month: "short",
@@ -19,7 +20,7 @@ const PaymentRow = ({ payment }: Props) => {
         failed: "bg-red-100 text-red-600",
     };
     return (
-        <div className="grid grid-cols-5 items-center  px-4 py-4 border-b hover:bg-gray-50 cursor-pointer">
+        <div className="grid grid-cols-5 items-center  px-4 py-4 border-b hover:bg-gray-50 cursor-pointer"       onClick={() => openInvoice(payment)}>
             <p className="text-sm text-gray-700">{date}</p>
 
             <div className="flex flex-col">

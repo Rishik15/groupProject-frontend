@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { Modal, Button, Card } from "@heroui/react";
 import { parseDate, type CalendarDate } from "@internationalized/date";

@@ -4,10 +4,11 @@ import type { PaymentHistoryDetail } from "./type";
 import PaymentRow from "./PaymentHistoryRow";
 
 type Props = {
-    historyList: PaymentHistoryDetail[];
+  historyList: PaymentHistoryDetail[];
+  openInvoice: (payment: PaymentHistoryDetail) => void;
 };
 
-const PaymentHistoryCard = ({ historyList }: Props) => {
+const PaymentHistoryCard = ({ openInvoice, historyList }: Props) => {
     return (
         <Card className="w-full border rounded-xl p-5 flex flex-col">
             <div className="flex items-center">
@@ -36,6 +37,7 @@ const PaymentHistoryCard = ({ historyList }: Props) => {
                         <PaymentRow
                             key={payment.payment_id}
                             payment={payment}
+                            openInvoice={openInvoice}
                         />
                     ))
                 )}
