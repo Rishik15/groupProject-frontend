@@ -9,22 +9,22 @@ type Props = {
 const mealTypeStyles = {
     breakfast: {
         p: "px-1 py-1",
-        bg: "bg-yellow-100",
+        
         text: "text-yellow-700",
     },
     lunch: {
         p: "px-1 py-1",
-        bg: "bg-green-100",
+        
         text: "text-green-700",
     },
     dinner: {
         p: "px-1 py-1",
-        bg: "bg-blue-100",
+        
         text: "text-blue-700",
     },
     snack: {
         p: "px-1 py-1",
-        bg: "bg-purple-100",
+        
         text: "text-purple-700",
     },
 };
@@ -35,26 +35,29 @@ const DayCard = ({ day, meals }: Props) => {
             <h3 className="mb-3 text-lg font-bold">{day}</h3>
 
             {meals.length > 0 ? (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-3">
                     {meals.map((meal) => (
                         <Card key={meal.meal_id} className="rounded-lg border p-2">
                             <p
-                                className={`${mealTypeStyles[meal.meal_type].bg} ${mealTypeStyles[meal.meal_type].text} w-fit rounded-2xl px-2 py-1 text-sm font-semibold capitalize`}
+                                className={`${mealTypeStyles[meal.meal_type]} ${mealTypeStyles[meal.meal_type].text} w-fit rounded-2xl px-2 py-1 text-sm font-semibold capitalize`}
                             >
-                                {meal.meal_type}
+                                {meal.meal_type} 
 
                             </p>
                             <p className="font-bold">{meal.name}</p>
-                            <div className="flex gap-1 pr-2">
-                                <p className="border rounded-2xl bg-gray-100 px-2 font-bold  text-sm text-black">
-                                    {meal.calories}
+                            <div className="flex gap-1 pr-2 flex-wrap">
+                                <p className="border rounded-2xl bg-orange-50 px-2 font-bold text-sm text-orange-600">
+                                    {meal.calories} kcal
                                 </p>
-                                <p className="border rounded-2xl bg-gray-100 px-2 font-bold  text-sm text-black">
-                                    {meal.protein}P</p>
-                                <p className="border rounded-2xl bg-gray-100 px-2 font-bold  text-sm text-black">
-                                    {meal.carbs}C</p>
-                                <p className="border rounded-2xl bg-gray-100 px-2 font-bold  text-sm text-black">
-                                    {meal.fats}F</p>
+                                <p className="border rounded-2xl bg-blue-50 px-2 font-bold text-sm text-blue-600">
+                                    {meal.protein}g protein
+                                </p>
+                                <p className="border rounded-2xl bg-yellow-50 px-2 font-bold text-sm text-yellow-600">
+                                    {meal.carbs}g carbs
+                                </p>
+                                <p className="border rounded-2xl bg-red-50 px-2 font-bold text-sm text-pink-600">
+                                    {meal.fats}g fat
+                                </p>
                             </div>
                         </Card>
                     ))}

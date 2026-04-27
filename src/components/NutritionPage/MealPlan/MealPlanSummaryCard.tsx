@@ -21,7 +21,7 @@ const MealPlanSummaryCard = ({ meal_plan, onSelectPlan }: Prop) => {
                 cursor-pointer
             "
         >
-            <Card.Header className="p-2">
+            <Card.Header className="p-5">
                 <div className="flex flex-row gap-5">
                     <p className="my-auto font-extrabold">
                         {meal_plan.plan_name.split(' - ')[0]}
