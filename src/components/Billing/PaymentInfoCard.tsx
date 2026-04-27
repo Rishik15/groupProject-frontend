@@ -1,7 +1,13 @@
 import { Button } from "@heroui/react";
 import { Ellipsis } from "lucide-react";
+import type { PaymentMethod } from "./type";
 
-const PaymentInfoCard = ({ isDefault = false }) => {
+type Props = {
+  method: PaymentMethod;
+  isDefault?: boolean;
+};
+
+const PaymentInfoCard = ({ method, isDefault = false }: Props) => {
   return (
     <div className="flex items-center gap-4 p-4 border-b last:border-b-0">
       
@@ -11,7 +17,9 @@ const PaymentInfoCard = ({ isDefault = false }) => {
 
       <div className="flex flex-col">
         <div className="flex items-center gap-3">
-          <p className="font-semibold">Card ending in 1234</p>
+          <p className="font-semibold">
+            Card ending in {method.card_last_four}
+          </p>
 
           {isDefault && (
             <span className="text-xs border border-indigo-500 text-indigo-500 px-2 py-[2px] rounded-md">
@@ -20,7 +28,9 @@ const PaymentInfoCard = ({ isDefault = false }) => {
           )}
         </div>
 
-        <p className="text-sm text-gray-500">Expires 01/23</p>
+        <p className="text-sm text-gray-500">
+          Expires {String(method.expiry_month).padStart(2, "0")}/{String(method.expiry_year).slice(-2)}
+        </p>
       </div>
 
       <Button isIconOnly className="ml-auto bg-transparent text-gray-500">
