@@ -67,7 +67,15 @@ const ClientLayout = () => {
           <Route path="chat" element={<Chat />} />
           <Route path="nutrition" element={<Nutrition />} />
           <Route path="coaches" element={<BrowseCoaches />} />
-          <Route path="workouts" element={<Workouts />} />
+          <Route
+            path="workouts"
+            element={
+              <Workouts
+                notifications={notifications}
+                setNotifications={setNotifications}
+              />
+            }
+          />
           <Route path="createWorkout" element={<CreateWorkoutPlan />} />
           <Route path="exercises" element={<ExerciseLibrary />} />
           <Route

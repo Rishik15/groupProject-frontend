@@ -20,7 +20,7 @@ export const getNavItems = (activeMode: string | null, parent: string) => {
       },
       {
         label: "Sessions",
-        route: `${parent}/sessions`,
+        route: `${parent}/session`,
         icon: <Dumbbell className="w-4 h-4" />,
       },
       {
@@ -39,7 +39,7 @@ export const getNavItems = (activeMode: string | null, parent: string) => {
   return [
     { label: "Home", route: parent, icon: <House className="w-4 h-4" /> },
     {
-      label: "Workouts",
+      label: "Calendar",
       route: `${parent}/workouts`,
       icon: <Dumbbell className="w-4 h-4" />,
     },
