@@ -18,7 +18,6 @@ type SettingsProps = {
   tab: string;
 };
 
-
 const Settings = ({ role, tab }: SettingsProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [form, setForm] = useState<SettingsForm | null>(null);
@@ -58,7 +57,7 @@ const Settings = ({ role, tab }: SettingsProps) => {
 
       setUser(userData.user);
       setForm(mergedForm);
-       console.log(mergedForm)
+      console.log(mergedForm);
     };
 
     fetchData();
@@ -78,15 +77,16 @@ const Settings = ({ role, tab }: SettingsProps) => {
         await updateProfile(
           Number(form.weight),
           Number(form.height),
-          Number(form.goal_weight)
+          Number(form.goal_weight),
         );
-
-
       }
 
       if (role === "coach") {
         await updateCoachProfile({
-          price: form.price === "" || form.price == null ? undefined : Number(form.price),
+          price:
+            form.price === "" || form.price == null
+              ? undefined
+              : Number(form.price),
           coach_description: form.coach_description,
         });
 
@@ -115,10 +115,11 @@ const Settings = ({ role, tab }: SettingsProps) => {
         />
 
         <div
-          className={`fixed top-20 right-6 z-50 transition-all duration-300 ${showAlert
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 -translate-y-2 pointer-events-none"
-            }`}
+          className={`fixed top-20 right-6 z-50 transition-all duration-300 ${
+            showAlert
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 -translate-y-2 pointer-events-none"
+          }`}
         >
           <Alert status="success" className="rounded-xl bg-[#e5fcf0]">
             <Alert.Indicator />

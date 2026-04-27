@@ -3,7 +3,13 @@ import { InfoTab } from "./InfoTab";
 import ProgressPhotos from "../ProgressPhotos";
 
 import SettingOptions from "./SettingsOptions";
-import { MessageCircle, UserRound, CreditCard, Bell, HelpCircle } from "lucide-react";
+import {
+  MessageCircle,
+  UserRound,
+  CreditCard,
+  Bell,
+  HelpCircle,
+} from "lucide-react";
 import { logout } from "../../../services/auth/logout";
 import type { LucideIcon } from "lucide-react";
 
@@ -36,14 +42,14 @@ const clientOptions = [
   { label: "Payments & Billing", icon: CreditCard, route: "/client/billing" },
   { label: "Notifications", icon: Bell, route: "/notifications" },
   { label: "Help & Support", icon: HelpCircle, route: "help" },
-
 ];
 
 const coachOptions: SettingOptionItem[] = [
   { label: "Messages", icon: MessageCircle, route: "/coach/chat" },
   { label: "Browse Coaches", icon: UserRound, route: "/coaches" },
   { label: "Payments & Billing", icon: CreditCard, route: "/billing" },
-  { label: "Notifications", icon: Bell, route: "/notifications" },];
+  { label: "Notifications", icon: Bell, route: "/notifications" },
+];
 
 const SettingTab = ({
   role,

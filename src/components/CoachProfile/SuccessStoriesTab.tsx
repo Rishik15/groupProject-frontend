@@ -15,10 +15,17 @@ export default function SuccessStoriesTab({ reviews }: { reviews: Review[] }) {
               {review.reviewer_first_name} {review.reviewer_last_name}
             </span>
             <span className="text-xs font-medium text-[#5B5EF4]">
-              {review.rating === 5 ? "Excellent" : review.rating >= 4 ? "Great" : "Good"} experience
+              {review.rating === 5
+                ? "Excellent"
+                : review.rating >= 4
+                  ? "Great"
+                  : "Good"}{" "}
+              experience
             </span>
           </div>
-          <p className="text-sm text-default-500 leading-relaxed">{review.review_text}</p>
+          <p className="text-sm text-default-500 leading-relaxed">
+            {review.review_text}
+          </p>
         </Card>
       ))}
     </div>

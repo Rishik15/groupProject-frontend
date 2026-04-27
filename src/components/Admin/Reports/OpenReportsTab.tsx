@@ -1,7 +1,10 @@
 import { Card } from "@heroui/react";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { closeReport, getReports } from "../../../services/Admin/adminReportService";
+import {
+  closeReport,
+  getReports,
+} from "../../../services/Admin/adminReportService";
 import type {
   AdminReport,
   CloseReportPayload,
@@ -16,7 +19,9 @@ const OpenReportsTab = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [selectedReport, setSelectedReport] = useState<AdminReport | null>(null);
+  const [selectedReport, setSelectedReport] = useState<AdminReport | null>(
+    null,
+  );
   const [adminAction, setAdminAction] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -95,7 +100,9 @@ const OpenReportsTab = () => {
       closeAction();
       await loadReports();
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "Failed to close the report.");
+      setActionError(
+        err instanceof Error ? err.message : "Failed to close the report.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -122,7 +129,9 @@ const OpenReportsTab = () => {
         <Card className="rounded-[24px] border border-default-200 bg-white shadow-sm">
           <div className="flex items-center justify-between gap-4 p-6">
             <div>
-              <p className="text-lg font-semibold text-default-900">Loading reports</p>
+              <p className="text-lg font-semibold text-default-900">
+                Loading reports
+              </p>
               <p className="mt-1 text-sm text-default-600">
                 Pulling the open report moderation queue.
               </p>
@@ -137,7 +146,9 @@ const OpenReportsTab = () => {
               <AlertCircle className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-lg font-semibold text-default-900">Unable to load reports</p>
+              <p className="text-lg font-semibold text-default-900">
+                Unable to load reports
+              </p>
               <p className="mt-1 text-sm text-default-600">{error}</p>
             </div>
           </div>
@@ -161,7 +172,9 @@ const OpenReportsTab = () => {
 
               {actionIsOpen ? (
                 <div className="rounded-[20px] border border-default-200 bg-default-50 p-5 text-sm text-default-600">
-                  <p className="font-medium text-default-800">Queue paused for active moderation</p>
+                  <p className="font-medium text-default-800">
+                    Queue paused for active moderation
+                  </p>
                   <p className="mt-2">
                     Finish or cancel the current action on{" "}
                     <span className="font-medium text-default-800">

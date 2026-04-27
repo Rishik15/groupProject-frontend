@@ -291,8 +291,8 @@ const ExerciseActionPanel = ({
           </>
         ) : (
           <div className="rounded-[20px] border border-default-200 bg-default-50 p-5 text-sm text-default-600">
-            Select New Exercise, Edit, or Delete on a card to open the
-            exercise management form.
+            Select New Exercise, Edit, or Delete on a card to open the exercise
+            management form.
           </div>
         )}
       </div>

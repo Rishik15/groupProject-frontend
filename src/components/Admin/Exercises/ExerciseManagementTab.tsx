@@ -35,7 +35,8 @@ const ExerciseManagementTab = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [selectedExercise, setSelectedExercise] = useState<AdminExercise | null>(null);
+  const [selectedExercise, setSelectedExercise] =
+    useState<AdminExercise | null>(null);
   const [actionMode, setActionMode] = useState<ExerciseActionMode>(null);
   const [formState, setFormState] = useState<ExerciseFormState>(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
@@ -55,7 +56,9 @@ const ExerciseManagementTab = () => {
         return;
       }
 
-      setError(err instanceof Error ? err.message : "Failed to load exercises.");
+      setError(
+        err instanceof Error ? err.message : "Failed to load exercises.",
+      );
       setExercises([]);
     } finally {
       if (!signal?.aborted) {
@@ -129,7 +132,10 @@ const ExerciseManagementTab = () => {
   const submitAction = async () => {
     if (!actionMode) return;
 
-    if ((actionMode === "create" || actionMode === "edit") && !formState.exercise_name.trim()) {
+    if (
+      (actionMode === "create" || actionMode === "edit") &&
+      !formState.exercise_name.trim()
+    ) {
       setActionError("Exercise name is required.");
       return;
     }
@@ -213,7 +219,9 @@ const ExerciseManagementTab = () => {
         <Card className="rounded-[24px] border border-default-200 bg-white shadow-sm">
           <div className="flex items-center justify-between gap-4 p-6">
             <div>
-              <p className="text-lg font-semibold text-default-900">Loading exercises</p>
+              <p className="text-lg font-semibold text-default-900">
+                Loading exercises
+              </p>
               <p className="mt-1 text-sm text-default-600">
                 Pulling the latest exercise database for admin management.
               </p>
@@ -252,7 +260,11 @@ const ExerciseManagementTab = () => {
                 </div>
 
                 {actionIsOpen ? (
-                  <Button className={"bg-[#5B5EF4]"} onPress={closeAction} isDisabled={submitting}>
+                  <Button
+                    className={"bg-[#5B5EF4]"}
+                    onPress={closeAction}
+                    isDisabled={submitting}
+                  >
                     Back to roster
                   </Button>
                 ) : null}
@@ -281,7 +293,9 @@ const ExerciseManagementTab = () => {
                     <ExerciseCard
                       key={exercise.exercise_id}
                       exercise={exercise}
-                      statusLabel={formatVideoStatusLabel(exercise.video_status)}
+                      statusLabel={formatVideoStatusLabel(
+                        exercise.video_status,
+                      )}
                       onEdit={openEdit}
                       onDelete={openDelete}
                     />

@@ -18,8 +18,9 @@ interface CoachReviewsSectionProps {
 export default function CoachReviewsSection({
   coachId,
 }: CoachReviewsSectionProps) {
-  const [reviewData, setReviewData] =
-    useState<CoachReviewResponse | null>(null);
+  const [reviewData, setReviewData] = useState<CoachReviewResponse | null>(
+    null,
+  );
 
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
@@ -103,7 +104,7 @@ export default function CoachReviewsSection({
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setSubmitError(
-          error.response?.data?.error || "Failed to submit review."
+          error.response?.data?.error || "Failed to submit review.",
         );
       } else {
         setSubmitError("Failed to submit review.");

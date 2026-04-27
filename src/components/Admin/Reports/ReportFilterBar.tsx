@@ -40,9 +40,15 @@ const ReportFilterBar = ({
             className="min-w-[280px] rounded-[16px] border border-default-200 px-4 py-2.5 text-sm outline-none transition focus:border-default-400"
           />
 
-          <Button className={"bg-[#5B5EF4]"} onPress={onRefresh} isDisabled={isRefreshing}>
+          <Button
+            className={"bg-[#5B5EF4]"}
+            onPress={onRefresh}
+            isDisabled={isRefreshing}
+          >
             <span className="inline-flex items-center gap-2">
-              <RefreshCw className={isRefreshing ? "h-4 w-4 animate-spin" : "h-4 w-4"} />
+              <RefreshCw
+                className={isRefreshing ? "h-4 w-4 animate-spin" : "h-4 w-4"}
+              />
               Refresh
             </span>
           </Button>
@@ -51,7 +57,8 @@ const ReportFilterBar = ({
 
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <p className="text-sm text-default-600">
-          {visibleCount} of {totalCount} report{totalCount === 1 ? "" : "s"} shown
+          {visibleCount} of {totalCount} report{totalCount === 1 ? "" : "s"}{" "}
+          shown
         </p>
       </div>
     </div>

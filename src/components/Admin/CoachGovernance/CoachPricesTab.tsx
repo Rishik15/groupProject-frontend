@@ -41,7 +41,9 @@ const CoachPricesTab = () => {
       }
 
       setError(
-        err instanceof Error ? err.message : "Failed to load coach price requests.",
+        err instanceof Error
+          ? err.message
+          : "Failed to load coach price requests.",
       );
       setRequests([]);
     } finally {
@@ -117,7 +119,9 @@ const CoachPricesTab = () => {
       }
 
       setRequests((current) =>
-        current.filter((request) => request.request_id !== selectedRequest.request_id),
+        current.filter(
+          (request) => request.request_id !== selectedRequest.request_id,
+        ),
       );
       closeAction();
     } catch (err) {
@@ -132,9 +136,12 @@ const CoachPricesTab = () => {
       <Card className="rounded-[24px] border border-default-200 bg-white shadow-sm">
         <div className="flex flex-col gap-4 p-6 xl:flex-row xl:items-center xl:justify-between">
           <div>
-            <h2 className="text-2xl font-semibold text-default-900">Coach price requests</h2>
+            <h2 className="text-2xl font-semibold text-default-900">
+              Coach price requests
+            </h2>
             <p className="mt-1 text-sm text-default-600">
-              Review pending price changes, search by coach identity or amount, and use the side panel to approve or reject.
+              Review pending price changes, search by coach identity or amount,
+              and use the side panel to approve or reject.
             </p>
           </div>
 
@@ -147,9 +154,15 @@ const CoachPricesTab = () => {
             />
 
             <div className="flex flex-wrap gap-2">
-              <Button onPress={() => void loadRequests()} isDisabled={loading} className={"bg-[#5B5EF4]"}>
+              <Button
+                onPress={() => void loadRequests()}
+                isDisabled={loading}
+                className={"bg-[#5B5EF4]"}
+              >
                 <span className="inline-flex items-center gap-2">
-                  <RefreshCw className={loading ? "h-4 w-4 animate-spin" : "h-4 w-4"} />
+                  <RefreshCw
+                    className={loading ? "h-4 w-4 animate-spin" : "h-4 w-4"}
+                  />
                   Refresh
                 </span>
               </Button>
@@ -236,8 +249,12 @@ const CoachPricesTab = () => {
                     <PriceRequestCard
                       key={request.request_id}
                       request={request}
-                      onApprove={(targetRequest) => openAction(targetRequest, "approve")}
-                      onReject={(targetRequest) => openAction(targetRequest, "reject")}
+                      onApprove={(targetRequest) =>
+                        openAction(targetRequest, "approve")
+                      }
+                      onReject={(targetRequest) =>
+                        openAction(targetRequest, "reject")
+                      }
                     />
                   ))}
                 </div>

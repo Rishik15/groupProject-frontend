@@ -1,6 +1,9 @@
 import { Button, Card } from "@heroui/react";
 import { BadgeDollarSign, CheckCircle2, XCircle } from "lucide-react";
-import { formatAdminCurrency, formatAdminDateTime } from "../../../../utils/Admin/adminFormatters";
+import {
+  formatAdminCurrency,
+  formatAdminDateTime,
+} from "../../../../utils/Admin/adminFormatters";
 import type { AdminCoachPriceRequest } from "../../../../utils/Interfaces/Admin/adminCoachPrice";
 
 type PriceActionMode = "approve" | "reject" | null;
@@ -43,19 +46,29 @@ const PriceActionPanel = ({
         {hasSelection && selectedRequest ? (
           <>
             <div className="rounded-[20px] border border-default-200 bg-default-50 p-4">
-              <p className="text-sm font-semibold text-default-900">{selectedRequest.coach_name}</p>
-              <p className="mt-1 text-sm text-default-600">Coach ID: {selectedRequest.coach_id}</p>
+              <p className="text-sm font-semibold text-default-900">
+                {selectedRequest.coach_name}
+              </p>
+              <p className="mt-1 text-sm text-default-600">
+                Coach ID: {selectedRequest.coach_id}
+              </p>
               <div className="mt-3 space-y-1 text-sm text-default-600">
                 <p>
-                  <span className="font-medium text-default-800">Current price:</span>{" "}
+                  <span className="font-medium text-default-800">
+                    Current price:
+                  </span>{" "}
                   {formatAdminCurrency(selectedRequest.current_price)}
                 </p>
                 <p>
-                  <span className="font-medium text-default-800">Proposed price:</span>{" "}
+                  <span className="font-medium text-default-800">
+                    Proposed price:
+                  </span>{" "}
                   {formatAdminCurrency(selectedRequest.proposed_price)}
                 </p>
                 <p>
-                  <span className="font-medium text-default-800">Requested:</span>{" "}
+                  <span className="font-medium text-default-800">
+                    Requested:
+                  </span>{" "}
                   {formatAdminDateTime(selectedRequest.created_at)}
                 </p>
               </div>
@@ -68,15 +81,21 @@ const PriceActionPanel = ({
                 ) : (
                   <XCircle className="h-4 w-4" />
                 )}
-                {actionMode === "approve" ? "Approve price request" : "Reject price request"}
+                {actionMode === "approve"
+                  ? "Approve price request"
+                  : "Reject price request"}
               </div>
               <p className="mt-2 text-sm text-default-600">
-                Record the review note that should be attached to this price decision.
+                Record the review note that should be attached to this price
+                decision.
               </p>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-default-700" htmlFor="price-admin-action">
+              <label
+                className="text-sm font-medium text-default-700"
+                htmlFor="price-admin-action"
+              >
                 Admin note
               </label>
               <textarea
@@ -111,7 +130,8 @@ const PriceActionPanel = ({
               No active price request selection
             </div>
             <p className="mt-2">
-              Use Approve or Reject on a pending price request card to load the action panel.
+              Use Approve or Reject on a pending price request card to load the
+              action panel.
             </p>
           </div>
         )}

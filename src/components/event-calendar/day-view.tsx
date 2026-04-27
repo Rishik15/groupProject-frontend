@@ -21,10 +21,7 @@ import { EventItem } from "./event-item";
 import { WeekCellsHeight } from "./constants";
 import { isMultiDayEvent } from "./utils";
 import { useCurrentTimeIndicator } from "./hooks/use-current-time-indicator";
-import {
-  EndHour,
-  StartHour,
-} from "@/components/event-calendar/constants";
+import { EndHour, StartHour } from "@/components/event-calendar/constants";
 import { cn } from "@/lib/utils";
 
 interface DayViewProps {
@@ -300,11 +297,11 @@ export function DayView({
                         "absolute h-[calc(var(--week-cells-height)/4)] w-full",
                         quarter === 0 && "top-0",
                         quarter === 1 &&
-                        "top-[calc(var(--week-cells-height)/4)]",
+                          "top-[calc(var(--week-cells-height)/4)]",
                         quarter === 2 &&
-                        "top-[calc(var(--week-cells-height)/4*2)]",
+                          "top-[calc(var(--week-cells-height)/4*2)]",
                         quarter === 3 &&
-                        "top-[calc(var(--week-cells-height)/4*3)]",
+                          "top-[calc(var(--week-cells-height)/4*3)]",
                       )}
                       date={currentDate}
                       id={`day-cell-${currentDate.toISOString()}-${quarterHourTime}`}

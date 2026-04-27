@@ -37,7 +37,6 @@ const CoachHeader = () => {
             <div className="text-[12px]">Manage Clients</div>
           </div>
         </Button>
-       
       </div>
     </section>
   );

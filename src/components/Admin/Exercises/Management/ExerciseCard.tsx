@@ -10,7 +10,12 @@ interface ExerciseCardProps {
   onDelete: (exercise: AdminExercise) => void;
 }
 
-const ExerciseCard = ({ exercise, statusLabel, onEdit, onDelete }: ExerciseCardProps) => {
+const ExerciseCard = ({
+  exercise,
+  statusLabel,
+  onEdit,
+  onDelete,
+}: ExerciseCardProps) => {
   return (
     <div className="flex h-full flex-col rounded-[20px] border border-default-200 bg-default-50 p-5">
       <div className="space-y-3">

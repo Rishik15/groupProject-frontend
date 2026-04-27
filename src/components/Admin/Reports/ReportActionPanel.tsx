@@ -38,17 +38,27 @@ const ReportActionPanel = ({
         {selectedReport ? (
           <>
             <div className="rounded-[20px] border border-default-200 bg-default-50 p-4">
-              <p className="text-sm font-semibold text-default-900">{selectedReport.title}</p>
-              <p className="mt-1 text-sm text-default-600">{selectedReport.description}</p>
+              <p className="text-sm font-semibold text-default-900">
+                {selectedReport.title}
+              </p>
+              <p className="mt-1 text-sm text-default-600">
+                {selectedReport.description}
+              </p>
               <div className="mt-3 space-y-1 text-sm text-default-600">
                 <p>
-                  <span className="font-medium text-default-800">Report ID:</span>{" "}
+                  <span className="font-medium text-default-800">
+                    Report ID:
+                  </span>{" "}
                   {selectedReport.report_id}
                 </p>
                 <p>
-                  <span className="font-medium text-default-800">Submitted:</span>{" "}
+                  <span className="font-medium text-default-800">
+                    Submitted:
+                  </span>{" "}
                   {formatAdminDateTime(
-                    selectedReport.submittedLabel ?? selectedReport.updated_at ?? null,
+                    selectedReport.submittedLabel ??
+                      selectedReport.updated_at ??
+                      null,
                   )}
                 </p>
               </div>
@@ -60,8 +70,8 @@ const ReportActionPanel = ({
                 Close report
               </div>
               <p className="mt-2 text-sm text-default-600">
-                Provide the admin action note that should be stored when this report
-                is closed.
+                Provide the admin action note that should be stored when this
+                report is closed.
               </p>
             </div>
 
@@ -89,18 +99,26 @@ const ReportActionPanel = ({
             ) : null}
 
             <div className="flex flex-wrap gap-2">
-              <Button className={"bg-[#5B5EF4]"} onPress={onSubmit} isDisabled={submitting}>
+              <Button
+                className={"bg-[#5B5EF4]"}
+                onPress={onSubmit}
+                isDisabled={submitting}
+              >
                 {submitting ? "Saving..." : "Confirm close"}
               </Button>
-              <Button className={"bg-[#5B5EF4]"} onPress={onCancel} isDisabled={submitting}>
+              <Button
+                className={"bg-[#5B5EF4]"}
+                onPress={onCancel}
+                isDisabled={submitting}
+              >
                 Cancel
               </Button>
             </div>
           </>
         ) : (
           <div className="rounded-[20px] border border-default-200 bg-default-50 p-5 text-sm text-default-600">
-            Select a report card to review its details and close it with an admin
-            note.
+            Select a report card to review its details and close it with an
+            admin note.
           </div>
         )}
       </div>

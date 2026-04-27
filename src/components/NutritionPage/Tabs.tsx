@@ -5,7 +5,7 @@ import Macros from "./Today/Macros";
 import MealsToday from "./Today/MealsToday";
 import WeeklyCalories from "./Week/WeeklyCalories";
 import MealPlan from "./MealPlan/MealPlan";
-import CreateMealPlan from "../NutritionPage/MealPlan/CreateMealPlan";
+import CreateMealPlan from "./MealPlan/CreateMealPlan";
 import AssignedPlans from "./MealPlan/AssignedPlans";
 import type { TodayNutritionSummary } from "../../utils/Interfaces/Nutrition/nutrition";
 import {

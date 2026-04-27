@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import ProfileHeader from "../../components/CoachProfile/ProfileHeader";
+import ProfileHeader from "../../components/CoachProfile/ProfileHeader.tsx";
 import ProfileTabs, {
   type Tab,
-} from "../../components/CoachProfile/ProfileTabs";
-import AboutTab from "../../components/CoachProfile/AboutTab";
-import CoachReviewsSection from "../../components/CoachProfile/CoachReviewSection";
-import ReviewsTab from "../../components/CoachProfile/ReviewsTab";
-import SuccessStoriesTab from "../../components/CoachProfile/SuccessStoriesTab";
+} from "../../components/CoachProfile/ProfileTabs.tsx";
+import AboutTab from "../../components/CoachProfile/AboutTab.tsx";
+import CoachReviewsSection from "../../components/CoachProfile/CoachReviewSection.tsx";
+import ReviewsTab from "../../components/CoachProfile/ReviewsTab.tsx";
+import SuccessStoriesTab from "../../components/CoachProfile/SuccessStoriesTab.tsx";
 import {
   getCoachProfile,
   type CoachProfile as CoachProfileType,

@@ -31,7 +31,9 @@ const UsersTab = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [selectedUser, setSelectedUser] = useState<AdminManagedUser | null>(null);
+  const [selectedUser, setSelectedUser] = useState<AdminManagedUser | null>(
+    null,
+  );
   const [mutationMode, setMutationMode] = useState<MutationMode>(null);
   const [reason, setReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -106,7 +108,7 @@ const UsersTab = () => {
     setSelectedUser(user);
     setMutationMode(mode);
     setActionError(null);
-    setReason(mode === "restore" ? "" : user.suspension_reason ?? "");
+    setReason(mode === "restore" ? "" : (user.suspension_reason ?? ""));
   };
 
   const closeAction = () => {
@@ -125,11 +127,11 @@ const UsersTab = () => {
       current.map((user) =>
         user.user_id === updatedUser.user_id
           ? {
-            ...user,
-            account_status: updatedUser.account_status,
-            suspension_reason: updatedUser.suspension_reason,
-            updated_at: new Date().toISOString(),
-          }
+              ...user,
+              account_status: updatedUser.account_status,
+              suspension_reason: updatedUser.suspension_reason,
+              updated_at: new Date().toISOString(),
+            }
           : user,
       ),
     );
@@ -206,7 +208,9 @@ const UsersTab = () => {
         <Card className="rounded-[24px] border border-default-200 bg-white shadow-sm">
           <div className="flex items-center justify-between gap-4 p-6">
             <div>
-              <p className="text-lg font-semibold text-default-900">Loading users</p>
+              <p className="text-lg font-semibold text-default-900">
+                Loading users
+              </p>
               <p className="mt-1 text-sm text-default-600">
                 Pulling the latest account roster and status data.
               </p>
@@ -245,7 +249,11 @@ const UsersTab = () => {
                 </div>
 
                 {actionIsOpen ? (
-                  <Button className={"bg-[#5B5EF4]"} onPress={closeAction} isDisabled={submitting}>
+                  <Button
+                    className={"bg-[#5B5EF4]"}
+                    onPress={closeAction}
+                    isDisabled={submitting}
+                  >
                     Back to roster
                   </Button>
                 ) : null}
@@ -264,7 +272,8 @@ const UsersTab = () => {
                     to return to the full roster.
                   </p>
                   <p className="mt-3">
-                    Selected on: {formatAdminDateTime(selectedUser?.updated_at ?? null)}
+                    Selected on:{" "}
+                    {formatAdminDateTime(selectedUser?.updated_at ?? null)}
                   </p>
                 </div>
               ) : filteredUsers.length === 0 ? (
@@ -277,11 +286,15 @@ const UsersTab = () => {
                     <UserAccountCard
                       key={user.user_id}
                       user={user}
-                      onSuspend={(targetUser) => openAction(targetUser, "suspend")}
+                      onSuspend={(targetUser) =>
+                        openAction(targetUser, "suspend")
+                      }
                       onDeactivate={(targetUser) =>
                         openAction(targetUser, "deactivate")
                       }
-                      onRestore={(targetUser) => openAction(targetUser, "restore")}
+                      onRestore={(targetUser) =>
+                        openAction(targetUser, "restore")
+                      }
                     />
                   ))}
                 </div>

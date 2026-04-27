@@ -20,7 +20,8 @@ const VideoModerationTab = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [selectedVideo, setSelectedVideo] = useState<AdminModeratedVideo | null>(null);
+  const [selectedVideo, setSelectedVideo] =
+    useState<AdminModeratedVideo | null>(null);
   const [actionMode, setActionMode] = useState<VideoActionMode>(null);
   const [reviewNote, setReviewNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -40,7 +41,9 @@ const VideoModerationTab = () => {
         return;
       }
 
-      setError(err instanceof Error ? err.message : "Failed to load pending videos.");
+      setError(
+        err instanceof Error ? err.message : "Failed to load pending videos.",
+      );
       setVideos([]);
     } finally {
       if (!signal?.aborted) {
@@ -79,7 +82,7 @@ const VideoModerationTab = () => {
   ) => {
     setSelectedVideo(video);
     setActionMode(mode);
-    setReviewNote(mode === "reject" ? video.video_review_note ?? "" : "");
+    setReviewNote(mode === "reject" ? (video.video_review_note ?? "") : "");
     setActionError(null);
   };
 
@@ -118,7 +121,9 @@ const VideoModerationTab = () => {
       }
 
       setVideos((current) =>
-        current.filter((video) => video.exercise_id !== selectedVideo.exercise_id),
+        current.filter(
+          (video) => video.exercise_id !== selectedVideo.exercise_id,
+        ),
       );
       closeAction();
     } catch (err) {
@@ -133,7 +138,9 @@ const VideoModerationTab = () => {
       <Card className="rounded-[24px] border border-default-200 bg-white shadow-sm">
         <div className="flex flex-col gap-4 p-6 xl:flex-row xl:items-center xl:justify-between">
           <div>
-            <h2 className="text-2xl font-semibold text-default-900">Video moderation</h2>
+            <h2 className="text-2xl font-semibold text-default-900">
+              Video moderation
+            </h2>
             <p className="mt-1 text-sm text-default-600">
               Review pending exercise videos, search the queue, and approve,
               reject, or remove clips from the admin moderation surface.
@@ -149,9 +156,15 @@ const VideoModerationTab = () => {
             />
 
             <div className="flex flex-wrap gap-2">
-              <Button onPress={() => void loadVideos()} isDisabled={loading} className={"bg-[#5B5EF4]"}>
+              <Button
+                onPress={() => void loadVideos()}
+                isDisabled={loading}
+                className={"bg-[#5B5EF4]"}
+              >
                 <span className="inline-flex items-center gap-2">
-                  <RefreshCw className={loading ? "h-4 w-4 animate-spin" : "h-4 w-4"} />
+                  <RefreshCw
+                    className={loading ? "h-4 w-4 animate-spin" : "h-4 w-4"}
+                  />
                   Refresh
                 </span>
               </Button>
@@ -168,7 +181,8 @@ const VideoModerationTab = () => {
                 Loading pending videos
               </p>
               <p className="mt-1 text-sm text-default-600">
-                Pulling the latest moderation queue from the admin video endpoints.
+                Pulling the latest moderation queue from the admin video
+                endpoints.
               </p>
             </div>
             <RefreshCw className="h-5 w-5 animate-spin text-default-500" />
@@ -235,9 +249,15 @@ const VideoModerationTab = () => {
                       key={video.exercise_id}
                       video={video}
                       statusLabel={formatVideoStatusLabel(video.video_status)}
-                      onApprove={(targetVideo) => openAction(targetVideo, "approve")}
-                      onReject={(targetVideo) => openAction(targetVideo, "reject")}
-                      onRemove={(targetVideo) => openAction(targetVideo, "remove")}
+                      onApprove={(targetVideo) =>
+                        openAction(targetVideo, "approve")
+                      }
+                      onReject={(targetVideo) =>
+                        openAction(targetVideo, "reject")
+                      }
+                      onRemove={(targetVideo) =>
+                        openAction(targetVideo, "remove")
+                      }
                     />
                   ))}
                 </div>
