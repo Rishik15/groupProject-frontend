@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { toast } from "@heroui/react";
 
 import ClientOnboardingPage from "./ClientOnboardingPage";
 import CoachOnboardingPage from "./CoachOnboardingPage";
@@ -215,12 +214,7 @@ function OnboardingSurveyPage({
       await refreshAuth();
 
       if (isClientBecomingCoach) {
-        toast("Coach application submitted", {
-          description:
-            "Your application is in review. We will get back to you as soon as possible.",
-          timeout: 5000,
-        });
-
+        sessionStorage.setItem("showCoachApplicationSubmittedToast", "true");
         navigate("/client", { replace: true });
         return;
       }
@@ -248,6 +242,10 @@ function OnboardingSurveyPage({
 
       const response = await submitClientOnboarding(combinedData.client.info);
       console.log("Client onboarding saved:", response);
+
+      if (surveyType === "coach") {
+        sessionStorage.setItem("showCoachApplicationSubmittedToast", "true");
+      }
 
       navigate("/client", { replace: true });
     } catch (error) {
@@ -293,9 +291,7 @@ function OnboardingSurveyPage({
           onCertificationCountChange={handleCertificationCountChange}
           onCertificationChange={handleCertificationChange}
           onComplete={handleCoachPhaseComplete}
-          finalButtonLabel={
-            isClientBecomingCoach ? "Submit Application" : "Submit Application"
-          }
+          finalButtonLabel="Submit Application"
           isClientBecomingCoach={isClientBecomingCoach}
         />
 

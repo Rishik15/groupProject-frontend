@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@heroui/react";
-import { getAuth } from "../../services/auth/checkAuth";
+import { Button, Spinner } from "@heroui/react";
 import { updateRole } from "../../services/auth/updateRole";
 import RoleSelector from "../Register/RoleSelection";
 import { useAuth } from "../../utils/auth/AuthContext";
-import { Spinner } from "@heroui/react";
+import { getAuth } from "../../services/auth/checkAuth";
 
 const AuthComplete = () => {
   const navigate = useNavigate();
-  const { setAuth } = useAuth();
+
+  const { status, hasCheckedAuth, coachApplicationStatus, setAuth } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [submittingRole, setSubmittingRole] = useState(false);
@@ -17,52 +17,73 @@ const AuthComplete = () => {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
   useEffect(() => {
+    let active = true;
+
     const finishAuth = async () => {
-      try {
-        const data = await getAuth();
-
-        if (!data.authenticated || !data.user) {
-          navigate("/", { replace: true });
-          return;
-        }
-
-        const roles = data.roles ?? [];
-
-        setAuth({
-          user: data.user,
-          roles,
-          coachApplicationStatus: data.coachApplicationStatus ?? "rejected",
-        });
-
-        if (data.needs_onboarding) {
-          setShowRoleSelection(true);
-          setLoading(false);
-          return;
-        }
-
-        if (roles.includes("admin")) {
-          navigate("/admin", { replace: true });
-          return;
-        }
-
-        if (roles.includes("client")) {
-          navigate("/client", { replace: true });
-          return;
-        }
-
-        if (roles.includes("coach")) {
-          navigate("/coach", { replace: true });
-          return;
-        }
-
-        navigate("/", { replace: true });
-      } catch {
-        navigate("/", { replace: true });
+      if (!hasCheckedAuth || status === "checking") {
+        return;
       }
+
+      const data = await getAuth();
+
+      if (!active) return;
+
+      if (!data.authenticated || !data.user) {
+        navigate("/", { replace: true });
+        return;
+      }
+
+      const currentRoles = data.roles ?? [];
+
+      setAuth({
+        user: data.user,
+        roles: currentRoles,
+        coachApplicationStatus: data.coachApplicationStatus ?? "none",
+        coachModeActivated: data.coachModeActivated ?? false,
+      });
+
+      if (currentRoles.length === 0) {
+        setShowRoleSelection(true);
+        setLoading(false);
+        return;
+      }
+
+      if (data.needs_onboarding) {
+        if (currentRoles.includes("coach")) {
+          navigate("/onboarding/coach", { replace: true });
+          return;
+        }
+
+        if (currentRoles.includes("client")) {
+          navigate("/onboarding/client", { replace: true });
+          return;
+        }
+      }
+
+      if (currentRoles.includes("admin")) {
+        navigate("/admin", { replace: true });
+        return;
+      }
+
+      if (currentRoles.includes("client")) {
+        navigate("/client", { replace: true });
+        return;
+      }
+
+      if (currentRoles.includes("coach")) {
+        navigate("/coach", { replace: true });
+        return;
+      }
+
+      setLoading(false);
     };
 
     finishAuth();
-  }, [navigate, setAuth]);
+
+    return () => {
+      active = false;
+    };
+  }, [hasCheckedAuth, status, navigate, setAuth]);
 
   const handleContinue = async () => {
     if (!selectedRole || submittingRole) return;
@@ -72,15 +93,18 @@ const AuthComplete = () => {
 
       const data = await updateRole(selectedRole as "coach" | "client");
 
-      const roles = data.roles ?? (data.role ? [data.role] : []);
+      const newRoles = data.roles ?? (data.role ? [data.role] : []);
 
       setAuth({
         user: data.user,
-        roles,
+        roles: newRoles,
         coachApplicationStatus:
           data.coachApplicationStatus ??
           data.coach_application_status ??
-          "rejected",
+          coachApplicationStatus ??
+          "none",
+        coachModeActivated:
+          data.coachModeActivated ?? data.coach_mode_activated ?? false,
       });
 
       if (selectedRole === "coach") {
