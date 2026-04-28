@@ -44,9 +44,7 @@ export interface ContractRequestPayload {
 }
 
 export async function getCoachProfile(coach_id: number): Promise<CoachProfile> {
-  const { data } = await api.post("/coach/profile", { coach_id }, {
-    skipAuthGate: true,
-  } as any);
+  const { data } = await api.post("/coach/profile", { coach_id });
 
   return data.coach;
 }

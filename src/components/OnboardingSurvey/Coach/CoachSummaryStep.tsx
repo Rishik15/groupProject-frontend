@@ -307,22 +307,13 @@ function CoachSummaryStep({
 
       <Card className={summaryCardClassName}>
         <div className="flex items-start gap-4">
-          <div className="flex h-10 w-10 items-center justify-center text-[18.75px] text-[#6E728C]">
-            ⛓
-          </div>
-
           <div>
             <h3 className="text-[13.125px] font-semibold text-black">
               {isClientBecomingCoach
                 ? "Ready to Submit"
                 : "Next: Basic Profile"}
             </h3>
-
-            <p className="mt-1 max-w-130 text-[13.125px] leading-7 text-[#6E728C]">
-              {isClientBecomingCoach
-                ? "Your coach application will be sent to the admin with all the information you provided."
-                : "Your coach application will be sent to the admin. Before finishing, we also need your basic client profile info so your account works across the platform."}
-            </p>
+           
           </div>
         </div>
       </Card>

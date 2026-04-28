@@ -8,7 +8,6 @@ import {
 } from "react";
 import { getAuth } from "../../services/auth/checkAuth";
 import { socket } from "../../services/sockets/socket";
-import { markAuthChecking, markAuthReady } from "../../services/api";
 
 type User = {
   first_name: string;
@@ -102,7 +101,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     useState<CoachApplicationStatus>("none");
   const [coachModeActivated, setCoachModeActivated] = useState(false);
 
-  const refreshInFlightRef = useRef(false);
+  const refreshPromiseRef = useRef<Promise<void> | null>(null);
   const connectionIdRef = useRef(0);
   const queuedEventsRef = useRef<QueuedSocketEvent[]>([]);
 
@@ -190,35 +189,38 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     sessionStorage.removeItem(MODE_KEY);
   }, [disconnectSocket]);
 
-  const refreshAuth = useCallback(async () => {
-    if (refreshInFlightRef.current) return;
-
-    refreshInFlightRef.current = true;
-    markAuthChecking();
-    setStatus("checking");
-
-    try {
-      const res = await getAuth();
-
-      if (res?.authenticated && res.user) {
-        setAuth({
-          user: res.user,
-          roles: res.roles || [],
-          coachApplicationStatus: res.coachApplicationStatus ?? "none",
-          coachModeActivated: res.coachModeActivated ?? false,
-        });
-
-        markAuthReady();
-      } else {
-        clearAuth();
-      }
-    } catch (err) {
-      console.error("Auth failed:", err);
-      clearAuth();
-    } finally {
-      refreshInFlightRef.current = false;
-      setHasCheckedAuth(true);
+  const refreshAuth = useCallback(() => {
+    if (refreshPromiseRef.current) {
+      return refreshPromiseRef.current;
     }
+
+    const promise = (async () => {
+      setStatus("checking");
+
+      try {
+        const res = await getAuth();
+
+        if (res?.authenticated && res.user) {
+          setAuth({
+            user: res.user,
+            roles: res.roles || [],
+            coachApplicationStatus: res.coachApplicationStatus ?? "none",
+            coachModeActivated: res.coachModeActivated ?? false,
+          });
+        } else {
+          clearAuth();
+        }
+      } catch (err) {
+        console.error("Auth failed:", err);
+        clearAuth();
+      } finally {
+        setHasCheckedAuth(true);
+        refreshPromiseRef.current = null;
+      }
+    })();
+
+    refreshPromiseRef.current = promise;
+    return promise;
   }, [setAuth, clearAuth]);
 
   const setActiveMode = useCallback(

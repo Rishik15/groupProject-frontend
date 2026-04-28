@@ -8,13 +8,9 @@ import type {
 export async function getCoachInfo(
   coachId: number,
 ): Promise<CoachInfoResponse> {
-  const response = await api.get<CoachInfoResponse>(
-    "/coach/get_coach_info",
-    {
-      params: { coach_id: coachId },
-      skipAuthGate: true,
-    } as any,
-  );
+  const response = await api.get<CoachInfoResponse>("/coach/get_coach_info", {
+    params: { coach_id: coachId },
+  });
 
   return response.data;
 }
@@ -22,13 +18,9 @@ export async function getCoachInfo(
 export async function getCoachReviews(
   coachId: number,
 ): Promise<CoachReviewResponse> {
-  const response = await api.get<CoachReviewResponse>(
-    "/coach/get_review",
-    {
-      params: { coach_id: coachId },
-      skipAuthGate: true,
-    } as any,
-  );
+  const response = await api.get<CoachReviewResponse>("/coach/get_review", {
+    params: { coach_id: coachId },
+  });
 
   return response.data;
 }

@@ -6,13 +6,7 @@ export async function searchCoaches(
 ): Promise<{ coaches: Coach[]; count: number }> {
   console.log("sending to backend:", query);
 
-  const { data } = await api.post(
-    "/coach/search",
-    query,
-    {
-      skipAuthGate: true,
-    } as any,
-  );
+  const { data } = await api.post("/coach/search", query);
 
   return data;
 }
