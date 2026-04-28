@@ -28,7 +28,9 @@ export type ExerciseResponse = {
 };
 
 export default function ExerciseCard({ plan }: Prop) {
-  const [exerciseData, setExerciseData] = useState<ExerciseResponse | null>(null);
+  const [exerciseData, setExerciseData] = useState<ExerciseResponse | null>(
+    null,
+  );
   const [loadingPlan, setLoadingPlan] = useState(false);
   const [submit, setSubmit] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -53,7 +55,7 @@ export default function ExerciseCard({ plan }: Prop) {
         {
           params: { plan_id: plan.plan_id },
           withCredentials: true,
-        }
+        },
       );
 
       setExerciseData(res.data);
@@ -77,7 +79,9 @@ export default function ExerciseCard({ plan }: Prop) {
           </div>
         </div>
 
-        <h1 className="mb-2 text-3xl font-bold text-gray-900">{plan.plan_name}</h1>
+        <h1 className="mb-2 text-3xl font-bold text-gray-900">
+          {plan.plan_name}
+        </h1>
 
         <div className="mb-6 flex gap-4">
           <div className="flex-1 rounded-2xl border border-gray-200 bg-gray-50 p-4">
@@ -98,7 +102,8 @@ export default function ExerciseCard({ plan }: Prop) {
 
         <div className="mb-6">
           <p className="text-sm text-gray-500">
-            Click <span className="font-medium text-gray-900">View Plan</span> to preview exercises.
+            Click <span className="font-medium text-gray-900">View Plan</span>{" "}
+            to preview exercises.
           </p>
         </div>
 
@@ -112,10 +117,11 @@ export default function ExerciseCard({ plan }: Prop) {
           </Button>
 
           <Button
-            className={`flex-1 rounded-2xl border py-6 font-semibold ${submit
+            className={`flex-1 rounded-2xl border py-6 font-semibold ${
+              submit
                 ? "border-green-500 bg-[#E4FBF0] text-[#5E8F7E]"
                 : "border-gray-300 bg-white text-gray-900"
-              }`}
+            }`}
             onPress={handleAssign}
           >
             {submit ? "Assigned" : "Assign Plan"}

@@ -1,12 +1,7 @@
+import api from "../api";
+
 export const checkSurveyStatus = async () => {
-    const res = await fetch("http://localhost:8080/client/mental-survey/check", {
-        credentials: "include",
-    });
+  const res = await api.get("/client/mental-survey/check");
 
-    if (!res.ok) {
-        throw new Error("Failed to fetch survey status");
-    }
-
-    const data = await res.json();
-    return data.taken_today; 
+  return res.data.taken_today;
 };

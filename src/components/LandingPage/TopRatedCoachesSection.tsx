@@ -6,7 +6,6 @@ import { top5 } from "../../services/landing/top5";
 import type { Coach } from "../../utils/Interfaces/coachquery";
 import { ArrowRight } from "lucide-react";
 
-
 const TopRatedCoachesSection = () => {
   const [coaches, setCoaches] = useState<Coach[]>([]);
   const navigate = useNavigate();
@@ -40,7 +39,6 @@ const TopRatedCoachesSection = () => {
             </p>
           </div>
 
-    
           <TemplateButton
             variant="ghost"
             className="text-[15px] flex items-center gap-0.5"

@@ -1,3 +1,5 @@
+import api from "@/services/api";
+
 export type ProgressPhotoRecord = {
   progress_photo_id: number;
   user_id: number;
@@ -22,18 +24,11 @@ export const buildBackendMediaUrl = (photoUrl?: string | null) => {
 };
 
 export const getProgressPhotos = async (): Promise<ProgressPhotoRecord[]> => {
-  const response = await fetch(`${API_BASE_URL}/client/progress-photos`, {
-    method: "GET",
-    credentials: "include",
-  });
+  const response = await api.get("/client/progress-photos");
 
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data?.error || "Failed to load progress photos.");
-  }
-
-  return Array.isArray(data?.progressPhotos) ? data.progressPhotos : [];
+  return Array.isArray(response.data?.progressPhotos)
+    ? response.data.progressPhotos
+    : [];
 };
 
 export const uploadProgressPhoto = async (params: {
@@ -42,6 +37,7 @@ export const uploadProgressPhoto = async (params: {
   takenAtIso?: string;
 }) => {
   const formData = new FormData();
+
   formData.append("photo", params.file);
 
   if (params.caption?.trim()) {
@@ -52,17 +48,7 @@ export const uploadProgressPhoto = async (params: {
     formData.append("taken_at", params.takenAtIso);
   }
 
-  const response = await fetch(`${API_BASE_URL}/client/progress-photo`, {
-    method: "POST",
-    body: formData,
-    credentials: "include",
-  });
+  const response = await api.post("/client/progress-photo", formData);
 
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data?.error || "Failed to upload progress photo.");
-  }
-
-  return data;
+  return response.data;
 };

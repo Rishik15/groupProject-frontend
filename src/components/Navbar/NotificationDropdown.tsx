@@ -3,13 +3,14 @@ import { Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { markAsRead } from "../../services/notifications/mark_as_read";
 import type { Notification } from "../../utils/Interfaces/navbar";
+import { useAuth } from "../../utils/auth/AuthContext";
+
 type Props = {
   count: number;
   notifications: Notification[];
   parent: string;
   setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
 };
-import { useAuth } from "../../utils/auth/AuthContext";
 
 export default function NotificationDropdown({
   count,
@@ -18,11 +19,22 @@ export default function NotificationDropdown({
   setNotifications,
 }: Props) {
   const navigate = useNavigate();
+  const { activeMode } = useAuth();
 
   const getRoute = (notif: Notification) => {
+    const metadataRoute = notif.metadata?.route;
+
+    if (metadataRoute) {
+      return metadataRoute.startsWith("/")
+        ? metadataRoute
+        : `/${metadataRoute}`;
+    }
+
     switch (notif.type) {
       case "chat":
         return `${parent}/chat`;
+      case "coach_session":
+        return "/client/workouts";
       case "workout":
         return `${parent}/workouts`;
       case "nutrition":
@@ -34,13 +46,18 @@ export default function NotificationDropdown({
     }
   };
 
-  const { activeMode } = useAuth();
-
   const handleClick = async (notif: Notification) => {
-    try {
-      await markAsRead(notif.id, activeMode);
+    const id = notif.id;
 
-      setNotifications((prev) => prev.filter((n) => n.id !== notif.id));
+    if (id == null || !activeMode) {
+      console.error("Missing notification data", { id, activeMode, notif });
+      return;
+    }
+
+    try {
+      await markAsRead(id, activeMode);
+
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
 
       navigate(getRoute(notif));
     } catch (err) {
@@ -65,7 +82,7 @@ export default function NotificationDropdown({
       </Dropdown.Trigger>
 
       <Dropdown.Popover
-        className="w-65 p-0 rounded-xl border shadow-lg"
+        className="w-65 p-0 rounded-xl border shadow-lg bg-white"
         placement="bottom end"
       >
         <div className="px-3 py-2 border-b font-medium text-[14px]">
@@ -80,9 +97,11 @@ export default function NotificationDropdown({
               <div
                 key={notif.id}
                 onClick={() => handleClick(notif)}
-                className="px-4 py-3 hover:bg-gray-100 cursor-pointer border-b"
+                className="px-4 py-3 hover:bg-indigo-50 cursor-pointer border-b"
               >
-                <p className="text-sm font-medium">{notif.title}</p>
+                <p className="text-sm font-medium text-[#0F0F14]">
+                  {notif.title}
+                </p>
                 <p className="text-xs text-gray-500">{notif.body}</p>
               </div>
             ))

@@ -42,7 +42,7 @@ const HeroSection = () => {
             onClick={() => navigate(registerRoute)}
             className="flex items-center gap-1 text-[14px] py-2"
           >
-            Start free trial
+            Start trial
             <ArrowRightIcon className="w-4 h-4" />
           </TemplateButton>
 

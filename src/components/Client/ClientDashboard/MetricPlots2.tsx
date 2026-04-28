@@ -13,11 +13,16 @@ import { useEffect, useState } from "react";
 import { getCaloriesMetrics } from "../../../services/dashboard/client/getCalories";
 import { getWorkoutCompletion } from "../../../services/dashboard/client/getWorkout";
 
+interface MetricPlots2Props {
+  refreshKey?: number;
+}
+
 const SessionTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const completed = payload.find(
       (p: any) => p.dataKey === "completed",
     )?.value;
+
     const planned = payload.find((p: any) => p.dataKey === "planned")?.value;
 
     return (
@@ -30,6 +35,7 @@ const SessionTooltip = ({ active, payload, label }: any) => {
       </div>
     );
   }
+
   return null;
 };
 
@@ -45,43 +51,51 @@ const CaloriesTooltip = ({ active, payload, label }: any) => {
       </div>
     );
   }
+
   return null;
 };
 
-const MetricPlots2 = () => {
-  const [calorieData, setCalorieData] = useState([]);
-  const [sessionData, setSessionData] = useState([]);
+const MetricPlots2 = ({ refreshKey }: MetricPlots2Props) => {
+  const [calorieData, setCalorieData] = useState<any[]>([]);
+  const [sessionData, setSessionData] = useState<any[]>([]);
   const [summary, setSummary] = useState({ planned: 0, completed: 0 });
 
   useEffect(() => {
     const fetchData = async () => {
-      const calData = await getCaloriesMetrics();
-      const formattedCalories = calData.map((d: any) => ({
-        day: d.day,
-        actual: d.calories,
-      }));
-      setCalorieData(formattedCalories);
+      try {
+        const calData = await getCaloriesMetrics();
 
-      const workoutData = await getWorkoutCompletion();
+        const formattedCalories = calData.map((d: any) => ({
+          day: d.day,
+          actual: d.calories,
+        }));
 
-      const formattedSessions = workoutData.days.map((d: any) => ({
-        day: d.day,
-        planned: d.planned,
-        completed: d.completed,
-      }));
+        setCalorieData(formattedCalories);
 
-      setSessionData(formattedSessions);
-      setSummary(workoutData.summary);
+        const workoutData = await getWorkoutCompletion();
+
+        const formattedSessions = workoutData.days.map((d: any) => ({
+          day: d.day,
+          planned: d.planned,
+          completed: d.completed,
+        }));
+
+        setSessionData(formattedSessions);
+        setSummary(workoutData.summary);
+      } catch (err) {
+        console.error("Failed to fetch dashboard chart metrics", err);
+      }
     };
 
     fetchData();
-  }, []);
+  }, [refreshKey]);
 
   return (
     <section className="flex gap-6 px-38 mt-6">
       <div className="bg-white px-6 py-4 rounded-3xl flex flex-col gap-4 w-full">
         <div className="flex justify-between items-center">
           <div className="font-semibold text-[14px]">Session Completion</div>
+
           <div className="text-[12px] text-gray-500">
             {summary.completed}/{summary.planned} this week
           </div>
@@ -109,7 +123,7 @@ const MetricPlots2 = () => {
               tick={{ fill: "#6b7280", fontSize: 12 }}
             />
 
-            <Tooltip content={SessionTooltip} />
+            <Tooltip content={<SessionTooltip />} />
 
             <Bar dataKey="planned" fill="#A9A9A9" radius={[4, 4, 0, 0]} />
 
@@ -122,6 +136,7 @@ const MetricPlots2 = () => {
             <div className="w-2 h-2 bg-gray-400 rounded-full" />
             Planned
           </div>
+
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 bg-[#5B5EF4] rounded-full" />
             Completed
@@ -155,7 +170,7 @@ const MetricPlots2 = () => {
               tick={{ fill: "#6b7280", fontSize: 12 }}
             />
 
-            <Tooltip content={CaloriesTooltip} />
+            <Tooltip content={<CaloriesTooltip />} />
 
             <Line
               type="monotone"

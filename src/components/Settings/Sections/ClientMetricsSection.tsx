@@ -6,7 +6,9 @@ import { getInputClass } from "../utils";
 type ClientMetricsSectionProps = {
   form: User;
   edit: boolean;
-  updateNumberField: (key: keyof User) => (e: ChangeEvent<HTMLInputElement>) => void;
+  updateNumberField: (
+    key: keyof User,
+  ) => (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
 export default function ClientMetricsSection({

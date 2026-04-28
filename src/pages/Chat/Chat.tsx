@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ChatMessages from "../../components/chat/ChatMessage";
 import ChatSidebar from "../../components/chat/ChatSidebar";
 import ChatWindow from "../../components/chat/ChatWindow";
@@ -6,63 +6,61 @@ import { get_users } from "../../services/chat/get_user";
 import { socket } from "../../services/sockets/socket";
 import { getMessages } from "../../services/chat/get_messages";
 import type { Message } from "../../utils/Interfaces/chat";
-import { useRef } from "react";
 import { useAuth } from "../../utils/auth/AuthContext";
 
 const Chat = () => {
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [users, setUsers] = useState<any[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
-  const selectedUserRef = useRef<any>(null);
 
-  const { activeMode, socketReady } = useAuth();
+  const selectedUserRef = useRef<any>(null);
+  const hasJoinedRef = useRef(false);
+
+  const { activeMode, socketReady, safeEmit } = useAuth();
 
   const mode = activeMode === "coach" ? "coach" : "client";
   const targetMode = mode === "coach" ? "client" : "coach";
 
+  const currentUser = users.find((u) => u.id === selectedUser?.id);
+
   useEffect(() => {
     const fetchUsers = async () => {
       const data = await get_users(mode);
-      console.log("FULL DATA:", data);
       setUsers(data);
     };
 
     fetchUsers();
-  }, []);
-
-  const currentUser = users.find((u) => u.id === selectedUser?.id);
+  }, [mode]);
 
   useEffect(() => {
     selectedUserRef.current = selectedUser;
   }, [selectedUser]);
 
-  const hasJoinedRef = useRef(false);
-
   useEffect(() => {
     if (!socketReady) return;
     if (hasJoinedRef.current) return;
 
-    socket.emit("join_chat_presence");
+    safeEmit("join_chat_presence");
     hasJoinedRef.current = true;
-  }, [socketReady]);
+  }, [socketReady, safeEmit]);
 
   useEffect(() => {
     return () => {
       if (hasJoinedRef.current) {
-        socket.emit("leave_chat_presence");
+        safeEmit("leave_chat_presence");
         hasJoinedRef.current = false;
       }
     };
-  }, []);
+  }, [safeEmit]);
 
   useEffect(() => {
     if (!socketReady) return;
     if (users.length === 0) return;
 
-    socket.emit("subscribe_presence", {
+    safeEmit("subscribe_presence", {
       identities: users.map((u) => `${u.id}:${targetMode}`),
     });
-  }, [socketReady, users, targetMode]);
+  }, [socketReady, users, targetMode, safeEmit]);
 
   useEffect(() => {
     const handler = ({ identity, status }: any) => {
@@ -92,7 +90,7 @@ const Chat = () => {
 
     const convId = selectedUser.conversationId;
 
-    socket.emit("chat_selected", { convId });
+    safeEmit("chat_selected", { convId });
 
     const fetchMessages = async () => {
       const data = await getMessages(convId);
@@ -109,9 +107,9 @@ const Chat = () => {
     fetchMessages();
 
     return () => {
-      socket.emit("chat_deselected", { convId });
+      safeEmit("chat_deselected", { convId });
     };
-  }, [selectedUser]);
+  }, [selectedUser, safeEmit]);
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -143,6 +141,7 @@ const Chat = () => {
         }),
       );
     };
+
     socket.on("new_message", handleNewMessage);
 
     return () => {
@@ -153,7 +152,6 @@ const Chat = () => {
   useEffect(() => {
     const handleConversationUpdate = (data: any) => {
       const currentUser = selectedUserRef.current;
-
       const { conversationId, message } = data;
 
       setUsers((prev) =>

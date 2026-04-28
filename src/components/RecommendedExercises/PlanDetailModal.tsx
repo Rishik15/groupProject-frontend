@@ -58,7 +58,7 @@ const PlanDetailModal = ({
       dayOrder: Number(dayOrder),
       dayLabel: value.dayLabel,
       exercises: value.exercises.sort(
-        (a, b) => a.order_in_workout - b.order_in_workout
+        (a, b) => a.order_in_workout - b.order_in_workout,
       ),
     }));
   const [submit, setSubmit] = useState(false);
@@ -70,7 +70,9 @@ const PlanDetailModal = ({
           <Modal.Dialog className="max-w-2xl">
             <Modal.Header>
               <div>
-                <Modal.Heading className="font-bold text-2xl">{planName}</Modal.Heading>
+                <Modal.Heading className="font-bold text-2xl">
+                  {planName}
+                </Modal.Heading>
                 <p className="mt-1 text-sm text-gray-500">
                   Quick look at the plan before assigning it.
                 </p>
@@ -151,12 +153,18 @@ const PlanDetailModal = ({
             </Modal.Body>
 
             <Modal.Footer>
-              <Button className="h-11 rounded-xl border-2 border-gray-300 bg-white font-bold text-black" onPress={() => onOpenChange(false)}>Close</Button>
               <Button
-                className={`${submit
-                  ? "h-11 rounded-xl border-green-500 bg-[#E4FBF0] text-[#5E8F7E]"
-                  : "h-11 rounded-xl bg-indigo-500 font-bold text-white"
-                  }`}
+                className="h-11 rounded-xl border-2 border-gray-300 bg-white font-bold text-black"
+                onPress={() => onOpenChange(false)}
+              >
+                Close
+              </Button>
+              <Button
+                className={`${
+                  submit
+                    ? "h-11 rounded-xl border-green-500 bg-[#E4FBF0] text-[#5E8F7E]"
+                    : "h-11 rounded-xl bg-indigo-500 font-bold text-white"
+                }`}
                 onPress={handleAssign}
               >
                 {submit ? "Assigned" : "Assign Plan"}

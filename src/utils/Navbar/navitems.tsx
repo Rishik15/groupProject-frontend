@@ -6,7 +6,11 @@ import {
   CircleStar,
   Search,
   Users,
-  BicepsFlexed,
+  ClipboardList,
+  ShieldCheck,
+  UserCog,
+  Wrench,
+  BicepsFlexed
 } from "lucide-react";
 
 export const getNavItems = (activeMode: string | null, parent: string) => {
@@ -20,7 +24,7 @@ export const getNavItems = (activeMode: string | null, parent: string) => {
       },
       {
         label: "Sessions",
-        route: `${parent}/sessions`,
+        route: `${parent}/session`,
         icon: <Dumbbell className="w-4 h-4" />,
       },
       {
@@ -35,11 +39,42 @@ export const getNavItems = (activeMode: string | null, parent: string) => {
       },
     ];
   }
+  else if (activeMode === "admin") {
+    return [
+      { label: "Home", route: `${parent}/dashboard`, icon: <House className="w-4 h-4" /> },
+      {
+        label: "Accounts",
+        route: `${parent}/accounts/`,
+        icon: <UserCog className="w-4 h-4" />,
+      },
+      {
+        label: "Coaches",
+        route: `${parent}/coach-governance/`,
+        icon: <ShieldCheck className="w-4 h-4" />,
+      },
+      {
+        label: "Predictions",
+        route: `${parent}/prediction/`,
+        icon: <CircleStar className="w-4 h-4" />,
+      },
+      {
+        label: "Reports",
+        route: `${parent}/reports/`,
+        icon: <ClipboardList className="w-4 h-4" />,
+      },
+      {
+        label: "Exercises",
+        route: `${parent}/exercises/`,
+        icon: <Wrench className="w-4 h-4" />,
+      },
+    ];
+  }
+
 
   return [
     { label: "Home", route: parent, icon: <House className="w-4 h-4" /> },
     {
-      label: "Workouts",
+      label: "Calendar",
       route: `${parent}/workouts`,
       icon: <Dumbbell className="w-4 h-4" />,
     },

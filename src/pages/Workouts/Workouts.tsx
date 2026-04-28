@@ -1,25 +1,68 @@
+import { useEffect, useRef } from "react";
 import WorkoutScheduleSection from "../../components/WorkoutSchedule/WorkoutScheduleSection";
+import { markAsRead } from "../../services/notifications/mark_as_read";
 
-export default function Workouts() {
+interface WorkoutsProps {
+  notifications: any[];
+  setNotifications: React.Dispatch<React.SetStateAction<any[]>>;
+}
+
+const shouldMarkAsWorkoutNotification = (notif: any) => {
+  const route = notif?.metadata?.route;
+
   return (
-    <main className="min-h-screen bg-white px-8 py-8">
-      <div className="mx-auto w-full max-w-350 space-y-6">
-        <div>
-          <p className="text-[11.25px] font-medium text-[#72728A]">
-            Workout Tracker
-          </p>
+    notif.type === "coach_session" ||
+    notif.type === "workout" ||
+    route === "/client/workouts" ||
+    route === "client/workouts"
+  );
+};
 
-          <h1 className="mt-1 text-[18.75px] font-semibold text-[#0F0F14]">
-            Workouts
-          </h1>
+export default function Workouts({
+  notifications,
+  setNotifications,
+}: WorkoutsProps) {
+  const markingReadRef = useRef(false);
 
-          <p className="mt-2 max-w-3xl text-[11.25px] text-[#72728A]">
-            View your weekly workout schedule, add session blocks to the
-            calendar, and open the workout logger for completed strength sets or
-            cardio activity.
-          </p>
-        </div>
+  useEffect(() => {
+    if (markingReadRef.current || notifications.length === 0) {
+      return;
+    }
 
+    const workoutNotifications = notifications.filter(
+      shouldMarkAsWorkoutNotification,
+    );
+
+    if (workoutNotifications.length === 0) {
+      return;
+    }
+
+    async function markRead() {
+      try {
+        markingReadRef.current = true;
+
+        await Promise.all(
+          workoutNotifications.map((notif) =>
+            markAsRead(Number(notif.id), "client"),
+          ),
+        );
+
+        setNotifications((previous) =>
+          previous.filter((notif) => !shouldMarkAsWorkoutNotification(notif)),
+        );
+      } catch (error) {
+        console.error("Failed to mark workout notifications as read", error);
+      } finally {
+        markingReadRef.current = false;
+      }
+    }
+
+    markRead();
+  }, [notifications, setNotifications]);
+
+  return (
+    <main className="flex w-full justify-center px-6 py-12">
+      <div className="w-full max-w-310">
         <WorkoutScheduleSection />
       </div>
     </main>

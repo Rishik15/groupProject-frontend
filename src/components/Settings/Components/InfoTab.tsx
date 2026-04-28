@@ -32,56 +32,48 @@ export function InfoTab({ form, setForm, edit, role }: InfoTabProps) {
   const updateAvailabilityField = (
     index: number,
     key: keyof AvailabilitySlot,
-    value: string
+    value: string,
   ) => {
     setForm((prev) =>
       prev
         ? {
-          ...prev,
-          availability: prev.availability?.map((slot, i) =>
-            i === index ? { ...slot, [key]: value } : slot
-          ) ?? [],
-        }
-        : prev
+            ...prev,
+            availability:
+              prev.availability?.map((slot, i) =>
+                i === index ? { ...slot, [key]: value } : slot,
+              ) ?? [],
+          }
+        : prev,
     );
 
     console.log(form?.availability?.[index]);
-
   };
 
-  const days = [
-    "Mon",
-    "Tue",
-    "Wed",
-    "Thu",
-    "Fri",
-    "Sat",
-    "Sun",
-  ];
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   const addAvailability = () => {
     if (!form) return;
 
-    const existingDays = form.availability?.map(a => a.day_of_week) ?? [];
+    const existingDays = form.availability?.map((a) => a.day_of_week) ?? [];
 
-    const nextDay = days.find(day => !existingDays.includes(day));
+    const nextDay = days.find((day) => !existingDays.includes(day));
 
     if (!nextDay) return;
 
     setForm((prev) =>
       prev
         ? {
-          ...prev,
-          availability: [
-            ...(prev.availability ?? []),
-            {
-              day_of_week: nextDay,
-              start_time: "09:00:00",
-              end_time: "17:00:00",
-            },
-          ],
-        }
-        : prev
+            ...prev,
+            availability: [
+              ...(prev.availability ?? []),
+              {
+                day_of_week: nextDay,
+                start_time: "09:00:00",
+                end_time: "17:00:00",
+              },
+            ],
+          }
+        : prev,
     );
   };
 
@@ -89,11 +81,11 @@ export function InfoTab({ form, setForm, edit, role }: InfoTabProps) {
     setForm((prev) =>
       prev
         ? {
-          ...prev,
-          availability:
-            prev.availability?.filter((_, i) => i !== index) ?? [],
-        }
-        : prev
+            ...prev,
+            availability:
+              prev.availability?.filter((_, i) => i !== index) ?? [],
+          }
+        : prev,
     );
   };
 
@@ -126,7 +118,11 @@ export function InfoTab({ form, setForm, edit, role }: InfoTabProps) {
               removeAvailability={removeAvailability}
             />
 
-            <CoachCertificationsSection form={form} edit={edit} />
+            <CoachCertificationsSection
+              form={form}
+              edit={edit}
+              setForm={setForm}
+            />
 
             <CoachDescriptionBlock
               form={form}

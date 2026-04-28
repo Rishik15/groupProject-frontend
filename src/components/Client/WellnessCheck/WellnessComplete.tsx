@@ -7,7 +7,7 @@ const WellnessComplete = () => {
       className="bg-[#DAFAEA]! text-[#065F46]! h-8 px-3 rounded-xl flex items-center gap-1 opacity-70"
     >
       <Check />
-      <span className="text-[12px]">Wellness Complete</span>
+      <span className="text-[12px]">Survey Complete</span>
     </Button>
   );
 };

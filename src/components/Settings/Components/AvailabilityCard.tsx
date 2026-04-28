@@ -1,4 +1,12 @@
-import { Button, ListBox, Select, Card, Input, Label, TimeField } from "@heroui/react";
+import {
+  Button,
+  ListBox,
+  Select,
+  Card,
+  Input,
+  Label,
+  TimeField,
+} from "@heroui/react";
 import { Clock, X } from "lucide-react";
 import type { Time } from "@internationalized/date";
 import type { AvailabilitySlot } from "../../../services/Setting/User";
@@ -17,7 +25,7 @@ type Props = {
   updateAvailabilityField: (
     index: number,
     key: keyof AvailabilitySlot,
-    value: string
+    value: string,
   ) => void;
   removeAvailability: (index: number) => void;
 };
@@ -34,9 +42,13 @@ export default function AvailabilityCard({
     <Card className="rounded-xl border border-gray-200 p-4 shadow-sm">
       <div className="grid w-full grid-cols-4 gap-3">
         <div className="flex flex-col gap-2">
-          <DayListBox slot={slot} edit={edit} updateDay={(value) =>
-            updateAvailabilityField(index, "day_of_week", value)
-          } />
+          <DayListBox
+            slot={slot}
+            edit={edit}
+            updateDay={(value) =>
+              updateAvailabilityField(index, "day_of_week", value)
+            }
+          />
         </div>
 
         <div className="flex flex-col gap-2">
@@ -51,7 +63,7 @@ export default function AvailabilityCard({
                   updateAvailabilityField(
                     index,
                     "start_time",
-                    formatTime(value as Time)
+                    formatTime(value as Time),
                   );
                 }
               }}
@@ -76,7 +88,7 @@ export default function AvailabilityCard({
                   updateAvailabilityField(
                     index,
                     "end_time",
-                    formatTime(value as Time)
+                    formatTime(value as Time),
                   );
                 }
               }}
@@ -92,8 +104,9 @@ export default function AvailabilityCard({
         <div className="ml-auto w-fit">
           <Button
             onPress={() => removeAvailability(index)}
-            className={`flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-500 hover:bg-gray-200 hover:text-gray-700 ${!edit ? "invisible pointer-events-none" : ""
-              }`}
+            className={`flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-500 hover:bg-gray-200 hover:text-gray-700 ${
+              !edit ? "invisible pointer-events-none" : ""
+            }`}
           >
             <X size={18} />
           </Button>

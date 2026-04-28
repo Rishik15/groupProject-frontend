@@ -1,10 +1,6 @@
-import axios from "axios";
+import api from "../../api";
 
 export const getWorkoutCompletion = async () => {
-  const res = await axios.get(
-    "http://localhost:8080/dashboard/client/workout-completion",
-    { withCredentials: true },
-  );
-
+  const res = await api.get("/dashboard/client/workout-completion");
   return res.data;
 };

@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../api";
 
 type AvailabilitySlot = {
   day_of_week: string;
@@ -7,20 +7,16 @@ type AvailabilitySlot = {
 };
 
 export const updateCoachAvailability = async (
-  availability: AvailabilitySlot[]
+  availability: AvailabilitySlot[],
 ) => {
-  const res = await axios.post(
-    "http://localhost:8080/coach/availability/update",
-    {
-      num_days: availability.length,
-      day_of_week: availability.map(s => s.day_of_week),
-      start_time: availability.map(s => s.start_time),
-      end_time: availability.map(s => s.end_time),
-      recurring: availability.map(() => true),
-      active: availability.map(() => true),
-    },
-    { withCredentials: true }
-  );
+  const res = await api.post("/coach/availability/update", {
+    num_days: availability.length,
+    day_of_week: availability.map((s) => s.day_of_week),
+    start_time: availability.map((s) => s.start_time),
+    end_time: availability.map((s) => s.end_time),
+    recurring: availability.map(() => true),
+    active: availability.map(() => true),
+  });
 
   return res.data;
 };

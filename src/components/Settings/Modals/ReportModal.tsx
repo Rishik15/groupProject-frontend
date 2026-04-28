@@ -1,4 +1,4 @@
-import { Modal, Button, Card, Avatar, TextArea } from "@heroui/react";
+import { Modal, Button, Card, Avatar, TextArea, Checkbox } from "@heroui/react";
 import { Label, ListBox, Select } from "@heroui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -9,7 +9,8 @@ type Prop = {
 };
 
 type Coach = {
-    name: string;
+    coach_id: number
+    full_name: string;
     email: string;
     image?: string;
 };
@@ -19,6 +20,7 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
     const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
     const [reason, setReason] = useState<string>("");
     const [details, setDetails] = useState("");
+    const [terminateRequested, setTerminateRequested] = useState(false);
 
     useEffect(() => {
         const getClientCoach = async () => {
@@ -34,23 +36,31 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
         }
     }, [isOpen]);
 
+
     const closeModal = () => {
         setIsOpen(false);
         setSelectedCoach(null);
         setReason("");
         setDetails("");
+        setTerminateRequested(false);
     };
 
-    const handleSubmit = () => {
-        if (!selectedCoach || !reason) return;
+    const handleSubmit = async () => {
+        if (!selectedCoach) return;
 
-        console.log({
-            coach: selectedCoach,
-            reason,
-            details,
-        });
-
-        closeModal();
+        const res = await axios.post(
+            "http://localhost:8080/client/reportCoach",
+            {
+                coach_id: selectedCoach.coach_id,
+                reason: reason,
+                description: details,
+                terminate_requested: terminateRequested
+            },
+            {
+                withCredentials: true
+            }
+        );
+        closeModal()
     };
 
     return (
@@ -85,15 +95,13 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                                                 <Card
                                                     key={coach.email}
                                                     onClick={() => setSelectedCoach(coach)}
-                                                    className={`flex cursor-pointer flex-row items-center gap-3 border p-3 transition ${
-                                                        isSelected
-                                                            ? "border-indigo-500 bg-[#eef2ff]"
-                                                            : "border-gray-200 bg-white hover:bg-gray-50"
-                                                    }`}
+                                                    className={`flex cursor-pointer flex-row items-center gap-3 border p-3 transition ${isSelected
+                                                        ? "border-indigo-500 bg-[#eef2ff]"
+                                                        : "border-gray-200 bg-white hover:bg-gray-50"
+                                                        }`}
                                                 >
                                                     <Avatar>
                                                         <Avatar.Image
-                                                            alt={coach.name}
                                                             src={
                                                                 coach.image ||
                                                                 "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg"
@@ -102,7 +110,7 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                                                     </Avatar>
 
                                                     <div>
-                                                        <p className="font-bold text-black">{coach.name}</p>
+                                                        <p className="font-bold text-black">{coach.full_name}</p>
                                                         <p className="text-sm text-gray-500">{coach.email}</p>
                                                     </div>
                                                 </Card>
@@ -117,8 +125,9 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                                     <div className="flex flex-col gap-2">
                                         <Label>Reason</Label>
                                         <Select
-                                            selectedKey={reason || undefined}
-                                            onSelectionChange={(key) => setReason(String(key))}
+                                            onChange={(key) => {
+                                                if (key) setReason(key.toString());
+                                            }}
                                             placeholder="Select a reason"
                                             className="w-full"
                                         >
@@ -163,6 +172,24 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                                                 [&_textarea]:outline-none
                                             "
                                         />
+                                        <Checkbox
+                                            isSelected={terminateRequested}
+                                            onChange={(checked) => setTerminateRequested(checked)}
+                                            className="rounded-xl border border-gray-200 bg-white p-3"
+                                        >
+                                            <Checkbox.Control>
+                                                <Checkbox.Indicator />
+                                            </Checkbox.Control>
+
+                                            <Checkbox.Content>
+                                                <div className="flex flex-col">
+                                                    <Label>Terminate contract?</Label>
+                                                    <span className="text-xs text-gray-500">
+                                                        Request to end your contract with this coach.
+                                                    </span>
+                                                </div>
+                                            </Checkbox.Content>
+                                        </Checkbox>
                                     </div>
                                 </>
                             )}
