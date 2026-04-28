@@ -5,27 +5,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
+from login import login
 
 BASE_URL = "http://localhost:5173"
 
 def make_driver():
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
-def login(driver, email, password, redirect):
-    driver.get(f"{BASE_URL}/signin")
 
-    WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.NAME, "email"))
-    )
-
-    driver.find_element(By.NAME, "email").send_keys(email)
-    driver.find_element(By.NAME, "password").send_keys(password)
-    driver.find_element(By.XPATH, "//button[text()='Sign In']").click()
-
-    WebDriverWait(driver, 10).until(
-        EC.url_contains(redirect)
-    )
-  
 
 def delete_profile_flow(driver, email, password, redirect):
     login(driver, email, password, redirect)
@@ -49,9 +36,7 @@ def delete_profile_flow(driver, email, password, redirect):
 
  
 driver = make_driver()
-
-delete_profile_flow(driver)
-
+delete_profile_flow(driver, "example@example.com", "example1", "/client")
 
 time.sleep(10)
 
