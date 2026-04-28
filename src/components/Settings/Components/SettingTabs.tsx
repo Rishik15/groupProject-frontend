@@ -1,7 +1,6 @@
 import { Tabs } from "@heroui/react";
 import { InfoTab } from "./InfoTab";
 import ProgressPhotos from "../ProgressPhotos";
-
 import SettingOptions from "./SettingsOptions";
 import {
   MessageCircle,
@@ -9,9 +8,12 @@ import {
   CreditCard,
   Bell,
   HelpCircle,
+  Dumbbell,
+  ClipboardCheck,
 } from "lucide-react";
 import { logout } from "../../../services/auth/logout";
 import type { LucideIcon } from "lucide-react";
+import { useAuth } from "../../../utils/auth/AuthContext";
 
 type Props = {
   role: string;
@@ -27,7 +29,7 @@ type SettingOptionItem = {
   label: string;
   icon: LucideIcon;
   route?: string;
-  action?: "become_coach";
+  action?: "become_coach" | "switch_to_coach";
 };
 
 type TabItem = {
@@ -36,19 +38,11 @@ type TabItem = {
   component: React.ReactNode;
 };
 
-const clientOptions = [
-  { label: "Messages", icon: MessageCircle, route: "/client/messages" },
-  { label: "Browse Coaches", icon: UserRound, route: "/client/coaches" },
-  { label: "Payments & Billing", icon: CreditCard, route: "/client/billing" },
-  { label: "Notifications", icon: Bell, route: "/notifications" },
-  { label: "Help & Support", icon: HelpCircle, route: "help" },
-];
-
 const coachOptions: SettingOptionItem[] = [
   { label: "Messages", icon: MessageCircle, route: "/coach/chat" },
-  { label: "Browse Coaches", icon: UserRound, route: "/coaches" },
   { label: "Payments & Billing", icon: CreditCard, route: "/billing" },
   { label: "Notifications", icon: Bell, route: "/notifications" },
+  { label: "Help & Support", icon: HelpCircle, route: "help" },
 ];
 
 const SettingTab = ({
@@ -59,6 +53,48 @@ const SettingTab = ({
   selectedTab,
   setSelectedTab,
 }: Props) => {
+  const { coachApplicationStatus, coachModeActivated } = useAuth();
+
+  const coachApplicationOption: SettingOptionItem =
+    coachApplicationStatus === "pending"
+      ? {
+          label: "Coach Application In Review",
+          icon: ClipboardCheck,
+          action: "become_coach",
+        }
+      : coachApplicationStatus === "rejected"
+        ? {
+            label: "Coach Application Rejected",
+            icon: ClipboardCheck,
+            action: "become_coach",
+          }
+        : coachApplicationStatus === "approved" && !coachModeActivated
+          ? {
+              label: "Coach Application Approved",
+              icon: ClipboardCheck,
+              action: "become_coach",
+            }
+          : coachModeActivated
+            ? {
+                label: "Go to Coach Dashboard",
+                icon: ClipboardCheck,
+                action: "switch_to_coach",
+              }
+            : {
+                label: "Become a Coach",
+                icon: Dumbbell,
+                action: "become_coach",
+              };
+
+  const clientOptions: SettingOptionItem[] = [
+    { label: "Messages", icon: MessageCircle, route: "/client/chat" },
+    { label: "Browse Coaches", icon: UserRound, route: "/client/coaches" },
+    { label: "Payments & Billing", icon: CreditCard, route: "/client/billing" },
+    { label: "Notifications", icon: Bell, route: "/notifications" },
+    coachApplicationOption,
+    { label: "Help & Support", icon: HelpCircle, route: "help" },
+  ];
+
   const tabsConfig: Record<string, TabItem[]> = {
     client: [
       {

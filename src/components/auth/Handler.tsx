@@ -4,19 +4,12 @@ import { Button, Spinner } from "@heroui/react";
 import { updateRole } from "../../services/auth/updateRole";
 import RoleSelector from "../Register/RoleSelection";
 import { useAuth } from "../../utils/auth/AuthContext";
+import { getAuth } from "../../services/auth/checkAuth";
 
 const AuthComplete = () => {
   const navigate = useNavigate();
 
-  const {
-    user,
-    roles,
-    status,
-    hasCheckedAuth,
-    coachApplicationStatus,
-    setAuth,
-    refreshAuth,
-  } = useAuth();
+  const { status, hasCheckedAuth, coachApplicationStatus, setAuth } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [submittingRole, setSubmittingRole] = useState(false);
@@ -31,17 +24,40 @@ const AuthComplete = () => {
         return;
       }
 
-      if (status === "anonymous" || !user) {
+      const data = await getAuth();
+
+      if (!active) return;
+
+      if (!data.authenticated || !data.user) {
         navigate("/", { replace: true });
         return;
       }
 
-      const currentRoles = roles ?? [];
+      const currentRoles = data.roles ?? [];
+
+      setAuth({
+        user: data.user,
+        roles: currentRoles,
+        coachApplicationStatus: data.coachApplicationStatus ?? "none",
+        coachModeActivated: data.coachModeActivated ?? false,
+      });
 
       if (currentRoles.length === 0) {
         setShowRoleSelection(true);
         setLoading(false);
         return;
+      }
+
+      if (data.needs_onboarding) {
+        if (currentRoles.includes("coach")) {
+          navigate("/onboarding/coach", { replace: true });
+          return;
+        }
+
+        if (currentRoles.includes("client")) {
+          navigate("/onboarding/client", { replace: true });
+          return;
+        }
       }
 
       if (currentRoles.includes("admin")) {
@@ -59,17 +75,7 @@ const AuthComplete = () => {
         return;
       }
 
-      try {
-        await refreshAuth();
-
-        if (!active) {
-          return;
-        }
-
-        setLoading(false);
-      } catch {
-        navigate("/", { replace: true });
-      }
+      setLoading(false);
     };
 
     finishAuth();
@@ -77,7 +83,7 @@ const AuthComplete = () => {
     return () => {
       active = false;
     };
-  }, [hasCheckedAuth, status, user, roles, navigate, refreshAuth]);
+  }, [hasCheckedAuth, status, navigate, setAuth]);
 
   const handleContinue = async () => {
     if (!selectedRole || submittingRole) return;

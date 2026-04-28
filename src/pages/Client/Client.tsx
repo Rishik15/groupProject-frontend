@@ -27,6 +27,21 @@ const ClientLayout = () => {
   const hasFetchedRef = useRef(false);
 
   useEffect(() => {
+    const shouldShowSubmittedToast =
+      sessionStorage.getItem("showCoachApplicationSubmittedToast") === "true";
+
+    if (shouldShowSubmittedToast) {
+      sessionStorage.removeItem("showCoachApplicationSubmittedToast");
+
+      toast("Coach application submitted", {
+        description:
+          "Your application is in review. We will notify you once an admin makes a decision.",
+        timeout: 5000,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
     if (hasFetchedRef.current) return;
 
     hasFetchedRef.current = true;

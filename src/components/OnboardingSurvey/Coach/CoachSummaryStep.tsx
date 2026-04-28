@@ -305,18 +305,6 @@ function CoachSummaryStep({
         </div>
       </Card>
 
-      <Card className={summaryCardClassName}>
-        <div className="flex items-start gap-4">
-          <div>
-            <h3 className="text-[13.125px] font-semibold text-black">
-              {isClientBecomingCoach
-                ? "Ready to Submit"
-                : "Next: Basic Profile"}
-            </h3>
-           
-          </div>
-        </div>
-      </Card>
     </div>
   );
 }
