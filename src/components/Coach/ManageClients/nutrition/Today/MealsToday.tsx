@@ -66,11 +66,12 @@ const MealsToday = ({ meals, isLoading = false }: MealsTodayProps) => {
 
   if (isLoading) {
     return (
-      <div className="w-full rounded-2xl border border-neutral-300 bg-white p-6">
+      <div className="flex h-90 w-full flex-col rounded-2xl border border-neutral-300 bg-white p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-[15px] font-semibold text-[#0F0F14]">
             Today&apos;s Meals
           </h2>
+
           <span className="text-[11.25px] text-[#72728A]">Loading...</span>
         </div>
       </div>
@@ -79,8 +80,8 @@ const MealsToday = ({ meals, isLoading = false }: MealsTodayProps) => {
 
   return (
     <>
-      <div className="w-full rounded-2xl border border-neutral-300 bg-white p-6">
-        <div className="flex items-start justify-between">
+      <div className="flex h-90 w-full flex-col rounded-2xl border border-neutral-300 bg-white p-6">
+        <div className="flex shrink-0 items-start justify-between">
           <h2 className="text-[15px] font-semibold text-[#0F0F14]">
             Today&apos;s Meals
           </h2>
@@ -95,10 +96,16 @@ const MealsToday = ({ meals, isLoading = false }: MealsTodayProps) => {
             No meals logged today.
           </div>
         ) : (
-          <div className="mt-6 space-y-4">
+          <div className="mt-6 flex-1 space-y-4 overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {meals.map((meal) => {
               const Icon = getMealIcon(meal.meal_type);
               const hasPhoto = Boolean(meal.photo_url);
+
+              const servings = Number(meal.servings ?? 1);
+              const protein = Number(meal.protein ?? 0);
+              const carbs = Number(meal.carbs ?? 0);
+              const fats = Number(meal.fats ?? 0);
+              const calories = Number(meal.calories ?? 0);
 
               return (
                 <div
@@ -137,18 +144,16 @@ const MealsToday = ({ meals, isLoading = false }: MealsTodayProps) => {
                       </div>
 
                       <div className="mt-1 text-[13.125px] text-[#72728A]">
-                        {meal.time_label ?? ""} ·{" "}
-                        {formatNumber(Number(meal.servings ?? 1))} serving
-                        {Number(meal.servings ?? 1) !== 1 ? "s" : ""} · P:{" "}
-                        {formatNumber(Number(meal.protein ?? 0))}g · C:{" "}
-                        {formatNumber(Number(meal.carbs ?? 0))}g · F:{" "}
-                        {formatNumber(Number(meal.fats ?? 0))}g
+                        {meal.time_label ?? ""} · {formatNumber(servings)}{" "}
+                        serving{servings !== 1 ? "s" : ""} · P:{" "}
+                        {formatNumber(protein)}g · C: {formatNumber(carbs)}g ·
+                        F: {formatNumber(fats)}g
                       </div>
                     </div>
                   </div>
 
                   <div className="shrink-0 text-[13.125px] font-medium text-[#0F0F14]">
-                    {Math.round(Number(meal.calories ?? 0))} kcal
+                    {Math.round(calories)} kcal
                   </div>
                 </div>
               );

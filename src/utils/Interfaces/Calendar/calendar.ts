@@ -7,6 +7,12 @@ export type CalendarEventType =
 
 export type CoachSessionStatus = "scheduled" | "completed" | "cancelled";
 
+export type WorkoutCalendarStatus =
+  | "scheduled"
+  | "active"
+  | "completed"
+  | "missed";
+
 export interface CalendarEvent {
   id: string;
   eventId: number;
@@ -25,6 +31,11 @@ export interface CalendarEvent {
   workoutDayId: number | null;
   workoutDayLabel?: string | null;
   workoutDayOrder?: number | null;
+
+  sessionId?: number | null;
+  sessionStartedAt?: string | null;
+  sessionEndedAt?: string | null;
+  workoutStatus?: WorkoutCalendarStatus | null;
 
   coachSessionId?: number | null;
   contractId?: number | null;

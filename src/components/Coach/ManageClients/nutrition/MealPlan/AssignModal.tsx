@@ -1,22 +1,23 @@
 import { useState } from "react";
-import type { DateValue } from "@internationalized/date";
 import {
   Button,
-  Calendar,
   Card,
   DateField,
-  DatePicker,
+  FieldError,
   Label,
   Modal,
 } from "@heroui/react";
-import { assignMealPlan } from "@/services/nutrition/mealPlan";
+import type { DateValue } from "@internationalized/date";
+import { getLocalTimeZone, today } from "@internationalized/date";
+import { assignManageClientMealPlan } from "@/services/ManageClients/nutrition/mealPlan";
 
-interface Props {
+type Props = {
+  contractId: number;
   mealPlanId: number;
   planName: string;
   onClose: () => void;
   onSuccess: () => void;
-}
+};
 
 function isMonday(date: string) {
   const [year, month, day] = date.split("-").map(Number);
@@ -24,6 +25,7 @@ function isMonday(date: string) {
 }
 
 export default function AssignModal({
+  contractId,
   mealPlanId,
   planName,
   onClose,
@@ -34,15 +36,32 @@ export default function AssignModal({
   const [conflict, setConflict] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const todayDate = today(getLocalTimeZone());
   const startDate = startDateValue ? startDateValue.toString() : "";
 
+  const isStartPast =
+    startDateValue !== null && startDateValue.compare(todayDate) < 0;
+
+  const isStartNotMonday = startDate !== "" && !isMonday(startDate);
+
+  const startDateError = isStartPast
+    ? "Start date must be today or later."
+    : isStartNotMonday
+      ? "Start date must be a Monday."
+      : "";
+
   async function handleAssign(force = false) {
-    if (!startDate) {
+    if (!startDateValue) {
       setError("Please select a start date.");
       return;
     }
 
-    if (!isMonday(startDate)) {
+    if (isStartPast) {
+      setError("Start date must be today or later.");
+      return;
+    }
+
+    if (isStartNotMonday) {
       setError("Start date must be a Monday.");
       return;
     }
@@ -51,7 +70,7 @@ export default function AssignModal({
     setError(null);
 
     try {
-      await assignMealPlan({
+      await assignManageClientMealPlan(contractId, {
         meal_plan_id: mealPlanId,
         start_date: startDate,
         force,
@@ -90,7 +109,7 @@ export default function AssignModal({
             </Modal.Heading>
 
             <p className="text-[12px] text-[#72728A]">
-              Pick the Monday this plan should start.
+              Pick the Monday this plan should start for this client.
             </p>
           </Modal.Header>
 
@@ -124,10 +143,13 @@ export default function AssignModal({
               </div>
             )}
 
-            <DatePicker
+            <DateField
+              isRequired
               className="w-full"
               name="start_date"
               value={startDateValue}
+              minValue={todayDate}
+              isInvalid={isStartPast || isStartNotMonday}
               onChange={(value) => {
                 setStartDateValue(value);
                 setError(null);
@@ -143,49 +165,17 @@ export default function AssignModal({
                 variant="secondary"
                 className="h-10 rounded-xl border border-[#E6E6EE] bg-white px-3"
               >
-                <DateField.Input>
+                <DateField.Input className="text-[14px]">
                   {(segment) => <DateField.Segment segment={segment} />}
                 </DateField.Input>
-
-                <DateField.Suffix>
-                  <DatePicker.Trigger>
-                    <DatePicker.TriggerIndicator />
-                  </DatePicker.Trigger>
-                </DateField.Suffix>
               </DateField.Group>
 
-              <DatePicker.Popover>
-                <Calendar aria-label="Start date">
-                  <Calendar.Header>
-                    <Calendar.YearPickerTrigger>
-                      <Calendar.YearPickerTriggerHeading />
-                      <Calendar.YearPickerTriggerIndicator />
-                    </Calendar.YearPickerTrigger>
-
-                    <Calendar.NavButton slot="previous" />
-                    <Calendar.NavButton slot="next" />
-                  </Calendar.Header>
-
-                  <Calendar.Grid>
-                    <Calendar.GridHeader>
-                      {(day) => (
-                        <Calendar.HeaderCell>{day}</Calendar.HeaderCell>
-                      )}
-                    </Calendar.GridHeader>
-
-                    <Calendar.GridBody>
-                      {(date) => <Calendar.Cell date={date} />}
-                    </Calendar.GridBody>
-                  </Calendar.Grid>
-
-                  <Calendar.YearPickerGrid>
-                    <Calendar.YearPickerGridBody>
-                      {({ year }) => <Calendar.YearPickerCell year={year} />}
-                    </Calendar.YearPickerGridBody>
-                  </Calendar.YearPickerGrid>
-                </Calendar>
-              </DatePicker.Popover>
-            </DatePicker>
+              {(isStartPast || isStartNotMonday) && (
+                <FieldError className="text-[12px] text-red-600">
+                  {startDateError}
+                </FieldError>
+              )}
+            </DateField>
           </Modal.Body>
 
           <Modal.Footer>

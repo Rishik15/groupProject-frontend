@@ -10,11 +10,11 @@ import {
   Separator,
 } from "@heroui/react";
 import {
-  deleteMealPlan,
-  getMealPlanDetail,
-  getMeals,
-  updateMealPlan,
-} from "@/services/nutrition/mealPlan";
+  deleteManageClientMealPlan,
+  getManageClientMealPlanDetail,
+  getManageClientMeals,
+  updateManageClientMealPlan,
+} from "@/services/ManageClients/nutrition/mealPlan";
 import type {
   AssignedMealPlan,
   DayOfWeek,
@@ -25,6 +25,7 @@ import type {
 import { DAYS, MEAL_TYPES } from "@/utils/Interfaces/Nutrition/mealPlan";
 
 type Props = {
+  contractId: number;
   plan: AssignedMealPlan;
   onPlanUpdated?: () => void;
   onPlanDeleted?: () => void;
@@ -35,6 +36,7 @@ const formatNumber = (value: number) => {
 };
 
 export default function PlanCard({
+  contractId,
   plan,
   onPlanUpdated,
   onPlanDeleted,
@@ -64,7 +66,10 @@ export default function PlanCard({
     setLoading(true);
 
     try {
-      const data = await getMealPlanDetail(plan.meal_plan_id);
+      const data = await getManageClientMealPlanDetail(
+        contractId,
+        plan.meal_plan_id,
+      );
 
       setDetail(data);
       setPlanName(data.plan_name);
@@ -88,7 +93,7 @@ export default function PlanCard({
       await loadDetail();
     }
 
-    const meals = await getMeals();
+    const meals = await getManageClientMeals();
 
     setSystemMeals(meals);
     setEditing(true);
@@ -100,7 +105,7 @@ export default function PlanCard({
     setError(null);
 
     try {
-      await deleteMealPlan(plan.meal_plan_id);
+      await deleteManageClientMealPlan(contractId, plan.meal_plan_id);
       setShowDeleteModal(false);
       onPlanDeleted?.();
     } catch (err: any) {
@@ -115,7 +120,7 @@ export default function PlanCard({
     setError(null);
 
     try {
-      const result = await updateMealPlan({
+      const result = await updateManageClientMealPlan(contractId, {
         meal_plan_id: plan.meal_plan_id,
         ...body,
       });
@@ -248,7 +253,6 @@ export default function PlanCard({
               className="h-8 rounded-xl px-3 text-[12px] font-semibold text-red-500 hover:bg-red-50 disabled:opacity-60"
               isDisabled={saving || deleting}
               onPress={() => setShowDeleteModal(true)}
-              onClick={() => setShowDeleteModal(true)}
             >
               {deleting ? "Deleting..." : "Delete"}
             </Button>
@@ -542,7 +546,7 @@ export default function PlanCard({
 
             <Modal.Header>
               <Modal.Heading className="text-[18px] font-bold text-black">
-                Delete Meal Plan
+                Delete Client Meal Plan
               </Modal.Heading>
             </Modal.Header>
 

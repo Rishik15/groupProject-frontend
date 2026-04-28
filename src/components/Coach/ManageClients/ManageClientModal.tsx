@@ -2,15 +2,14 @@ import { useState } from "react";
 import Dashboard from "./dashboard/ManageDashboard";
 import Nutrition from "./nutrition/ManageNutrition";
 import Workouts from "./workouts/ManageWorkouts";
-import { X } from "lucide-react";
-import { Home, Dumbbell, Refrigerator } from "lucide-react";
+import { X, Home, Dumbbell, Refrigerator } from "lucide-react";
 
 type Tab = "dashboard" | "workouts" | "nutrition";
 
 const Icons = {
-  dashboard: <Home className="w-5 h-5" />,
-  workouts: <Dumbbell className="w-5 h-5" />,
-  nutrition: <Refrigerator className="w-5 h-5" />,
+  dashboard: <Home className="h-5 w-5" />,
+  workouts: <Dumbbell className="h-5 w-5" />,
+  nutrition: <Refrigerator className="h-5 w-5" />,
 };
 
 export default function ManageClientModal({
@@ -23,30 +22,33 @@ export default function ManageClientModal({
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center py-6 gap-4 backdrop-blur-sm">
-      <div className="absolute left-13 top-12 flex flex-col gap-4 pt-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center gap-4 bg-black/40 py-6 backdrop-blur-sm">
+      <div className="absolute left-22 top-12 flex flex-col gap-4 pt-6">
         {(["dashboard", "workouts", "nutrition"] as Tab[]).map((tab) => (
           <div
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`w-10 h-10 rounded-full flex items-center justify-center cursor-pointer 
-            ${activeTab === tab ? "bg-indigo-500 text-white" : "bg-white shadow-lg"}`}
+            className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full ${
+              activeTab === tab
+                ? "bg-indigo-500 text-white"
+                : "bg-white shadow-lg"
+            }`}
           >
             {Icons[tab]}
           </div>
         ))}
       </div>
 
-      <div className="absolute right-15 top-12 pt-6">
+      <div className="absolute right-24 top-12 pt-6">
         <div
           onClick={onClose}
-          className="w-8 h-8 rounded-full bg-white flex items-center justify-center cursor-pointer shadow-lg hover:bg-indigo-500 hover:text-white"
+          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-white shadow-lg hover:bg-indigo-500 hover:text-white"
         >
-          <X className="w-5 h-5" />
+          <X className="h-5 w-5" />
         </div>
       </div>
 
-      <div className="w-[85%] h-[95%] bg-[#f8f8fbe4] rounded-4xl shadow-xl overflow-hidden p-6">
+      <div className="h-[95%] w-[80%] overflow-y-auto rounded-4xl bg-[#f8f8fbe4] p-6 shadow-xl [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {activeTab === "dashboard" && (
           <Dashboard contractId={contractId} onTabChange={setActiveTab} />
         )}

@@ -11,7 +11,7 @@ const Nutrition = () => {
     <section className="bg-[#F7F7FB]">
       <NutritionHeader onLogMeal={() => setIsMealModalOpen(true)} />
 
-      <div className="px-38 py-4">
+      <div className="px-38 py-3">
         <div className="flex items-left">
           <NutritionTabs key={mealsRefreshKey} />
         </div>

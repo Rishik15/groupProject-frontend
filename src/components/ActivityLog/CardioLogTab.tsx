@@ -77,7 +77,7 @@ const CardioLogTab = ({
         </div>
 
         <div className="flex flex-col gap-1">
-          <Label htmlFor="avg-hr">Avg HR</Label>
+          <Label htmlFor="avg-hr">Avg Heart Rate</Label>
           <Input
             id="avg-hr"
             type="number"
