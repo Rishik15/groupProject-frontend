@@ -20,7 +20,7 @@ const Register = () => {
   const [modalMessage, setModalMessage] = useState("");
 
   const navigate = useNavigate();
-  const { setAuth } = useAuth();
+  const { refreshAuth } = useAuth();
 
   const handleRegister = async () => {
     try {
@@ -39,23 +39,14 @@ const Register = () => {
         return;
       }
 
-      const data = await register(name, email, password, selectedRole);
+      await register(name, email, password, selectedRole);
 
-      const roles = data.roles ?? [];
-
-      setAuth({
-        user: data.user,
-        roles,
-        coachApplicationStatus:
-          data.coachApplicationStatus ??
-          data.coach_application_status ??
-          "none",
-      });
+      await refreshAuth();
 
       if (selectedRole === "coach") {
-        navigate("/onboarding/coach");
+        navigate("/onboarding/coach", { replace: true });
       } else {
-        navigate("/onboarding/client");
+        navigate("/onboarding/client", { replace: true });
       }
     } catch (err: any) {
       setModalMessage(err.message || "Something went wrong");

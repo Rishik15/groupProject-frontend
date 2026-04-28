@@ -75,6 +75,7 @@ export default function AddSessionModal({
 }: AddSessionModalProps) {
   const [plans, setPlans] = useState<UserWorkoutPlan[]>([]);
   const [days, setDays] = useState<WorkoutPlanDay[]>([]);
+  const [plansLoaded, setPlansLoaded] = useState(false);
   const [isLoadingPlans, setIsLoadingPlans] = useState(false);
   const [isLoadingDays, setIsLoadingDays] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -106,54 +107,132 @@ export default function AddSessionModal({
       return;
     }
 
+    let active = true;
+
     setForm(initialState);
     setDays([]);
+    setPlans([]);
+    setPlansLoaded(false);
     setIsSubmitting(false);
 
     async function loadPlans() {
       try {
         setIsLoadingPlans(true);
+
         const data = await getMyWorkoutPlans();
+
+        if (!active) {
+          return;
+        }
+
         setPlans(data);
+        setPlansLoaded(true);
+
+        if (initialState.workoutPlanId) {
+          const selectedPlanExists = data.some(
+            (plan) => String(plan.plan_id) === initialState.workoutPlanId,
+          );
+
+          if (!selectedPlanExists) {
+            setForm((previous) => ({
+              ...previous,
+              workoutPlanId: "",
+              workoutDayId: "",
+            }));
+          }
+        }
       } catch (error) {
+        if (!active) {
+          return;
+        }
+
         console.error("Failed to load workout plans", error);
         setPlans([]);
+        setPlansLoaded(true);
       } finally {
-        setIsLoadingPlans(false);
+        if (active) {
+          setIsLoadingPlans(false);
+        }
       }
     }
 
     loadPlans();
+
+    return () => {
+      active = false;
+    };
   }, [isOpen, initialState]);
 
   useEffect(() => {
-    if (!isOpen || !form.workoutPlanId) {
+    if (!isOpen || !plansLoaded || !form.workoutPlanId) {
       setDays([]);
       return;
     }
 
+    const selectedPlanExists = plans.some(
+      (plan) => String(plan.plan_id) === form.workoutPlanId,
+    );
+
+    if (!selectedPlanExists) {
+      setDays([]);
+      return;
+    }
+
+    let active = true;
+
     async function loadDays() {
       try {
         setIsLoadingDays(true);
+
         const data = await getWorkoutPlanDays(Number(form.workoutPlanId));
+
+        if (!active) {
+          return;
+        }
+
         setDays(data);
 
-        if (!form.workoutDayId && data.length === 1) {
-          setForm((previous) => ({
+        setForm((previous) => {
+          const selectedDayStillExists = data.some(
+            (day) => String(day.day_id) === previous.workoutDayId,
+          );
+
+          if (selectedDayStillExists) {
+            return previous;
+          }
+
+          if (data.length === 1) {
+            return {
+              ...previous,
+              workoutDayId: String(data[0].day_id),
+            };
+          }
+
+          return {
             ...previous,
-            workoutDayId: String(data[0].day_id),
-          }));
-        }
+            workoutDayId: "",
+          };
+        });
       } catch (error) {
+        if (!active) {
+          return;
+        }
+
         console.error("Failed to load workout days", error);
         setDays([]);
       } finally {
-        setIsLoadingDays(false);
+        if (active) {
+          setIsLoadingDays(false);
+        }
       }
     }
 
     loadDays();
-  }, [isOpen, form.workoutPlanId, form.workoutDayId]);
+
+    return () => {
+      active = false;
+    };
+  }, [isOpen, plansLoaded, plans, form.workoutPlanId]);
 
   function updateField(field: keyof AddSessionFormState, value: string) {
     setForm((previous) => ({
@@ -165,6 +244,8 @@ export default function AddSessionModal({
   async function handleSubmit() {
     if (
       isSubmitting ||
+      isLoadingPlans ||
+      isLoadingDays ||
       !form.description.trim() ||
       !form.workoutPlanId ||
       !form.workoutDayId
@@ -245,7 +326,7 @@ export default function AddSessionModal({
               </div>
             </Modal.Header>
 
-            <Modal.Body className="bg-white py-2 px-4">
+            <Modal.Body className="bg-white px-4 py-2">
               <AddSessionForm
                 plans={plans}
                 days={days}
@@ -275,6 +356,8 @@ export default function AddSessionModal({
                     workoutPlanId: value,
                     workoutDayId: "",
                   }));
+
+                  setDays([]);
                 }}
                 onWorkoutDayChange={(value) =>
                   updateField("workoutDayId", value)
@@ -282,7 +365,7 @@ export default function AddSessionModal({
               />
             </Modal.Body>
 
-            <Modal.Footer className="border-t border-[#E5E7EB] bg-white pt-3 pb-1">
+            <Modal.Footer className="border-t border-[#E5E7EB] bg-white pb-1 pt-3">
               <div className="flex w-full items-center justify-between gap-3">
                 <div>
                   {isEditing ? (
@@ -312,6 +395,8 @@ export default function AddSessionModal({
                     onPress={handleSubmit}
                     isDisabled={
                       isSubmitting ||
+                      isLoadingPlans ||
+                      isLoadingDays ||
                       plans.length === 0 ||
                       !form.description.trim() ||
                       !form.workoutPlanId ||
