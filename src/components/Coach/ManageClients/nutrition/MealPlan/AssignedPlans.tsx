@@ -1,27 +1,32 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Card, Pagination, Spinner } from "@heroui/react";
 import PlanCard from "./PlanCard";
-import { getMyAssignedMealPlans } from "@/services/nutrition/mealPlan";
+import { getManageClientAssignedMealPlans } from "@/services/ManageClients/nutrition/mealPlan";
 import type { AssignedMealPlan } from "@/utils/Interfaces/Nutrition/mealPlan";
 
 const ITEMS_PER_PAGE = 4;
 
-export default function AssignedPlans() {
+type Props = {
+  contractId: number;
+};
+
+export default function AssignedPlans({ contractId }: Props) {
   const [plans, setPlans] = useState<AssignedMealPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
   const loadPlans = useCallback(async () => {
+    setLoading(true);
+
     try {
-      setLoading(true);
-      const data = await getMyAssignedMealPlans();
+      const data = await getManageClientAssignedMealPlans(contractId);
       setPlans(data);
     } catch {
       setPlans([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [contractId]);
 
   useEffect(() => {
     loadPlans();
@@ -86,8 +91,9 @@ export default function AssignedPlans() {
       <Card className="flex h-[420px] items-center justify-center border border-dashed border-[#D8D8E8] bg-[#FAFAFF] text-center shadow-sm">
         <div>
           <p className="text-[16px] font-bold text-black">
-            No assigned plans yet
+            No client plans yet
           </p>
+
           <p className="mt-1 text-[14px] text-[#72728A]">
             Assign a plan from the meal plan library.
           </p>
@@ -101,6 +107,7 @@ export default function AssignedPlans() {
       {paginatedPlans.map((plan) => (
         <div key={plan.meal_plan_id} className="w-full max-w-3xl">
           <PlanCard
+            contractId={contractId}
             plan={plan}
             onPlanUpdated={loadPlans}
             onPlanDeleted={loadPlans}

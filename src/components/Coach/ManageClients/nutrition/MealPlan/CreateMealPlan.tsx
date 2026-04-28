@@ -14,10 +14,10 @@ import {
   Separator,
 } from "@heroui/react";
 import {
-  assignMealPlan,
-  createMealPlan,
-  getMeals,
-} from "@/services/nutrition/mealPlan";
+  assignManageClientMealPlan,
+  createManageClientMealPlan,
+  getManageClientMeals,
+} from "@/services/ManageClients/nutrition/mealPlan";
 import type {
   DayOfWeek,
   MealLibraryItem,
@@ -26,12 +26,16 @@ import type {
 } from "@/utils/Interfaces/Nutrition/mealPlan";
 import { DAYS, MEAL_TYPES } from "@/utils/Interfaces/Nutrition/mealPlan";
 
+type Props = {
+  contractId: number;
+};
+
 function isMonday(date: string) {
   const [year, month, day] = date.split("-").map(Number);
   return new Date(year, month - 1, day).getDay() === 1;
 }
 
-export default function CreateMealPlan() {
+export default function CreateMealPlan({ contractId }: Props) {
   const [planName, setPlanName] = useState("");
   const [selectedDay, setSelectedDay] = useState<DayOfWeek>("Mon");
   const [selectedType, setSelectedType] = useState<MealType>("breakfast");
@@ -75,7 +79,7 @@ export default function CreateMealPlan() {
   useEffect(() => {
     const loadMeals = async () => {
       try {
-        const data = await getMeals();
+        const data = await getManageClientMeals();
         setMeals(data);
       } catch {
         setError("Failed to load meals.");
@@ -124,7 +128,7 @@ export default function CreateMealPlan() {
   }
 
   async function handleAssign(planId: number, force = false) {
-    await assignMealPlan({
+    await assignManageClientMealPlan(contractId, {
       meal_plan_id: planId,
       start_date: startDate,
       force,
@@ -183,7 +187,7 @@ export default function CreateMealPlan() {
     setSuccess(false);
 
     try {
-      const res = await createMealPlan({
+      const res = await createManageClientMealPlan(contractId, {
         plan_name: planName,
         start_date: startDate,
         end_date: endDate,
@@ -235,14 +239,15 @@ export default function CreateMealPlan() {
   }
 
   return (
-    <Card className="border border-[#E6E6EE] bg-white px-4 py-2  shadow-sm">
+    <Card className="border border-[#E6E6EE] bg-white px-4 py-2 shadow-sm">
       <Card.Header className="flex flex-col items-start gap-1 px-4 py-3">
         <Card.Title className="text-[18px] font-bold text-black">
-          Create Meal Plan
+          Create Client Meal Plan
         </Card.Title>
 
         <Card.Description className="text-[12px] text-[#72728A]">
-          Build a weekly plan from your meal library.
+          Build a weekly plan from the meal library and assign it to this
+          client.
         </Card.Description>
       </Card.Header>
 

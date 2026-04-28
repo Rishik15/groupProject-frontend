@@ -98,10 +98,9 @@ const ExerciseLogTab = ({
       </Select>
 
       {selectedExercise ? (
-        <p className="text-xs text-zinc-400">
+        <p className="text-sm text-zinc-600">
           Goal: {selectedExercise.setsGoal || "-"} sets{" • "}
-          {selectedExercise.repsGoal || "-"} reps{" • "}
-          {selectedExercise.weightGoal || "-"} lbs
+          {selectedExercise.repsGoal || "-"} reps
         </p>
       ) : null}
 
@@ -129,7 +128,7 @@ const ExerciseLogTab = ({
         </div>
 
         <div className="flex flex-col gap-1">
-          <Label htmlFor="weight">Weight</Label>
+          <Label htmlFor="weight">Weight (lbs)</Label>
           <Input
             id="weight"
             type="number"
@@ -140,7 +139,7 @@ const ExerciseLogTab = ({
         </div>
 
         <div className="flex flex-col gap-1">
-          <Label htmlFor="rpe">RPE</Label>
+          <Label htmlFor="rpe">Rate of Percieved Excersion (1-10)</Label>
           <Input
             id="rpe"
             type="number"
@@ -152,7 +151,7 @@ const ExerciseLogTab = ({
         </div>
       </div>
 
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-3 mt-4">
         <Button
           className="h-9 bg-indigo-600 px-4 text-sm text-white hover:bg-indigo-700"
           isPending={isLoggingStrength}

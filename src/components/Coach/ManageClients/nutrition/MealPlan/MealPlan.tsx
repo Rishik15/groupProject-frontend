@@ -6,7 +6,11 @@ import CreateMealPlan from "./CreateMealPlan";
 
 type ActiveTab = "library" | "assigned" | "create";
 
-const MealPlan = () => {
+type Props = {
+  contractId: number;
+};
+
+const MealPlan = ({ contractId }: Props) => {
   const [activeTab, setActiveTab] = useState<ActiveTab>("library");
 
   const tabClass = (tab: ActiveTab) =>
@@ -30,7 +34,7 @@ const MealPlan = () => {
           className={tabClass("assigned")}
           onPress={() => setActiveTab("assigned")}
         >
-          My Plans
+          Client Plans
         </Button>
 
         <Button
@@ -42,9 +46,9 @@ const MealPlan = () => {
         </Button>
       </div>
 
-      {activeTab === "library" && <MealPlanLibrary />}
-      {activeTab === "assigned" && <AssignedPlans />}
-      {activeTab === "create" && <CreateMealPlan />}
+      {activeTab === "library" && <MealPlanLibrary contractId={contractId} />}
+      {activeTab === "assigned" && <AssignedPlans contractId={contractId} />}
+      {activeTab === "create" && <CreateMealPlan contractId={contractId} />}
     </div>
   );
 };

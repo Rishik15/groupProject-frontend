@@ -11,17 +11,8 @@ type Props = {
 const MealPlanCard = ({ mealPlan, onAssign }: Props) => {
   const totalMeals = mealPlan.meals.length;
 
-  const totalProtein = mealPlan.meals.reduce(
-    (sum, meal) => sum + meal.protein,
-    0,
-  );
-
-  const totalCarbs = mealPlan.meals.reduce((sum, meal) => sum + meal.carbs, 0);
-
-  const totalFats = mealPlan.meals.reduce((sum, meal) => sum + meal.fats, 0);
-
   return (
-    <Card className="h-[550px] w-full border border-[#E6E6EE] bg-white p-0 shadow-sm">
+    <Card className="h-[560px] w-full border border-[#E6E6EE] bg-white p-0 shadow-sm">
       <Card.Header className="flex flex-col gap-3 px-4 py-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0">
           <Card.Description className="text-[12px] font-bold uppercase tracking-[1.5px] text-[#5E5EF4]">
@@ -59,7 +50,7 @@ const MealPlanCard = ({ mealPlan, onAssign }: Props) => {
       <Separator />
 
       <Card.Content className="flex min-h-0 flex-1 flex-col px-4 py-3">
-        <div className="h-[415px] overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="h-[425px] overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
             {DAYS.map((day) => {
               const mealsForDay = mealPlan.meals.filter(

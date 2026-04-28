@@ -410,7 +410,7 @@ const ActivityLogModal = ({
             </Modal.Header>
 
             <Modal.Body>
-              <div className="max-h-[68vh] overflow-y-auto px-5 py-4">
+              <div className="max-h-[68vh] overflow-y-auto px-5">
                 {isLoading ? (
                   <div className="flex min-h-28 items-center justify-center">
                     <Spinner size="sm" />
@@ -511,7 +511,7 @@ const ActivityLogModal = ({
               </div>
             </Modal.Body>
 
-            <Modal.Footer className="border-t border-zinc-100 px-5 py-4">
+            <Modal.Footer className="border-t border-zinc-100 px-5 py-3">
               <Button
                 variant="secondary"
                 onPress={onClose}

@@ -3,10 +3,10 @@ import { Utensils } from "lucide-react";
 
 const NoSelectedCard = () => {
   return (
-    <Card className="flex h-140 w-full items-center justify-center border border-[#E6E6EE] bg-[#FAFAFF] p-6 shadow-sm">
+    <Card className="flex h-[560px] w-full items-center justify-center border border-[#E6E6EE] bg-[#FAFAFF] p-6 shadow-sm">
       <div className="max-w-md text-center">
         <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EDEBFF] text-[18px]">
-          <Utensils className="w-4 h-4" />
+          <Utensils className="h-4 w-4 text-[#5E5EF4]" />
         </div>
 
         <p className="text-[18px] font-bold text-[#202033]">

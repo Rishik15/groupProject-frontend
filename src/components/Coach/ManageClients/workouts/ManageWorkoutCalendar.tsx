@@ -10,6 +10,7 @@ import type { CalendarEvent } from "../../../event-calendar/types";
 
 type CalendarEventWithDrag = CalendarEvent & {
   isDraggable?: boolean;
+  className?: string;
 };
 
 interface ManageWorkoutCalendarProps {
@@ -62,15 +63,78 @@ function withDefaultStartTime(date: Date) {
   return nextDate;
 }
 
+function getEventColor(event: ManageWorkoutEvent) {
+  if (event.eventType === "coach_session") {
+    return "sky";
+  }
+
+  if (event.workoutStatus === "completed") {
+    return "emerald";
+  }
+
+  if (event.workoutStatus === "missed") {
+    return "rose";
+  }
+
+  if (event.workoutStatus === "active") {
+    return "amber";
+  }
+
+  return "violet";
+}
+
+function getEventTitle(event: ManageWorkoutEvent) {
+  const time = event.startTime ? event.startTime.slice(0, 5) : "";
+  const title = time ? `${time} ${event.title}` : event.title;
+
+  if (event.eventType === "coach_session") {
+    return `Coach: ${title}`;
+  }
+
+  if (event.workoutStatus === "missed") {
+    return `Missed: ${title}`;
+  }
+
+  if (event.workoutStatus === "active") {
+    return `Active: ${title}`;
+  }
+
+  return title;
+}
+
+function getEventClassName(event: ManageWorkoutEvent) {
+  if (event.eventType === "coach_session") {
+    return "manage-event-coach-session";
+  }
+
+  if (event.workoutStatus === "completed") {
+    return "manage-event-completed";
+  }
+
+  if (event.workoutStatus === "missed") {
+    return "manage-event-missed";
+  }
+
+  if (event.workoutStatus === "active") {
+    return "manage-event-active";
+  }
+
+  return "";
+}
+
 function toCalendarEvent(event: ManageWorkoutEvent): CalendarEventWithDrag {
   return {
     id: event.id,
-    title: event.title,
+    title: getEventTitle(event),
     description: event.description || undefined,
     start: toDateTime(event.date, event.startTime),
     end: toDateTime(event.date, event.endTime),
-    color: "violet",
-    isDraggable: event.eventType === "workout",
+    color: getEventColor(event),
+    isDraggable:
+      event.eventType === "workout" &&
+      event.workoutStatus !== "completed" &&
+      event.workoutStatus !== "active",
+    className: getEventClassName(event),
   };
 }
 
@@ -101,6 +165,13 @@ export default function ManageWorkoutCalendar({
       return;
     }
 
+    if (
+      originalEvent.workoutStatus === "completed" ||
+      originalEvent.workoutStatus === "active"
+    ) {
+      return;
+    }
+
     const nextDate = toDateString(updatedEvent.start);
 
     if (nextDate === originalEvent.date) {
@@ -122,24 +193,46 @@ export default function ManageWorkoutCalendar({
 
   return (
     <section
-      className="coss-calendar-scope overflow-hidden rounded-2xl bg-white shadow-sm "
+      className="manage-calendar-scope overflow-hidden rounded-2xl bg-white shadow-sm"
       style={{ border: "1px solid #E5E7EB" }}
     >
       <style>
         {`
-          .coss-calendar-scope {
+          .manage-calendar-scope {
             --calendar-body-height: 650px;
           }
 
-          .coss-calendar-scope .coss-calendar-shell {
+          .manage-calendar-scope .manage-calendar-shell {
             width: 100%;
             height: var(--calendar-body-height);
             min-height: var(--calendar-body-height);
           }
 
-          .coss-calendar-scope [data-slot="month-view"] {
+          .manage-calendar-scope [data-slot="month-view"] {
             height: 100%;
             min-height: var(--calendar-body-height);
+          }
+
+          .manage-calendar-scope .manage-event-completed,
+          .manage-calendar-scope .manage-event-completed * {
+            text-decoration-line: line-through;
+            opacity: 0.8;
+          }
+
+          .manage-calendar-scope .manage-event-missed,
+          .manage-calendar-scope .manage-event-missed * {
+            color: #B91C1C !important;
+          }
+
+          .manage-calendar-scope .manage-event-active,
+          .manage-calendar-scope .manage-event-active * {
+            font-weight: 700;
+          }
+
+          .manage-calendar-scope .manage-event-coach-session,
+          .manage-calendar-scope .manage-event-coach-session * {
+            color: #0369A1 !important;
+            background-color: #E0F2FE !important;
           }
         `}
       </style>
