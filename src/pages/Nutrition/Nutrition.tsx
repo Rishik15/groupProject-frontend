@@ -1,31 +1,31 @@
 import { useState } from "react";
 import MealLoggingModal from "../../components/MealLoggingModal/Modal";
 import NutritionHeader from "../../components/NutritionPage/NutritionHeader";
+import NutritionTabs from "@/components/NutritionPage/Tabs";
 
 const Nutrition = () => {
-    const [isMealModalOpen, setIsMealModalOpen] = useState(false);
+  const [isMealModalOpen, setIsMealModalOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
-    return (
-        <section className="min-h-screen bg-[#F7F7FB]">
-            <NutritionHeader onLogMeal={() => setIsMealModalOpen(true)} />
+  const refreshNutrition = () => {
+    setRefreshKey((prev) => prev + 1);
+  };
 
-            <div className="px-8 py-6">
-                <div className="rounded-2xl border border-dashed border-neutral-300 bg-white p-6">
-                    <p className="text-[13.125px] text-[#72728A]">
-                        Meal history and macro summary can go here next.
-                    </p>
-                </div>
-            </div>
+  return (
+    <section className="min-h-screen bg-[#F7F7FB]">
+      <NutritionHeader onLogMeal={() => setIsMealModalOpen(true)} />
 
-            <MealLoggingModal
-                isOpen={isMealModalOpen}
-                onOpenChange={setIsMealModalOpen}
-                onSuccess={() => {
-                    console.log("Meal logged successfully");
-                }}
-            />
-        </section>
-    );
+      <div className="px-36 py-6">
+        <NutritionTabs refreshKey={refreshKey} />
+      </div>
+
+      <MealLoggingModal
+        isOpen={isMealModalOpen}
+        onOpenChange={setIsMealModalOpen}
+        onSuccess={refreshNutrition}
+      />
+    </section>
+  );
 };
 
 export default Nutrition;

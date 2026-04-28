@@ -50,6 +50,8 @@ interface CoachOnboardingPageProps {
     value: string,
   ) => void;
   onComplete: () => void;
+  finalButtonLabel?: string;
+  isClientBecomingCoach?: boolean;
 }
 
 function isPriceValid(value: string) {
@@ -81,12 +83,13 @@ function CoachOnboardingPage({
   onCertificationCountChange,
   onCertificationChange,
   onComplete,
+  finalButtonLabel = "Continue to Personal Profile",
+  isClientBecomingCoach = false,
 }: CoachOnboardingPageProps) {
   const [currentStep, setCurrentStep] = useState(1);
 
   const stepDetails = coachSteps[currentStep - 1];
 
-  // Secondary options should not show any specialty already chosen as primary.
   const availableSecondaryOptions = coachPrimarySpecialtyOptions.filter(
     (option) => !primarySpecialties.includes(option.value),
   );
@@ -103,7 +106,6 @@ function CoachOnboardingPage({
   const handlePrimarySpecialtiesChange = (values: string[]) => {
     onPrimarySpecialtiesChange(values);
 
-    // If a specialty becomes primary, remove it from secondary selections.
     onSecondarySpecialtiesChange(
       secondarySpecialties.filter((value) => !values.includes(value)),
     );
@@ -216,6 +218,7 @@ function CoachOnboardingPage({
             bio={credentials.bio}
             certifications={credentials.certifications}
             profileDescription={coachProfileDescription}
+            isClientBecomingCoach={isClientBecomingCoach}
           />
         );
     }
@@ -231,9 +234,7 @@ function CoachOnboardingPage({
       onBack={currentStep > 1 ? handleBack : undefined}
       onNext={handleNext}
       nextButtonLabel={
-        currentStep === coachTotalSteps
-          ? "Continue to Personal Profile"
-          : "Continue"
+        currentStep === coachTotalSteps ? finalButtonLabel : "Continue"
       }
       isNextDisabled={isCurrentStepDisabled()}
     >

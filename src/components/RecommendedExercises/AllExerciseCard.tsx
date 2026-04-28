@@ -29,7 +29,9 @@ type ExerciseResponse = {
 const AllExerciseCard = ({ plan }: Prop) => {
   const [goal, days, duration, level] = plan.description.split(" | ");
 
-  const [exerciseData, setExerciseData] = useState<ExerciseResponse | null>(null);
+  const [exerciseData, setExerciseData] = useState<ExerciseResponse | null>(
+    null,
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loadingPlan, setLoadingPlan] = useState(false);
 
@@ -42,10 +44,10 @@ const AllExerciseCard = ({ plan }: Prop) => {
         {
           params: { plan_id: plan.plan_id },
           withCredentials: true,
-        }
+        },
       );
       setExerciseData(res.data);
-      console.log(res.data)
+      console.log(res.data);
       setIsModalOpen(true);
     } catch (err) {
       console.error("Failed to fetch exercises:", err);

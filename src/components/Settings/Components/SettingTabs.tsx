@@ -3,8 +3,15 @@ import { InfoTab } from "./InfoTab";
 import ProgressPhotos from "../ProgressPhotos";
 
 import SettingOptions from "./SettingsOptions";
-import { MessageCircle, UserRound, CreditCard, Bell } from "lucide-react";
+import {
+  MessageCircle,
+  UserRound,
+  CreditCard,
+  Bell,
+  HelpCircle,
+} from "lucide-react";
 import { logout } from "../../../services/auth/logout";
+import type { LucideIcon } from "lucide-react";
 
 type Props = {
   role: string;
@@ -16,6 +23,13 @@ type Props = {
   setSelectedTab: React.Dispatch<React.SetStateAction<string>>;
 };
 
+type SettingOptionItem = {
+  label: string;
+  icon: LucideIcon;
+  route?: string;
+  action?: "become_coach";
+};
+
 type TabItem = {
   id: string;
   label: string;
@@ -25,12 +39,13 @@ type TabItem = {
 const clientOptions = [
   { label: "Messages", icon: MessageCircle, route: "/client/messages" },
   { label: "Browse Coaches", icon: UserRound, route: "/client/coaches" },
-  { label: "Payments & Billing", icon: CreditCard, route: "/billing" },
+  { label: "Payments & Billing", icon: CreditCard, route: "/client/billing" },
   { label: "Notifications", icon: Bell, route: "/notifications" },
+  { label: "Help & Support", icon: HelpCircle, route: "help" },
 ];
 
-const coachOptions = [
-  { label: "Messages", icon: MessageCircle, route: "/messages" },
+const coachOptions: SettingOptionItem[] = [
+  { label: "Messages", icon: MessageCircle, route: "/coach/chat" },
   { label: "Browse Coaches", icon: UserRound, route: "/coaches" },
   { label: "Payments & Billing", icon: CreditCard, route: "/billing" },
   { label: "Notifications", icon: Bell, route: "/notifications" },

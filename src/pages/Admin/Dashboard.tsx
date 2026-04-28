@@ -1,188 +1,227 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Button, Card } from "@heroui/react";
+import { AlertCircle, RefreshCw } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-    DollarSign,
-    TriangleAlert,
-    UserCheck,
-    Users,
-} from "lucide-react";
-import AdminDashboardHeader from "../../components/Admin/Dashboard/Header";
-import ReviewQueueSection from "../../components/Admin/Dashboard/ReviewQueueSection";
-import AdminStatsSection, {
-    type StatCardData,
-} from "../../components/Admin/Dashboard/StatSection";
 import type {
-    ApplicationReviewItem,
-    ReportReviewItem,
-} from "../../utils/Interfaces/Admin/reviewQueue";
+  AdminDashboardStats,
+  AdminEngagementAnalytics,
+} from "../../utils/Interfaces/Admin/adminDashboard";
 import {
-    approveCoachApplication,
-    closeAdminReport,
-    formatCurrencyCompact,
-    getAdminReports,
-    getCoachApplications,
-    getDashboardStats,
-    rejectCoachApplication,
-    type AdminDashboardStats,
+  getDashboardStats,
+  getEngagementAnalytics,
 } from "../../services/Admin/adminDashboardService";
+import {
+  getCancellationReviewMarkets,
+  getMarketsInReview,
+  getPendingSettlementMarkets,
+} from "../../services/Admin/adminPredictionService";
+import AdminDashboardHeader from "../../components/Admin/Dashboard/Header";
+import StatsCards from "../../components/Admin/Dashboard/StatsCards";
+import EngagementAnalytics from "../../components/Admin/Dashboard/EngagementAnalytics";
+import PendingReviewSummary from "../../components/Admin/Dashboard/PendingReviewSummary";
 
-const AdminDashboard = () => {
-    const navigate = useNavigate();
+const Dashboard = () => {
+  const navigate = useNavigate();
 
-    const [stats, setStats] = useState<AdminDashboardStats | null>(null);
-    const [applications, setApplications] = useState<ApplicationReviewItem[]>([]);
-    const [reports, setReports] = useState<ReportReviewItem[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [busy, setBusy] = useState(false);
+  const overviewRef = useRef<HTMLDivElement | null>(null);
+  const engagementRef = useRef<HTMLDivElement | null>(null);
+  const reviewsRef = useRef<HTMLDivElement | null>(null);
 
-    const loadDashboard = useCallback(async () => {
-        try {
-            setError(null);
+  const [stats, setStats] = useState<AdminDashboardStats | null>(null);
+  const [analytics, setAnalytics] = useState<AdminEngagementAnalytics | null>(
+    null,
+  );
+  const [predictionPendingReviews, setPredictionPendingReviews] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-            const [statsData, applicationsData, reportsData] = await Promise.all([
-                getDashboardStats(),
-                getCoachApplications("pending"),
-                getAdminReports("open"),
-            ]);
+  const loadDashboard = async (signal?: AbortSignal) => {
+    setIsLoading(true);
+    setError(null);
 
-            setStats(statsData);
-            setApplications(applicationsData);
-            setReports(reportsData);
-        } catch (err) {
-            console.error(err);
-            setError("Failed to load admin dashboard.");
-        } finally {
-            setLoading(false);
-            setBusy(false);
-        }
-    }, []);
+    try {
+      const [
+        statsResult,
+        analyticsResult,
+        reviewQueueResult,
+        settlementQueueResult,
+        cancelQueueResult,
+      ] = await Promise.allSettled([
+        getDashboardStats(signal),
+        getEngagementAnalytics(signal),
+        getMarketsInReview(),
+        getPendingSettlementMarkets(),
+        getCancellationReviewMarkets(),
+      ]);
 
-    useEffect(() => {
-        void loadDashboard();
-    }, [loadDashboard]);
+      if (signal?.aborted) {
+        return;
+      }
 
-    const statCards = useMemo<StatCardData[]>(() => {
-        if (!stats) return [];
+      if (statsResult.status !== "fulfilled" || !statsResult.value?.stats) {
+        throw new Error("Dashboard stats response was empty.");
+      }
 
-        return [
-            {
-                id: "total-users",
-                title: "Total Users",
-                value: stats.total_users.toLocaleString(),
-                helperText: "Registered accounts",
-                icon: Users,
-                tone: "default",
-            },
-            {
-                id: "active-coaches",
-                title: "Active Coaches",
-                value: stats.active_coaches.toLocaleString(),
-                helperText: "Currently active",
-                icon: UserCheck,
-                tone: "default",
-            },
-            {
-                id: "pending-reviews",
-                title: "Pending Reviews",
-                value: stats.pending_reviews.toLocaleString(),
-                helperText: `${stats.pending_coach_applications} coach apps · ${stats.open_reports} reports`,
-                icon: TriangleAlert,
-                tone: "default",
-            },
-            {
-                id: "monthly-revenue",
-                title: "Monthly Revenue",
-                value: formatCurrencyCompact(stats.monthly_revenue),
-                helperText: "Active contracts",
-                icon: DollarSign,
-                tone: "default",
-            },
-        ];
-    }, [stats]);
+      setStats(statsResult.value.stats);
 
-    const handleApprove = async (application: ApplicationReviewItem) => {
-        const applicationId = Number(application.application_id ?? application.id);
-        if (Number.isNaN(applicationId)) return;
+      if (
+        analyticsResult.status === "fulfilled" &&
+        analyticsResult.value?.analytics
+      ) {
+        setAnalytics(analyticsResult.value.analytics);
+      } else {
+        setAnalytics(null);
+      }
 
-        try {
-            setBusy(true);
-            await approveCoachApplication(applicationId);
-            await loadDashboard();
-        } catch (err) {
-            console.error(err);
-            setBusy(false);
-            setError("Failed to approve coach application.");
-        }
-    };
+      const reviewCount =
+        reviewQueueResult.status === "fulfilled"
+          ? reviewQueueResult.value.length
+          : 0;
 
-    const handleReject = async (application: ApplicationReviewItem) => {
-        const applicationId = Number(application.application_id ?? application.id);
-        if (Number.isNaN(applicationId)) return;
+      const settlementCount =
+        settlementQueueResult.status === "fulfilled"
+          ? settlementQueueResult.value.length
+          : 0;
 
-        try {
-            setBusy(true);
-            await rejectCoachApplication(applicationId);
-            await loadDashboard();
-        } catch (err) {
-            console.error(err);
-            setBusy(false);
-            setError("Failed to reject coach application.");
-        }
-    };
+      const cancelCount =
+        cancelQueueResult.status === "fulfilled"
+          ? cancelQueueResult.value.length
+          : 0;
 
-    const handleCloseReport = async (report: ReportReviewItem) => {
-        const reportId = Number(report.report_id ?? report.id);
-        if (Number.isNaN(reportId)) return;
+      setPredictionPendingReviews(reviewCount + settlementCount + cancelCount);
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") {
+        return;
+      }
 
-        try {
-            setBusy(true);
-            await closeAdminReport(reportId);
-            await loadDashboard();
-        } catch (err) {
-            console.error(err);
-            setBusy(false);
-            setError("Failed to close report.");
-        }
-    };
+      const message =
+        err instanceof Error ? err.message : "Failed to load dashboard data.";
+
+      setError(message);
+      setStats(null);
+      setAnalytics(null);
+      setPredictionPendingReviews(0);
+    } finally {
+      if (!signal?.aborted) {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    void loadDashboard(controller.signal);
+
+    return () => controller.abort();
+  }, []);
+
+  const scrollToSection = (element: HTMLDivElement | null) => {
+    element?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const totalPendingReviewsIncludingPredictions = useMemo(() => {
+    if (!stats) {
+      return 0;
+    }
 
     return (
-        <div className="min-h-screen bg-default-50">
-            <AdminDashboardHeader
-                onViewAllUsers={() => navigate("/admin/users")}
-                onViewAllActiveCoaches={() => navigate("/admin/coaches")}
-            />
-
-            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-                {error ? (
-                    <div className="mb-4 rounded-[16px] border border-danger/20 bg-danger/5 px-4 py-3 text-sm text-danger">
-                        {error}
-                    </div>
-                ) : null}
-
-                {loading ? (
-                    <div className="text-sm text-[#72728A]">Loading admin dashboard...</div>
-                ) : (
-                    <div className="space-y-6">
-                        <AdminStatsSection stats={statCards} />
-
-                        <ReviewQueueSection
-                            applications={applications}
-                            reports={reports}
-                            onApprove={handleApprove}
-                            onReject={handleReject}
-                            onCloseReport={handleCloseReport}
-                            onViewClosedReports={() => navigate("/admin/reports/closed")}
-                        />
-
-                        {busy ? (
-                            <div className="text-xs text-[#72728A]">Updating dashboard...</div>
-                        ) : null}
-                    </div>
-                )}
-            </div>
-        </div>
+      stats.pending_coach_applications +
+      stats.open_reports +
+      predictionPendingReviews
     );
+  }, [predictionPendingReviews, stats]);
+
+  return (
+    <div className="min-h-[calc(100vh-56px)] bg-default-50 px-36 py-8">
+      <div className="space-y-6">
+        <AdminDashboardHeader
+          onNavigateToAccounts={() => navigate("/admin/accounts")}
+          onNavigateToCoachGovernance={() =>
+            navigate("/admin/coach-governance")
+          }
+          onNavigateToReports={() => navigate("/admin/reports/")}
+          onNavigateToExercises={() => navigate("/admin/exercises/")}
+          onNavigateToWorkouts={() => navigate("/admin/workouts/")}
+          onScrollToOverview={() => scrollToSection(overviewRef.current)}
+          onScrollToEngagement={() => scrollToSection(engagementRef.current)}
+          onScrollToReviews={() => scrollToSection(reviewsRef.current)}
+        />
+
+        {isLoading ? (
+          <Card className="rounded-[24px] border border-default-200 bg-white shadow-sm">
+            <div className="flex items-center justify-between gap-4 p-6">
+              <div>
+                <p className="text-lg font-semibold text-default-900">
+                  Loading dashboard
+                </p>
+                <p className="mt-1 text-sm text-default-600">
+                  Pulling stats and engagement metrics from the admin endpoints.
+                </p>
+              </div>
+              <RefreshCw className="h-5 w-5 animate-spin text-default-500" />
+            </div>
+          </Card>
+        ) : error ? (
+          <Card className="rounded-[24px] border border-danger/20 bg-white shadow-sm">
+            <div className="flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-start gap-3">
+                <div className="rounded-full bg-danger/10 p-2 text-danger">
+                  <AlertCircle className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-lg font-semibold text-default-900">
+                    Unable to load the dashboard
+                  </p>
+                  <p className="mt-1 text-sm text-default-600">{error}</p>
+                </div>
+              </div>
+
+              <Button onPress={() => void loadDashboard()}>Retry</Button>
+            </div>
+          </Card>
+        ) : stats ? (
+          <>
+            <div ref={overviewRef}>
+              <StatsCards stats={stats} />
+            </div>
+
+            <div ref={engagementRef}>
+              {analytics ? (
+                <EngagementAnalytics analytics={analytics} />
+              ) : (
+                <Card className="rounded-[24px] border border-default-200 bg-white shadow-sm">
+                  <div className="p-6">
+                    <p className="text-lg font-semibold text-default-900">
+                      Engagement analytics unavailable
+                    </p>
+                    <p className="mt-1 text-sm text-default-600">
+                      Dashboard stats loaded successfully, but the analytics
+                      endpoint is not currently available on the backend.
+                    </p>
+                  </div>
+                </Card>
+              )}
+            </div>
+
+            <div ref={reviewsRef}>
+              <PendingReviewSummary
+                stats={stats}
+                predictionPendingReviews={predictionPendingReviews}
+                totalPendingReviewsIncludingPredictions={
+                  totalPendingReviewsIncludingPredictions
+                }
+                onNavigateToCoachGovernance={() =>
+                  navigate("/admin/coach-governance/")
+                }
+                onNavigateToReports={() => navigate("/admin/reports/")}
+                onNavigateToPredictions={() => navigate("/admin/prediction/")}
+              />
+            </div>
+          </>
+        ) : null}
+      </div>
+    </div>
+  );
 };
 
-export default AdminDashboard;
+export default Dashboard;

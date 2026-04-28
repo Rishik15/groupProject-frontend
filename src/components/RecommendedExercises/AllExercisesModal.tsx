@@ -23,7 +23,6 @@ const AllExercisesModal = ({ plans, isOpen, setIsOpen }: Props) => {
           <Modal.Body>
             <ScrollShadow className="max-h-[90%] p-4 mt-6">
               <div className="space-y-4">
-
                 {plans.map((plan) => (
                   <AllExerciseCard key={plan.plan_id} plan={plan} />
                 ))}
@@ -31,8 +30,7 @@ const AllExercisesModal = ({ plans, isOpen, setIsOpen }: Props) => {
             </ScrollShadow>
           </Modal.Body>
 
-          <Modal.Footer>
-          </Modal.Footer>
+          <Modal.Footer></Modal.Footer>
         </Modal.Dialog>
       </Modal.Container>
     </Modal.Backdrop>

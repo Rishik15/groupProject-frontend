@@ -1,11 +1,9 @@
-import axios from "axios";
+import api from "../api";
 
 const assign_plan = async (plan_id: number) => {
-  const res = await axios.post(
-    "http://localhost:8080/workouts/predefined/assign",
-    { plan_id },
-    { withCredentials: true }
-  );
+  const res = await api.post("/workouts/predefined/assign", {
+    plan_id,
+  });
 
   return res;
 };
