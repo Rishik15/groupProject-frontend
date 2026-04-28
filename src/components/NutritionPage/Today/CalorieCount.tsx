@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { Meter } from "@heroui/react";
+import { getNutritionGoals } from "../../../services/nutrition/nutritionGoals";
 
 interface CalorieCountProps {
   Current: number;
@@ -8,11 +10,41 @@ interface CalorieCountProps {
 const DEFAULT_VISUAL_CALORIE_MAX = 2000;
 
 const CalorieCount = ({ Current, Goal }: CalorieCountProps) => {
-  const hasGoal = typeof Goal === "number" && Goal > 0;
+  const [calorieGoal, setCalorieGoal] = useState<number | null>(Goal);
 
-  const meterMaxValue = hasGoal ? Goal : DEFAULT_VISUAL_CALORIE_MAX;
+  useEffect(() => {
+    setCalorieGoal(Goal);
+  }, [Goal]);
+
+  useEffect(() => {
+    const loadGoal = async () => {
+      try {
+        const goals = await getNutritionGoals();
+
+        if (goals) {
+          setCalorieGoal(goals.calories_target);
+        } else {
+          setCalorieGoal(null);
+        }
+      } catch (err) {
+        console.error("Failed to load calorie goal:", err);
+      }
+    };
+
+    loadGoal();
+
+    window.addEventListener("nutritionGoalsUpdated", loadGoal);
+
+    return () => {
+      window.removeEventListener("nutritionGoalsUpdated", loadGoal);
+    };
+  }, []);
+
+  const hasGoal = typeof calorieGoal === "number" && calorieGoal > 0;
+
+  const meterMaxValue = hasGoal ? calorieGoal : DEFAULT_VISUAL_CALORIE_MAX;
   const meterValue = Math.min(Current, meterMaxValue);
-  const remaining = hasGoal ? Math.max(Goal - Current, 0) : null;
+  const remaining = hasGoal ? Math.max(calorieGoal - Current, 0) : null;
 
   return (
     <div className="w-full rounded-2xl border border-neutral-300 bg-white p-6">
@@ -27,7 +59,7 @@ const CalorieCount = ({ Current, Goal }: CalorieCountProps) => {
 
         {hasGoal && (
           <span className="text-[13.125px] font-medium text-[#72728A]">
-            / {Goal} kcal
+            / {calorieGoal} kcal
           </span>
         )}
       </div>
