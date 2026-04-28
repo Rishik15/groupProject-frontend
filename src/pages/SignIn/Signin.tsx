@@ -17,7 +17,7 @@ const SignIn = () => {
   const [modalMessage, setModalMessage] = useState("");
 
   const navigate = useNavigate();
-  const { setAuth } = useAuth();
+  const { refreshAuth } = useAuth();
 
   const handleLogin = async () => {
     try {
@@ -38,28 +38,13 @@ const SignIn = () => {
         return;
       }
 
-      const roles = data.roles ?? (data.role ? [data.role] : []);
+      await refreshAuth();
 
-      setAuth({
-        user: data.user,
-        roles,
-        coachApplicationStatus:
-          data.coachApplicationStatus ??
-          data.coach_application_status ??
-          "rejected",
-      });
-
-      navigate("/auth/complete");
+      navigate("/auth/complete", { replace: true });
     } catch (err: any) {
-      let message = "Something went wrong. Please try again.";
-
-      if (err?.response?.data?.error) {
-        message = err.response.data.error;
-      } else if (err?.message) {
-        message = err.message;
-      }
-
-      setModalMessage(message);
+      setModalMessage(
+        err?.message || "Something went wrong. Please try again.",
+      );
       setShowModal(true);
     }
   };
