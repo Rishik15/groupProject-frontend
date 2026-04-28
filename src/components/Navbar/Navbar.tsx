@@ -75,7 +75,15 @@ export default function Navbar({
   };
 
   useEffect(() => {
-    const handleNotification = (notif: Notification) => {
+    const handleNotification = (payload: any) => {
+      const notif = payload?.notification ?? payload;
+      console.log("FRONTEND RECEIVED NOTIFICATION:", notif);
+
+      if (!notif || notif.id == null) {
+        console.warn("Invalid notification payload:", payload);
+        return;
+      }
+
       setNotifications((prev) => {
         const exists = prev.some((n) => n.id === notif.id);
 
@@ -86,22 +94,27 @@ export default function Navbar({
         return prev.map((n) => (n.id === notif.id ? notif : n));
       });
 
-      toast(notif.title, {
-        description: truncate(notif.body, 50),
+      toast(notif.title || "New notification", {
+        description: truncate(notif.body || "", 50),
         timeout: 5000,
       });
     };
 
     const handleClearNotification = (data: {
-      id: number;
+      id?: number;
       notification_id?: number;
     }) => {
       const id = data.id ?? data.notification_id;
+
+      if (id == null) return;
+
       setNotifications((prev) => prev.filter((n) => n.id !== id));
     };
 
-    const handleClearNotifications = (data: { ids: number[] }) => {
-      setNotifications((prev) => prev.filter((n) => !data.ids.includes(n.id)));
+    const handleClearNotifications = (data: { ids?: number[] }) => {
+      if (!Array.isArray(data.ids)) return;
+
+      setNotifications((prev) => prev.filter((n) => !data.ids!.includes(n.id)));
     };
 
     socket.on("new_notification", handleNotification);

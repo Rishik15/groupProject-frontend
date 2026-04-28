@@ -4,7 +4,7 @@ import CalorieCount from "./Today/CalorieCount";
 import Macros from "./Today/Macros";
 import MealsToday from "./Today/MealsToday";
 import WeeklyCalories from "./Week/WeeklyCalories";
-import MealPlan from "./MealPlan/MealPlan";
+import MealPlanLibrary from "./MealPlan/MealPlan";
 import CreateMealPlan from "./MealPlan/CreateMealPlan";
 import AssignedPlans from "./MealPlan/AssignedPlans";
 import type { TodayNutritionSummary } from "../../utils/Interfaces/Nutrition/nutrition";
@@ -12,7 +12,7 @@ import {
   getWeeklyCaloriesSummary,
   type WeeklyCaloriesSummary,
 } from "../../services/nutrition/getWeeklyCaloriesSummary";
-import { getNutritionToday } from "../../services/Nutrition/getNutritionToday";
+import { getNutritionToday } from "../../services/nutrition/getNutritionToday";
 
 interface NutritionTabsProps {
   refreshKey?: number;
@@ -156,7 +156,7 @@ const NutritionTabs = ({ refreshKey = 0 }: NutritionTabsProps) => {
               </button>
             </div>
 
-            {activeSubTab === "meal-plans" && <MealPlan />}
+            {activeSubTab === "meal-plans" && <MealPlanLibrary />}
             {activeSubTab === "assigned-plans" && <AssignedPlans />}
             {activeSubTab === "create-plan" && <CreateMealPlan />}
           </Tabs.Panel>
