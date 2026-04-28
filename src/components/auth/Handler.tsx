@@ -1,15 +1,22 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@heroui/react";
-import { getAuth } from "../../services/auth/checkAuth";
+import { Button, Spinner } from "@heroui/react";
 import { updateRole } from "../../services/auth/updateRole";
 import RoleSelector from "../Register/RoleSelection";
 import { useAuth } from "../../utils/auth/AuthContext";
-import { Spinner } from "@heroui/react";
 
 const AuthComplete = () => {
   const navigate = useNavigate();
-  const { setAuth } = useAuth();
+
+  const {
+    user,
+    roles,
+    status,
+    hasCheckedAuth,
+    coachApplicationStatus,
+    setAuth,
+    refreshAuth,
+  } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [submittingRole, setSubmittingRole] = useState(false);
@@ -17,52 +24,60 @@ const AuthComplete = () => {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
   useEffect(() => {
+    let active = true;
+
     const finishAuth = async () => {
-      try {
-        const data = await getAuth();
+      if (!hasCheckedAuth || status === "checking") {
+        return;
+      }
 
-        if (!data.authenticated || !data.user) {
-          navigate("/", { replace: true });
-          return;
-        }
-
-        const roles = data.roles ?? [];
-
-        setAuth({
-          user: data.user,
-          roles,
-          coachApplicationStatus: data.coachApplicationStatus ?? "rejected",
-        });
-
-        if (data.needs_onboarding) {
-          setShowRoleSelection(true);
-          setLoading(false);
-          return;
-        }
-
-        if (roles.includes("admin")) {
-          navigate("/admin", { replace: true });
-          return;
-        }
-
-        if (roles.includes("client")) {
-          navigate("/client", { replace: true });
-          return;
-        }
-
-        if (roles.includes("coach")) {
-          navigate("/coach", { replace: true });
-          return;
-        }
-
+      if (status === "anonymous" || !user) {
         navigate("/", { replace: true });
+        return;
+      }
+
+      const currentRoles = roles ?? [];
+
+      if (currentRoles.length === 0) {
+        setShowRoleSelection(true);
+        setLoading(false);
+        return;
+      }
+
+      if (currentRoles.includes("admin")) {
+        navigate("/admin", { replace: true });
+        return;
+      }
+
+      if (currentRoles.includes("client")) {
+        navigate("/client", { replace: true });
+        return;
+      }
+
+      if (currentRoles.includes("coach")) {
+        navigate("/coach", { replace: true });
+        return;
+      }
+
+      try {
+        await refreshAuth();
+
+        if (!active) {
+          return;
+        }
+
+        setLoading(false);
       } catch {
         navigate("/", { replace: true });
       }
     };
 
     finishAuth();
-  }, [navigate, setAuth]);
+
+    return () => {
+      active = false;
+    };
+  }, [hasCheckedAuth, status, user, roles, navigate, refreshAuth]);
 
   const handleContinue = async () => {
     if (!selectedRole || submittingRole) return;
@@ -72,15 +87,18 @@ const AuthComplete = () => {
 
       const data = await updateRole(selectedRole as "coach" | "client");
 
-      const roles = data.roles ?? (data.role ? [data.role] : []);
+      const newRoles = data.roles ?? (data.role ? [data.role] : []);
 
       setAuth({
         user: data.user,
-        roles,
+        roles: newRoles,
         coachApplicationStatus:
           data.coachApplicationStatus ??
           data.coach_application_status ??
-          "rejected",
+          coachApplicationStatus ??
+          "none",
+        coachModeActivated:
+          data.coachModeActivated ?? data.coach_mode_activated ?? false,
       });
 
       if (selectedRole === "coach") {
