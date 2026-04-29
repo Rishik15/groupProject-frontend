@@ -34,14 +34,3 @@ def test_delete_profile(driver, email, password, redirect):
         EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='delete-confirm']"))
     ).click()
     
-
- 
-driver = make_driver()
-delete_profile_flow(driver, "example@example.com", "example1", "/client")
-
-time.sleep(10)
-
-
-
-
-driver.quit()

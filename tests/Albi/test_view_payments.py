@@ -35,7 +35,7 @@ def driver():
     d.quit()
 
 
-def test_report_coach(driver):
+def test_view_payments(driver):
     login(driver, "alex@example.com", "Rishik@1", "/client")
     driver.refresh()
 

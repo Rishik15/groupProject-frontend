@@ -72,3 +72,4 @@ def test_coach_sets_prices(driver):
     )
     driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", save_btn)
     driver.execute_script("arguments[0].click();", save_btn)
+
