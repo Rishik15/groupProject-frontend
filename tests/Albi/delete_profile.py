@@ -7,7 +7,6 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 from login import login
 
-BASE_URL = "http://localhost:5173"
 
 def make_driver():
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()))
