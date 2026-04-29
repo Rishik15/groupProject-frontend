@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from login import login
 import pytest
+import time
 
 BASE_URL = "http://localhost:5173"
 
@@ -34,8 +35,8 @@ def driver():
     d.quit()
 
 
-def test_view_profile_edit(driver):
-    login(driver, "example@example.com", "example1", "/client")
+def test_report_coach(driver):
+    login(driver, "alex@example.com", "Rishik@1", "/client")
     driver.refresh()
 
     wait = WebDriverWait(driver, 10)
@@ -45,34 +46,11 @@ def test_view_profile_edit(driver):
     ).click()
 
     wait.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='My Profile']"))
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='Settings']"))
     ).click()
 
-    wait.until(EC.url_contains("/profile"))
+    wait.until(EC.url_contains("/settings"))
 
-    # enter edit mode (fix overlap)
-    edit_btn = wait.until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, "[data-testid='edit-button']"))
-    )
-    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", edit_btn)
-    driver.execute_script("arguments[0].click();", edit_btn)
-
-    # weight input
-    weight = wait.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "input[data-testid='weight']"))
-    )
-    weight.click()
-    weight.send_keys(Keys.END)
-    for _ in range(20):
-        weight.send_keys(Keys.BACKSPACE)
-    weight.send_keys("120")
-
-    # save
-    save_btn = wait.until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, "[data-testid='edit-button']"))
-    )
-    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", save_btn)
-    driver.execute_script("arguments[0].click();", save_btn)
-
-    input("pause")
-    assert "/profile" in driver.current_url
+    wait.until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='Payments & Billing']"))
+    ).click()

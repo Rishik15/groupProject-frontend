@@ -34,8 +34,8 @@ def driver():
     d.quit()
 
 
-def test_coach_sets_prices(driver):
-    login(driver, "sam@example.com", "Rishik@1", "/coach")
+def test_view_profile_edit(driver):
+    login(driver, "alex@example.com", "Rishik@1", "/client")
     driver.refresh()
 
     wait = WebDriverWait(driver, 10)
@@ -56,16 +56,14 @@ def test_coach_sets_prices(driver):
     driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", edit_btn)
     driver.execute_script("arguments[0].click();", edit_btn)
 
-    price = wait.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "input[data-testid='price']"))
+    weight = wait.until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "input[data-testid='weight']"))
     )
-    price.click()
-    price.send_keys(Keys.END)
-
+    weight.click()
+    weight.send_keys(Keys.END)
     for _ in range(20):
-        price.send_keys(Keys.BACKSPACE)
-
-    price.send_keys("5")
+        weight.send_keys(Keys.BACKSPACE)
+    weight.send_keys("120")
 
     save_btn = wait.until(
         EC.presence_of_element_located((By.CSS_SELECTOR, "[data-testid='edit-button']"))

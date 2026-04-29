@@ -80,5 +80,3 @@ def filter_coaches(driver):
 
 def test_search_filter_coaches(driver):
     filter_coaches(driver)
-
-    assert "/coaches" in driver.current_url

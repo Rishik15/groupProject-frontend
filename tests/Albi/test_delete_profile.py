@@ -6,14 +6,16 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 from login import login
+import pytest
 
 
+@pytest.fixture
 def make_driver():
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
 
 
-def delete_profile_flow(driver, email, password, redirect):
+def test_delete_profile(driver, email, password, redirect):
     login(driver, email, password, redirect)
     
     WebDriverWait(driver, 10).until(
