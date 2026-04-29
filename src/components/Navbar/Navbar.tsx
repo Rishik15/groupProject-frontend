@@ -143,6 +143,7 @@ export default function Navbar({
         <div className="flex items-center gap-3 text-sm font-medium">
           {navItems.map((item) => (
             <NavLink
+              data-testid={item.label}
               key={item.label}
               label={item.label}
               icon={item.icon}

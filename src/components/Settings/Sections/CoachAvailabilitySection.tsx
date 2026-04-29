@@ -30,6 +30,7 @@ export default function CoachAvailabilitySection({
         <div className="ml-auto">
           <Button
             onPress={addAvailability}
+            data-testid="add"
             className={`flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-500 hover:bg-gray-200 hover:text-gray-700 ${
               !edit ? "invisible pointer-events-none" : ""
             }`}

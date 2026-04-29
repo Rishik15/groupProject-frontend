@@ -94,6 +94,7 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                                             return (
                                                 <Card
                                                     key={coach.email}
+                                                    data-testid="coach"
                                                     onClick={() => setSelectedCoach(coach)}
                                                     className={`flex cursor-pointer flex-row items-center gap-3 border p-3 transition ${isSelected
                                                         ? "border-indigo-500 bg-[#eef2ff]"
@@ -125,6 +126,7 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                                     <div className="flex flex-col gap-2">
                                         <Label>Reason</Label>
                                         <Select
+                                            data-testid="select"
                                             onChange={(key) => {
                                                 if (key) setReason(key.toString());
                                             }}
@@ -153,6 +155,7 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                                     <div className="flex flex-col gap-2">
                                         <Label>Details</Label>
                                         <TextArea
+                                            data-testid="details"
                                             value={details}
                                             onChange={(e) => setDetails(e.target.value)}
                                             placeholder="Add more details..."
@@ -173,6 +176,7 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                                             "
                                         />
                                         <Checkbox
+                                            data-testid="checkbox"
                                             isSelected={terminateRequested}
                                             onChange={(checked) => setTerminateRequested(checked)}
                                             className="rounded-xl border border-gray-200 bg-white p-3"
@@ -208,6 +212,7 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                                     className="rounded-xl bg-indigo-500 text-white"
                                     onPress={handleSubmit}
                                     isDisabled={!reason}
+                                    data-testid="submit"
                                 >
                                     Submit
                                 </Button>

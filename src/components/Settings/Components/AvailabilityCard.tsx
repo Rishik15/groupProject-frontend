@@ -1,9 +1,6 @@
 import {
   Button,
-  ListBox,
-  Select,
   Card,
-  Input,
   Label,
   TimeField,
 } from "@heroui/react";
@@ -13,7 +10,6 @@ import type { AvailabilitySlot } from "../../../services/Setting/User";
 import {
   parseBackendTime,
   formatTime,
-  readonlyClass,
   getTimeBoxClass,
 } from "../utils";
 import DayListBox from "./DayListBox";
@@ -38,8 +34,12 @@ export default function AvailabilityCard({
   removeAvailability,
 }: Props) {
   const timeBoxClass = getTimeBoxClass(edit);
+
   return (
-    <Card className="rounded-xl border border-gray-200 p-4 shadow-sm">
+    <Card
+      className="rounded-xl border border-gray-200 p-4 shadow-sm"
+      data-testid={`availability-card-${index}`}
+    >
       <div className="grid w-full grid-cols-4 gap-3">
         <div className="flex flex-col gap-2">
           <DayListBox
@@ -68,7 +68,10 @@ export default function AvailabilityCard({
                 }
               }}
             >
-              <TimeField.Input className="w-full outline-none">
+              <TimeField.Input
+                className="w-full outline-none"
+                data-testid={`start-time-${index}`}
+              >
                 {(segment) => <TimeField.Segment segment={segment} />}
               </TimeField.Input>
               <Clock size={18} />
@@ -93,7 +96,10 @@ export default function AvailabilityCard({
                 }
               }}
             >
-              <TimeField.Input className="w-full outline-none">
+              <TimeField.Input
+                className="w-full outline-none"
+                data-testid={`end-time-${index}`}
+              >
                 {(segment) => <TimeField.Segment segment={segment} />}
               </TimeField.Input>
               <Clock size={18} />
@@ -107,6 +113,7 @@ export default function AvailabilityCard({
             className={`flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-500 hover:bg-gray-200 hover:text-gray-700 ${
               !edit ? "invisible pointer-events-none" : ""
             }`}
+            data-testid={`remove-${index}`}
           >
             <X size={18} />
           </Button>

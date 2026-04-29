@@ -22,6 +22,7 @@ const SupportOptionsCard = ({
   return (
     <Button
       onPress={onPress}
+      data-testid={option_name}
       className="
         mt-3
         w-full

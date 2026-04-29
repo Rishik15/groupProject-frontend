@@ -141,6 +141,7 @@ export default function CertificationModal({ form, setForm }: Props) {
       <Button
         className="ml-auto rounded-xl border border-gray-300 bg-white text-black"
         onPress={() => setOpen(true)}
+        data-testid="edit-certifications"
       >
         Edit Certifications
       </Button>
@@ -184,6 +185,7 @@ export default function CertificationModal({ form, setForm }: Props) {
             <Modal.Footer>
               <div className="flex w-full items-center justify-between gap-3">
                 <Button
+                  data-testid="add-certification"
                   className="bg-indigo-500 rounded-xl text-white"
                   onPress={addCertificate}
                 >
@@ -200,6 +202,7 @@ export default function CertificationModal({ form, setForm }: Props) {
                   </Button>
 
                   <Button
+                    data-testid="save"
                     className="bg-indigo-500 rounded-xl text-white"
                     onPress={handleSave}
                     isDisabled={!isValid()}
