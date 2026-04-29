@@ -12,6 +12,7 @@ const RoleSelector = ({ role, setRole }: RoleProps) => {
 
       <div className="flex gap-4">
         <RoleCard
+          
           title="Train"
           desc="Find a coach & track progress"
           icon={

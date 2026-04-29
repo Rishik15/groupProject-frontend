@@ -39,7 +39,8 @@ const shouldSkipAuthGate = (config: AxiosRequestConfig) => {
     (config as CustomAxiosRequestConfig).skipAuthGate ||
     url.startsWith("/auth") ||
     url.startsWith("/landing") ||
-    url.startsWith("/filtering")
+    url.startsWith("/filtering") ||
+    url.startsWith("/onboard")
   );
 };
 

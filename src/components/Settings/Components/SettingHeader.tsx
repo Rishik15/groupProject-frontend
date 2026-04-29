@@ -22,6 +22,7 @@ const SettingHeader = ({ edit, setEdit, selectedTab, onClick }: Props) => {
         </p>
 
         <Button
+          data-testid="edit-button"
           className="bg-white text-black hover:bg-indigo-500 hover:text-white rounded-lg flex items-center gap-1"
           onClick={onClick}
           style={{ visibility: selectedTab === "info" ? "visible" : "hidden" }}

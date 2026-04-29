@@ -57,6 +57,7 @@ export default function FilterPanel({
             const active = selectedTags.includes(tag);
             return (
               <button
+                data-testid={tag}
                 key={tag}
                 onClick={() => onTagToggle(tag)}
                 className="text-xs font-medium px-3 py-1 rounded-full border transition-colors"
@@ -83,6 +84,7 @@ export default function FilterPanel({
             const active = minRating === value;
             return (
               <button
+                data-testid={label}
                 key={label}
                 onClick={() => onMinRatingChange(value)}
                 className="text-xs font-medium px-3 py-1 rounded-full border transition-colors"
@@ -108,6 +110,7 @@ export default function FilterPanel({
           {maxPrice === MAX_PRICE_LIMIT ? "Any price" : `Up to $${maxPrice}`}
         </span>
         <input
+          data-testid="max_price"
           type="range"
           min={0}
           max={MAX_PRICE_LIMIT}
@@ -119,7 +122,7 @@ export default function FilterPanel({
       </div>
 
      
-      <Checkbox isSelected={certifiedOnly} onChange={onCertifiedOnlyChange}>
+      <Checkbox isSelected={certifiedOnly} onChange={onCertifiedOnlyChange} data-testid="checkbox">
         <Checkbox.Control>
           <Checkbox.Indicator />
         </Checkbox.Control>

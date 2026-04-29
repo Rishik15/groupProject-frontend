@@ -41,6 +41,7 @@ function SurveyFooter({
         onPress={onNext}
         isDisabled={isNextDisabled}
         className="h-[37.5px px-4 rounded-[14px] bg-[#5B5EF4] text-white disabled:opacity-50"
+        data-testid={nextButtonLabel}
       >
         {nextButtonLabel}
         <ArrowRight className="w-4 h-4" />

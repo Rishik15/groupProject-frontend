@@ -116,6 +116,7 @@ export default function BrowseCoaches() {
 
           <Input
             placeholder="Search by name or specialty..."
+            data-testid="search"
             value={nameSearch}
             onChange={(e) => setNameSearch(e.target.value)}
             className="pl-9 w-full"
@@ -126,6 +127,7 @@ export default function BrowseCoaches() {
           variant={showFilterPanel ? "primary" : "ghost"}
           onPress={() => setShowFilterPanel((v) => !v)}
           className={showFilterPanel ? "bg-[#5B5EF4] text-white" : "bg-white"}
+          data-testid="filters"
         >
           <svg
             width="15"

@@ -9,6 +9,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: exercise_app
+      TZ: America/New_York
+    command: --default-time-zone=-04:00
     volumes:
       - mysql_data:/var/lib/mysql
       - ./database/data:/docker-entrypoint-initdb.d
@@ -17,30 +19,30 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
   backend:
-    build: 
+    build:
       context: backend
       dockerfile: Dockerfile
     container_name: betafit-backend
     ports:
       - "8080:8000"
+    environment:
+      TZ: America/New_York
+      APP_TIMEZONE: America/New_York
+      DB_TIMEZONE: "-04:00"
     volumes:
       - ./backend:/app
       - /app/.venv
+      - backend_media:/app/media
     depends_on:
       db:
         condition: service_healthy
     command: >
-      sh -c "
-        sleep 5 &&
-        gunicorn --worker-class eventlet --workers 1 \
-          --bind 0.0.0.0:8000 \
-          --log-level debug \
-          --access-logfile - \
-          app.main:app
-        " 
+      sh -c "sleep 5 && gunicorn --reload --worker-class eventlet --workers 1 --bind 0.0.0.0:8000 --log-level debug --access-logfile - app.main:app"
+
   frontend:
-    build: 
+    build:
       context: frontend
       dockerfile: Dockerfile
     container_name: betafit-frontend
@@ -53,8 +55,9 @@ services:
       - node_modules:/app/node_modules
     stdin_open: true
     tty: true
-    command: sh -c "npm install && npm run dev --host"
+    command: sh -c "sleep 5 && npm install && npm run dev --host"
 
 volumes:
   mysql_data:
   node_modules:
+  backend_media:

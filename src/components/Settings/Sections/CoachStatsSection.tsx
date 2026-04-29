@@ -21,6 +21,7 @@ export default function CoachStatsSection({
       <div className="flex w-full flex-col gap-2">
         <Label>Price</Label>
         <Input
+          data-testid="price"
           type="number"
           step="0.01"
           min="0"

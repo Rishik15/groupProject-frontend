@@ -21,6 +21,7 @@ export default function ClientMetricsSection({
       <div className="flex flex-col gap-2">
         <Label>Weight</Label>
         <Input
+          data-testid = "weight"
           type="number"
           value={form.weight != null ? String(form.weight) : ""}
           readOnly={!edit}
@@ -32,6 +33,7 @@ export default function ClientMetricsSection({
       <div className="flex flex-col gap-2">
         <Label>Goal Weight</Label>
         <Input
+          data-testid = "goal_weight"
           type="number"
           value={form.goal_weight != null ? String(form.goal_weight) : ""}
           readOnly={!edit}
@@ -43,6 +45,7 @@ export default function ClientMetricsSection({
       <div className="flex flex-col gap-2">
         <Label>Height</Label>
         <Input
+          data-testid = "height"
           type="number"
           value={form.height != null ? String(form.height) : ""}
           readOnly={!edit}

@@ -118,6 +118,7 @@ function CoachPreferencesStep({
 
             return (
               <button
+                data-testid={option.label}
                 key={option.value}
                 type="button"
                 onClick={() =>
@@ -155,6 +156,7 @@ function CoachPreferencesStep({
               Price
             </span>
             <input
+              data-testid="price"
               type="text"
               inputMode="decimal"
               placeholder="50"
@@ -200,14 +202,13 @@ function CoachPreferencesStep({
                     <p className="text-[9px] text-[#72728A]">
                       {dayBlocks.length === 0
                         ? "No blocks added yet"
-                        : `${dayBlocks.length} ${
-                            dayBlocks.length === 1 ? "block" : "blocks"
-                          } added`}
+                        : `${dayBlocks.length} ${dayBlocks.length === 1 ? "block" : "blocks"
+                        } added`}
                     </p>
                   </div>
 
                   <button
-                    type="button"
+                    data-testid={`${dayOfWeek}`}
                     onClick={() => addAvailabilityBlock(dayOfWeek)}
                     className="rounded-xl border border-[#DCDDFE] bg-white px-2 py-1 text-[11px] font-medium text-[#5B5EF4] transition hover:bg-[#F7F7FF]"
                   >
@@ -251,6 +252,7 @@ function CoachPreferencesStep({
                                 Start time
                               </span>
                               <input
+                                data-testid={`${dayOfWeek}-start-time-${index}`}
                                 type="time"
                                 step={900}
                                 value={block.startTime}
@@ -270,6 +272,7 @@ function CoachPreferencesStep({
                                 End time
                               </span>
                               <input
+                                data-testid={`${dayOfWeek}-end-time-${index}`}
                                 type="time"
                                 step={900}
                                 value={block.endTime}
