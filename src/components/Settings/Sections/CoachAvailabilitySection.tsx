@@ -1,4 +1,4 @@
-import { Label, Button } from "@heroui/react";
+import { Button } from "@heroui/react";
 import type { AvailabilitySlot } from "../../../services/Setting/User";
 import AvailabilityCard from "../Components/AvailabilityCard";
 import { Plus } from "lucide-react";
@@ -24,19 +24,25 @@ export default function CoachAvailabilitySection({
 }: CoachAvailabilitySectionProps) {
   return (
     <div className="flex w-full flex-col gap-3">
-      <div className="flex flex-row items-center">
-        <Label>Availability</Label>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 className="text-sm font-semibold text-[#0F0F14]">Availability</h3>
+          <p className="mt-1 text-xs text-[#72728A]">
+            {edit
+              ? "Add or update the days and times clients can book you."
+              : "Your weekly booking availability shown to clients."}
+          </p>
+        </div>
 
-        <div className="ml-auto">
+        {edit && (
           <Button
             onPress={addAvailability}
-            className={`flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-500 hover:bg-gray-200 hover:text-gray-700 ${
-              !edit ? "invisible pointer-events-none" : ""
-            }`}
+            className="h-10 rounded-xl bg-indigo-500 px-4 text-sm font-medium text-white"
           >
-            <Plus size={18} />
+            <Plus size={17} />
+            Add
           </Button>
-        </div>
+        )}
       </div>
 
       {availability && availability.length > 0 ? (
@@ -53,8 +59,15 @@ export default function CoachAvailabilitySection({
           ))}
         </div>
       ) : (
-        <div className="rounded-md bg-gray-100 px-3 py-3 text-sm text-gray-500">
-          No availability set
+        <div className="rounded-2xl border border-dashed border-[#D9DBE3] bg-[#FAFAFC] px-4 py-8 text-center">
+          <p className="text-sm font-medium text-[#0F0F14]">
+            No availability set
+          </p>
+          <p className="mt-1 text-xs text-[#72728A]">
+            {edit
+              ? "Click Add to create your first availability slot."
+              : "No booking times are currently available."}
+          </p>
         </div>
       )}
     </div>

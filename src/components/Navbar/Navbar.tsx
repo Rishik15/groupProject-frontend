@@ -3,7 +3,6 @@ import { Avatar, toast } from "@heroui/react";
 import type { NavbarInterface } from "../../utils/Interfaces/navbar";
 import NavLink from "./Navlink";
 import Dropdownaction from "./Dropdown";
-import type { Notification } from "../../utils/Interfaces/navbar";
 import NotificationDropdown from "./NotificationDropdown";
 import { Link, useNavigate } from "react-router-dom";
 import { socket } from "../../services/sockets/socket";

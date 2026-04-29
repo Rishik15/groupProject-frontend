@@ -41,6 +41,8 @@ export default function NotificationDropdown({
         return `${parent}/nutrition`;
       case "contract":
         return `${parent}/contracts`;
+      case "report":
+        return `${parent}/settings`;
       default:
         return parent;
     }
