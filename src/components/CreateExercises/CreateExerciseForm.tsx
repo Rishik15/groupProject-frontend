@@ -71,7 +71,7 @@ export default function CreateExerciseForm() {
     "w-full text-sm border border-[#E6E6EE] rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#5B5EF4] transition-colors";
 
   return (
-    <div className="flex flex-col gap-6 max-w-2xl w-full mx-auto py-6">
+    <div className="flex flex-col gap-6 max-w-2xl w-full mx-auto py-3">
       {success && (
         <div className="bg-green-50 border border-green-200 text-green-600 text-sm rounded-xl px-4 py-3">
           Exercise created successfully!
@@ -139,7 +139,7 @@ export default function CreateExerciseForm() {
 
       <FormField label="Exercise Video (optional)">
         <div
-          className="w-full border border-dashed border-[#E6E6EE] rounded-xl px-4 py-6 flex flex-col items-center gap-2 cursor-pointer hover:border-[#5B5EF4] transition-colors"
+          className="w-full border border-dashed border-[#E6E6EE] rounded-xl px-4 py-3 flex flex-col items-center gap-2 cursor-pointer hover:border-[#5B5EF4] transition-colors"
           onClick={() => document.getElementById("video-upload")?.click()}
         >
           <svg

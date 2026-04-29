@@ -1,22 +1,20 @@
 import api from "../api";
-
-type AvailabilitySlot = {
-  day_of_week: string;
-  start_time: string;
-  end_time: string;
-};
+import type { AvailabilitySlot } from "./User";
 
 export const updateCoachAvailability = async (
   availability: AvailabilitySlot[],
+  mode = "coach",
 ) => {
-  const res = await api.post("/coach/availability/update", {
+  const payload = {
+    mode,
     num_days: availability.length,
-    day_of_week: availability.map((s) => s.day_of_week),
-    start_time: availability.map((s) => s.start_time),
-    end_time: availability.map((s) => s.end_time),
+    day_of_week: availability.map((slot) => slot.day_of_week),
+    start_time: availability.map((slot) => slot.start_time),
+    end_time: availability.map((slot) => slot.end_time),
     recurring: availability.map(() => true),
     active: availability.map(() => true),
-  });
+  };
 
+  const res = await api.post("/coach/availability/update", payload);
   return res.data;
 };

@@ -6,15 +6,19 @@ export interface AdminCoachPriceRequest {
   request_id: number;
   coach_id: number;
   coach_name: string;
-  current_price: number;
-  proposed_price: number;
+  current_price: number | null;
+  proposed_price: number | null;
   status: AdminCoachPriceRequestStatus;
-  created_at: IsoDateString;
+  admin_action: string | null;
+  reviewed_by_admin_id: number | null;
+  reviewed_at: IsoDateString | null;
+  created_at: IsoDateString | null;
+  updated_at: IsoDateString | null;
 }
 
 export interface CoachPriceActionPayload {
   request_id: number;
-  admin_action: string;
+  admin_action?: string;
 }
 
 export interface GetPendingCoachPriceRequestsResponse extends ApiSuccess {
@@ -22,5 +26,5 @@ export interface GetPendingCoachPriceRequestsResponse extends ApiSuccess {
 }
 
 export interface CoachPriceActionResponse extends ApiSuccess {
-  request: Pick<AdminCoachPriceRequest, "request_id" | "status" | "proposed_price">;
+  request: AdminCoachPriceRequest;
 }

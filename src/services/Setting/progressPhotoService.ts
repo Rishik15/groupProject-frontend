@@ -23,8 +23,12 @@ export const buildBackendMediaUrl = (photoUrl?: string | null) => {
   return `${API_BASE_URL}${photoUrl.startsWith("/") ? "" : "/"}${photoUrl}`;
 };
 
-export const getProgressPhotos = async (): Promise<ProgressPhotoRecord[]> => {
-  const response = await api.get("/client/progress-photos");
+export const getProgressPhotos = async (
+  mode = "client",
+): Promise<ProgressPhotoRecord[]> => {
+  const response = await api.get("/client/progress-photos", {
+    params: { mode },
+  });
 
   return Array.isArray(response.data?.progressPhotos)
     ? response.data.progressPhotos
@@ -35,9 +39,11 @@ export const uploadProgressPhoto = async (params: {
   file: File;
   caption?: string;
   takenAtIso?: string;
+  mode?: string;
 }) => {
   const formData = new FormData();
 
+  formData.append("mode", params.mode ?? "client");
   formData.append("photo", params.file);
 
   if (params.caption?.trim()) {
