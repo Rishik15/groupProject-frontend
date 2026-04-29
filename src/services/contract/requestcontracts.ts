@@ -31,8 +31,11 @@ export interface CoachProfile {
 export type ContractStatus = "none" | "active" | "pending" | "closed";
 
 export interface ClientCoachStatus {
+  status: ContractStatus;
   has_active_contract: boolean;
   active_coach_id: number | null;
+  active_contract_id: number | null;
+  active_coach_name: string | null;
 }
 
 export interface ContractRequestPayload {
@@ -44,31 +47,63 @@ export interface ContractRequestPayload {
 }
 
 export async function getCoachProfile(coach_id: number): Promise<CoachProfile> {
-  const { data } = await api.post("/coach/profile", { coach_id }, {
-    skipAuthGate: true,
-  } as any);
+  console.log("[getCoachProfile] sending coach_id:", coach_id);
+
+  const { data } = await api.post("/coach/profile", { coach_id });
+
+  console.log("[getCoachProfile] response:", data);
 
   return data.coach;
 }
 
-export async function getContractStatus(
+export async function getClientCoachStatus(
   coach_id: number,
-): Promise<ContractStatus> {
-  const { data } = await api.get("/contract/contractStatus", {
-    params: { coach_id },
+): Promise<ClientCoachStatus> {
+  console.log("[getClientCoachStatus] sending coach_id:", coach_id);
+
+  const { data } = await api.get("/contract/clientCoachStatus", {
+    params: {
+      coach_id,
+    },
   });
 
-  return data.status;
-}
+  console.log("[getClientCoachStatus] raw response:", data);
+  console.log("[getClientCoachStatus] status:", data.status);
+  console.log(
+    "[getClientCoachStatus] has_active_contract:",
+    data.has_active_contract,
+  );
+  console.log("[getClientCoachStatus] active_coach_id:", data.active_coach_id);
+  console.log(
+    "[getClientCoachStatus] active_contract_id:",
+    data.active_contract_id,
+  );
+  console.log(
+    "[getClientCoachStatus] active_coach_name:",
+    data.active_coach_name,
+  );
 
-export async function getClientCoachStatus(): Promise<ClientCoachStatus> {
-  const { data } = await api.get("/contract/clientCoachStatus");
-
-  return data;
+  return {
+    status: data.status,
+    has_active_contract: Boolean(data.has_active_contract),
+    active_coach_id:
+      data.active_coach_id === null || data.active_coach_id === undefined
+        ? null
+        : Number(data.active_coach_id),
+    active_contract_id:
+      data.active_contract_id === null || data.active_contract_id === undefined
+        ? null
+        : Number(data.active_contract_id),
+    active_coach_name: data.active_coach_name ?? null,
+  };
 }
 
 export async function requestCoachContract(payload: ContractRequestPayload) {
+  console.log("[requestCoachContract] payload:", payload);
+
   const { data } = await api.post("/contract/requestContract", payload);
+
+  console.log("[requestCoachContract] response:", data);
 
   return data;
 }

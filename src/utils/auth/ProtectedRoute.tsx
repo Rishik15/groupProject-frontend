@@ -1,5 +1,4 @@
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { Navigate } from "react-router-dom";
 import { Spinner } from "@heroui/react";
 import { useAuth } from "./AuthContext";
 
@@ -27,35 +26,6 @@ const ProtectedRoute = ({
 }) => {
   const { status, roles, activeMode, hasCheckedAuth } = useAuth();
 
-  const navigate = useNavigate();
-
-  const hasAllowedRole =
-    !allowedRoles || allowedRoles.some((role) => roles.includes(role));
-
-  const activeModeAllowed =
-    !allowedRoles || (!!activeMode && allowedRoles.includes(activeMode));
-
-  useEffect(() => {
-    if (!hasCheckedAuth) return;
-
-    if (status === "anonymous") {
-      navigate("/signin", { replace: true });
-      return;
-    }
-
-    if (status === "authenticated" && (!hasAllowedRole || !activeModeAllowed)) {
-      navigate(getDefaultRoute(roles, activeMode), { replace: true });
-    }
-  }, [
-    status,
-    roles,
-    activeMode,
-    hasAllowedRole,
-    activeModeAllowed,
-    hasCheckedAuth,
-    navigate,
-  ]);
-
   if (!hasCheckedAuth || status === "checking") {
     return (
       <div className="h-screen flex items-center justify-center">
@@ -64,9 +34,19 @@ const ProtectedRoute = ({
     );
   }
 
-  if (status !== "authenticated") return null;
+  if (status === "anonymous") {
+    return <Navigate to="/signin" replace />;
+  }
 
-  if (!hasAllowedRole || !activeModeAllowed) return null;
+  const hasAllowedRole =
+    !allowedRoles || allowedRoles.some((role) => roles.includes(role));
+
+  const activeModeAllowed =
+    !allowedRoles || (!!activeMode && allowedRoles.includes(activeMode));
+
+  if (!hasAllowedRole || !activeModeAllowed) {
+    return <Navigate to={getDefaultRoute(roles, activeMode)} replace />;
+  }
 
   return <>{children}</>;
 };

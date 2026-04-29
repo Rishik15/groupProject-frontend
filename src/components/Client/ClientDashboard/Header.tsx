@@ -43,7 +43,7 @@ const DashboardHeader = ({ onActivityLogged }: DashboardHeaderProps) => {
           <div className="text-[13px] text-gray-600">{formattedDate}</div>
         </div>
 
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-4 items-center">
           <Button
             className="h-8 px-3 rounded-xl bg-[#5B5EF4]"
             onPress={() => setIsActivityLogOpen(true)}

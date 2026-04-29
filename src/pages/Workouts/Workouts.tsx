@@ -61,7 +61,7 @@ export default function Workouts({
   }, [notifications, setNotifications]);
 
   return (
-    <main className="flex w-full justify-center px-6 py-12">
+    <main className="flex w-full justify-center px-6 py-9">
       <div className="w-full max-w-310">
         <WorkoutScheduleSection />
       </div>

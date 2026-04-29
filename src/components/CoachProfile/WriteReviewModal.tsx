@@ -1,6 +1,6 @@
-import { Button } from "@heroui/react";
-import { coachReviewTheme } from "../../utils/CoachReview/coachReviewTheme";
+import { Button, Modal } from "@heroui/react";
 import { X } from "lucide-react";
+import { coachReviewTheme } from "../../utils/CoachReview/coachReviewTheme";
 import StarRating from "./StarRating";
 
 interface WriteReviewModalProps {
@@ -16,8 +16,6 @@ interface WriteReviewModalProps {
   onSubmit: () => void;
 }
 
-// Small controlled modal used by the review section.
-// The parent owns the state so this component stays presentational.
 export default function WriteReviewModal({
   isOpen,
   coachId,
@@ -30,138 +28,149 @@ export default function WriteReviewModal({
   onReviewTextChange,
   onSubmit,
 }: WriteReviewModalProps) {
-  if (!isOpen) {
-    return null;
-  }
+  const handleOpenChange = (open: boolean) => {
+    if (!open && !isSubmitting) {
+      onClose();
+    }
+  };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center px-4"
-      style={{ backgroundColor: coachReviewTheme.colors.overlay }}
+    <Modal.Backdrop
+      isOpen={isOpen}
+      onOpenChange={handleOpenChange}
+      variant="blur"
+      isDismissable={!isSubmitting}
+      isKeyboardDismissDisabled={isSubmitting}
+      className="bg-black/40"
     >
-      <div
-        className="w-full max-w-lg rounded-2xl border p-6"
-        style={{
-          borderColor: coachReviewTheme.colors.border,
-          backgroundColor: coachReviewTheme.colors.white,
-        }}
-      >
-        <div className="mb-5 flex items-start justify-between gap-4">
-          <div>
-            <h2
-              className="font-semibold"
-              style={{
-                color: coachReviewTheme.colors.heading,
-                fontSize: coachReviewTheme.fontSizes.title,
-              }}
-            >
-              Write Review
-            </h2>
+      <Modal.Container placement="center" size="md">
+        <Modal.Dialog
+          aria-label={`Write review for coach ${coachId}`}
+          className="rounded-2xl border p-0 shadow-xl"
+          style={{
+            borderColor: coachReviewTheme.colors.border,
+            backgroundColor: coachReviewTheme.colors.white,
+          }}
+        >
+          <Modal.Header className="relative border-b px-6 py-5">
+            <div className="pr-10">
+              <Modal.Heading
+                className="font-semibold"
+                style={{
+                  color: coachReviewTheme.colors.heading,
+                  fontSize: coachReviewTheme.fontSizes.title,
+                }}
+              >
+                Write Review
+              </Modal.Heading>
 
-            <p
-              className="mt-1"
+              <p
+                className="mt-1"
+                style={{
+                  color: coachReviewTheme.colors.secondaryText,
+                  fontSize: coachReviewTheme.fontSizes.label,
+                }}
+              >
+                Share your experience with this coach.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isSubmitting}
+              className="absolute right-5 top-5 flex h-8 w-8 items-center justify-center rounded-full bg-transparent transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
               style={{
                 color: coachReviewTheme.colors.secondaryText,
-                fontSize: coachReviewTheme.fontSizes.body,
               }}
             >
-              Coach ID: {coachId}
-            </p>
-          </div>
+              <X size={18} />
+            </button>
+          </Modal.Header>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="bg-transparent"
-            style={{
-              color: coachReviewTheme.colors.secondaryText,
-              fontSize: coachReviewTheme.fontSizes.label,
-            }}
-          >
-            <X size={16} />
-          </button>
-        </div>
+          <Modal.Body className="px-6 py-3">
+            <div className="mb-5">
+              <p
+                className="mb-2"
+                style={{
+                  color: coachReviewTheme.colors.heading,
+                  fontSize: coachReviewTheme.fontSizes.label,
+                }}
+              >
+                Rating
+              </p>
 
-        <div className="mb-5">
-          <p
-            className="mb-2"
-            style={{
-              color: coachReviewTheme.colors.heading,
-              fontSize: coachReviewTheme.fontSizes.label,
-            }}
-          >
-            Rating
-          </p>
+              <StarRating rating={rating} onChange={onRatingChange} size={20} />
+            </div>
 
-          <StarRating rating={rating} onChange={onRatingChange} size={20} />
-        </div>
+            <div>
+              <label
+                htmlFor="coach-review-text"
+                className="mb-2 block"
+                style={{
+                  color: coachReviewTheme.colors.heading,
+                  fontSize: coachReviewTheme.fontSizes.label,
+                }}
+              >
+                Review
+              </label>
 
-        <div className="mb-5">
-          <label
-            htmlFor="coach-review-text"
-            className="mb-2 block"
-            style={{
-              color: coachReviewTheme.colors.heading,
-              fontSize: coachReviewTheme.fontSizes.label,
-            }}
-          >
-            Review
-          </label>
+              <textarea
+                id="coach-review-text"
+                value={reviewText}
+                onChange={(event) => onReviewTextChange(event.target.value)}
+                rows={5}
+                disabled={isSubmitting}
+                className="w-full resize-none rounded-xl border p-3 outline-none transition focus:border-[#5B5EF4] disabled:cursor-not-allowed disabled:opacity-70"
+                style={{
+                  borderColor: coachReviewTheme.colors.border,
+                  color: coachReviewTheme.colors.heading,
+                  fontSize: coachReviewTheme.fontSizes.body,
+                }}
+                placeholder="Write your review here..."
+              />
+            </div>
 
-          <textarea
-            id="coach-review-text"
-            value={reviewText}
-            onChange={(event) => onReviewTextChange(event.target.value)}
-            rows={5}
-            className="w-full rounded-xl border p-3 outline-none"
-            style={{
-              borderColor: coachReviewTheme.colors.border,
-              color: coachReviewTheme.colors.heading,
-              fontSize: coachReviewTheme.fontSizes.body,
-            }}
-            placeholder="Write your review here..."
-          />
-        </div>
+            {submitError ? (
+              <p
+                className="mt-4"
+                style={{
+                  color: coachReviewTheme.colors.danger,
+                  fontSize: coachReviewTheme.fontSizes.body,
+                }}
+              >
+                {submitError}
+              </p>
+            ) : null}
+          </Modal.Body>
 
-        {submitError ? (
-          <p
-            className="mb-4"
-            style={{
-              color: coachReviewTheme.colors.danger,
-              fontSize: coachReviewTheme.fontSizes.body,
-            }}
-          >
-            {submitError}
-          </p>
-        ) : null}
+          <Modal.Footer className="flex justify-end gap-3 border-t px-6 py-4">
+            <Button
+              onPress={onClose}
+              variant="secondary"
+              isDisabled={isSubmitting}
+              style={{
+                color: coachReviewTheme.colors.heading,
+                fontSize: coachReviewTheme.fontSizes.label,
+              }}
+            >
+              Cancel
+            </Button>
 
-        <div className="flex justify-end gap-3">
-          <Button
-            onPress={onClose}
-            variant="ghost"
-            isDisabled={isSubmitting}
-            style={{
-              color: coachReviewTheme.colors.heading,
-              fontSize: coachReviewTheme.fontSizes.label,
-            }}
-          >
-            Cancel
-          </Button>
-
-          <Button
-            onPress={onSubmit}
-            variant="primary"
-            isDisabled={isSubmitting}
-            style={{
-              backgroundColor: coachReviewTheme.colors.primary,
-              color: "#FFFFFF",
-              fontSize: coachReviewTheme.fontSizes.label,
-            }}
-          >
-            {isSubmitting ? "Submitting..." : "Submit Review"}
-          </Button>
-        </div>
-      </div>
-    </div>
+            <Button
+              onPress={onSubmit}
+              isDisabled={isSubmitting}
+              style={{
+                backgroundColor: coachReviewTheme.colors.primary,
+                color: "#FFFFFF",
+                fontSize: coachReviewTheme.fontSizes.label,
+              }}
+            >
+              {isSubmitting ? "Submitting..." : "Submit Review"}
+            </Button>
+          </Modal.Footer>
+        </Modal.Dialog>
+      </Modal.Container>
+    </Modal.Backdrop>
   );
 }

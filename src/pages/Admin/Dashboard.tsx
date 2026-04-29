@@ -19,9 +19,11 @@ import AdminDashboardHeader from "../../components/Admin/Dashboard/Header";
 import StatsCards from "../../components/Admin/Dashboard/StatsCards";
 import EngagementAnalytics from "../../components/Admin/Dashboard/EngagementAnalytics";
 import PendingReviewSummary from "../../components/Admin/Dashboard/PendingReviewSummary";
+import { useAuth } from "../../utils/auth/AuthContext";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { status, activeMode, hasCheckedAuth } = useAuth();
 
   const overviewRef = useRef<HTMLDivElement | null>(null);
   const engagementRef = useRef<HTMLDivElement | null>(null);
@@ -49,9 +51,9 @@ const Dashboard = () => {
       ] = await Promise.allSettled([
         getDashboardStats(signal),
         getEngagementAnalytics(signal),
-        getMarketsInReview(),
-        getPendingSettlementMarkets(),
-        getCancellationReviewMarkets(),
+        getMarketsInReview(signal),
+        getPendingSettlementMarkets(signal),
+        getCancellationReviewMarkets(signal),
       ]);
 
       if (signal?.aborted) {
@@ -109,11 +111,22 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    if (!hasCheckedAuth) return;
+    if (status !== "authenticated") return;
+    if (activeMode !== "admin") return;
+
     const controller = new AbortController();
     void loadDashboard(controller.signal);
 
     return () => controller.abort();
-  }, []);
+  }, [hasCheckedAuth, status, activeMode]);
+
+  const handleRetry = () => {
+    if (status !== "authenticated" || activeMode !== "admin") return;
+
+    const controller = new AbortController();
+    void loadDashboard(controller.signal);
+  };
 
   const scrollToSection = (element: HTMLDivElement | null) => {
     element?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -176,7 +189,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <Button onPress={() => void loadDashboard()}>Retry</Button>
+              <Button onPress={handleRetry}>Retry</Button>
             </div>
           </Card>
         ) : stats ? (

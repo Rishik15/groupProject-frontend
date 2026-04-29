@@ -1,127 +1,207 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import CustomModal from "../../global/Modal";
-
-const BASE_URL = "http://localhost:8080";
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"];
-
-interface Meal {
-  meal_id: number;
-  name: string;
-  calories: number;
-  protein: number;
-  carbs: number;
-  fats: number;
-}
-
-interface MealSlot {
-  day: string;
-  meal_type: string;
-  meal_id: number;
-  meal_name: string;
-  servings: number;
-}
+import { useEffect, useMemo, useState } from "react";
+import type { DateValue } from "@internationalized/date";
+import { getLocalTimeZone, today } from "@internationalized/date";
+import {
+  Button,
+  Card,
+  DateField,
+  FieldError,
+  Input,
+  Label,
+  ListBox,
+  Modal,
+  Select,
+  Separator,
+} from "@heroui/react";
+import {
+  assignMealPlan,
+  createMealPlan,
+  getMeals,
+} from "@/services/nutrition/mealPlan";
+import type {
+  DayOfWeek,
+  MealLibraryItem,
+  MealSlot,
+  MealType,
+} from "@/utils/Interfaces/Nutrition/mealPlan";
+import { DAYS, MEAL_TYPES } from "@/utils/Interfaces/Nutrition/mealPlan";
 
 function isMonday(date: string) {
   const [year, month, day] = date.split("-").map(Number);
   return new Date(year, month - 1, day).getDay() === 1;
 }
 
-function MealBrowser({ onSelect, onClose }: { onSelect: (meal: Meal) => void; onClose: () => void }) {
-  const [meals, setMeals] = useState<Meal[]>([]);
-  const [search, setSearch] = useState("");
-
-  useEffect(() => {
-    axios.get(`${BASE_URL}/nutrition/meals`, { withCredentials: true }).then((res) => setMeals(res.data));
-  }, []);
-
-  const filtered = meals.filter((m) => m.name.toLowerCase().includes(search.toLowerCase()));
-
-  return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl p-6 w-full max-w-lg flex flex-col gap-4 shadow-xl max-h-[80vh]" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-semibold text-black">Select a Meal</p>
-          <button onClick={onClose} className="text-[#72728A] hover:text-black">✕</button>
-        </div>
-        <input placeholder="Search meals..." value={search} onChange={(e) => setSearch(e.target.value)}
-          className="w-full text-sm border border-[#E6E6EE] rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#5B5EF4]" />
-        <div className="flex flex-col gap-2 overflow-y-auto">
-          {filtered.map((meal) => (
-            <button key={meal.meal_id} onClick={() => onSelect(meal)}
-              className="flex items-center justify-between text-left px-4 py-3 border border-[#E6E6EE] rounded-xl hover:border-[#5B5EF4] transition-colors">
-              <p className="text-sm font-medium text-black">{meal.name}</p>
-              <div className="flex gap-4 text-xs text-[#72728A]">
-                <span>{meal.calories} kcal</span>
-                <span>{meal.protein}g P</span>
-                <span>{meal.carbs}g C</span>
-                <span>{meal.fats}g F</span>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function CreateMealPlan() {
   const [planName, setPlanName] = useState("");
-  const [selectedDay, setSelectedDay] = useState("Mon");
-  const [selectedType, setSelectedType] = useState("breakfast");
+  const [selectedDay, setSelectedDay] = useState<DayOfWeek>("Mon");
+  const [selectedType, setSelectedType] = useState<MealType>("breakfast");
   const [slots, setSlots] = useState<MealSlot[]>([]);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [showBrowser, setShowBrowser] = useState(false);
+  const [meals, setMeals] = useState<MealLibraryItem[]>([]);
+  const [mealSearch, setMealSearch] = useState("");
+  const [selectedMealId, setSelectedMealId] = useState<number | null>(null);
+  const [startDateValue, setStartDateValue] = useState<DateValue | null>(null);
+  const [endDateValue, setEndDateValue] = useState<DateValue | null>(null);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const [showConflictModal, setShowConflictModal] = useState(false);
   const [pendingPlanId, setPendingPlanId] = useState<number | null>(null);
 
-  function handleSelectMeal(meal: Meal) {
-    setSlots((prev) => [...prev, { day: selectedDay, meal_type: selectedType, meal_id: meal.meal_id, meal_name: meal.name, servings: 1 }]);
-    setShowBrowser(false);
+  const todayDate = today(getLocalTimeZone());
+
+  const startDate = startDateValue ? startDateValue.toString() : "";
+  const endDate = endDateValue ? endDateValue.toString() : "";
+
+  const isStartPast =
+    startDateValue !== null && startDateValue.compare(todayDate) < 0;
+
+  const isStartNotMonday = startDate !== "" && !isMonday(startDate);
+
+  const isEndBeforeStart =
+    startDateValue !== null &&
+    endDateValue !== null &&
+    endDateValue.compare(startDateValue) < 0;
+
+  const startDateError = isStartPast
+    ? "Start date must be today or later."
+    : isStartNotMonday
+      ? "Start date must be a Monday."
+      : "";
+
+  const endDateError = isEndBeforeStart
+    ? "End date must be after the start date."
+    : "";
+
+  useEffect(() => {
+    const loadMeals = async () => {
+      try {
+        const data = await getMeals();
+        setMeals(data);
+      } catch {
+        setError("Failed to load meals.");
+      }
+    };
+
+    loadMeals();
+  }, []);
+
+  const filteredMeals = useMemo(() => {
+    const query = mealSearch.trim().toLowerCase();
+
+    if (!query) {
+      return meals;
+    }
+
+    return meals.filter((meal) => meal.name.toLowerCase().includes(query));
+  }, [meals, mealSearch]);
+
+  const selectedMeal = meals.find((meal) => meal.meal_id === selectedMealId);
+
+  function addSlot() {
+    if (!selectedMeal) {
+      setError("Please select a meal.");
+      return;
+    }
+
+    setSlots((prev) => [
+      ...prev,
+      {
+        day: selectedDay,
+        meal_type: selectedType,
+        meal_id: selectedMeal.meal_id,
+        meal_name: selectedMeal.name,
+        servings: 1,
+      },
+    ]);
+
+    setSelectedMealId(null);
+    setMealSearch("");
+    setError(null);
   }
 
   function removeSlot(index: number) {
-    setSlots((prev) => prev.filter((_, i) => i !== index));
+    setSlots((prev) => prev.filter((_, itemIndex) => itemIndex !== index));
   }
 
   async function handleAssign(planId: number, force = false) {
-    await axios.post(`${BASE_URL}/nutrition/meal-plans/assign`, {
-      meal_plan_id: planId, start_date: startDate, force,
-    }, { withCredentials: true });
+    await assignMealPlan({
+      meal_plan_id: planId,
+      start_date: startDate,
+      force,
+    });
+  }
+
+  function resetForm() {
+    setPlanName("");
+    setSelectedDay("Mon");
+    setSelectedType("breakfast");
+    setSlots([]);
+    setMealSearch("");
+    setSelectedMealId(null);
+    setStartDateValue(null);
+    setEndDateValue(null);
   }
 
   async function handleSave() {
-    if (!planName.trim()) { setError("Plan name is required."); return; }
-    if (slots.length === 0) { setError("Add at least one meal."); return; }
-    if (!startDate) { setError("Please select a start date."); return; }
-    if (!endDate) { setError("Please select an end date."); return; }
-    if (!isMonday(startDate)) { setError("Start date must be a Monday."); return; }
-    if (endDate < startDate) { setError("End date must be after start date."); return; }
+    if (!planName.trim()) {
+      setError("Plan name is required.");
+      return;
+    }
+
+    if (slots.length === 0) {
+      setError("Add at least one meal.");
+      return;
+    }
+
+    if (!startDateValue) {
+      setError("Please select a start date.");
+      return;
+    }
+
+    if (!endDateValue) {
+      setError("Please select an end date.");
+      return;
+    }
+
+    if (isStartPast) {
+      setError("Start date must be today or later.");
+      return;
+    }
+
+    if (isStartNotMonday) {
+      setError("Start date must be a Monday.");
+      return;
+    }
+
+    if (isEndBeforeStart) {
+      setError("End date must be after the start date.");
+      return;
+    }
+
+    setSaving(true);
     setError(null);
+    setSuccess(false);
 
     try {
-      const res = await axios.post(`${BASE_URL}/nutrition/meal-plans/create`, {
+      const res = await createMealPlan({
         plan_name: planName,
         start_date: startDate,
         end_date: endDate,
-        meals: slots.map(({ day, meal_type, meal_id, servings }) => ({
-          day_of_week: day, meal_type, meal_id, servings,
-        }))
-      }, { withCredentials: true });
-
-      const planId = res.data.meal_plan_id;
+        meals: slots.map((slot) => ({
+          day_of_week: slot.day,
+          meal_type: slot.meal_type,
+          meal_id: slot.meal_id,
+          servings: slot.servings,
+        })),
+      });
 
       try {
-        await handleAssign(planId);
+        await handleAssign(res.meal_plan_id);
         setSuccess(true);
-        setPlanName(""); setSlots([]); setStartDate(""); setEndDate("");
+        resetForm();
       } catch (assignErr: any) {
         if (assignErr?.response?.status === 409) {
-          setPendingPlanId(planId);
+          setPendingPlanId(res.meal_plan_id);
           setShowConflictModal(true);
         } else {
           setError("Plan created but failed to assign.");
@@ -129,106 +209,370 @@ export default function CreateMealPlan() {
       }
     } catch (err: any) {
       setError(err?.response?.data?.error || "Failed to create plan.");
+    } finally {
+      setSaving(false);
     }
   }
 
   async function handleForceAssign() {
-    if (!pendingPlanId) return;
+    if (!pendingPlanId) {
+      return;
+    }
+
+    setSaving(true);
     setShowConflictModal(false);
+
     try {
       await handleAssign(pendingPlanId, true);
       setSuccess(true);
-      setPlanName(""); setSlots([]); setStartDate(""); setEndDate(""); setPendingPlanId(null);
+      setPendingPlanId(null);
+      resetForm();
     } catch {
       setError("Failed to assign plan.");
+    } finally {
+      setSaving(false);
     }
   }
 
-  const inputClass = "w-full text-sm border border-[#E6E6EE] rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#5B5EF4] bg-white";
-
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <p className="text-base font-semibold text-black">Create Meal Plan</p>
-        <p className="text-xs text-[#72728A] mt-0.5">Build a weekly meal plan from your meal library</p>
-      </div>
+    <Card className="border border-[#E6E6EE] bg-white px-4 py-2  shadow-sm">
+      <Card.Header className="flex flex-col items-start gap-1 px-4 py-3">
+        <Card.Title className="text-[18px] font-bold text-black">
+          Create Meal Plan
+        </Card.Title>
 
-      {success && <div className="bg-green-50 border border-green-200 text-green-600 text-sm rounded-xl px-4 py-3">Plan created and assigned successfully!</div>}
-      {error && <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3">{error}</div>}
+        <Card.Description className="text-[12px] text-[#72728A]">
+          Build a weekly plan from your meal library.
+        </Card.Description>
+      </Card.Header>
 
-      <div className="flex gap-6 items-start">
-        <div className="flex flex-col gap-4 flex-1">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-[#72728A] uppercase tracking-wider">Plan Name</label>
-            <input placeholder="e.g. High Protein Week" value={planName} onChange={(e) => { setPlanName(e.target.value); setSuccess(false); }} className={inputClass} />
+      <Separator />
+
+      <Card.Content className="flex flex-col gap-3 px-4 py-4">
+        {success && (
+          <div className="rounded-xl border border-green-200 bg-green-50 px-3 py-2 text-[13px] text-green-600">
+            Plan created and assigned successfully.
           </div>
+        )}
 
-          <div className="flex gap-3">
-            <div className="flex flex-col gap-1.5 flex-1">
-              <label className="text-xs font-semibold text-[#72728A] uppercase tracking-wider">Start Date (Monday)</label>
-              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputClass} />
-            </div>
-            <div className="flex flex-col gap-1.5 flex-1">
-              <label className="text-xs font-semibold text-[#72728A] uppercase tracking-wider">End Date</label>
-              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputClass} />
-            </div>
+        {error && (
+          <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-[13px] text-red-600">
+            {error}
           </div>
+        )}
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-[#72728A] uppercase tracking-wider">Add a Meal</label>
-            <p className="text-xs text-[#72728A]">Select a day and meal type, then click Add Meal to pick from the library.</p>
-            <div className="flex gap-3">
-              <select value={selectedDay} onChange={(e) => setSelectedDay(e.target.value)} className={inputClass}>
-                {DAYS.map((d) => <option key={d}>{d}</option>)}
-              </select>
-              <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)} className={`${inputClass} capitalize`}>
-                {MEAL_TYPES.map((t) => <option key={t}>{t}</option>)}
-              </select>
-              <button onClick={() => setShowBrowser(true)} className="shrink-0 bg-[#5B5EF4] text-white text-sm font-medium px-4 py-2.5 rounded-xl hover:bg-[#4B4EE4] transition-colors">
-                + Add Meal
-              </button>
-            </div>
-          </div>
-        </div>
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_320px]">
+          <div className="flex flex-col gap-3">
+            <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_180px_180px]">
+              <div className="flex flex-col gap-1">
+                <label className="text-[12px] font-semibold text-[#72728A]">
+                  Plan Name
+                </label>
 
-        <div className="w-80 shrink-0 bg-white border border-[#E6E6EE] rounded-2xl p-5 flex flex-col gap-3">
-          <p className="text-sm font-semibold text-black">
-            Added Meals <span className="text-[#72728A] font-normal">({slots.length})</span>
-          </p>
-          {slots.length === 0 ? (
-            <p className="text-xs text-[#72728A]">No meals added yet.</p>
-          ) : (
-            slots.map((slot, i) => (
-              <div key={i} className="flex items-center justify-between px-4 py-3 border border-[#E6E6EE] rounded-xl">
-                <div>
-                  <p className="text-sm font-medium text-black">{slot.meal_name}</p>
-                  <p className="text-xs text-[#72728A] capitalize">{slot.day} · {slot.meal_type}</p>
-                </div>
-                <button onClick={() => removeSlot(i)} className="text-xs text-red-400 hover:text-red-600">Remove</button>
+                <Input
+                  placeholder="Example: High Protein Week"
+                  value={planName}
+                  onChange={(event) => {
+                    setPlanName(event.target.value);
+                    setSuccess(false);
+                  }}
+                  className="h-10 rounded-xl border border-[#E6E6EE] px-3 text-[14px] outline-none focus:border-[#5E5EF4]"
+                />
               </div>
-            ))
-          )}
-          <button onClick={handleSave} className="w-full bg-[#5B5EF4] text-white text-sm font-medium py-2.5 rounded-xl hover:bg-[#4B4EE4] transition-colors mt-2">
-            Save Plan
-          </button>
-        </div>
-      </div>
 
-      {showBrowser && <MealBrowser onSelect={handleSelectMeal} onClose={() => setShowBrowser(false)} />}
+              <DateField
+                isRequired
+                className="w-full"
+                name="start_date"
+                value={startDateValue}
+                minValue={todayDate}
+                isInvalid={isStartPast || isStartNotMonday}
+                onChange={(value) => {
+                  setStartDateValue(value);
+                  setError(null);
 
-      <CustomModal isOpen={showConflictModal} onClose={() => setShowConflictModal(false)} title="Meal Plan Conflict">
-        <div className="flex flex-col gap-4">
-          <p>There is already a meal plan assigned for this week. Do you want to replace it?</p>
-          <div className="flex gap-3 mt-2">
-            <button onClick={handleForceAssign} className="flex-1 bg-[#5B5EF4] text-white text-sm font-medium py-2.5 rounded-xl hover:bg-[#4B4EE4]">
-              Yes, Replace
-            </button>
-            <button onClick={() => setShowConflictModal(false)} className="flex-1 border border-[#E6E6EE] text-[#72728A] text-sm font-medium py-2.5 rounded-xl">
-              Cancel
-            </button>
+                  if (
+                    endDateValue &&
+                    value &&
+                    endDateValue.compare(value) < 0
+                  ) {
+                    setEndDateValue(null);
+                  }
+                }}
+              >
+                <Label className="text-[12px] font-semibold text-[#72728A]">
+                  Start Date
+                </Label>
+
+                <DateField.Group
+                  fullWidth
+                  variant="secondary"
+                  className="h-10 rounded-xl border border-[#E6E6EE] bg-white px-3"
+                >
+                  <DateField.Input className="text-[14px]">
+                    {(segment) => <DateField.Segment segment={segment} />}
+                  </DateField.Input>
+                </DateField.Group>
+
+                {(isStartPast || isStartNotMonday) && (
+                  <FieldError className="text-[12px] text-red-600">
+                    {startDateError}
+                  </FieldError>
+                )}
+              </DateField>
+
+              <DateField
+                isRequired
+                className="w-full"
+                name="end_date"
+                value={endDateValue}
+                minValue={startDateValue ?? todayDate}
+                isInvalid={isEndBeforeStart}
+                onChange={(value) => {
+                  setEndDateValue(value);
+                  setError(null);
+                }}
+              >
+                <Label className="text-[12px] font-semibold text-[#72728A]">
+                  End Date
+                </Label>
+
+                <DateField.Group
+                  fullWidth
+                  variant="secondary"
+                  className="h-10 rounded-xl border border-[#E6E6EE] bg-white px-3"
+                >
+                  <DateField.Input className="text-[14px]">
+                    {(segment) => <DateField.Segment segment={segment} />}
+                  </DateField.Input>
+                </DateField.Group>
+
+                {isEndBeforeStart && (
+                  <FieldError className="text-[12px] text-red-600">
+                    {endDateError}
+                  </FieldError>
+                )}
+              </DateField>
+            </div>
+
+            <div className="mt-10 rounded-2xl border border-[#E6E6EE] bg-[#FAFAFF] p-3">
+              <div className="mb-3">
+                <p className="text-[16px] font-bold text-black">Add a Meal</p>
+                <p className="text-[12px] text-[#72728A]">
+                  Pick a day, type, and meal.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 gap-2 lg:grid-cols-[130px_130px_1fr_74px]">
+                <Select
+                  value={selectedDay}
+                  onChange={(value) => setSelectedDay(value as DayOfWeek)}
+                  placeholder="Day"
+                  variant="secondary"
+                  className="w-full"
+                >
+                  <Label className="sr-only">Day</Label>
+                  <Select.Trigger className="h-10 rounded-xl border border-[#E6E6EE] bg-white px-3 text-[14px]">
+                    <Select.Value />
+                    <Select.Indicator />
+                  </Select.Trigger>
+
+                  <Select.Popover>
+                    <ListBox>
+                      {DAYS.map((day) => (
+                        <ListBox.Item
+                          key={day.key}
+                          id={day.key}
+                          textValue={day.label}
+                        >
+                          {day.label}
+                          <ListBox.ItemIndicator />
+                        </ListBox.Item>
+                      ))}
+                    </ListBox>
+                  </Select.Popover>
+                </Select>
+
+                <Select
+                  value={selectedType}
+                  onChange={(value) => setSelectedType(value as MealType)}
+                  placeholder="Type"
+                  variant="secondary"
+                  className="w-full"
+                >
+                  <Label className="sr-only">Meal type</Label>
+                  <Select.Trigger className="h-10 rounded-xl border border-[#E6E6EE] bg-white px-3 text-[14px] capitalize">
+                    <Select.Value />
+                    <Select.Indicator />
+                  </Select.Trigger>
+
+                  <Select.Popover>
+                    <ListBox>
+                      {MEAL_TYPES.map((type) => (
+                        <ListBox.Item key={type} id={type} textValue={type}>
+                          <span className="capitalize">{type}</span>
+                          <ListBox.ItemIndicator />
+                        </ListBox.Item>
+                      ))}
+                    </ListBox>
+                  </Select.Popover>
+                </Select>
+
+                <Select
+                  value={selectedMealId ? String(selectedMealId) : null}
+                  onChange={(value) =>
+                    setSelectedMealId(value ? Number(value) : null)
+                  }
+                  placeholder="Select meal..."
+                  variant="secondary"
+                  className="w-full"
+                >
+                  <Label className="sr-only">Meal</Label>
+                  <Select.Trigger className="h-10 rounded-xl border border-[#E6E6EE] bg-white px-3 text-[14px]">
+                    <Select.Value />
+                    <Select.Indicator />
+                  </Select.Trigger>
+
+                  <Select.Popover>
+                    <ListBox>
+                      {filteredMeals.map((meal) => (
+                        <ListBox.Item
+                          key={meal.meal_id}
+                          id={String(meal.meal_id)}
+                          textValue={meal.name}
+                        >
+                          {meal.name}
+                          <ListBox.ItemIndicator />
+                        </ListBox.Item>
+                      ))}
+                    </ListBox>
+                  </Select.Popover>
+                </Select>
+
+                <Button
+                  variant="tertiary"
+                  className="h-10 rounded-xl bg-[#5E5EF4] px-4 text-[14px] font-semibold text-white hover:bg-[#4B4EE4]"
+                  onPress={addSlot}
+                >
+                  Add
+                </Button>
+              </div>
+            </div>
           </div>
+
+          <Card
+            variant="transparent"
+            className="flex h-[45vh] min-h-[260px] flex-col border border-[#E6E6EE] bg-white p-0"
+          >
+            <Card.Header className="flex items-center justify-between px-4 py-3">
+              <div>
+                <Card.Title className="text-[16px] font-bold text-black">
+                  Added Meals
+                </Card.Title>
+              </div>
+
+              <span className="mt-1 rounded-full bg-[#EDEBFF] px-3 py-1 text-[12px] font-semibold text-[#5E5EF4]">
+                {slots.length}
+              </span>
+            </Card.Header>
+
+            <Separator />
+
+            <Card.Content className="flex min-h-0 flex-1 flex-col gap-3 p-3">
+              <div className="min-h-0 flex-1 overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {slots.length === 0 ? (
+                  <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-[#D8D8E8] bg-[#FAFAFF] p-4 text-center">
+                    <p className="text-[14px] text-[#72728A]">
+                      No meals added yet.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    {slots.map((slot, index) => (
+                      <div
+                        key={`${slot.meal_id}-${slot.day}-${slot.meal_type}-${index}`}
+                        className="rounded-xl border border-[#E6E6EE] bg-[#FAFAFF] px-3 py-2"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="truncate text-[14px] font-semibold text-black">
+                              {slot.meal_name}
+                            </p>
+                            <p className="text-[12px] capitalize text-[#72728A]">
+                              {slot.day} · {slot.meal_type}
+                            </p>
+                          </div>
+
+                          <Button
+                            variant="tertiary"
+                            className="h-7 rounded-lg px-2 text-[12px] font-semibold text-red-500 hover:bg-red-50"
+                            onPress={() => removeSlot(index)}
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <Button
+                variant="tertiary"
+                className="h-10 w-full shrink-0 rounded-xl bg-[#5E5EF4] text-[14px] font-semibold text-white hover:bg-[#4B4EE4] disabled:opacity-60"
+                isDisabled={saving}
+                onPress={handleSave}
+              >
+                {saving ? "Saving..." : "Save Plan"}
+              </Button>
+            </Card.Content>
+          </Card>
         </div>
-      </CustomModal>
-    </div>
+      </Card.Content>
+
+      <Modal.Backdrop
+        isOpen={showConflictModal}
+        onOpenChange={setShowConflictModal}
+        variant="opaque"
+      >
+        <Modal.Container placement="center" size="sm">
+          <Modal.Dialog className="sm:max-w-[390px]">
+            <Modal.CloseTrigger />
+
+            <Modal.Header>
+              <Modal.Heading className="text-[18px] font-bold text-black">
+                Meal Plan Conflict
+              </Modal.Heading>
+            </Modal.Header>
+
+            <Modal.Body>
+              <p className="text-[14px] text-[#72728A]">
+                There is already a meal plan assigned for this week. Do you want
+                to replace it?
+              </p>
+            </Modal.Body>
+
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                className="text-[12px] font-semibold"
+                onPress={() => setShowConflictModal(false)}
+              >
+                Cancel
+              </Button>
+
+              <Button
+                variant="tertiary"
+                className="bg-[#5E5EF4] text-[12px] font-semibold text-white hover:bg-[#4B4EE4]"
+                isDisabled={saving}
+                onPress={handleForceAssign}
+              >
+                {saving ? "Replacing..." : "Replace"}
+              </Button>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Card>
   );
 }

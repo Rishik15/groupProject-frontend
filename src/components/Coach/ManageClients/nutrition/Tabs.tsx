@@ -4,6 +4,7 @@ import CalorieCount from "./Today/CalorieCount";
 import Macros from "./Today/Macros";
 import MealsToday from "./Today/MealsToday";
 import WeeklyCalories from "./Week/WeeklyCalories";
+import MealPlan from "./MealPlan/MealPlan";
 import type { TodayNutritionSummary } from "@/utils/Interfaces/Nutrition/nutrition";
 import {
   getTodayNutritionSummary,
@@ -11,6 +12,8 @@ import {
   type WeeklyCaloriesSummary,
 } from "@/services/ManageClients/nutrition/getNutrition";
 import { socket } from "@/services/sockets/socket";
+import NutritionGoalsButton from "./NutritionGoalsButton";
+import NutritionGoalsModal from "./NutritionGoalsModal";
 
 interface NutritionTabsProps {
   contract_Id: number;
@@ -26,6 +29,7 @@ const NutritionTabs = ({ contract_Id, refreshKey = 0 }: NutritionTabsProps) => {
 
   const [isTodayLoading, setIsTodayLoading] = useState(true);
   const [isWeeklyLoading, setIsWeeklyLoading] = useState(true);
+  const [isGoalsOpen, setIsGoalsOpen] = useState(false);
 
   const fetchNutritionData = useCallback(async () => {
     if (!contract_Id) return;
@@ -67,6 +71,21 @@ const NutritionTabs = ({ contract_Id, refreshKey = 0 }: NutritionTabsProps) => {
     };
   }, [fetchNutritionData]);
 
+  useEffect(() => {
+    const handleGoalsUpdated = () => {
+      fetchNutritionData();
+    };
+
+    window.addEventListener("managedNutritionGoalsUpdated", handleGoalsUpdated);
+
+    return () => {
+      window.removeEventListener(
+        "managedNutritionGoalsUpdated",
+        handleGoalsUpdated,
+      );
+    };
+  }, [fetchNutritionData]);
+
   const calorieCurrent = todaySummary?.calories.current ?? 0;
   const calorieGoal = todaySummary?.calories.goal ?? null;
 
@@ -80,36 +99,40 @@ const NutritionTabs = ({ contract_Id, refreshKey = 0 }: NutritionTabsProps) => {
     <div className="mx-auto flex w-full flex-col gap-4 py-4">
       <div className="flex w-full justify-center">
         <Tabs className="w-full">
-          <Tabs.ListContainer>
-            <Tabs.List
-              aria-label="Nutrition tabs"
-              className="inline-flex w-fit items-center gap-1 rounded-full bg-transparent p-0"
-            >
-              <Tabs.Tab
-                id="Today"
-                className="whitespace-nowrap rounded-full px-2 py-2 text-sm font-medium text-black"
+          <div className="mx-auto flex w-full max-w-275 items-center justify-between gap-3">
+            <Tabs.ListContainer>
+              <Tabs.List
+                aria-label="Nutrition tabs"
+                className="inline-flex w-fit items-center gap-1 rounded-full bg-transparent p-0"
               >
-                Today
-                <Tabs.Indicator />
-              </Tabs.Tab>
+                <Tabs.Tab
+                  id="Today"
+                  className="whitespace-nowrap rounded-full px-2 py-2 text-sm font-medium text-black"
+                >
+                  Today
+                  <Tabs.Indicator />
+                </Tabs.Tab>
 
-              <Tabs.Tab
-                id="This Week"
-                className="whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium text-black"
-              >
-                This Week
-                <Tabs.Indicator />
-              </Tabs.Tab>
+                <Tabs.Tab
+                  id="This Week"
+                  className="whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium text-black"
+                >
+                  This Week
+                  <Tabs.Indicator />
+                </Tabs.Tab>
 
-              <Tabs.Tab
-                id="Meal Plans"
-                className="whitespace-nowrap rounded-full px-2 py-2 text-sm font-medium text-black"
-              >
-                Meal Plans
-                <Tabs.Indicator />
-              </Tabs.Tab>
-            </Tabs.List>
-          </Tabs.ListContainer>
+                <Tabs.Tab
+                  id="Meal Plans"
+                  className="whitespace-nowrap rounded-full px-2 py-2 text-sm font-medium text-black"
+                >
+                  Meal Plans
+                  <Tabs.Indicator />
+                </Tabs.Tab>
+              </Tabs.List>
+            </Tabs.ListContainer>
+
+            <NutritionGoalsButton onPress={() => setIsGoalsOpen(true)} />
+          </div>
 
           <Tabs.Panel className="mt-5 p-0" id="Today">
             <div className="flex w-full gap-6">
@@ -130,10 +153,17 @@ const NutritionTabs = ({ contract_Id, refreshKey = 0 }: NutritionTabsProps) => {
           </Tabs.Panel>
 
           <Tabs.Panel className="mt-5 p-0" id="Meal Plans">
-            <div className="rounded-2xl border border-dashed border-neutral-300 bg-white p-6" />
+            <MealPlan contractId={contract_Id} />
           </Tabs.Panel>
         </Tabs>
       </div>
+
+      <NutritionGoalsModal
+        isOpen={isGoalsOpen}
+        onOpenChange={setIsGoalsOpen}
+        contractId={contract_Id}
+        onSaved={fetchNutritionData}
+      />
     </div>
   );
 };

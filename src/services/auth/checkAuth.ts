@@ -8,9 +8,7 @@ export type CoachApplicationStatus =
 
 export async function getAuth() {
   try {
-    const { data } = await api.get("/auth/me", {
-      skipAuthGate: true,
-    } as any);
+    const { data } = await api.get("/auth/me");
 
     console.log("AUTH ME RESPONSE:", data);
 
@@ -24,7 +22,13 @@ export async function getAuth() {
       coachModeActivated:
         data.coachModeActivated ?? data.coach_mode_activated ?? false,
     };
-  } catch {
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      console.log("[AUTH CHECK] User is not logged in");
+    } else {
+      console.error("[AUTH CHECK FAILED]", error);
+    }
+
     return {
       authenticated: false,
       roles: [],

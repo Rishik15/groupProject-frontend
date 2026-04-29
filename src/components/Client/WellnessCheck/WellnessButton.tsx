@@ -1,14 +1,19 @@
 import { Button } from "@heroui/react";
+import { BookCheck } from "lucide-react";
 
-const WellnessButton = () => {
+type WellnessButtonProps = {
+  onPress: () => void;
+};
+
+const WellnessButton = ({ onPress }: WellnessButtonProps) => {
   return (
     <Button
       type="button"
-      className="h-8 px-3 rounded-xl bg-gray-100 text-black hover:bg-[#5B5EF4] hover:text-white"
+      onPress={onPress}
+      className="h-8 rounded-xl border border-[#5B5EF4]/15 bg-[#5B5EF4] px-4 text-xs font-semibold text-white shadow-sm shadow-indigo-100 hover:bg-[#4A4DE8]"
     >
-      <div className="flex items-center gap-2">
-        <div className="text-[12px]">Mental Wellness</div>
-      </div>
+      <BookCheck className="h-4 w-4" />
+      <span>Daily Survey</span>
     </Button>
   );
 };

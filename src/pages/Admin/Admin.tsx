@@ -6,14 +6,18 @@ import CoachGovernance from "./CoachGovernance";
 import Predictions from "./Predictions";
 import Reports from "./Reports";
 import Exercises from "./Exercises";
+import { useAuth } from "../../utils/auth/AuthContext";
 
 const AdminLayout = () => {
+  const { user } = useAuth();
+
   return (
     <section className="min-h-screen bg-default-50">
       <Navbar
         parent="/admin"
-        name="Admin"
-        email="admin@email.com"
+        mode="admin"
+        name={user?.first_name || "Admin"}
+        email={user?.email || "admin@email.com"}
         notifications={[]}
         count={0}
         setNotifications={() => {}}

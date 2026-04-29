@@ -10,7 +10,7 @@ import {
   ShieldCheck,
   UserCog,
   Wrench,
-  BicepsFlexed
+  BicepsFlexed,
 } from "lucide-react";
 
 export const getNavItems = (activeMode: string | null, parent: string) => {
@@ -38,10 +38,13 @@ export const getNavItems = (activeMode: string | null, parent: string) => {
         icon: <BicepsFlexed className="w-4 h-4" />,
       },
     ];
-  }
-  else if (activeMode === "admin") {
+  } else if (activeMode === "admin") {
     return [
-      { label: "Home", route: `${parent}/dashboard`, icon: <House className="w-4 h-4" /> },
+      {
+        label: "Dashboard",
+        route: `${parent}/dashboard`,
+        icon: <House className="w-4 h-4" />,
+      },
       {
         label: "Accounts",
         route: `${parent}/accounts/`,
@@ -69,7 +72,6 @@ export const getNavItems = (activeMode: string | null, parent: string) => {
       },
     ];
   }
-
 
   return [
     { label: "Home", route: parent, icon: <House className="w-4 h-4" /> },

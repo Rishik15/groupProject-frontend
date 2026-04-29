@@ -66,7 +66,7 @@ const MealsToday = ({ meals, isLoading = false }: MealsTodayProps) => {
 
   if (isLoading) {
     return (
-      <div className="w-full rounded-2xl border border-neutral-300 bg-white p-6">
+      <div className="flex h-90 w-full flex-col rounded-2xl border border-neutral-300 bg-white p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-[15px] font-semibold text-[#0F0F14]">
             Today&apos;s Meals
@@ -79,8 +79,8 @@ const MealsToday = ({ meals, isLoading = false }: MealsTodayProps) => {
 
   return (
     <>
-      <div className="w-full rounded-2xl border border-neutral-300 bg-white p-6">
-        <div className="flex items-start justify-between">
+      <div className="flex h-90 w-full flex-col rounded-2xl border border-neutral-300 bg-white p-6">
+        <div className="flex shrink-0 items-start justify-between">
           <h2 className="text-[15px] font-semibold text-[#0F0F14]">
             Today&apos;s Meals
           </h2>
@@ -95,7 +95,7 @@ const MealsToday = ({ meals, isLoading = false }: MealsTodayProps) => {
             No meals logged today.
           </div>
         ) : (
-          <div className="mt-6 space-y-4">
+          <div className="mt-6 flex-1 space-y-4 overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {meals.map((meal) => {
               const Icon = getMealIcon(meal.meal_type);
               const hasPhoto = Boolean(meal.photo_url);

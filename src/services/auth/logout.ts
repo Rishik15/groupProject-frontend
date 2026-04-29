@@ -2,14 +2,10 @@ import api from "../api";
 
 export async function logout() {
   try {
-    await api.post(
-      "/auth/logout",
-      {},
-      {
-        skipAuthGate: true,
-      } as any,
-    );
+    const res = await api.post("/auth/logout");
+    return res.data;
   } catch (err) {
     console.error("Logout failed", err);
+    throw err;
   }
 }

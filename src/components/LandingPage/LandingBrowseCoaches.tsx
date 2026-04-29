@@ -194,7 +194,7 @@ export default function BrowseCoaches() {
 
           {!loading && coaches.length > COACHES_PER_PAGE && (
             <div className="mt-8">
-              <Pagination className="w-full">
+              <Pagination className="w-full pt-8 px-2">
                 <Pagination.Summary>
                   Showing {startItem}-{endItem} of {coaches.length} coaches
                 </Pagination.Summary>
