@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@heroui/react";
-import { Plus } from "lucide-react";
+import { ImagePlus, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../../utils/auth/AuthContext";
 import WellnessCheck from "../WellnessCheck/WellnessCheck";
@@ -11,6 +12,7 @@ interface DashboardHeaderProps {
 }
 
 const DashboardHeader = ({ onActivityLogged }: DashboardHeaderProps) => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [isActivityLogOpen, setIsActivityLogOpen] = useState(false);
 
@@ -44,6 +46,16 @@ const DashboardHeader = ({ onActivityLogged }: DashboardHeaderProps) => {
         </div>
 
         <div className="flex gap-4 items-center">
+          <Button
+            className="h-8 px-3 rounded-xl border border-[#5B5EF4]/20 bg-white text-[#5B5EF4]"
+            onPress={() => navigate("/client/progress-photos")}
+          >
+            <div className="flex items-center gap-2">
+              <ImagePlus className="w-4 h-4" />
+              <div className="text-[12px]">Add Progress Pictures</div>
+            </div>
+          </Button>
+
           <Button
             className="h-8 px-3 rounded-xl bg-[#5B5EF4]"
             onPress={() => setIsActivityLogOpen(true)}

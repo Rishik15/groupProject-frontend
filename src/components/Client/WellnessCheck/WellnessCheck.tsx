@@ -37,6 +37,20 @@ const WellnessCheck = () => {
     surveyStatus();
   }, [status, hasCheckedAuth]);
 
+  useEffect(() => {
+    const openWellnessCheck = () => {
+      if (surveyDone) return;
+
+      setOpen(true);
+    };
+
+    window.addEventListener("open-wellness-check", openWellnessCheck);
+
+    return () => {
+      window.removeEventListener("open-wellness-check", openWellnessCheck);
+    };
+  }, [surveyDone]);
+
   const sendWellness = async (): Promise<void> => {
     const payload = {
       mood_score: moodScore,
