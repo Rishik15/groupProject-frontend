@@ -13,10 +13,12 @@ import CoachPlaceholderSection from "./CoachPlaceholderSection";
 
 interface CoachReviewsSectionProps {
   coachId: number;
+  onReviewSubmitted?: () => void;
 }
 
 export default function CoachReviewsSection({
   coachId,
+  onReviewSubmitted,
 }: CoachReviewsSectionProps) {
   const [reviewData, setReviewData] = useState<CoachReviewResponse | null>(
     null,
@@ -33,13 +35,32 @@ export default function CoachReviewsSection({
 
   const fetchReviews = useCallback(async () => {
     try {
+      console.log(
+        "[CoachReviewsSection] fetching reviews for coachId:",
+        coachId,
+      );
+
       setIsLoading(true);
       setLoadError("");
 
       const data = await getCoachReviews(coachId);
+
+      console.log("[CoachReviewsSection] review response:", data);
+      console.log("[CoachReviewsSection] can_review:", data.can_review);
+      console.log(
+        "[CoachReviewsSection] reviews length:",
+        data.reviews?.length,
+      );
+
       setReviewData(data);
     } catch (error) {
+      console.error("[CoachReviewsSection] failed to load reviews:", error);
+
       if (axios.isAxiosError(error)) {
+        console.error(
+          "[CoachReviewsSection] axios response:",
+          error.response?.data,
+        );
         setLoadError(error.response?.data?.error || "Failed to load reviews.");
       } else {
         setLoadError("Failed to load reviews.");
@@ -50,7 +71,10 @@ export default function CoachReviewsSection({
   }, [coachId]);
 
   useEffect(() => {
+    console.log("[CoachReviewsSection] mounted/changed coachId:", coachId);
+
     if (!Number.isFinite(coachId) || coachId <= 0) {
+      console.log("[CoachReviewsSection] invalid coach id:", coachId);
       setLoadError("Invalid coach id.");
       setIsLoading(false);
       return;
@@ -60,18 +84,41 @@ export default function CoachReviewsSection({
   }, [coachId, fetchReviews]);
 
   const reviews = reviewData?.reviews ?? [];
-  const breakdown = useMemo(() => buildRatingBreakdown(reviews), [reviews]);
+
+  const breakdown = useMemo(() => {
+    console.log(
+      "[CoachReviewsSection] building breakdown for reviews:",
+      reviews,
+    );
+
+    return buildRatingBreakdown(reviews);
+  }, [reviews]);
 
   const averageRating =
     reviewData?.coach_avg_rating == null
       ? "0.0"
       : reviewData.coach_avg_rating.toFixed(1);
 
-  // ✅ THIS is the key
   const canReview = reviewData?.can_review ?? false;
 
+  console.log("[CoachReviewsSection render] reviewData:", reviewData);
+  console.log("[CoachReviewsSection render] canReview:", canReview);
+  console.log("[CoachReviewsSection render] averageRating:", averageRating);
+  console.log("[CoachReviewsSection render] reviewCount:", reviews.length);
+  console.log("[CoachReviewsSection render] isLoading:", isLoading);
+  console.log("[CoachReviewsSection render] loadError:", loadError);
+
   const openModal = () => {
-    if (!canReview) return;
+    console.log("[CoachReviewsSection] write review clicked");
+    console.log("[CoachReviewsSection] canReview:", canReview);
+
+    if (!canReview) {
+      console.log(
+        "[CoachReviewsSection] modal blocked because canReview is false",
+      );
+      return;
+    }
+
     setSubmitError("");
     setRating(5);
     setReviewText("");
@@ -79,6 +126,9 @@ export default function CoachReviewsSection({
   };
 
   const closeModal = () => {
+    console.log("[CoachReviewsSection] close modal clicked");
+    console.log("[CoachReviewsSection] isSubmitting:", isSubmitting);
+
     if (!isSubmitting) {
       setIsModalOpen(false);
       setSubmitError("");
@@ -87,6 +137,11 @@ export default function CoachReviewsSection({
 
   const submitReview = async () => {
     try {
+      console.log("[CoachReviewsSection] submitting review");
+      console.log("[CoachReviewsSection] coachId:", coachId);
+      console.log("[CoachReviewsSection] rating:", rating);
+      console.log("[CoachReviewsSection] reviewText:", reviewText);
+
       setIsSubmitting(true);
       setSubmitError("");
 
@@ -96,13 +151,26 @@ export default function CoachReviewsSection({
         review_text: reviewText.trim(),
       });
 
+      console.log("[CoachReviewsSection] review submitted successfully");
+
       setIsModalOpen(false);
       setRating(5);
       setReviewText("");
 
       await fetchReviews();
+
+      if (onReviewSubmitted) {
+        onReviewSubmitted();
+      }
     } catch (error) {
+      console.error("[CoachReviewsSection] failed to submit review:", error);
+
       if (axios.isAxiosError(error)) {
+        console.error(
+          "[CoachReviewsSection] submit axios response:",
+          error.response?.data,
+        );
+
         setSubmitError(
           error.response?.data?.error || "Failed to submit review.",
         );
@@ -147,7 +215,7 @@ export default function CoachReviewsSection({
           averageRatingValue={reviewData?.coach_avg_rating ?? 0}
           reviewCount={reviews.length}
           breakdown={breakdown}
-          onWriteReview={canReview ? openModal : undefined} // ✅ FIX
+          onWriteReview={canReview ? openModal : undefined}
         />
       </div>
 

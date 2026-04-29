@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { StarRating } from "../LandingPage/CoachCard";
 import {
   getClientCoachStatus,
-  getContractStatus,
   requestCoachContract,
   type CoachProfile,
   type ContractStatus,
@@ -14,7 +14,6 @@ interface ProfileHeaderProps {
   coachId: number;
   mode?: "app" | "landing";
 }
-import { useNavigate } from "react-router-dom";
 
 export default function ProfileHeader({
   coach,
@@ -24,38 +23,69 @@ export default function ProfileHeader({
   const [contractStatus, setContractStatus] = useState<ContractStatus | null>(
     null,
   );
-  const [hasActiveCoach, setHasActiveCoach] = useState(false);
+  const [hasActiveContract, setHasActiveContract] = useState(false);
   const [activeCoachId, setActiveCoachId] = useState<number | null>(null);
+  const [activeCoachName, setActiveCoachName] = useState<string | null>(null);
 
   const [isCheckingStatus, setIsCheckingStatus] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
+    console.log("[ProfileHeader] mounted/changed");
+    console.log("[ProfileHeader] mode:", mode);
+    console.log("[ProfileHeader] coachId:", coachId);
+    console.log("[ProfileHeader] coach:", coach);
+
     if (mode !== "app") {
+      console.log(
+        "[ProfileHeader] landing mode, skipping contract status check",
+      );
+
       setIsCheckingStatus(false);
       setContractStatus(null);
-      setHasActiveCoach(false);
+      setHasActiveContract(false);
       setActiveCoachId(null);
+      setActiveCoachName(null);
       return;
     }
 
-    const loadStatuses = async () => {
+    const loadStatus = async () => {
       try {
         setIsCheckingStatus(true);
         setError(null);
 
-        const [selectedCoachStatus, clientCoachStatus] = await Promise.all([
-          getContractStatus(coachId),
-          getClientCoachStatus(),
-        ]);
+        console.log(
+          "[ProfileHeader] loading client coach status for coachId:",
+          coachId,
+        );
 
-        setContractStatus(selectedCoachStatus);
-        setHasActiveCoach(clientCoachStatus.has_active_contract);
-        setActiveCoachId(clientCoachStatus.active_coach_id);
+        const data = await getClientCoachStatus(coachId);
+
+        console.log("[ProfileHeader] client coach status data:", data);
+
+        const normalizedActiveCoachId =
+          data.active_coach_id === null ? null : Number(data.active_coach_id);
+
+        console.log(
+          "[ProfileHeader] normalized active coach id:",
+          normalizedActiveCoachId,
+        );
+        console.log("[ProfileHeader] selected coach id:", Number(coachId));
+        console.log(
+          "[ProfileHeader] active id equals selected id:",
+          normalizedActiveCoachId === Number(coachId),
+        );
+
+        setContractStatus(data.status);
+        setHasActiveContract(Boolean(data.has_active_contract));
+        setActiveCoachId(normalizedActiveCoachId);
+        setActiveCoachName(data.active_coach_name);
       } catch (err) {
-        console.error("Failed to load contract status:", err);
+        console.error("[ProfileHeader] failed to load contract status:", err);
         setError("Could not load contract status.");
       } finally {
         setIsCheckingStatus(false);
@@ -63,17 +93,41 @@ export default function ProfileHeader({
     };
 
     if (coachId) {
-      void loadStatuses();
+      void loadStatus();
     }
   }, [coachId, mode]);
 
-  const isActiveWithThisCoach = activeCoachId === coachId;
+  const selectedCoachId = Number(coachId);
 
-  const hasSomeOtherCoach = hasActiveCoach && activeCoachId !== coachId;
+  const isActiveWithThisCoach =
+    hasActiveContract &&
+    activeCoachId !== null &&
+    Number(activeCoachId) === selectedCoachId;
+
+  const hasSomeOtherCoach =
+    hasActiveContract &&
+    activeCoachId !== null &&
+    Number(activeCoachId) !== selectedCoachId;
 
   const isPendingWithThisCoach = contractStatus === "pending";
 
-  const canRequest = !hasActiveCoach && contractStatus === "none";
+  const canRequest = !hasActiveContract && contractStatus === "none";
+
+  console.log("[ProfileHeader render] contractStatus:", contractStatus);
+  console.log("[ProfileHeader render] hasActiveContract:", hasActiveContract);
+  console.log("[ProfileHeader render] activeCoachId:", activeCoachId);
+  console.log("[ProfileHeader render] activeCoachName:", activeCoachName);
+  console.log("[ProfileHeader render] selectedCoachId:", selectedCoachId);
+  console.log(
+    "[ProfileHeader render] isActiveWithThisCoach:",
+    isActiveWithThisCoach,
+  );
+  console.log("[ProfileHeader render] hasSomeOtherCoach:", hasSomeOtherCoach);
+  console.log(
+    "[ProfileHeader render] isPendingWithThisCoach:",
+    isPendingWithThisCoach,
+  );
+  console.log("[ProfileHeader render] canRequest:", canRequest);
 
   const handleSubmitRequest = async (values: {
     training_reason: string;
@@ -81,28 +135,36 @@ export default function ProfileHeader({
     preferred_schedule: string;
     notes: string;
   }) => {
-    if (isSubmitting || !canRequest) return;
+    console.log("[ProfileHeader] submit request clicked");
+    console.log("[ProfileHeader] isSubmitting:", isSubmitting);
+    console.log("[ProfileHeader] canRequest:", canRequest);
+    console.log("[ProfileHeader] form values:", values);
+
+    if (isSubmitting || !canRequest) {
+      console.log("[ProfileHeader] request blocked");
+      return;
+    }
 
     try {
       setIsSubmitting(true);
       setError(null);
 
       await requestCoachContract({
-        coach_id: coachId,
+        coach_id: selectedCoachId,
         ...values,
       });
+
+      console.log("[ProfileHeader] request successful, setting status pending");
 
       setContractStatus("pending");
       setIsRequestModalOpen(false);
     } catch (err) {
-      console.error("Failed to request coaching:", err);
+      console.error("[ProfileHeader] failed to request coaching:", err);
       setError("Could not send request. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  const navigate = useNavigate();
 
   return (
     <>
@@ -142,7 +204,7 @@ export default function ProfileHeader({
 
         {mode === "app" &&
           (isCheckingStatus ? (
-            <div className="h-10.5 rounded-xl bg-default-100 animate-pulse" />
+            <div className="h-10.5 animate-pulse rounded-xl bg-default-100" />
           ) : (
             <div className="flex flex-col gap-3">
               {isActiveWithThisCoach ? (
@@ -159,19 +221,29 @@ export default function ProfileHeader({
                   </button>
                 </>
               ) : hasSomeOtherCoach ? (
-                <div></div>
+                <div className="flex w-full items-center justify-center rounded-xl bg-gray-100 px-5 py-3 text-sm font-medium text-gray-500">
+                  You already have an active coach
+                  {activeCoachName ? `: ${activeCoachName}` : ""}
+                </div>
               ) : isPendingWithThisCoach ? (
                 <div className="flex w-full items-center justify-center rounded-xl bg-yellow-50 px-5 py-3 text-sm font-medium text-yellow-700">
                   Request pending
                 </div>
               ) : canRequest ? (
                 <button
-                  onClick={() => setIsRequestModalOpen(true)}
+                  onClick={() => {
+                    console.log("[ProfileHeader] opening request modal");
+                    setIsRequestModalOpen(true);
+                  }}
                   className="flex w-full items-center justify-center rounded-xl bg-[#5B5EF4] px-5 py-3 text-sm font-medium text-white hover:bg-[#4B4EE4]"
                 >
                   Request Coaching
                 </button>
-              ) : null}
+              ) : (
+                <div className="flex w-full items-center justify-center rounded-xl bg-gray-100 px-5 py-3 text-sm font-medium text-gray-500">
+                  Unavailable
+                </div>
+              )}
             </div>
           ))}
 
@@ -184,6 +256,7 @@ export default function ProfileHeader({
         isSubmitting={isSubmitting}
         error={error}
         onClose={() => {
+          console.log("[ProfileHeader] closing request modal");
           if (!isSubmitting) setIsRequestModalOpen(false);
         }}
         onSubmit={handleSubmitRequest}

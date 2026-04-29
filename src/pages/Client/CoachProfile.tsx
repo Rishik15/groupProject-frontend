@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ProfileHeader from "../../components/CoachProfile/ProfileHeader.tsx";
 import ProfileTabs, {
@@ -27,26 +27,29 @@ export default function CoachProfile() {
       ? "app"
       : "landing";
 
-  useEffect(() => {
-    async function load() {
-      if (!id) {
-        setLoading(false);
-        return;
-      }
+  const coachId = id ? Number(id) : null;
 
-      try {
-        const data = await getCoachProfile(Number(id));
-        setCoach(data);
-      } catch (error) {
-        console.error("Failed to load coach profile:", error);
-        setCoach(null);
-      } finally {
-        setLoading(false);
-      }
+  const loadCoachProfile = useCallback(async () => {
+    if (!coachId || Number.isNaN(coachId)) {
+      setCoach(null);
+      setLoading(false);
+      return;
     }
 
-    load();
-  }, [id]);
+    try {
+      const data = await getCoachProfile(coachId);
+      setCoach(data);
+    } catch (error) {
+      console.error("Failed to load coach profile:", error);
+      setCoach(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [coachId]);
+
+  useEffect(() => {
+    void loadCoachProfile();
+  }, [loadCoachProfile]);
 
   if (loading) {
     return (
@@ -56,15 +59,13 @@ export default function CoachProfile() {
     );
   }
 
-  if (!coach || !id) {
+  if (!coach || !coachId) {
     return (
       <div className="min-h-screen bg-default-100 flex items-center justify-center">
         <p className="text-sm text-default-400">Coach not found.</p>
       </div>
     );
   }
-
-  const coachId = Number(id);
 
   return (
     <div className="min-h-screen bg-default-100 px-8 py-8 max-w-3xl mx-auto">
@@ -97,7 +98,10 @@ export default function CoachProfile() {
 
       {activeTab === "reviews" && (
         <div className="space-y-6">
-          <CoachReviewsSection coachId={coachId} />
+          <CoachReviewsSection
+            coachId={coachId}
+            onReviewSubmitted={loadCoachProfile}
+          />
           <ReviewsTab reviews={coach.reviews} />
         </div>
       )}

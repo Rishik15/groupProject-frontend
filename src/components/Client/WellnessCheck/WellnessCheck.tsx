@@ -13,10 +13,7 @@ import CustomModal from "../../global/Modal";
 const WellnessCheck = () => {
   const { status, hasCheckedAuth } = useAuth();
 
-  const authenticated = status === "authenticated";
-  const authLoading = !hasCheckedAuth || status === "checking";
-
-  const [moodScore, setMoodScore] = useState<number>(3);
+  const [moodScore, setMoodScore] = useState<number>(5);
   const [notes, setNotes] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [surveyDone, setDone] = useState(false);
@@ -48,15 +45,15 @@ const WellnessCheck = () => {
 
     try {
       setLoading(true);
-      const result = await submitSurvey(payload);
-      console.log(result);
 
-      const reward = await rewardDailySurvey();
-      console.log(reward);
+      await submitSurvey(payload);
+      await rewardDailySurvey();
 
       setOpen(false);
       setDone(true);
       setRewardOpen(true);
+      setNotes("");
+      setMoodScore(5);
     } catch (error) {
       console.error("Failed to submit wellness survey:", error);
     } finally {
@@ -68,27 +65,31 @@ const WellnessCheck = () => {
 
   return (
     <>
-      <Modal isOpen={open} onOpenChange={setOpen}>
-        {surveyDone ? (
-          <WellnessComplete />
-        ) : (
-          <div onClick={() => setOpen(true)}>
-            <WellnessButton />
-          </div>
-        )}
+      {surveyDone ? (
+        <WellnessComplete />
+      ) : (
+        <WellnessButton onPress={() => setOpen(true)} />
+      )}
 
-        <Modal.Backdrop className="backdrop-blur-xs">
+      <Modal isOpen={open} onOpenChange={setOpen}>
+        <Modal.Backdrop className="bg-black/35 backdrop-blur-sm">
           <Modal.Container>
-            <Modal.Dialog className="sm:max-w-155">
-              <Modal.CloseTrigger />
-              <Modal.Header>
-                <div className="flex">
-                  <Modal.Heading className="text-2xl pb-4">
+            <Modal.Dialog className="w-[94vw] rounded-[26px] border border-white/60 bg-white p-0 shadow-2xl sm:max-w-[720px]">
+              <Modal.CloseTrigger className="right-5 top-5 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200" />
+
+              <Modal.Header className="border-b border-gray-100 px-7 pb-4 pt-6">
+                <div>
+                  <Modal.Heading className="text-2xl font-bold tracking-tight text-[#202020]">
                     Daily Survey
                   </Modal.Heading>
+
+                  <p className="mt-1 text-sm text-gray-500">
+                    Quick check in for your mood, sleep, and notes.
+                  </p>
                 </div>
               </Modal.Header>
-              <Modal.Body>
+
+              <Modal.Body className="px-7 py-5">
                 <WellnessForm
                   moodScore={moodScore}
                   setMoodScore={setMoodScore}
