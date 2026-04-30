@@ -1,11 +1,7 @@
-import axios from "axios";
+import api from "../api";
 
 export const delete_payment_method = (payment_method_id: number) => {
-    return axios.delete(
-        "http://localhost:8080/payments/payment-methods/delete",
-        {
-            data: { payment_method_id },
-            withCredentials: true,
-        }
-    );
+  return api.delete("/payments/payment-methods/delete", {
+    data: { payment_method_id },
+  });
 };
