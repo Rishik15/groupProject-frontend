@@ -31,7 +31,7 @@ const getExercisePreviewSrc = (videoUrl: string) => {
     return trimmed;
   }
 
-  return `/src/assets/gifs/${trimmed}`;
+  return `/gifs/${trimmed}`;
 };
 
 const getMediaType = (src: string | null): "image" | "video" | null => {
