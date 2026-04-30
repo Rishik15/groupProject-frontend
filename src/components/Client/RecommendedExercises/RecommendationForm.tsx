@@ -1,4 +1,4 @@
-import { Card, Label, ListBox, Select, Button } from "@heroui/react";
+import { Card, Label, ListBox, Select, Button, Spinner } from "@heroui/react";
 import { Description, Radio, RadioGroup } from "@heroui/react";
 import { useMemo, useState } from "react";
 import type { Key } from "@heroui/react";
@@ -165,7 +165,11 @@ export function RecommendationForm({ goal, onSubmit, loading = false }: Props) {
               isDisabled={!isFormValid || loading}
               className="bg-indigo-500 w-full rounded-xl text-white"
             >
-              {loading ? "Loading..." : "Get Recommendations"}
+              {loading ? (
+                <Spinner color="accent" size="lg" />
+              ) : (
+                "Get Recommendations"
+              )}
             </Button>
           </div>
         </form>

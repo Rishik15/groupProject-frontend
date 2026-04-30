@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Card, Input, Label, TextArea, TextField } from "@heroui/react";
 import MoodSelector from "./MoodSelector";
-import { Moon, File, Weight } from "lucide-react";
+import { File, Moon, Weight } from "lucide-react";
 
 type WellnessFormProps = {
   moodScore: number;
@@ -20,69 +20,112 @@ const WellnessForm = ({
   onSubmit,
   loading,
 }: WellnessFormProps) => {
+  const [weight, setWeight] = useState("");
+  const [sleep, setSleep] = useState("");
+
+  const handleWeightChange = (value: string) => {
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+      setWeight(value);
+    }
+  };
+
+  const handleSleepChange = (value: string) => {
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+      setSleep(value);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const sleepNumber = Number(sleep);
+
+    if (sleep && (sleepNumber < 0 || sleepNumber > 24)) {
+      return;
+    }
+
+    onSubmit();
+  };
+
   return (
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <MoodSelector value={moodScore} onChange={setMoodScore} />
 
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        onSubmit();
-      }}
-      className="px-1 space-y-5"
-    >
-      <div>
-        <MoodSelector value={moodScore} onChange={setMoodScore} />
-      </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Card className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="mb-4 flex items-center gap-3">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-[#5B5EF4]">
+              <Weight className="h-5 w-5" />
+            </span>
 
-
-      <div className="flex flex-row gap-5">
-
-        <Card className="mr-auto border h-35 w-full p-5">
-          <div className="flex flex-row gap-2 ">
-            <div className="w-fit rounded-lg p-1 bg-[#EBEBFD] text-indigo-500 mb-2">
-              <Weight className="h-6 w-6" />
-            </div>
-            <div className="text-[11px] text-black">
-              <p>Daily Weight</p>
-              <p className="text-gray-500">(lbs)</p>
+            <div>
+              <p className="text-sm font-semibold text-[#202020]">
+                Daily Weight
+              </p>
+              <p className="text-xs text-gray-500">lbs</p>
             </div>
           </div>
-          <Input className="border border-gray-300" placeholder="0.00" step={0.01} type="number"></Input>
+
+          <Input
+            fullWidth
+            variant="secondary"
+            value={weight}
+            onChange={(e) => handleWeightChange(e.target.value)}
+            placeholder="0.00"
+            inputMode="decimal"
+            className="h-11 rounded-xl border border-gray-200 bg-gray-50 px-3 text-sm shadow-none outline-none focus-visible:border-[#5B5EF4] focus-visible:ring-2 focus-visible:ring-[#5B5EF4]/20"
+          />
         </Card>
 
-        <Card className="mr-auto border h-35 w-full p-5">
-          <div className="flex flex-row gap-2 ">
-            <div className="w-fit rounded-lg p-1 bg-white text-indigo-500 mb-2">
-              <Moon className="h-6 w-6" />
-            </div>
-            <div className="text-[11px] text-black">
-              <p>Sleep</p>
-              <p className="text-gray-500">Duration (hours)</p>
+        <Card className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="mb-4 flex items-center gap-3">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-[#5B5EF4]">
+              <Moon className="h-5 w-5" />
+            </span>
+
+            <div>
+              <p className="text-sm font-semibold text-[#202020]">Sleep</p>
+              <p className="text-xs text-gray-500">Duration in hours</p>
             </div>
           </div>
-          <Input className="border border-gray-300" placeholder="0" min={0} max={24} type="number"></Input>
+
+          <Input
+            fullWidth
+            variant="secondary"
+            value={sleep}
+            onChange={(e) => handleSleepChange(e.target.value)}
+            placeholder="0"
+            inputMode="decimal"
+            className="h-11 rounded-xl border border-gray-200 bg-gray-50 px-3 text-sm shadow-none outline-none focus-visible:border-[#5B5EF4] focus-visible:ring-2 focus-visible:ring-[#5B5EF4]/20"
+          />
         </Card>
-
       </div>
-
 
       <TextField className="w-full">
-        <div className="flex gap-1">
-          <File className="w-5 h-5 text-indigo-500" />
-          <Label className="my-auto">Note (Optional)</Label>
+        <div className="mb-2 flex items-center gap-2">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 text-[#5B5EF4]">
+            <File className="h-4 w-4" />
+          </span>
+
+          <Label className="text-sm font-semibold text-[#202020]">
+            Note
+            <span className="ml-1 font-normal text-gray-400">(Optional)</span>
+          </Label>
         </div>
+
         <TextArea
-          placeholder="Feeling good..."
-          rows={4}
+          placeholder="Write anything you want to remember about today..."
+          rows={3}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
+          className="w-full resize-none rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm shadow-none outline-none focus-visible:border-[#5B5EF4] focus-visible:ring-2 focus-visible:ring-[#5B5EF4]/20"
         />
       </TextField>
 
       <Button
-
         type="submit"
         isDisabled={loading}
-        className="rounded-xl w-full bg-indigo-500 hover:bg-indigo-400 text-white disabled:opacity-60"
+        className="h-11 w-full rounded-xl bg-[#5B5EF4] text-sm font-semibold text-white shadow-md shadow-indigo-100 hover:bg-[#4A4DE8] disabled:opacity-60"
       >
         {loading ? "Submitting..." : "Submit Survey"}
       </Button>

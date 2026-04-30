@@ -14,6 +14,23 @@ export interface WeeklyCaloriesSummary {
   goalCalories: number | null;
 }
 
+export interface ManagedNutritionGoals {
+  user_id?: number;
+  calories_target: number | null;
+  protein_target: number | null;
+  carbs_target: number | null;
+  fat_target: number | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface SaveManagedNutritionGoalsInput {
+  calories_target: number | null;
+  protein_target: number | null;
+  carbs_target: number | null;
+  fat_target: number | null;
+}
+
 interface GetNutritionTodayResponse extends TodayNutritionSummary {
   message?: string;
 }
@@ -51,4 +68,32 @@ export const getWeeklyCaloriesSummary = async (
     response.data;
 
   return { days, averageDailyCalories, bestDayCalories, goalCalories };
+};
+
+export const getManagedNutritionGoals = async (
+  contract_id: number,
+): Promise<ManagedNutritionGoals | null> => {
+  const response = await api.get<{ goals: ManagedNutritionGoals | null }>(
+    "/manage/nutrition/goals",
+    {
+      params: { contract_id },
+    },
+  );
+
+  return response.data.goals;
+};
+
+export const saveManagedNutritionGoals = async (
+  contract_id: number,
+  input: SaveManagedNutritionGoalsInput,
+): Promise<ManagedNutritionGoals> => {
+  const response = await api.patch<{ goals: ManagedNutritionGoals }>(
+    "/manage/nutrition/goals",
+    input,
+    {
+      params: { contract_id },
+    },
+  );
+
+  return response.data.goals;
 };

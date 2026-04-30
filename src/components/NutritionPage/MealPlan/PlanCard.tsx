@@ -1,163 +1,583 @@
 import { useState } from "react";
-import axios from "axios";
+import {
+  Button,
+  Card,
+  Input,
+  Label,
+  ListBox,
+  Modal,
+  Select,
+  Separator,
+} from "@heroui/react";
+import {
+  deleteMealPlan,
+  getMealPlanDetail,
+  getMeals,
+  updateMealPlan,
+} from "@/services/nutrition/mealPlan";
+import type {
+  AssignedMealPlan,
+  DayOfWeek,
+  MealLibraryItem,
+  MealPlanDetail,
+  MealType,
+} from "@/utils/Interfaces/Nutrition/mealPlan";
+import { DAYS, MEAL_TYPES } from "@/utils/Interfaces/Nutrition/mealPlan";
 
-const BASE_URL = "http://localhost:8080";
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"];
+type Props = {
+  plan: AssignedMealPlan;
+  onPlanUpdated?: () => void;
+  onPlanDeleted?: () => void;
+};
 
-interface Meal {
-  meal_id: number;
-  name: string;
-  calories: number;
-  protein: number;
-  carbs: number;
-  fats: number;
-  meal_type: string;
-  day_of_week: string;
-  servings: number;
-}
+const formatNumber = (value: number) => {
+  return Number.isInteger(value) ? value.toString() : value.toFixed(1);
+};
 
-export interface MealPlan {
-  meal_plan_id: number;
-  plan_name: string;
-  start_date: string;
-  end_date: string;
-  total_calories: number;
-}
-
-interface PlanDetail {
-  plan_name: string;
-  total_calories: number;
-  meals: Meal[];
-}
-
-export default function PlanCard({ plan }: { plan: MealPlan }) {
+export default function PlanCard({
+  plan,
+  onPlanUpdated,
+  onPlanDeleted,
+}: Props) {
   const [expanded, setExpanded] = useState(false);
   const [editing, setEditing] = useState(false);
-  const [detail, setDetail] = useState<PlanDetail | null>(null);
+  const [detail, setDetail] = useState<MealPlanDetail | null>(null);
   const [loading, setLoading] = useState(false);
+
   const [planName, setPlanName] = useState(plan.plan_name);
-  const [systemMeals, setSystemMeals] = useState<{ meal_id: number; name: string }[]>([]);
-  const [selectedDay, setSelectedDay] = useState("Mon");
-  const [selectedType, setSelectedType] = useState("breakfast");
+  const [headerPlanName, setHeaderPlanName] = useState(plan.plan_name);
+  const [headerCalories, setHeaderCalories] = useState(
+    Number(plan.total_calories ?? 0),
+  );
+
+  const [systemMeals, setSystemMeals] = useState<MealLibraryItem[]>([]);
+  const [selectedDay, setSelectedDay] = useState<DayOfWeek>("Mon");
+  const [selectedType, setSelectedType] = useState<MealType>("breakfast");
   const [selectedMealId, setSelectedMealId] = useState<number | null>(null);
+
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function loadDetail() {
     setLoading(true);
-    const res = await axios.post(`${BASE_URL}/nutrition/meal-plans/detail`, { meal_plan_id: plan.meal_plan_id }, { withCredentials: true });
-    setDetail(res.data);
-    setLoading(false);
+
+    try {
+      const data = await getMealPlanDetail(plan.meal_plan_id);
+
+      setDetail(data);
+      setPlanName(data.plan_name);
+      setHeaderPlanName(data.plan_name);
+      setHeaderCalories(Number(data.total_calories ?? 0));
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleExpand() {
-    if (!expanded && !detail) await loadDetail();
-    setExpanded((v) => !v);
+    if (!expanded && !detail) {
+      await loadDetail();
+    }
+
+    setExpanded((value) => !value);
   }
 
   async function handleEdit() {
-    if (!detail) await loadDetail();
-    const res = await axios.get(`${BASE_URL}/nutrition/meals`, { withCredentials: true });
-    setSystemMeals(res.data);
+    if (!detail) {
+      await loadDetail();
+    }
+
+    const meals = await getMeals();
+
+    setSystemMeals(meals);
     setEditing(true);
     setExpanded(true);
   }
 
-  async function put(body: object) {
-    await axios.put(`${BASE_URL}/nutrition/meal-plans/update`, { meal_plan_id: plan.meal_plan_id, ...body }, { withCredentials: true });
-    await loadDetail();
+  async function handleDeletePlan() {
+    setDeleting(true);
+    setError(null);
+
+    try {
+      await deleteMealPlan(plan.meal_plan_id);
+      setShowDeleteModal(false);
+      onPlanDeleted?.();
+    } catch (err: any) {
+      setError(err?.response?.data?.error || "Failed to delete meal plan.");
+    } finally {
+      setDeleting(false);
+    }
   }
 
-  const selectClass = "text-sm border border-[#E6E6EE] rounded-xl px-3 py-2 bg-white focus:outline-none";
+  async function saveUpdate(body: object) {
+    setSaving(true);
+    setError(null);
+
+    try {
+      const result = await updateMealPlan({
+        meal_plan_id: plan.meal_plan_id,
+        ...body,
+      });
+
+      if (result.deleted) {
+        onPlanDeleted?.();
+        return;
+      }
+
+      if (typeof result.total_calories === "number") {
+        setHeaderCalories(result.total_calories);
+      }
+
+      if ("plan_name" in body && typeof body.plan_name === "string") {
+        setHeaderPlanName(body.plan_name);
+      }
+
+      await loadDetail();
+      onPlanUpdated?.();
+    } catch (err: any) {
+      setError(err?.response?.data?.error || "Failed to update meal plan.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function savePlanName() {
+    const cleanedName = planName.trim();
+
+    if (!cleanedName) {
+      setError("Plan name cannot be empty.");
+      return;
+    }
+
+    await saveUpdate({ plan_name: cleanedName });
+    setEditing(false);
+  }
+
+  async function addMeal() {
+    if (!selectedMealId) {
+      setError("Please select a meal.");
+      return;
+    }
+
+    await saveUpdate({
+      add_meals: [
+        {
+          meal_id: selectedMealId,
+          day_of_week: selectedDay,
+          meal_type: selectedType,
+          servings: 1,
+        },
+      ],
+    });
+
+    setSelectedMealId(null);
+  }
 
   return (
-    <div className="bg-white border rounded-2xl overflow-hidden transition-all" style={{ borderColor: expanded ? "#5B5EF4" : "#E6E6EE", borderWidth: "0.5px" }}>
-      <div className="flex items-center justify-between px-5 py-4">
-        {editing ? (
-          <input value={planName} onChange={(e) => setPlanName(e.target.value)}
-            className="text-sm font-semibold border border-[#E6E6EE] rounded-lg px-3 py-1 focus:outline-none focus:border-[#5B5EF4]" />
-        ) : (
-          <div>
-            <p className="text-sm font-semibold text-black">{plan.plan_name}</p>
-            <p className="text-xs text-[#72728A] mt-1">{plan.start_date} → {plan.end_date}</p>
+    <>
+      <Card className="border border-[#E6E6EE] bg-white p-0 shadow-sm">
+        <Card.Header className="flex flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between">
+          {editing ? (
+            <Input
+              value={planName}
+              onChange={(event) => setPlanName(event.target.value)}
+              className="h-9 max-w-sm rounded-xl border border-[#E6E6EE] px-3 text-[14px] font-semibold outline-none focus:border-[#5E5EF4]"
+            />
+          ) : (
+            <div>
+              <Card.Title className="text-[14px] font-bold text-black">
+                {headerPlanName}
+              </Card.Title>
+
+              <Card.Description className="mt-0.5 text-[12px] text-[#72728A]">
+                {plan.start_date} → {plan.end_date}
+              </Card.Description>
+            </div>
+          )}
+
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-[#EDEBFF] px-3 py-1 text-[12px] font-semibold text-[#5E5EF4]">
+              {headerCalories} kcal
+            </span>
+
+            {editing ? (
+              <>
+                <Button
+                  variant="tertiary"
+                  className="h-8 rounded-xl bg-[#5E5EF4] px-3 text-[12px] font-semibold text-white hover:bg-[#4B4EE4] disabled:opacity-60"
+                  isDisabled={saving || deleting}
+                  onPress={savePlanName}
+                >
+                  {saving ? "Saving..." : "Save"}
+                </Button>
+
+                <Button
+                  variant="secondary"
+                  className="h-8 rounded-xl px-3 text-[12px] font-semibold"
+                  isDisabled={saving || deleting}
+                  onPress={() => setEditing(false)}
+                >
+                  Done
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant="secondary"
+                className="h-8 rounded-xl px-3 text-[12px] font-semibold"
+                isDisabled={deleting}
+                onPress={handleEdit}
+              >
+                Edit
+              </Button>
+            )}
+
+            <Button
+              variant="secondary"
+              className={`h-8 rounded-xl px-3 text-[12px] font-semibold ${
+                expanded ? "bg-[#EDEBFF] text-[#5E5EF4]" : ""
+              }`}
+              isDisabled={deleting}
+              onPress={handleExpand}
+            >
+              {expanded ? "Collapse" : "Expand"}
+            </Button>
+
+            <Button
+              variant="tertiary"
+              className="h-8 rounded-xl px-3 text-[12px] font-semibold text-red-500 hover:bg-red-50 disabled:opacity-60"
+              isDisabled={saving || deleting}
+              onPress={() => setShowDeleteModal(true)}
+              onClick={() => setShowDeleteModal(true)}
+            >
+              {deleting ? "Deleting..." : "Delete"}
+            </Button>
+          </div>
+        </Card.Header>
+
+        {error && (
+          <div className="mx-4 mb-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-600">
+            {error}
           </div>
         )}
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-[#5B5EF4] bg-[#5B5EF4]/10 px-3 py-0.5 rounded-full">{plan.total_calories} kcal</span>
-          {editing ? (
-            <button onClick={() => put({ plan_name: planName }).then(() => setEditing(false))} className="text-xs bg-[#5B5EF4] text-white rounded-lg px-3 py-1">Save</button>
-          ) : (
-            <button onClick={handleEdit} className="text-xs border border-[#E6E6EE] text-[#72728A] rounded-lg px-3 py-1">Edit</button>
-          )}
-          <button onClick={handleExpand} className="text-xs border rounded-lg px-3 py-1 transition-colors"
-            style={{ borderColor: expanded ? "#5B5EF4" : "#E6E6EE", color: expanded ? "#5B5EF4" : "#72728A" }}>
-            {expanded ? "Collapse" : "Expand"}
-          </button>
-        </div>
-      </div>
 
-      {expanded && (
-        <div className="border-t border-[#E6E6EE] px-5 py-4 flex flex-col gap-4">
-          {loading ? <p className="text-xs text-[#72728A]">Loading...</p> : detail ? (
-            <>
-              {DAYS.map((day) => {
-                const dayMeals = detail.meals.filter((m) => m.day_of_week === day);
-                if (dayMeals.length === 0) return null;
-                return (
-                  <div key={day}>
-                    <p className="text-xs font-semibold text-[#72728A] uppercase tracking-wider mb-2">{day}</p>
-                    <div className="flex flex-col gap-2">
-                      {dayMeals.map((meal) => (
-                        <div key={`${meal.meal_id}-${meal.day_of_week}-${meal.meal_type}`} className="flex items-center justify-between px-4 py-2 bg-[#F7F7FB] rounded-xl text-sm">
-                          <div>
-                            <p className="font-medium text-black">{meal.name}</p>
-                            <p className="text-xs text-[#72728A] capitalize">{meal.meal_type}</p>
-                          </div>
-                          {editing ? (
-                            <div className="flex items-center gap-2">
-                              <input type="number" min={0.5} step={0.5} defaultValue={meal.servings}
-                                onBlur={(e) => put({ update_servings: [{ meal_id: meal.meal_id, day_of_week: meal.day_of_week, meal_type: meal.meal_type, servings: Number(e.target.value) }] })}
-                                className="w-14 text-center text-xs border border-[#E6E6EE] rounded-lg py-1 focus:outline-none" />
-                              <span className="text-xs text-[#72728A]">servings</span>
-                              <button onClick={() => put({ remove_meals: [{ meal_id: meal.meal_id, day_of_week: meal.day_of_week, meal_type: meal.meal_type }] })} className="text-xs text-red-400 hover:text-red-600">Remove</button>
-                            </div>
-                          ) : (
-                            <div className="flex gap-2 text-xs text-[#72728A]">
-                              <span>{meal.calories} kcal</span>
-                              <span>{meal.protein}g P</span>
-                              <span>{meal.carbs}g C</span>
-                              <span>{meal.fats}g F</span>
-                            </div>
-                          )}
+        {expanded && (
+          <>
+            <Separator />
+
+            <Card.Content className="flex flex-col gap-4 px-4 py-4">
+              {loading ? (
+                <p className="text-[12px] text-[#72728A]">Loading plan...</p>
+              ) : detail ? (
+                <>
+                  {DAYS.map((day) => {
+                    const dayMeals = detail.meals.filter(
+                      (meal) => meal.day_of_week === day.key,
+                    );
+
+                    if (dayMeals.length === 0) {
+                      return null;
+                    }
+
+                    return (
+                      <div key={day.key}>
+                        <div className="mb-2 flex items-center justify-between">
+                          <p className="text-[12px] font-bold uppercase tracking-wide text-[#72728A]">
+                            {day.label}
+                          </p>
+
+                          <p className="text-[12px] text-[#72728A]">
+                            {dayMeals.length} meal
+                            {dayMeals.length === 1 ? "" : "s"}
+                          </p>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
 
-              {editing && (
-                <div className="flex flex-col gap-2 border-t border-[#E6E6EE] pt-4">
-                  <p className="text-xs font-semibold text-[#72728A] uppercase tracking-wider">Add a Meal</p>
-                  <div className="flex gap-2">
-                    <select value={selectedDay} onChange={(e) => setSelectedDay(e.target.value)} className={selectClass}>
-                      {DAYS.map((d) => <option key={d}>{d}</option>)}
-                    </select>
-                    <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)} className={`${selectClass} capitalize`}>
-                      {MEAL_TYPES.map((t) => <option key={t}>{t}</option>)}
-                    </select>
-                    <select value={selectedMealId ?? ""} onChange={(e) => setSelectedMealId(Number(e.target.value))} className={`flex-1 ${selectClass}`}>
-                      <option value="">Select meal...</option>
-                      {systemMeals.map((m) => <option key={m.meal_id} value={m.meal_id}>{m.name}</option>)}
-                    </select>
-                    <button onClick={() => selectedMealId && put({ add_meals: [{ meal_id: selectedMealId, day_of_week: selectedDay, meal_type: selectedType, servings: 1 }] })}
-                      className="bg-[#5B5EF4] text-white text-xs font-medium px-4 py-2 rounded-xl hover:bg-[#4B4EE4]">Add</button>
-                  </div>
-                </div>
+                        <div className="flex flex-col gap-2">
+                          {dayMeals.map((meal, index) => {
+                            const servings = Number(meal.servings ?? 1);
+
+                            return (
+                              <div
+                                key={`${meal.meal_id}-${meal.day_of_week}-${meal.meal_type}-${index}`}
+                                className="flex flex-col gap-2 rounded-xl border border-[#E6E6EE] bg-[#FAFAFF] px-3 py-2 md:flex-row md:items-center md:justify-between"
+                              >
+                                <div>
+                                  <p className="text-[14px] font-semibold text-black">
+                                    {meal.name}
+                                  </p>
+
+                                  <p className="text-[12px] capitalize text-[#72728A]">
+                                    {meal.meal_type}
+                                  </p>
+                                </div>
+
+                                {editing ? (
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-[12px] font-medium text-[#72728A]">
+                                        Servings
+                                      </span>
+
+                                      <Input
+                                        type="number"
+                                        min={0.5}
+                                        step={0.5}
+                                        defaultValue={String(meal.servings)}
+                                        className="h-8 w-20 rounded-lg border border-[#E6E6EE] px-2 text-center text-[12px] outline-none focus:border-[#5E5EF4]"
+                                        onBlur={(event) => {
+                                          const newServings = Number(
+                                            event.target.value,
+                                          );
+
+                                          if (
+                                            !newServings ||
+                                            newServings <= 0
+                                          ) {
+                                            setError(
+                                              "Servings must be greater than 0.",
+                                            );
+                                            return;
+                                          }
+
+                                          if (newServings === servings) {
+                                            return;
+                                          }
+
+                                          saveUpdate({
+                                            update_servings: [
+                                              {
+                                                meal_id: meal.meal_id,
+                                                day_of_week: meal.day_of_week,
+                                                meal_type: meal.meal_type,
+                                                servings: newServings,
+                                              },
+                                            ],
+                                          });
+                                        }}
+                                      />
+                                    </div>
+
+                                    <Button
+                                      variant="tertiary"
+                                      className="h-8 rounded-lg px-3 text-[12px] font-semibold text-red-500 hover:bg-red-50"
+                                      isDisabled={saving || deleting}
+                                      onPress={() =>
+                                        saveUpdate({
+                                          remove_meals: [
+                                            {
+                                              meal_id: meal.meal_id,
+                                              day_of_week: meal.day_of_week,
+                                              meal_type: meal.meal_type,
+                                            },
+                                          ],
+                                        })
+                                      }
+                                    >
+                                      Remove
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <div className="flex flex-wrap gap-1.5">
+                                    <span className="rounded-full bg-[#EDEBFF] px-2 py-0.5 text-[12px] font-medium text-[#5E5EF4]">
+                                      {formatNumber(servings)} serving
+                                      {servings === 1 ? "" : "s"}
+                                    </span>
+
+                                    <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[12px] text-[#55556A]">
+                                      {meal.calories} kcal
+                                    </span>
+
+                                    <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[12px] text-blue-600">
+                                      {meal.protein}g P
+                                    </span>
+
+                                    <span className="rounded-full bg-yellow-50 px-2 py-0.5 text-[12px] text-yellow-700">
+                                      {meal.carbs}g C
+                                    </span>
+
+                                    <span className="rounded-full bg-pink-50 px-2 py-0.5 text-[12px] text-pink-600">
+                                      {meal.fats}g F
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {editing && (
+                    <div className="border-t border-[#E6E6EE] pt-4">
+                      <p className="mb-3 text-[12px] font-bold uppercase tracking-wide text-[#72728A]">
+                        Add Meal
+                      </p>
+
+                      <div className="grid grid-cols-1 gap-2 lg:grid-cols-[130px_130px_1fr_auto]">
+                        <Select
+                          value={selectedDay}
+                          onChange={(value) =>
+                            setSelectedDay(value as DayOfWeek)
+                          }
+                          placeholder="Day"
+                          variant="secondary"
+                          className="w-full"
+                        >
+                          <Label className="sr-only">Day</Label>
+
+                          <Select.Trigger className="h-9 rounded-xl border border-[#E6E6EE] bg-white px-3 text-[12px]">
+                            <Select.Value />
+                            <Select.Indicator />
+                          </Select.Trigger>
+
+                          <Select.Popover>
+                            <ListBox>
+                              {DAYS.map((day) => (
+                                <ListBox.Item
+                                  key={day.key}
+                                  id={day.key}
+                                  textValue={day.label}
+                                >
+                                  {day.label}
+                                  <ListBox.ItemIndicator />
+                                </ListBox.Item>
+                              ))}
+                            </ListBox>
+                          </Select.Popover>
+                        </Select>
+
+                        <Select
+                          value={selectedType}
+                          onChange={(value) =>
+                            setSelectedType(value as MealType)
+                          }
+                          placeholder="Type"
+                          variant="secondary"
+                          className="w-full"
+                        >
+                          <Label className="sr-only">Meal type</Label>
+
+                          <Select.Trigger className="h-9 rounded-xl border border-[#E6E6EE] bg-white px-3 text-[12px] capitalize">
+                            <Select.Value />
+                            <Select.Indicator />
+                          </Select.Trigger>
+
+                          <Select.Popover>
+                            <ListBox>
+                              {MEAL_TYPES.map((type) => (
+                                <ListBox.Item
+                                  key={type}
+                                  id={type}
+                                  textValue={type}
+                                >
+                                  <span className="capitalize">{type}</span>
+                                  <ListBox.ItemIndicator />
+                                </ListBox.Item>
+                              ))}
+                            </ListBox>
+                          </Select.Popover>
+                        </Select>
+
+                        <Select
+                          value={selectedMealId ? String(selectedMealId) : null}
+                          onChange={(value) =>
+                            setSelectedMealId(value ? Number(value) : null)
+                          }
+                          placeholder="Select meal..."
+                          variant="secondary"
+                          className="w-full"
+                        >
+                          <Label className="sr-only">Meal</Label>
+
+                          <Select.Trigger className="h-9 rounded-xl border border-[#E6E6EE] bg-white px-3 text-[12px]">
+                            <Select.Value />
+                            <Select.Indicator />
+                          </Select.Trigger>
+
+                          <Select.Popover>
+                            <ListBox>
+                              {systemMeals.map((meal) => (
+                                <ListBox.Item
+                                  key={meal.meal_id}
+                                  id={String(meal.meal_id)}
+                                  textValue={meal.name}
+                                >
+                                  {meal.name}
+                                  <ListBox.ItemIndicator />
+                                </ListBox.Item>
+                              ))}
+                            </ListBox>
+                          </Select.Popover>
+                        </Select>
+
+                        <Button
+                          variant="tertiary"
+                          className="h-9 rounded-xl bg-[#5E5EF4] px-4 text-[12px] font-semibold text-white hover:bg-[#4B4EE4] disabled:opacity-60"
+                          isDisabled={!selectedMealId || saving || deleting}
+                          onPress={addMeal}
+                        >
+                          {saving ? "Adding..." : "Add"}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p className="text-[12px] text-[#72728A]">No details found.</p>
               )}
-            </>
-          ) : null}
-        </div>
-      )}
-    </div>
+            </Card.Content>
+          </>
+        )}
+      </Card>
+
+      <Modal.Backdrop
+        isOpen={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        variant="opaque"
+      >
+        <Modal.Container placement="center" size="sm">
+          <Modal.Dialog className="sm:max-w-[390px]">
+            <Modal.CloseTrigger />
+
+            <Modal.Header>
+              <Modal.Heading className="text-[18px] font-bold text-black">
+                Delete Meal Plan
+              </Modal.Heading>
+            </Modal.Header>
+
+            <Modal.Body>
+              <p className="text-[14px] text-[#72728A]">
+                Are you sure you want to delete{" "}
+                <span className="font-semibold text-black">
+                  {headerPlanName}
+                </span>
+                ? This cannot be undone.
+              </p>
+            </Modal.Body>
+
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                className="text-[12px] font-semibold"
+                isDisabled={deleting}
+                onPress={() => setShowDeleteModal(false)}
+              >
+                Cancel
+              </Button>
+
+              <Button
+                variant="tertiary"
+                className="bg-red-500 text-[12px] font-semibold text-white hover:bg-red-600"
+                isDisabled={deleting}
+                onPress={handleDeletePlan}
+              >
+                {deleting ? "Deleting..." : "Delete"}
+              </Button>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </>
   );
 }

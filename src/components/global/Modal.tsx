@@ -1,14 +1,22 @@
 import type { ReactNode } from "react";
 import { Button, Modal } from "@heroui/react";
+import { X } from "lucide-react";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
   children: ReactNode;
+  buttonText?: string;
 }
 
-const CustomModal = ({ isOpen, onClose, title, children }: ModalProps) => {
+export default function CustomModal({
+  isOpen,
+  onClose,
+  title,
+  children,
+  buttonText = "Close",
+}: ModalProps) {
   return (
     <Modal>
       <Modal.Backdrop
@@ -16,20 +24,28 @@ const CustomModal = ({ isOpen, onClose, title, children }: ModalProps) => {
         onOpenChange={(open) => {
           if (!open) onClose();
         }}
-        className="backdrop-blur-sm"
+        className="bg-black/40 backdrop-blur-sm"
       >
         <Modal.Container>
-          <Modal.Dialog className="sm:max-w-105 p-6">
-            <Modal.Header className="flex flex-col items-start gap-3">
+          <Modal.Dialog className="relative w-full sm:max-w-105 rounded-3xl border border-[#E6E6EE] bg-white p-6 shadow-2xl">
+            <button
+              type="button"
+              onClick={onClose}
+              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-[#F7F7FB] text-[#72728A] transition-colors hover:bg-[#ECECFA] hover:text-black"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            <Modal.Header className="flex flex-col items-start gap-2 pr-10">
               {title ? (
-                <Modal.Heading className="text-2xl font-semibold text-foreground">
+                <Modal.Heading className="text-xl font-semibold text-black">
                   {title}
                 </Modal.Heading>
               ) : null}
             </Modal.Header>
 
-            <Modal.Body>
-              <div className="text-md text-muted leading-relaxed">{children}</div>
+            <Modal.Body className="mt-2">
+              <div className="text-sm leading-6 text-[#72728A]">{children}</div>
             </Modal.Body>
 
             <Modal.Footer className="mt-6">
@@ -37,9 +53,10 @@ const CustomModal = ({ isOpen, onClose, title, children }: ModalProps) => {
                 fullWidth
                 size="lg"
                 slot="close"
-                className="bg-indigo-600 hover:bg-indigo-700 text-gray-200 font-semibold rounded-xl"
+                onPress={onClose}
+                className="rounded-xl bg-[#5B5EF4] font-semibold text-white hover:bg-[#4B4EE4]"
               >
-                Close
+                {buttonText}
               </Button>
             </Modal.Footer>
           </Modal.Dialog>
@@ -47,6 +64,4 @@ const CustomModal = ({ isOpen, onClose, title, children }: ModalProps) => {
       </Modal.Backdrop>
     </Modal>
   );
-};
-
-export default CustomModal;
+}

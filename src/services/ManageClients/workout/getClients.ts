@@ -1,5 +1,11 @@
 import api from "../../api";
 
+export type ManageWorkoutStatus =
+  | "scheduled"
+  | "active"
+  | "completed"
+  | "missed";
+
 export interface ManageWorkoutEvent {
   id: string;
   eventId: number;
@@ -11,11 +17,17 @@ export interface ManageWorkoutEvent {
   date: string;
   startTime: string;
   endTime: string;
+
   workoutPlanId?: number | null;
   workoutPlanName?: string | null;
   workoutDayId?: number | null;
   workoutDayLabel?: string | null;
   workoutDayOrder?: number | null;
+
+  sessionId?: number | null;
+  sessionStartedAt?: string | null;
+  sessionEndedAt?: string | null;
+  workoutStatus?: ManageWorkoutStatus | null;
 }
 
 export interface ManageWorkoutPlan {
@@ -70,7 +82,7 @@ export const getManageWorkoutEvents = async (
     },
   });
 
-  return res.data;
+  return res.data || [];
 };
 
 export const createManageWorkoutEvent = async (
@@ -112,7 +124,7 @@ export const getManageClientWorkoutPlans = async (
     },
   });
 
-  return res.data;
+  return res.data || [];
 };
 
 export const getManageCoachWorkoutPlans = async (): Promise<
@@ -120,7 +132,7 @@ export const getManageCoachWorkoutPlans = async (): Promise<
 > => {
   const res = await api.get("/manage/workouts/coach-plans");
 
-  return res.data;
+  return res.data || [];
 };
 
 export const getManageSystemWorkoutPlans = async (): Promise<
@@ -128,7 +140,7 @@ export const getManageSystemWorkoutPlans = async (): Promise<
 > => {
   const res = await api.get("/manage/workouts/system-plans");
 
-  return res.data;
+  return res.data || [];
 };
 
 export const getManageClientWorkoutPlanDays = async (
@@ -142,7 +154,7 @@ export const getManageClientWorkoutPlanDays = async (
     },
   });
 
-  return res.data;
+  return res.data || [];
 };
 
 export const getManageCoachWorkoutPlanDays = async (
@@ -154,7 +166,7 @@ export const getManageCoachWorkoutPlanDays = async (
     },
   });
 
-  return res.data;
+  return res.data || [];
 };
 
 export const assignWorkoutPlanToClient = async (

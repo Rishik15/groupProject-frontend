@@ -16,6 +16,7 @@ import type { CalendarEvent } from "../event-calendar/types";
 
 type CalendarEventWithDrag = CalendarEvent & {
   isDraggable?: boolean;
+  className?: string;
 };
 
 interface CossWorkoutCalendarProps {
@@ -59,15 +60,74 @@ function formatMonthYear(date: Date) {
   }).format(date);
 }
 
+function getWorkoutEventColor(event: AppCalendarEvent) {
+  if (event.eventType === "coach_session") {
+    return "sky";
+  }
+
+  if (event.workoutStatus === "completed") {
+    return "emerald";
+  }
+
+  if (event.workoutStatus === "missed") {
+    return "rose";
+  }
+
+  if (event.workoutStatus === "active") {
+    return "amber";
+  }
+
+  return "violet";
+}
+
+function getWorkoutEventTitle(event: AppCalendarEvent) {
+  const time = event.startTime ? event.startTime.slice(0, 5) : "";
+  const title = time ? `${time} ${event.title}` : event.title;
+
+  if (event.workoutStatus === "completed") {
+    return `${title}`;
+  }
+
+  if (event.workoutStatus === "missed") {
+    return `Missed: ${title}`;
+  }
+
+  if (event.workoutStatus === "active") {
+    return `Active: ${title}`;
+  }
+
+  return title;
+}
+
+function getWorkoutEventClassName(event: AppCalendarEvent) {
+  if (event.workoutStatus === "completed") {
+    return "coss-event-completed";
+  }
+
+  if (event.workoutStatus === "missed") {
+    return "coss-event-missed";
+  }
+
+  if (event.workoutStatus === "active") {
+    return "coss-event-active";
+  }
+
+  return "";
+}
+
 function toCalendarEvent(event: AppCalendarEvent): CalendarEventWithDrag {
   return {
     id: event.id,
-    title: event.title,
+    title: getWorkoutEventTitle(event),
     description: event.description || undefined,
     start: toDateTime(event.date, event.startTime),
     end: toDateTime(event.date, event.endTime),
-    color: event.eventType === "coach_session" ? "sky" : "violet",
-    isDraggable: event.eventType === "workout",
+    color: getWorkoutEventColor(event),
+    isDraggable:
+      event.eventType === "workout" &&
+      event.workoutStatus !== "completed" &&
+      event.workoutStatus !== "active",
+    className: getWorkoutEventClassName(event),
   };
 }
 
@@ -102,6 +162,13 @@ export default function CossWorkoutCalendar({
     const originalEvent = eventMap.get(updatedEvent.id);
 
     if (!originalEvent || originalEvent.eventType !== "workout") {
+      return;
+    }
+
+    if (
+      originalEvent.workoutStatus === "completed" ||
+      originalEvent.workoutStatus === "active"
+    ) {
       return;
     }
 
@@ -144,6 +211,22 @@ export default function CossWorkoutCalendar({
           .coss-calendar-scope [data-slot="month-view"] {
             height: 100%;
             min-height: var(--calendar-body-height);
+          }
+
+          .coss-calendar-scope .coss-event-completed,
+          .coss-calendar-scope .coss-event-completed * {
+            text-decoration-line: line-through;
+            opacity: 0.8;
+          }
+
+          .coss-calendar-scope .coss-event-missed,
+          .coss-calendar-scope .coss-event-missed * {
+            color: #B91C1C !important;
+          }
+
+          .coss-calendar-scope .coss-event-active,
+          .coss-calendar-scope .coss-event-active * {
+            font-weight: 700;
           }
         `}
       </style>

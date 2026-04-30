@@ -1,7 +1,15 @@
 import { useState } from "react";
-import axios from "axios";
-
-const BASE_URL = "http://localhost:8080";
+import type { DateValue } from "@internationalized/date";
+import {
+  Button,
+  Calendar,
+  Card,
+  DateField,
+  DatePicker,
+  Label,
+  Modal,
+} from "@heroui/react";
+import { assignMealPlan } from "@/services/nutrition/mealPlan";
 
 interface Props {
   mealPlanId: number;
@@ -10,109 +18,205 @@ interface Props {
   onSuccess: () => void;
 }
 
+function isMonday(date: string) {
+  const [year, month, day] = date.split("-").map(Number);
+  return new Date(year, month - 1, day).getDay() === 1;
+}
+
 export default function AssignModal({
   mealPlanId,
   planName,
   onClose,
   onSuccess,
 }: Props) {
-  const [startDate, setStartDate] = useState("");
+  const [startDateValue, setStartDateValue] = useState<DateValue | null>(null);
   const [loading, setLoading] = useState(false);
   const [conflict, setConflict] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+
+  const startDate = startDateValue ? startDateValue.toString() : "";
 
   async function handleAssign(force = false) {
     if (!startDate) {
-      setError("Please select a date.");
+      setError("Please select a start date.");
       return;
     }
+
+    if (!isMonday(startDate)) {
+      setError("Start date must be a Monday.");
+      return;
+    }
+
     setLoading(true);
+    setError(null);
+
     try {
-      await axios.post(
-        `${BASE_URL}/nutrition/meal-plans/assign`,
-        { meal_plan_id: mealPlanId, start_date: startDate, force },
-        { withCredentials: true },
-      );
-      setSuccess(true);
-      setTimeout(() => {
-        onSuccess();
-        onClose();
-      }, 1500);
+      await assignMealPlan({
+        meal_plan_id: mealPlanId,
+        start_date: startDate,
+        force,
+      });
+
+      onSuccess();
+      onClose();
     } catch (err: any) {
-      err?.response?.status === 409
-        ? setConflict(err.response.data.existing_plan_name)
-        : setError("Failed to assign plan.");
+      if (err?.response?.status === 409) {
+        setConflict(err.response.data.existing_plan_name ?? "Another plan");
+      } else {
+        setError(err?.response?.data?.error || "Failed to assign plan.");
+      }
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div
-      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
-      onClick={onClose}
+    <Modal.Backdrop
+      isOpen
+      onOpenChange={(open) => {
+        if (!open) {
+          onClose();
+        }
+      }}
+      variant="opaque"
     >
-      <div
-        className="bg-white rounded-2xl p-6 w-full max-w-sm flex flex-col gap-4 shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-semibold text-black">Assign Plan</p>
-          <button onClick={onClose} className="text-[#72728A] hover:text-black">
-            ✕
-          </button>
-        </div>
+      <Modal.Container placement="center" size="sm">
+        <Modal.Dialog className="sm:max-w-[390px]">
+          <Modal.CloseTrigger />
 
-        <p className="text-xs text-[#72728A]">
-          Assigning <span className="font-medium text-black">{planName}</span>.
-          Pick a Monday to start.
-        </p>
+          <Modal.Header className="flex flex-col gap-1">
+            <Modal.Heading className="text-[18px] font-bold text-black">
+              Assign Plan
+            </Modal.Heading>
 
-        {success && (
-          <div className="bg-green-50 border border-green-200 text-green-600 text-sm rounded-xl px-4 py-3 text-center">
-            ✓ Plan assigned successfully!
-          </div>
-        )}
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3">
-            {error}
-          </div>
-        )}
-
-        {conflict ? (
-          <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 text-sm rounded-xl px-4 py-3">
-            <p>
-              <span className="font-medium">"{conflict}"</span> is already
-              assigned for this week. Please choose a different week.
+            <p className="text-[12px] text-[#72728A]">
+              Pick the Monday this plan should start.
             </p>
-            <button
-              onClick={() => setConflict(null)}
-              className="mt-3 w-full border border-yellow-300 text-yellow-700 text-xs font-medium py-2 rounded-xl"
+          </Modal.Header>
+
+          <Modal.Body className="flex flex-col gap-4">
+            <Card
+              variant="transparent"
+              className="border border-[#E6E6EE] bg-[#FAFAFF] p-3"
             >
-              OK
-            </button>
-          </div>
-        ) : (
-          !success && (
-            <>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full text-sm border border-[#E6E6EE] rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#5B5EF4]"
-              />
-              <button
-                onClick={() => handleAssign(false)}
-                disabled={loading}
-                className="w-full bg-[#5B5EF4] text-white text-sm font-medium py-2.5 rounded-xl hover:bg-[#4B4EE4] disabled:opacity-50"
+              <p className="text-[12px] text-[#72728A]">Selected plan</p>
+              <p className="mt-1 text-[14px] font-semibold text-black">
+                {planName}
+              </p>
+            </Card>
+
+            {error && (
+              <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-600">
+                {error}
+              </div>
+            )}
+
+            {conflict && (
+              <div className="rounded-xl border border-yellow-200 bg-yellow-50 px-3 py-2">
+                <p className="text-[14px] font-semibold text-yellow-800">
+                  Plan conflict
+                </p>
+
+                <p className="mt-1 text-[12px] text-yellow-700">
+                  {conflict} is already assigned for this week. You can replace
+                  it or choose another Monday.
+                </p>
+              </div>
+            )}
+
+            <DatePicker
+              className="w-full"
+              name="start_date"
+              value={startDateValue}
+              onChange={(value) => {
+                setStartDateValue(value);
+                setError(null);
+                setConflict(null);
+              }}
+            >
+              <Label className="text-[12px] font-semibold text-[#72728A]">
+                Start Date
+              </Label>
+
+              <DateField.Group
+                fullWidth
+                variant="secondary"
+                className="h-10 rounded-xl border border-[#E6E6EE] bg-white px-3"
               >
-                {loading ? "Assigning..." : "Assign Plan"}
-              </button>
-            </>
-          )
-        )}
-      </div>
-    </div>
+                <DateField.Input>
+                  {(segment) => <DateField.Segment segment={segment} />}
+                </DateField.Input>
+
+                <DateField.Suffix>
+                  <DatePicker.Trigger>
+                    <DatePicker.TriggerIndicator />
+                  </DatePicker.Trigger>
+                </DateField.Suffix>
+              </DateField.Group>
+
+              <DatePicker.Popover>
+                <Calendar aria-label="Start date">
+                  <Calendar.Header>
+                    <Calendar.YearPickerTrigger>
+                      <Calendar.YearPickerTriggerHeading />
+                      <Calendar.YearPickerTriggerIndicator />
+                    </Calendar.YearPickerTrigger>
+
+                    <Calendar.NavButton slot="previous" />
+                    <Calendar.NavButton slot="next" />
+                  </Calendar.Header>
+
+                  <Calendar.Grid>
+                    <Calendar.GridHeader>
+                      {(day) => (
+                        <Calendar.HeaderCell>{day}</Calendar.HeaderCell>
+                      )}
+                    </Calendar.GridHeader>
+
+                    <Calendar.GridBody>
+                      {(date) => <Calendar.Cell date={date} />}
+                    </Calendar.GridBody>
+                  </Calendar.Grid>
+
+                  <Calendar.YearPickerGrid>
+                    <Calendar.YearPickerGridBody>
+                      {({ year }) => <Calendar.YearPickerCell year={year} />}
+                    </Calendar.YearPickerGridBody>
+                  </Calendar.YearPickerGrid>
+                </Calendar>
+              </DatePicker.Popover>
+            </DatePicker>
+          </Modal.Body>
+
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              className="text-[12px] font-semibold"
+              onPress={onClose}
+            >
+              Cancel
+            </Button>
+
+            {conflict ? (
+              <Button
+                isDisabled={loading}
+                className="bg-[#5E5EF4] text-[12px] font-semibold text-white"
+                onPress={() => handleAssign(true)}
+              >
+                {loading ? "Replacing..." : "Replace Plan"}
+              </Button>
+            ) : (
+              <Button
+                isDisabled={loading}
+                className="bg-[#5E5EF4] text-[12px] font-semibold text-white"
+                onPress={() => handleAssign(false)}
+              >
+                {loading ? "Assigning..." : "Assign"}
+              </Button>
+            )}
+          </Modal.Footer>
+        </Modal.Dialog>
+      </Modal.Container>
+    </Modal.Backdrop>
   );
 }

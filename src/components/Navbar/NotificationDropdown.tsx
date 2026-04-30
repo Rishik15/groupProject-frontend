@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Dropdown, Badge } from "@heroui/react";
 import { Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +21,7 @@ export default function NotificationDropdown({
 }: Props) {
   const navigate = useNavigate();
   const { activeMode } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
 
   const getRoute = (notif: Notification) => {
     const metadataRoute = notif.metadata?.route;
@@ -41,6 +43,8 @@ export default function NotificationDropdown({
         return `${parent}/nutrition`;
       case "contract":
         return `${parent}/contracts`;
+      case "report":
+        return `${parent}/settings`;
       default:
         return parent;
     }
@@ -54,10 +58,17 @@ export default function NotificationDropdown({
       return;
     }
 
+    setIsOpen(false);
+
     try {
       await markAsRead(id, activeMode);
 
       setNotifications((prev) => prev.filter((n) => n.id !== id));
+
+      if (notif.type === "daily_survey") {
+        window.dispatchEvent(new CustomEvent("open-wellness-check"));
+        return;
+      }
 
       navigate(getRoute(notif));
     } catch (err) {
@@ -66,7 +77,7 @@ export default function NotificationDropdown({
   };
 
   return (
-    <Dropdown>
+    <Dropdown isOpen={isOpen} onOpenChange={setIsOpen}>
       <Dropdown.Trigger>
         <div className="hover:bg-gray-200 rounded-3xl w-10 h-10 p-2 mb-0.5 cursor-pointer">
           <Badge.Anchor className="mt-px">
