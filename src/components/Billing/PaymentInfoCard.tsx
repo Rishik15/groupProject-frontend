@@ -23,10 +23,6 @@ const PaymentInfoCard = ({
   return (
     <div className="flex items-center gap-4 p-4 border-b last:border-b-0">
 
-      <div className="flex items-center justify-center h-10 w-15 rounded-xl border">
-        <p className="text-sm">Logo</p>
-      </div>
-
       <div className="flex flex-col">
         <div className="flex items-center gap-3">
           <p className="font-semibold">

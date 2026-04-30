@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Spinner } from "@heroui/react";
 import ProfileHeader from "../../components/CoachProfile/ProfileHeader.tsx";
 import ProfileTabs, {
   type Tab,
@@ -37,6 +38,7 @@ export default function CoachProfile() {
     }
 
     try {
+      setLoading(true);
       const data = await getCoachProfile(coachId);
       setCoach(data);
     } catch (error) {
@@ -54,7 +56,7 @@ export default function CoachProfile() {
   if (loading) {
     return (
       <div className="min-h-screen bg-default-100 flex items-center justify-center">
-        <p className="text-sm text-default-400">Loading...</p>
+        <Spinner size="lg" color="accent" />
       </div>
     );
   }

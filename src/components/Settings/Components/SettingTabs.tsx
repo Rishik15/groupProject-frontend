@@ -86,6 +86,11 @@ const SettingTab = ({
   const clientOptions: SettingOptionItem[] = [
     { label: "Messages", icon: MessageCircle, route: "/client/chat" },
     { label: "Browse Coaches", icon: UserRound, route: "/client/coaches" },
+    {
+      label: "Payments and Subscriptions",
+      icon: UserRound,
+      route: "/client/billing",
+    },
     { label: "Report Your Coach", icon: Siren, action: "report_coach" },
     coachApplicationOption,
   ];
