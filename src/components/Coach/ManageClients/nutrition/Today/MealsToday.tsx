@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { LoggedMeal } from "@/utils/Interfaces/Nutrition/nutrition";
 import { Apple, Coffee, Moon, Sandwich, Utensils } from "lucide-react";
+import { Spinner } from "@heroui/react";
 
 interface MealsTodayProps {
   meals: LoggedMeal[];
@@ -71,8 +72,7 @@ const MealsToday = ({ meals, isLoading = false }: MealsTodayProps) => {
           <h2 className="text-[15px] font-semibold text-[#0F0F14]">
             Today&apos;s Meals
           </h2>
-
-          <span className="text-[11.25px] text-[#72728A]">Loading...</span>
+          <Spinner size="lg" color="accent" />
         </div>
       </div>
     );

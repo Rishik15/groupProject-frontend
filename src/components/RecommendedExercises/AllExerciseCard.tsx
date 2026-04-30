@@ -1,4 +1,4 @@
-import { Card, Button } from "@heroui/react";
+import { Card, Button, Spinner } from "@heroui/react";
 import type { Plan } from "../../services/RecommendationExercises/types";
 import { useState } from "react";
 import axios from "axios";
@@ -90,7 +90,7 @@ const AllExerciseCard = ({ plan }: Prop) => {
             onPress={handlePreview}
             isPending={loadingPlan}
           >
-            {loadingPlan ? "Loading..." : "Preview"}
+            {loadingPlan ? <Spinner size="lg" color="accent" /> : "Preview"}
           </Button>
         </div>
       </Card>

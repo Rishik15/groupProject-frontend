@@ -1,4 +1,4 @@
-import { Button, Modal } from "@heroui/react";
+import { Button, Modal, Spinner } from "@heroui/react";
 import { CheckCircle, Clock, ShieldCheck, XCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { activateCoachMode } from "../../../services/auth/activateCoach";
@@ -127,7 +127,11 @@ export default function BecomeCoachModal({ isOpen, setIsOpen }: Props) {
                     isDisabled={loading}
                     className="rounded-xl bg-indigo-500 text-white"
                   >
-                    {loading ? "Loading..." : content.primaryText}
+                    {loading ? (
+                      <Spinner size="lg" color="accent" />
+                    ) : (
+                      content.primaryText
+                    )}
                   </Button>
                 )}
               </div>
