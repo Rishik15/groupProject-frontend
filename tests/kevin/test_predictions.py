@@ -47,7 +47,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-TIMEOUT = 12
+TIMEOUT = 10
 
 # Lower sleeps so the script runs faster.
 # Increase DEMO_SLEEP from the command line if you need slower demo visuals:

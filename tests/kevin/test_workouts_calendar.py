@@ -325,11 +325,13 @@ def get_visible_dialog(driver, timeout=TIMEOUT):
 
 
 def wait_for_dialog_to_close(driver, timeout=TIMEOUT):
-    WebDriverWait(driver, timeout).until(
-        lambda current_driver: len(
-            [dialog for dialog in current_driver.find_elements(By.XPATH, "//*[@role='dialog']") if dialog.is_displayed()]
-        ) == 0
-    )
+    def no_dialogs(current_driver):
+        try:
+            dialogs = current_driver.find_elements(By.XPATH, "//*[@role='dialog']")
+            return all(not dialog.is_displayed() for dialog in dialogs)
+        except StaleElementReferenceException:
+            return True
+    WebDriverWait(driver, timeout).until(no_dialogs)
     demo_pause(0.5)
 
 
@@ -424,7 +426,7 @@ def find_select_trigger_by_label(driver, dialog, label_text):
     )
 
 
-def click_select_option(driver, option_text, timeout=5):
+def click_select_option(driver, option_text, timeout=1):
     normalized = normalize_text(option_text)
     option_xpaths = [
         f"//*[@role='option' and normalize-space(.)={xpath_literal(normalized)}]",
@@ -438,12 +440,14 @@ def click_select_option(driver, option_text, timeout=5):
         try:
             option = WebDriverWait(driver, timeout).until(EC.element_to_be_clickable((By.XPATH, xpath)))
             click_element(driver, option)
-            return normalize_text(option.text) or normalized
+            try:
+                return normalize_text(option.text) or normalized
+            except StaleElementReferenceException:
+                return normalized
         except TimeoutException as error:
             last_error = error
 
     raise TimeoutException(f"Could not find select option: {option_text}") from last_error
-
 
 def click_visible_option_by_index(driver, option_index=0):
     def locate(current_driver):
@@ -477,7 +481,7 @@ def select_dialog_option(driver, dialog, label_text, preferred_text="", fallback
     selected = ""
     if preferred_text:
         try:
-            selected = click_select_option(driver, preferred_text, timeout=4)
+            selected = click_select_option(driver, preferred_text, timeout=1)
         except TimeoutException:
             selected = click_visible_option_by_index(driver, fallback_index)
     else:
@@ -571,9 +575,9 @@ def open_recommended_plans(driver):
 
 
 def open_preferences_modal(driver):
-    if not try_click_button_containing(driver, "Retake preferances", timeout=3):
-        if not try_click_button_containing(driver, "Retake preferences", timeout=3):
-            if not try_click_button_containing(driver, "Edit Filters", timeout=3):
+    if not try_click_button_containing(driver, "Retake preferances", timeout=1):
+        if not try_click_button_containing(driver, "Retake preferences", timeout=1):
+            if not try_click_button_containing(driver, "Edit Filters", timeout=1):
                 click_button_containing(driver, "Adjust filters")
 
     dialog = get_visible_dialog(driver)
@@ -644,7 +648,7 @@ def test_uc_4_2_client_browses_and_assigns_recommended_plan(driver, base_url):
 
 def open_coach_manage_clients_page(driver, base_url):
     try:
-        click_link_containing(driver, "Manage Clients", timeout=4)
+        click_link_containing(driver, "Manage Clients", timeout=1)
     except TimeoutException:
         driver.get(f"{base_url}/coach/clients")
         wait_for_body(driver)
@@ -707,8 +711,8 @@ def click_client_dumbbell_section(driver):
 
 
 def open_assign_workout_plan_modal(driver):
-    if not try_click_button_containing(driver, "Assign Workout Plan", timeout=5):
-        click_button_containing(driver, "Assign Plan", timeout=5)
+    if not try_click_button_containing(driver, "Assign Workout Plan", timeout=1):
+        click_button_containing(driver, "Assign Plan", timeout=1)
 
     dialog = get_visible_dialog(driver)
     assert "assign workout plan" in dialog.text.lower(), f"Expected Assign Workout Plan modal, got:\n{dialog.text[:1200]}"
@@ -761,7 +765,7 @@ def confirm_assign_workout_plan(driver, dialog):
     )
     print("\nConfirming coach plan assignment.\n")
     click_dialog_element(driver, dialog, assign_button)
-    wait_for_dialog_to_close(driver, timeout=10)
+    wait_for_dialog_to_close(driver, timeout=1)
     wait_for_body(driver)
     demo_pause(2)
 
@@ -940,7 +944,7 @@ def save_workout_session(driver, dialog):
     )
     print("\nSaving workout session.\n")
     click_dialog_element(driver, dialog, save_button)
-    wait_for_dialog_to_close(driver, timeout=10)
+    wait_for_dialog_to_close(driver, timeout=1)
     wait_for_body(driver)
     demo_pause(2)
 
@@ -1139,9 +1143,7 @@ def click_activity_log_tab(driver, tab_name):
         EC.element_to_be_clickable(
             (
                 By.XPATH,
-                "//*[@role='dialog']//*[@role='tablist' and "
-                + lower_attr_contains("aria-label", "activity log tabs")
-                + "]"
+                f"//*[@role='tablist' and {lower_attr_contains('aria-label', 'activity log tabs')}]"
                 f"//*[@role='tab' and {lower_contains(tab_name)}]",
             )
         )
@@ -1166,7 +1168,7 @@ def click_dialog_button_containing(driver, dialog, button_text, timeout=TIMEOUT)
     wait_for_body(driver)
     demo_pause(0.8)
     try:
-        return get_visible_dialog(driver, timeout=3)
+        return get_visible_dialog(driver, timeout=1)
     except TimeoutException:
         return None
 
@@ -1182,7 +1184,7 @@ def select_activity_exercise(driver, exercise_name, fallback_index=0):
     click_dialog_element(driver, dialog, trigger)
 
     try:
-        selected = click_select_option(driver, exercise_name, timeout=3)
+        selected = click_select_option(driver, exercise_name, timeout=1)
     except TimeoutException:
         selected = click_visible_option_by_index(driver, fallback_index)
 
@@ -1347,7 +1349,7 @@ def edit_logged_cardio_activity(driver):
 
 def close_activity_log_modal(driver):
     try:
-        dialog = get_visible_dialog(driver, timeout=3)
+        dialog = get_visible_dialog(driver, timeout=1)
         scroll_dialog_to_bottom(driver, dialog)
         close_button = WebDriverWait(driver, 4).until(
             EC.element_to_be_clickable((By.XPATH, f"//*[@role='dialog']//button[{lower_contains('close')}]") )
@@ -1360,7 +1362,7 @@ def close_activity_log_modal(driver):
 
 def maybe_complete_workout_log_dialog(driver):
     try:
-        dialog = get_visible_dialog(driver, timeout=5)
+        dialog = get_visible_dialog(driver, timeout=1)
     except TimeoutException:
         return False
 

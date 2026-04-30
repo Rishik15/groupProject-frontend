@@ -46,7 +46,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-TIMEOUT = 12
+TIMEOUT = 10
 DEMO_SLEEP = float(os.getenv("DEMO_SLEEP", "1"))
 REGISTER_SETTLE_SLEEP = float(os.getenv("REGISTER_SETTLE_SLEEP", "2"))
 LOGIN_SETTLE_SLEEP = float(os.getenv("LOGIN_SETTLE_SLEEP", "3"))
