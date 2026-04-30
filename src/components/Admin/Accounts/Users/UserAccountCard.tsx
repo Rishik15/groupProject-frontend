@@ -1,5 +1,5 @@
 import { Button } from "@heroui/react";
-import { ShieldAlert, UserCheck, UserX } from "lucide-react";
+import {  UserCheck, UserX } from "lucide-react";
 import {
   formatAccountStatusLabel,
   formatBooleanLabel,
@@ -15,7 +15,6 @@ interface UserAccountCardProps {
 
 const UserAccountCard = ({
   user,
-  onSuspend,
   onDeactivate,
   onRestore,
 }: UserAccountCardProps) => {

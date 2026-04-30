@@ -13,7 +13,6 @@ import {
   getWeight,
   getNutrition,
 } from "../../../../services/ManageClients/dashboard/dashboardApi";
-import { useNavigate } from "react-router-dom";
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {

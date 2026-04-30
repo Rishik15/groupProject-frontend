@@ -49,7 +49,7 @@ export default function CoachContractsPanel() {
 
   const handleAccept = async (id: number) => {
     try {
-      const res = await acceptCoachContract(id);
+      await acceptCoachContract(id);
 
       toast.success("Contract accepted successfully!");
 
@@ -69,7 +69,7 @@ export default function CoachContractsPanel() {
 
   const handleReject = async (id: number) => {
     try {
-      const res = await rejectCoachContract(id);
+      await rejectCoachContract(id);
 
       toast.success("Contract rejected successfully!");
 
@@ -84,7 +84,7 @@ export default function CoachContractsPanel() {
 
   const handleTerminate = async (id: number) => {
     try {
-      const res = await terminateCoachContract(id);
+      await terminateCoachContract(id);
 
       toast.success("Contract terminated successfully!");
 
