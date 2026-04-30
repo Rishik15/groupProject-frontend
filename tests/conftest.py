@@ -1,3 +1,4 @@
+import time
 import pytest
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
@@ -17,23 +18,25 @@ def login(driver, email, password, redirect):
     driver.find_element(By.NAME, "email").send_keys(email)
     driver.find_element(By.NAME, "password").send_keys(password)
     driver.find_element(By.XPATH, "//button[text()='Sign In']").click()
-    WebDriverWait(driver, 10).until(EC.url_contains(redirect))
+    time.sleep(2)
+    if redirect:
+        WebDriverWait(driver, 10).until(EC.url_contains(redirect))
 
-@pytest.fixture
+@pytest.fixture()
 def client_driver():
     driver = make_driver()
     login(driver, "alex@example.com", "Rishik@1", "/client")
     yield driver
     driver.quit()
 
-@pytest.fixture
+@pytest.fixture()
 def coach_driver():
     driver = make_driver()
     login(driver, "sam@example.com", "Rishik@1", "/coach")
     yield driver
     driver.quit()
 
-@pytest.fixture
+@pytest.fixture()
 def admin_driver():
     driver = make_driver()
     login(driver, "liam@example.com", "Rishik@1", "/admin")
