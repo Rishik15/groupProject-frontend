@@ -10,6 +10,7 @@ import { coachReviewTheme } from "../../utils/CoachReview/coachReviewTheme";
 import CoachReviewSummary from "./CoachReviewSummary";
 import WriteReviewModal from "./WriteReviewModal";
 import CoachPlaceholderSection from "./CoachPlaceholderSection";
+import { useAuth } from "../../utils/auth/AuthContext";
 
 interface CoachReviewsSectionProps {
   coachId: number;
@@ -20,6 +21,8 @@ export default function CoachReviewsSection({
   coachId,
   onReviewSubmitted,
 }: CoachReviewsSectionProps) {
+  const { activeMode } = useAuth();
+
   const [reviewData, setReviewData] = useState<CoachReviewResponse | null>(
     null,
   );
@@ -39,11 +42,12 @@ export default function CoachReviewsSection({
         "[CoachReviewsSection] fetching reviews for coachId:",
         coachId,
       );
+      console.log("[CoachReviewsSection] activeMode:", activeMode);
 
       setIsLoading(true);
       setLoadError("");
 
-      const data = await getCoachReviews(coachId);
+      const data = await getCoachReviews(coachId, activeMode);
 
       console.log("[CoachReviewsSection] review response:", data);
       console.log("[CoachReviewsSection] can_review:", data.can_review);
@@ -68,10 +72,14 @@ export default function CoachReviewsSection({
     } finally {
       setIsLoading(false);
     }
-  }, [coachId]);
+  }, [coachId, activeMode]);
 
   useEffect(() => {
     console.log("[CoachReviewsSection] mounted/changed coachId:", coachId);
+    console.log(
+      "[CoachReviewsSection] mounted/changed activeMode:",
+      activeMode,
+    );
 
     if (!Number.isFinite(coachId) || coachId <= 0) {
       console.log("[CoachReviewsSection] invalid coach id:", coachId);
@@ -81,7 +89,7 @@ export default function CoachReviewsSection({
     }
 
     void fetchReviews();
-  }, [coachId, fetchReviews]);
+  }, [coachId, activeMode, fetchReviews]);
 
   const reviews = reviewData?.reviews ?? [];
 
@@ -107,10 +115,12 @@ export default function CoachReviewsSection({
   console.log("[CoachReviewsSection render] reviewCount:", reviews.length);
   console.log("[CoachReviewsSection render] isLoading:", isLoading);
   console.log("[CoachReviewsSection render] loadError:", loadError);
+  console.log("[CoachReviewsSection render] activeMode:", activeMode);
 
   const openModal = () => {
     console.log("[CoachReviewsSection] write review clicked");
     console.log("[CoachReviewsSection] canReview:", canReview);
+    console.log("[CoachReviewsSection] activeMode:", activeMode);
 
     if (!canReview) {
       console.log(
@@ -141,15 +151,19 @@ export default function CoachReviewsSection({
       console.log("[CoachReviewsSection] coachId:", coachId);
       console.log("[CoachReviewsSection] rating:", rating);
       console.log("[CoachReviewsSection] reviewText:", reviewText);
+      console.log("[CoachReviewsSection] activeMode:", activeMode);
 
       setIsSubmitting(true);
       setSubmitError("");
 
-      await leaveCoachReview({
-        coach_id: coachId,
-        rating,
-        review_text: reviewText.trim(),
-      });
+      await leaveCoachReview(
+        {
+          coach_id: coachId,
+          rating,
+          review_text: reviewText.trim(),
+        },
+        activeMode,
+      );
 
       console.log("[CoachReviewsSection] review submitted successfully");
 

@@ -7,12 +7,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from login import login
 import pytest
-import time
 from datetime import datetime
 
 BASE_URL = "http://localhost:5173"
 
-
+#working
 @pytest.fixture
 def driver():
     options = webdriver.ChromeOptions()
@@ -107,21 +106,23 @@ def open_coach_profile(driver):
     return wait
 
 
-def test_edit_avaialblity(driver):
+def test_edit_availability(driver):
     wait = open_coach_profile(driver)
-    
+
     wait.until(
         EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='edit-button']"))
     ).click()
-    
-    driver.execute_script("window.scrollBy(0, 500);")
+
+    trigger = wait.until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "[data-testid='day-select-trigger']"))
+    )
+    driver.execute_script("arguments[0].scrollIntoView(true);", trigger)
+    driver.execute_script("window.scrollBy(0, -100);") 
+
+    driver.execute_script("arguments[0].click();", trigger)
 
     wait.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='day-select-trigger']"))
-    ).click()
-
-    wait.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='day-option-Mon']"))
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='Sunday']"))
     ).click()
 
     start_inputs = wait.until(
@@ -131,26 +132,25 @@ def test_edit_avaialblity(driver):
     )
 
     first_start = start_inputs[0]
-
     first_start.click()
 
     active = driver.switch_to.active_element
     active.send_keys("09")
     active.send_keys(Keys.TAB)
     active.send_keys("00")
-    
+
     end_inputs = driver.find_elements(
         By.CSS_SELECTOR, "[data-testid^='end-time-']"
     )
 
     first_end = end_inputs[0]
-
     first_end.click()
 
     active = driver.switch_to.active_element
     active.send_keys("17")
     active.send_keys(Keys.TAB)
     active.send_keys("00")
+
     driver.execute_script("window.scrollTo(0, 0);")
     wait.until(
         EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='edit-button']"))

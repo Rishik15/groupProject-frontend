@@ -84,6 +84,7 @@ const ClientLayout = () => {
           <Route path="chat" element={<Chat />} />
           <Route path="nutrition" element={<Nutrition />} />
           <Route path="coaches" element={<BrowseCoaches />} />
+
           <Route
             path="workouts"
             element={
@@ -93,6 +94,7 @@ const ClientLayout = () => {
               />
             }
           />
+
           <Route path="createWorkout" element={<CreateWorkoutPlan />} />
           <Route path="exercises" element={<ExerciseLibrary />} />
           <Route path="prediction" element={<Predictions />} />
@@ -101,10 +103,17 @@ const ClientLayout = () => {
             path="settings"
             element={<Settings role="client" tab="settings" />}
           />
+
           <Route
             path="profile"
             element={<Settings role="client" tab="info" />}
           />
+
+          <Route
+            path="progress-photos"
+            element={<Settings role="client" tab="photos" />}
+          />
+
           <Route path="recommendation" element={<Recommendation />} />
           <Route path="billing" element={<Billing />} />
         </Routes>

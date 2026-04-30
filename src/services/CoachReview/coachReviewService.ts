@@ -21,11 +21,15 @@ export async function getCoachInfo(
 
 export async function getCoachReviews(
   coachId: number,
+  mode?: string | null,
 ): Promise<CoachReviewResponse> {
-  console.log("[getCoachReviews] sending coach_id:", coachId);
+  console.log("[getCoachReviews] sending:", { coach_id: coachId, mode });
 
   const response = await api.get<CoachReviewResponse>("/coach/get_review", {
-    params: { coach_id: coachId },
+    params: {
+      coach_id: coachId,
+      mode,
+    },
   });
 
   console.log("[getCoachReviews] response:", response.data);
@@ -35,12 +39,18 @@ export async function getCoachReviews(
 
 export async function leaveCoachReview(
   payload: LeaveCoachReviewPayload,
+  mode?: string | null,
 ): Promise<{ message: string }> {
-  console.log("[leaveCoachReview] payload:", payload);
+  const finalPayload = {
+    ...payload,
+    mode,
+  };
+
+  console.log("[leaveCoachReview] payload:", finalPayload);
 
   const response = await api.post<{ message: string }>(
     "/coach/leave_review",
-    payload,
+    finalPayload,
   );
 
   console.log("[leaveCoachReview] response:", response.data);

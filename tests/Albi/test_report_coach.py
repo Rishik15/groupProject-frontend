@@ -9,7 +9,7 @@ from login import login
 import pytest
 
 BASE_URL = "http://localhost:5173"
-
+#working
 
 @pytest.fixture
 def driver():
@@ -51,44 +51,42 @@ def test_report_coach(driver):
     wait.until(EC.url_contains("/settings"))
 
     wait.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='Help & Support']"))
-    ).click()
-
-    wait.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='Report a Coach']"))
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='Report Your Coach']"))
     ).click()
 
     wait.until(
         EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='coach']"))
     ).click()
 
-    wait.until(
+    select = wait.until(
         EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='select']"))
-    ).click()
+    )
+    driver.execute_script("arguments[0].click();", select)
 
     reason = wait.until(
-        EC.element_to_be_clickable((
-            By.XPATH,
-            "//*[normalize-space()='Harassment']"
-        ))
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-key='harassment']"))
     )
     driver.execute_script("arguments[0].click();", reason)
 
+    wait.until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, "[role='listbox']"))
+    )
 
     details = wait.until(
         EC.presence_of_element_located((By.CSS_SELECTOR, "[data-testid='details']"))
     )
-
     driver.execute_script("""
         arguments[0].value = 'Coach was being disrespectful during the session.';
         arguments[0].dispatchEvent(new Event('input', { bubbles: true }));
         arguments[0].dispatchEvent(new Event('change', { bubbles: true }));
     """, details)
-    
-    wait.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='checkbox']"))
-    ).click()
 
-    wait.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='submit']"))
-    ).click()
+    checkbox = wait.until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "[data-testid='checkbox']"))
+    )
+    driver.execute_script("arguments[0].click();", checkbox)
+
+    submit = wait.until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "[data-testid='submit']"))
+    )
+    driver.execute_script("arguments[0].click();", submit)

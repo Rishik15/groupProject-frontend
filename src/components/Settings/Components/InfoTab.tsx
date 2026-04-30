@@ -55,7 +55,6 @@ export function InfoTab({ form, setForm, edit, role }: InfoTabProps) {
     if (!form) return;
 
     const existingDays = form.availability?.map((a) => a.day_of_week) ?? [];
-
     const nextDay = days.find((day) => !existingDays.includes(day));
 
     if (!nextDay) return;
@@ -90,48 +89,76 @@ export function InfoTab({ form, setForm, edit, role }: InfoTabProps) {
   };
 
   return (
-    <Card className="w-165 rounded-xl border border-[#E8E8EF]">
-      <Card.Footer className="flex flex-col items-start gap-4 pt-2 pl-2 pr-2">
+    <Card className="w-full max-w-3xl rounded-2xl border border-[#E8E8EF] bg-white shadow-sm">
+      <Card.Content className="flex flex-col gap-6 px-6 py-6">
         <ProfileSection form={form} role={role} />
 
         {role !== "coach" && (
-          <ClientMetricsSection
-            form={form}
-            edit={edit}
-            updateNumberField={updateNumberField}
-          />
-        )}
+          <section className="flex flex-col gap-3">
+            <div>
+              <h3 className="text-sm font-semibold text-[#0F0F14]">
+                Body Metrics
+              </h3>
+              <p className="mt-1 text-xs text-[#72728A]">
+                These values help personalize your fitness experience.
+              </p>
+            </div>
 
-        {role === "coach" && (
-          <>
-            <CoachStatsSection
+            <ClientMetricsSection
               form={form}
               edit={edit}
               updateNumberField={updateNumberField}
             />
+          </section>
+        )}
 
-            <CoachAvailabilitySection
-              availability={form.availability}
-              edit={edit}
-              updateAvailabilityField={updateAvailabilityField}
-              addAvailability={addAvailability}
-              removeAvailability={removeAvailability}
-            />
+        {role === "coach" && (
+          <>
+            <section className="flex flex-col gap-3">
+              <div>
+                <h3 className="text-sm font-semibold text-[#0F0F14]">
+                  Coach Overview
+                </h3>
+                <p className="mt-1 text-xs text-[#72728A]">
+                  Your pricing, rating, reviews, and active client count.
+                </p>
+              </div>
 
-            <CoachCertificationsSection
-              form={form}
-              edit={edit}
-              setForm={setForm}
-            />
+              <CoachStatsSection
+                form={form}
+                edit={edit}
+                updateNumberField={updateNumberField}
+              />
+            </section>
 
-            <CoachDescriptionBlock
-              form={form}
-              edit={edit}
-              updateField={updateField}
-            />
+            <section className="flex flex-col gap-3">
+              <CoachAvailabilitySection
+                availability={form.availability}
+                edit={edit}
+                updateAvailabilityField={updateAvailabilityField}
+                addAvailability={addAvailability}
+                removeAvailability={removeAvailability}
+              />
+            </section>
+
+            <section className="flex flex-col gap-3">
+              <CoachCertificationsSection
+                form={form}
+                edit={edit}
+                setForm={setForm}
+              />
+            </section>
+
+            <section className="flex flex-col gap-3">
+              <CoachDescriptionBlock
+                form={form}
+                edit={edit}
+                updateField={updateField}
+              />
+            </section>
           </>
         )}
-      </Card.Footer>
+      </Card.Content>
     </Card>
   );
 }

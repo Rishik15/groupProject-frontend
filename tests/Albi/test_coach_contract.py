@@ -10,7 +10,7 @@ import pytest
 
 BASE_URL = "http://localhost:5173"
 
-
+#working
 @pytest.fixture
 def driver():
     options = webdriver.ChromeOptions()

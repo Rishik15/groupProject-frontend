@@ -4,15 +4,15 @@ import { AccountDeletion } from "./AccountDeletion";
 import type { LucideIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import HelpModal from "../Modals/HelpModal";
 import BecomeCoachModal from "../Modals/BecomeCoachModal";
+import ReportModal from "../Modals/ReportModal";
 import { useAuth } from "../../../utils/auth/AuthContext";
 
 type OptionItem = {
   label: string;
   icon: LucideIcon;
   route?: string;
-  action?: "become_coach" | "switch_to_coach";
+  action?: "become_coach" | "switch_to_coach" | "report_coach";
 };
 
 type Props = {
@@ -24,10 +24,15 @@ const SettingOptions = ({ options, onLogout }: Props) => {
   const navigate = useNavigate();
   const { roles, coachModeActivated, setActiveMode } = useAuth();
 
-  const [helpOpen, setHelpOpen] = useState(false);
   const [becomeCoachOpen, setBecomeCoachOpen] = useState(false);
+  const [reportCoachOpen, setReportCoachOpen] = useState(false);
 
   const handleOptionClick = (option: OptionItem) => {
+    if (option.action === "report_coach") {
+      setReportCoachOpen(true);
+      return;
+    }
+
     if (option.action === "become_coach") {
       setBecomeCoachOpen(true);
       return;
@@ -39,11 +44,6 @@ const SettingOptions = ({ options, onLogout }: Props) => {
       sessionStorage.setItem("showCoachModeIntro", "true");
       setActiveMode("coach");
       navigate("/coach");
-      return;
-    }
-
-    if (option.route === "help") {
-      setHelpOpen(true);
       return;
     }
 
@@ -92,12 +92,12 @@ const SettingOptions = ({ options, onLogout }: Props) => {
         <AccountDeletion />
       </div>
 
-      <HelpModal setIsOpen={setHelpOpen} isOpen={helpOpen} />
-
       <BecomeCoachModal
         isOpen={becomeCoachOpen}
         setIsOpen={setBecomeCoachOpen}
       />
+
+      <ReportModal isOpen={reportCoachOpen} setIsOpen={setReportCoachOpen} />
     </div>
   );
 };

@@ -2,14 +2,14 @@ import { Tabs } from "@heroui/react";
 import { InfoTab } from "./InfoTab";
 import ProgressPhotos from "../ProgressPhotos";
 import SettingOptions from "./SettingsOptions";
+import MyReports from "./MyReports";
+import ProfileUpdatesTab from "./ProfileUpdatesTab";
 import {
   MessageCircle,
   UserRound,
-  CreditCard,
-  Bell,
-  HelpCircle,
   Dumbbell,
   ClipboardCheck,
+  Siren,
 } from "lucide-react";
 import { logout } from "../../../services/auth/logout";
 import type { LucideIcon } from "lucide-react";
@@ -29,7 +29,7 @@ type SettingOptionItem = {
   label: string;
   icon: LucideIcon;
   route?: string;
-  action?: "become_coach" | "switch_to_coach";
+  action?: "become_coach" | "switch_to_coach" | "report_coach";
 };
 
 type TabItem = {
@@ -40,9 +40,6 @@ type TabItem = {
 
 const coachOptions: SettingOptionItem[] = [
   { label: "Messages", icon: MessageCircle, route: "/coach/chat" },
-  { label: "Payments & Billing", icon: CreditCard, route: "/billing" },
-  { label: "Notifications", icon: Bell, route: "/notifications" },
-  { label: "Help & Support", icon: HelpCircle, route: "help" },
 ];
 
 const SettingTab = ({
@@ -89,10 +86,13 @@ const SettingTab = ({
   const clientOptions: SettingOptionItem[] = [
     { label: "Messages", icon: MessageCircle, route: "/client/chat" },
     { label: "Browse Coaches", icon: UserRound, route: "/client/coaches" },
-    { label: "Payments & Billing", icon: CreditCard, route: "/client/billing" },
-    { label: "Notifications", icon: Bell, route: "/notifications" },
+    {
+      label: "Payments and Subscriptions",
+      icon: UserRound,
+      route: "/client/billing",
+    },
+    { label: "Report Your Coach", icon: Siren, action: "report_coach" },
     coachApplicationOption,
-    { label: "Help & Support", icon: HelpCircle, route: "help" },
   ];
 
   const tabsConfig: Record<string, TabItem[]> = {
@@ -110,6 +110,11 @@ const SettingTab = ({
         component: <ProgressPhotos />,
       },
       {
+        id: "reports",
+        label: "Reports",
+        component: <MyReports />,
+      },
+      {
         id: "settings",
         label: "Settings",
         component: <SettingOptions options={clientOptions} onLogout={logout} />,
@@ -124,18 +129,17 @@ const SettingTab = ({
         ),
       },
       {
+        id: "profile-updates",
+        label: "Profile Updates",
+        component: <ProfileUpdatesTab />,
+      },
+      {
         id: "settings",
         label: "Settings",
         component: <SettingOptions options={coachOptions} onLogout={logout} />,
       },
     ],
-    admin: [
-      {
-        id: "users",
-        label: "Users",
-        component: <div>Admin Users</div>,
-      },
-    ],
+    admin: [],
   };
 
   const tabs = tabsConfig[role] ?? [];
@@ -145,6 +149,7 @@ const SettingTab = ({
       <Tabs
         selectedKey={selectedTab}
         onSelectionChange={(key) => setSelectedTab(String(key))}
+        className="w-full"
       >
         <Tabs.List className="flex w-fit gap-4 bg-transparent p-0">
           {tabs.map((tabItem) => (
@@ -160,9 +165,9 @@ const SettingTab = ({
         </Tabs.List>
 
         {tabs.map((tabItem) => (
-          <Tabs.Panel key={tabItem.id} id={tabItem.id}>
-            <div className="mx-auto mt-4 flex w-full max-w-3xl justify-center">
-              {tabItem.component}
+          <Tabs.Panel key={tabItem.id} id={tabItem.id} className="w-full">
+            <div className="mt-4 flex w-full justify-center">
+              <div className="px-12">{tabItem.component}</div>
             </div>
           </Tabs.Panel>
         ))}

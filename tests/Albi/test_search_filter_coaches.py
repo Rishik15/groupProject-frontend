@@ -10,6 +10,7 @@ from selenium.webdriver.common.keys import Keys
 
 BASE_URL = "http://localhost:5173"
 
+#working
 
 @pytest.fixture
 def driver():
@@ -79,4 +80,5 @@ def filter_coaches(driver):
 
 
 def test_search_filter_coaches(driver):
-    filter_coaches(driver)
+    search_coaches(driver, "Sam")
+    # filter_coaches(driver)

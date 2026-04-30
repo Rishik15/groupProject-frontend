@@ -81,7 +81,7 @@ const Billing = () => {
   };
 
   return (
-    <div className="px-16 py-8">
+    <div className="px-38 py-8">
       <BillingHeader />
       <div className="flex mt-8 gap-5">
         <PaymentMethodCard

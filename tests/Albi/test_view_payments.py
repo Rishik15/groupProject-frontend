@@ -11,6 +11,7 @@ import time
 
 BASE_URL = "http://localhost:5173"
 
+#working
 
 @pytest.fixture
 def driver():
@@ -52,5 +53,5 @@ def test_view_payments(driver):
     wait.until(EC.url_contains("/settings"))
 
     wait.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='Payments & Billing']"))
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='Payments and Subscriptions']"))
     ).click()
