@@ -24,9 +24,14 @@ async function postOnboarding(
   console.log("Onboarding payload JSON:", JSON.stringify(payload, null, 2));
 
   try {
+    console.log("Onboarding payload JSON:", JSON.stringify(payload, null, 2));
+    console.log("ABOUT TO POST:", path);
+
     const response = await api.post<OnboardingSuccessResponse>(path, payload);
 
+    console.log("POST SUCCESS:", response.status, response.data);
     return response.data ?? { message: "Onboarding completed successfully." };
+
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const backendMessage = error.response?.data?.error;
@@ -36,8 +41,7 @@ async function postOnboarding(
       }
 
       throw new Error(
-        `Onboarding request failed with status ${
-          error.response?.status ?? "unknown"
+        `Onboarding request failed with status ${error.response?.status ?? "unknown"
         }.`,
       );
     }

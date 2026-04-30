@@ -37,6 +37,7 @@ export default function CoachAvailabilitySection({
         {edit && (
           <Button
             onPress={addAvailability}
+            data-testid="add"
             className="h-10 rounded-xl bg-indigo-500 px-4 text-sm font-medium text-white"
           >
             <Plus size={17} />

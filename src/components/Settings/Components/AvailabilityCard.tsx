@@ -43,7 +43,7 @@ export default function AvailabilityCard({
 
   if (!edit) {
     return (
-      <Card className="rounded-2xl border border-[#E8E8EF] bg-[#FAFAFC] shadow-none">
+      <Card data-testid={`availability-card-${index}`} className="rounded-2xl border border-[#E8E8EF] bg-[#FAFAFC] shadow-none">
         <div className="flex items-center justify-between gap-4 px-5 py-4">
           <div className="flex items-center gap-4">
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-indigo-50 text-sm font-semibold text-indigo-600">
@@ -103,7 +103,7 @@ export default function AvailabilityCard({
                 }
               }}
             >
-              <TimeField.Input className="w-full outline-none">
+              <TimeField.Input className="w-full outline-none"               data-testid={`start-time-${index}`}>
                 {(segment) => <TimeField.Segment segment={segment} />}
               </TimeField.Input>
 
@@ -132,8 +132,11 @@ export default function AvailabilityCard({
                 }
               }}
             >
-              <TimeField.Input className="w-full outline-none">
+              <TimeField.Input className="w-full outline-none"
+              data-testid={`end-time-${index}`}
+              >
                 {(segment) => <TimeField.Segment segment={segment} />}
+
               </TimeField.Input>
 
               <Clock size={18} className="text-[#72728A]" />
@@ -144,7 +147,8 @@ export default function AvailabilityCard({
         <Button
           onPress={() => removeAvailability(index)}
           className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E8E8EF] bg-white text-gray-500 hover:bg-red-50 hover:text-red-500"
-        >
+          data-testid={`remove-${index}`}
+       >
           <X size={18} />
         </Button>
       </div>

@@ -34,7 +34,9 @@ export default function CertificationCard({
                     </p>
 
                     <Button
-                        className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 flex items-center justify-center" onPress={handleDelete}
+                        className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 flex items-center justify-center"
+                        onPress={handleDelete}
+                        data-testid={`delete-cert-${index}`}
                     >
                         <X size={18} />
                     </Button>
@@ -47,6 +49,7 @@ export default function CertificationCard({
                         onChange={(e) =>
                             updateField(index, "name", e.target.value)
                         }
+                        data-testid={`certification-name-${index}`}
                     />
                 </div>
 
@@ -57,6 +60,7 @@ export default function CertificationCard({
                         onChange={(e) =>
                             updateField(index, "provider", e.target.value)
                         }
+                        data-testid={`provider-name-${index}`}
                     />
                 </div>
 
@@ -67,24 +71,29 @@ export default function CertificationCard({
                         onChange={(e) =>
                             updateField(index, "description", e.target.value)
                         }
+                        data-testid={`description-name-${index}`}
                     />
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <CertificationDatePicker
+                        index={index}
                         label="Issue Date"
                         value={cert.issued_date}
                         onChange={(value) =>
                             updateField(index, "issued_date", value)
                         }
+                        data-testid={`Issue Date${index}`}
                     />
 
                     <CertificationDatePicker
+                        index={index}
                         label="Expires Date"
                         value={cert.expires_date}
                         onChange={(value) =>
                             updateField(index, "expires_date", value)
                         }
+                        data-testid={`Expires Date${index}`}
                     />
                 </div>
             </div>

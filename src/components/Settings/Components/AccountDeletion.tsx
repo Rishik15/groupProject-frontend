@@ -17,7 +17,7 @@ export function AccountDeletion() {
   };
   return (
     <Modal>
-      <Button className="rounded-md bg-transparent border border-red-300">
+      <Button className="rounded-md bg-transparent border border-red-300"       data-testid="delete-account">
         <Trash2 className="text-red-500" />
         <p className="text-red-500">Delete Account</p>
       </Button>
@@ -38,6 +38,7 @@ export function AccountDeletion() {
                 <Button
                   className="rounded-lg bg-[#E5484D] text-white"
                   onClick={deleteHandler}
+                  data-testid="delete-confirm"
                 >
                   Delete
                 </Button>

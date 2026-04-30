@@ -16,6 +16,7 @@ const NavLink = ({
 
   return (
     <Link
+      data-testid={label}
       to={route}
       className={`flex items-center gap-1.5 transition px-3 py-1 rounded-xl font-medium font-primary ${isActive
         ? "text-[#5659ed] bg-[#d5d5f5]"

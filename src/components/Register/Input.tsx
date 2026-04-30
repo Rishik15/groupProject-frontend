@@ -32,6 +32,7 @@ const RegisterInputs = ({
           </InputGroup.Prefix>
 
           <InputGroup.Input
+            data-testid="full_name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="First and last name"
@@ -48,6 +49,7 @@ const RegisterInputs = ({
           </InputGroup.Prefix>
 
           <InputGroup.Input
+            data-testid="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="name@email.com"
@@ -63,6 +65,7 @@ const RegisterInputs = ({
             <KeyRound className="size-4 text-muted" />
           </InputGroup.Prefix>
           <InputGroup.Input
+            data-testid="password"
             type={isVisible ? "text" : "password"}
             placeholder="Minimum 8 characters"
             value={password}

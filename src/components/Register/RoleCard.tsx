@@ -11,6 +11,7 @@ type RoleCardProps = {
 const RoleCard = ({ title, desc, icon, active, onClick }: RoleCardProps) => {
   return (
     <button
+      data-testid={title}
       onClick={onClick}
       className={`
       flex flex-col p-3

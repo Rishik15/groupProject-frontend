@@ -6,6 +6,7 @@ const RegFooter = ({ onSubmit }: { onSubmit: () => void }) => {
   return (
     <section className="pt-4 flex flex-col gap-2 items-center">
       <Button
+        data-testid="create_account"
         fullWidth
         onClick={onSubmit}
         className="bg-indigo-600 hover:bg-indigo-700 text-gray-200 font-semibold rounded-xl"

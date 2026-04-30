@@ -62,6 +62,7 @@ function SelectCardGroup({
               type="button"
               onClick={() => handleToggle(option.value)}
               className="w-full text-left"
+              data-testid={option.label}
             >
               <Card
                 className={[

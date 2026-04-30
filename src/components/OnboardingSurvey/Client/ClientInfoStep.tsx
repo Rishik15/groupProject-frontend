@@ -30,15 +30,15 @@ function ClientInfoStep({
   // consistent without repeating the same check in every field.
   const handleNonNegativeChange =
     (fieldName: "height" | "weight" | "goalWeight") =>
-    (event: ChangeEvent<HTMLInputElement>) => {
-      const value = event.target.value;
+      (event: ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
 
-      // Allow an empty string while the user is editing, but block negatives
-      // from entering state.
-      if (value === "" || Number(value) >= 0) {
-        onFieldChange(fieldName, value);
-      }
-    };
+        // Allow an empty string while the user is editing, but block negatives
+        // from entering state.
+        if (value === "" || Number(value) >= 0) {
+          onFieldChange(fieldName, value);
+        }
+      };
 
   const dateValue: DateValue | null = values.dateOfBirth
     ? parseDate(values.dateOfBirth)
@@ -69,6 +69,7 @@ function ClientInfoStep({
                 key={option.value}
                 type="button"
                 onClick={() => onFitnessLevelChange(option.value)}
+                data-testid={option.label}
                 className={[
                   "min-h-16 rounded-[18px] border px-1 py-1 text-center transition-all",
                   isSelected
@@ -95,6 +96,7 @@ function ClientInfoStep({
           </label>
           <Input
             type="number"
+            data-testid="height"
             value={values.height}
             placeholder="68"
             onChange={handleNonNegativeChange("height")}
@@ -108,6 +110,7 @@ function ClientInfoStep({
           </label>
           <Input
             type="number"
+            data-testid="weight"
             value={values.weight}
             placeholder="155"
             onChange={handleNonNegativeChange("weight")}
@@ -124,6 +127,7 @@ function ClientInfoStep({
           </label>
           <Input
             type="number"
+            data-testid="goal_weight"
             value={values.goalWeight}
             placeholder="145"
             onChange={handleNonNegativeChange("goalWeight")}
@@ -139,13 +143,14 @@ function ClientInfoStep({
 
         <DatePicker
           className="w-full"
+          data-testid="dob"
           value={dateValue}
           onChange={handleDateChange}
           maxValue={today(getLocalTimeZone())}
         >
           <DateField.Group fullWidth>
-            <DateField.Input>
-              {(segment) => <DateField.Segment segment={segment} />}
+            <DateField.Input data-testid="dob-input">
+              {(segment) => <DateField.Segment  segment={segment} />}
             </DateField.Input>
 
             <DateField.Suffix>
@@ -174,7 +179,7 @@ function ClientInfoStep({
                 </Calendar.GridHeader>
 
                 <Calendar.GridBody>
-                  {(date) => <Calendar.Cell date={date} />}
+                  {(date) => <Calendar.Cell date={date}       data-testid={`date-${date.toString()}`}/>}
                 </Calendar.GridBody>
               </Calendar.Grid>
 

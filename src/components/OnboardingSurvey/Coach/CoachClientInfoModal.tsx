@@ -42,6 +42,7 @@ export default function CoachClientInfoModal({
             <Modal.Footer>
               <Button
                 onPress={onContinue}
+                data-testid="Continue"
                 className="rounded-xl bg-indigo-500 text-white"
               >
                 Continue

@@ -42,6 +42,7 @@ export default function CoachStatsSection({
         <Label className="text-sm font-semibold text-[#0F0F14]">Price</Label>
 
         <Input
+          data-testid="price"
           type="number"
           step="0.01"
           min="0"

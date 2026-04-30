@@ -8,6 +8,7 @@ import type { CalendarDate } from "@internationalized/date";
 
 type Props = {
     label: string;
+    index: number;
     value: CalendarDate | null;
     onChange: (value: CalendarDate | null) => void;
 };
@@ -15,6 +16,7 @@ type Props = {
 export default function CertificationDatePicker({
     label,
     value,
+    index,
     onChange,
 }: Props) {
     return (
@@ -22,7 +24,7 @@ export default function CertificationDatePicker({
             <Label>{label}</Label>
 
             <DateField.Group fullWidth>
-                <DateField.Input>
+                <DateField.Input data-testid={label+index}>
                     {(segment) => <DateField.Segment segment={segment} />}
                 </DateField.Input>
 

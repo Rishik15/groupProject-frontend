@@ -9,6 +9,7 @@ import type { Dispatch, SetStateAction } from "react";
 import { GetCoachInfo } from "../../../services/Setting/GetCoachInfo";
 import { GetUserInfo } from "../../../services/Setting/GetUserInfo";
 import { useEffect } from "react";
+
 export type CertificationForm = {
   id?: number;
   name: string;
@@ -48,6 +49,7 @@ export default function CertificationModal({ form, setForm }: Props) {
       prev.map((cert, i) => (i === index ? { ...cert, [field]: value } : cert)),
     );
   };
+
   useEffect(() => {
     setCerts(initialCerts);
   }, [initialCerts]);
@@ -141,6 +143,7 @@ export default function CertificationModal({ form, setForm }: Props) {
       <Button
         className="ml-auto rounded-xl border border-gray-300 bg-white text-black"
         onPress={() => setOpen(true)}
+        data-testid="edit-certifications"
       >
         Edit Certifications
       </Button>
@@ -186,6 +189,7 @@ export default function CertificationModal({ form, setForm }: Props) {
                 <Button
                   className="bg-indigo-500 rounded-xl text-white"
                   onPress={addCertificate}
+                  data-testid="add-certification"
                 >
                   <Plus />
                   Add Certification
@@ -203,6 +207,7 @@ export default function CertificationModal({ form, setForm }: Props) {
                     className="bg-indigo-500 rounded-xl text-white"
                     onPress={handleSave}
                     isDisabled={!isValid()}
+                    data-testid="save"
                   >
                     Save
                   </Button>
