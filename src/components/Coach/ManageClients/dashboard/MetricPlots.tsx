@@ -57,7 +57,6 @@ const MetricPlots = ({
 }) => {
   const [data, setData] = useState<any[]>([]);
   const [nutrition, setNutrition] = useState<any>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchWeight = async () => {

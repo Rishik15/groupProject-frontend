@@ -13,11 +13,7 @@ type Props = {
   removePaymentMethod: (id: number) => void;
 };
 
-const AddPaymentMethodModal = ({
-  payment_methods,
-  addCardToList,
-  removePaymentMethod,
-}: Props) => {
+const AddPaymentMethodModal = ({ addCardToList }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const initialForm: PaymentMethodForm = {

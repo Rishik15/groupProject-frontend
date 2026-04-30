@@ -1,5 +1,5 @@
 import { Button } from "@heroui/react";
-import { CheckCircle2, TrendingUp, XCircle } from "lucide-react";
+import { CheckCircle2, XCircle } from "lucide-react";
 import {
   formatAdminCurrency,
   formatAdminDateTime,
@@ -19,7 +19,10 @@ const PriceRequestCard = ({
   onReject,
 }: PriceRequestCardProps) => {
   const delta =
-    request.current_price !== null && request.current_price !== undefined
+    request.current_price !== null &&
+    request.current_price !== undefined &&
+    request.proposed_price !== null &&
+    request.proposed_price !== undefined
       ? request.proposed_price - request.current_price
       : null;
 

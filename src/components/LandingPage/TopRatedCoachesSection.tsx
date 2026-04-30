@@ -11,7 +11,6 @@ const TopRatedCoachesSection = () => {
   const navigate = useNavigate();
 
   // Current working route for temporary actions.
-  const landingRoute = "/landing";
 
   useEffect(() => {
     const loadCoaches = async () => {
