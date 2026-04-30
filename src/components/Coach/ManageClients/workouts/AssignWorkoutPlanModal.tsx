@@ -44,7 +44,6 @@ export default function AssignWorkoutPlanModal({
   const [isAssigning, setIsAssigning] = useState(false);
   const [message, setMessage] = useState("");
 
-  const plans = activeTab === "coach" ? coachPlans : systemPlans;
   const isLoading =
     activeTab === "coach" ? isLoadingCoachPlans : isLoadingSystemPlans;
 

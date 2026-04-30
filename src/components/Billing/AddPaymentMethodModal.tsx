@@ -14,9 +14,7 @@ type Props = {
 };
 
 const AddPaymentMethodModal = ({
-  payment_methods,
   addCardToList,
-  removePaymentMethod,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 

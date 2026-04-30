@@ -1,4 +1,4 @@
-import { Modal, Button, Card, ScrollShadow } from "@heroui/react";
+import { Modal, ScrollShadow } from "@heroui/react";
 import type { Plan } from "../../services/RecommendationExercises/types";
 import AllExerciseCard from "./AllExerciseCard";
 

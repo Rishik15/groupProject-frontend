@@ -78,7 +78,6 @@ function CoachSummaryStep({
   bio,
   certifications,
   profileDescription,
-  isClientBecomingCoach = false,
 }: CoachSummaryStepProps) {
   const availabilityByDay = coachDaysOfWeek
     .map((dayOfWeek) => ({

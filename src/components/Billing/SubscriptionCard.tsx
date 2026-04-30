@@ -1,4 +1,4 @@
-import { Avatar, Button, Card } from "@heroui/react";
+import { Avatar, Card } from "@heroui/react";
 import type { Contract } from "./type";
 
 type Props = {

@@ -9,7 +9,7 @@ type Props = {
 
 };
 
-const SettingHeader = ({ edit, setEdit, selectedTab, onClick }: Props) => {
+const SettingHeader = ({ edit, selectedTab, onClick }: Props) => {
 
 
 
