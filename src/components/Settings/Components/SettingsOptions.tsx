@@ -60,6 +60,7 @@ const SettingOptions = ({ options, onLogout }: Props) => {
 
           return (
             <Button
+              data-testid={option.label}
               key={option.label}
               onPress={() => handleOptionClick(option)}
               className={`w-full h-[50px] px-6 flex items-center justify-between bg-transparent hover:bg-[#f9fafb] rounded-none ${

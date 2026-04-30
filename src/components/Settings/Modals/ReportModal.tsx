@@ -128,6 +128,7 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
 
                       return (
                         <Card
+                          data-testid="coach"
                           key={`${coach.coach_id}-${coach.contract_status}`}
                           onClick={() => handleSelectCoach(coach)}
                           className={`flex cursor-pointer flex-row items-center gap-3 border p-3 transition ${
@@ -194,7 +195,10 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                       placeholder="Select a reason"
                       className="w-full"
                     >
-                      <Select.Trigger className="h-[48px] w-full rounded-xl border border-gray-200 bg-white px-4">
+                      <Select.Trigger
+                        data-testid="select"
+                        className="h-[48px] w-full rounded-xl border border-gray-200 bg-white px-4"
+                      >
                         <Select.Value />
                         <Select.Indicator />
                       </Select.Trigger>
@@ -230,6 +234,7 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
                   <div className="flex flex-col gap-2">
                     <Label>Details</Label>
                     <TextArea
+                      data-testid="details"
                       aria-label="Report details"
                       value={details}
                       onChange={(e) => setDetails(e.target.value)}
@@ -253,6 +258,7 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
 
                     {isCurrentCoach && (
                       <Checkbox
+                        data-testid="checkbox"
                         isSelected={terminateRequested}
                         onChange={(checked) =>
                           setTerminateRequested(Boolean(checked))
@@ -288,6 +294,7 @@ const ReportModal = ({ isOpen, setIsOpen }: Prop) => {
 
               {selectedCoach && (
                 <Button
+                  data-testid="submit"
                   className="rounded-xl bg-indigo-500 text-white"
                   onPress={handleSubmit}
                   isDisabled={!reason}

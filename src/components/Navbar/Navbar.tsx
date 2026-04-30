@@ -132,7 +132,7 @@ export default function Navbar({
   return (
     <nav className="fixed top-0 left-0 w-full z-50 border-b bg-white">
       <div className="h-14 max-w-7xl mx-auto px-16 flex items-center justify-between">
-        <Link to={parent} className="flex items-center gap-2">
+        <Link to={parent} className="flex items-center gap-2" >
           <div className="text-[12px] text-white font-bold w-7 h-7 flex items-center justify-center bg-[#5B5EF4] rounded-lg p-0">
             βF
           </div>
@@ -142,6 +142,7 @@ export default function Navbar({
         <div className="flex items-center gap-3 text-sm font-medium">
           {navItems.map((item) => (
             <NavLink
+              data-testid={item.label}
               key={item.label}
               label={item.label}
               icon={item.icon}
