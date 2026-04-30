@@ -20,7 +20,7 @@ type SettingsProps = {
 };
 
 const Settings = ({ role, tab }: SettingsProps) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [, setUser] = useState<User | null>(null);
   const [form, setForm] = useState<SettingsForm | null>(null);
   const [edit, setEdit] = useState(false);
   const [selectedTab, setSelectedTab] = useState(tab);
