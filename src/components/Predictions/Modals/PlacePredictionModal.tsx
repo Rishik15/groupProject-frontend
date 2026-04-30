@@ -4,9 +4,12 @@ import { CheckCircle2, Coins, TrendingUp } from "lucide-react";
 import type { PredictionMarket } from "../../../utils/Interfaces/Predictions/predictionMarket";
 import type { PlacePredictionBetPayload } from "../../../utils/Interfaces/Predictions/predictionForms";
 
+type PredictionSide = "yes" | "no";
+
 type PlacePredictionModalProps = {
   isOpen: boolean;
   market?: PredictionMarket | null;
+  initialSide?: PredictionSide;
   walletBalance: number;
   isSubmitting?: boolean;
   error?: string | null;
@@ -14,11 +17,10 @@ type PlacePredictionModalProps = {
   onSubmit: (payload: PlacePredictionBetPayload) => void | Promise<void>;
 };
 
-type PredictionSide = "yes" | "no";
-
 export default function PlacePredictionModal({
   isOpen,
   market,
+  initialSide = "yes",
   walletBalance,
   isSubmitting = false,
   error,
@@ -26,7 +28,7 @@ export default function PlacePredictionModal({
   onSubmit,
 }: PlacePredictionModalProps) {
   const [predictionValue, setPredictionValue] =
-    React.useState<PredictionSide>("yes");
+    React.useState<PredictionSide>(initialSide);
   const [pointsWagered, setPointsWagered] = React.useState<string>("");
   const [validationError, setValidationError] = React.useState<string | null>(
     null,
@@ -34,10 +36,10 @@ export default function PlacePredictionModal({
 
   React.useEffect(() => {
     if (!isOpen) return;
-    setPredictionValue("yes");
+    setPredictionValue(initialSide);
     setPointsWagered("");
     setValidationError(null);
-  }, [isOpen, market?.market_id]);
+  }, [isOpen, market?.market_id, initialSide]);
 
   const numericWager = Number(pointsWagered || 0);
 

@@ -34,6 +34,8 @@ import type { PredictionMarket } from "../../utils/Interfaces/Predictions/predic
 import type { PredictionSummary } from "../../utils/Interfaces/Predictions/predictionSummary";
 import type { PredictionWallet } from "../../utils/Interfaces/Predictions/predictionWallet";
 
+type PredictionSide = "yes" | "no";
+
 type PageData = {
   wallet: PredictionWallet | null;
   summary: PredictionSummary | null;
@@ -84,6 +86,8 @@ export default function Predictions() {
   const [selectedMarket, setSelectedMarket] = useState<PredictionMarket | null>(
     null,
   );
+  const [selectedPredictionSide, setSelectedPredictionSide] =
+    useState<PredictionSide>("yes");
   const [selectedCompletedMarket, setSelectedCompletedMarket] =
     useState<PredictionMarket | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -173,16 +177,28 @@ export default function Predictions() {
     void loadAllClientData("initial");
   }, [loadAllClientData]);
 
-  const gamblingDenMarkets = useMemo(
-    () => data.openMarkets.filter(isStillBettable),
-    [data.openMarkets],
-  );
+  const gamblingDenMarkets = useMemo(() => {
+    const currentUserId = data.wallet?.user_id ?? null;
+    const betMarketIds = new Set(data.myBets.map((bet) => bet.market_id));
 
-  const openBetModal = useCallback((market: PredictionMarket | null) => {
-    setSelectedMarket(market);
-    setBetError(null);
-    setIsBetModalOpen(Boolean(market));
-  }, []);
+    return data.openMarkets.filter((market) => {
+      const alreadyBet = betMarketIds.has(market.market_id);
+      const ownsMarket =
+        currentUserId !== null && market.creator_user_id === currentUserId;
+
+      return isStillBettable(market) && !alreadyBet && !ownsMarket;
+    });
+  }, [data.openMarkets, data.myBets, data.wallet?.user_id]);
+
+  const openBetModal = useCallback(
+    (market: PredictionMarket | null, side: PredictionSide = "yes") => {
+      setSelectedMarket(market);
+      setSelectedPredictionSide(side);
+      setBetError(null);
+      setIsBetModalOpen(Boolean(market));
+    },
+    [],
+  );
 
   const openCancelModal = useCallback((market: PredictionMarket | null) => {
     setSelectedMarket(market);
@@ -231,6 +247,7 @@ export default function Predictions() {
         await placeBet(payload);
         setIsBetModalOpen(false);
         setSelectedMarket(null);
+        setSelectedPredictionSide("yes");
         setActiveTab("my-bets");
         await loadAllClientData("refresh");
       } catch (error) {
@@ -315,7 +332,7 @@ export default function Predictions() {
           markets={gamblingDenMarkets}
           isLoading={isInitialLoading}
           onRefresh={handleRefresh}
-          onSelectSide={(market) => openBetModal(market)}
+          onSelectSide={(market, side) => openBetModal(market, side)}
         />
       );
     }
@@ -468,6 +485,7 @@ export default function Predictions() {
         <PlacePredictionModal
           isOpen={isBetModalOpen}
           market={selectedMarket}
+          initialSide={selectedPredictionSide}
           walletBalance={data.wallet?.balance ?? 0}
           isSubmitting={isBetSubmitting}
           error={betError}
@@ -475,6 +493,7 @@ export default function Predictions() {
             if (isBetSubmitting) return;
             setIsBetModalOpen(false);
             setSelectedMarket(null);
+            setSelectedPredictionSide("yes");
             setBetError(null);
           }}
           onSubmit={handlePlaceBet}
