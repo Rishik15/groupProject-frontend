@@ -1,0 +1,56 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend-ci.yml"
+
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend-ci.yml"
+
+jobs:
+  frontend:
+    name: Build and Test Frontend
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Selenium test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest selenium webdriver-manager
+
+      - name: Start frontend preview server
+        run: |
+          npm run preview -- --host 0.0.0.0 --port 4173 &
+          sleep 5
+
+      - name: Run Selenium tests
+        run: python3 -m pytest tests/ -v
