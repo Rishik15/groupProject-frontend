@@ -35,7 +35,7 @@ def driver():
 
 
 def test_coach_contract(driver):
-    login(driver, "example@client.com", "example1", "/client")
+    login(driver, "alex@example.com", "Rishik@1", "/client")
     driver.refresh()
 
     wait = WebDriverWait(driver, 10)

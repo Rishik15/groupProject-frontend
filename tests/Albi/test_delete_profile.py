@@ -32,7 +32,7 @@ def driver():
 
 
 def test_delete_profile(driver):
-    login(driver, "example@client.com", "example1", "/client")
+    login(driver, "alex@example.com", "Rishik@1", "/client")
 
     WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='navbar-profile-icon']"))
