@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "@heroui/react";
 import BillingHeader from "../../components/Billing/BillingHeader";
 import PaymentHistoryCard from "../../components/Billing/PaymentHistoryCard";
 import PaymentMethodCard from "../../components/Billing/PaymentMethodCard";
@@ -10,16 +11,19 @@ import {
   type PaymentHistoryDetail,
   type PaymentMethod,
 } from "../../components/Billing/type";
-import { getClientContract } from "../../services/billing/get_active_contract";
 import InvoiceModal from "../../components/Billing/InvoiceModal";
 import { set_default_payment } from "../../services/billing/set_default_payment";
 import { delete_payment_method } from "../../services/billing/delete_payment_method";
+import { getSubscription } from "@/services/billing/get_subscription";
+import { startSubscription } from "@/services/billing/start_subscription";
+import { cancelSubscription } from "@/services/billing/cancel_subscription";
 
 const Billing = () => {
   const [payment_methods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [history_list, setHistoryList] = useState<PaymentHistoryDetail[]>([]);
   const [contract, setContract] = useState<Contract | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isSubscriptionUpdating, setIsSubscriptionUpdating] = useState(false);
   const [selectedPayment, setSelectedPayment] =
     useState<PaymentHistoryDetail | null>(null);
 
@@ -27,31 +31,42 @@ const Billing = () => {
     setSelectedPayment(payment);
     setIsOpen(true);
   };
+
+  const fetchPaymentMethods = async () => {
+    const res = await get_PaymentMethods();
+    setPaymentMethods(res.data);
+  };
+
+  const fetchHistory = async () => {
+    const res = await get_PaymentHistory();
+    setHistoryList(res.data);
+  };
+
+  const fetchSubscription = async () => {
+    const res = await getSubscription();
+    setContract(res.data.contract);
+  };
+
   useEffect(() => {
-    const get_Payments = async () => {
-      const res = await get_PaymentMethods();
-      setPaymentMethods(res.data);
-    };
-
-    const get_History = async () => {
-      const res = await get_PaymentHistory();
-      setHistoryList(res.data);
-      console.log(res.data);
-    };
-
-    const get_Contract = async () => {
-      const res = await getClientContract();
-      setContract(res.data.contract);
-      console.log(res.data);
-    };
-
-    get_Contract();
-    get_History();
-    get_Payments();
+    fetchSubscription();
+    fetchHistory();
+    fetchPaymentMethods();
   }, []);
 
   const addCardToList = (newMethod: PaymentMethod) => {
-    setPaymentMethods((prev) => [...prev, newMethod]);
+    setPaymentMethods((prev) => {
+      if (newMethod.is_default === 1) {
+        return [
+          newMethod,
+          ...prev.map((method) => ({
+            ...method,
+            is_default: 0,
+          })),
+        ];
+      }
+
+      return [...prev, newMethod];
+    });
   };
 
   const removePaymentMethod = async (id: number) => {
@@ -77,12 +92,71 @@ const Billing = () => {
         is_default: m.payment_method_id === id ? 1 : 0,
       })),
     );
+
     await set_default_payment(id);
+  };
+
+  const handleStartSubscription = async () => {
+    const hasDefaultCard = payment_methods.some(
+      (method) => method.is_default === 1,
+    );
+
+    if (!hasDefaultCard) {
+      toast("Add a default payment method first", {
+        description:
+          "A default card is required before starting a subscription.",
+        timeout: 4000,
+      });
+      return;
+    }
+
+    try {
+      setIsSubscriptionUpdating(true);
+
+      const res = await startSubscription();
+      setContract(res.data.contract);
+
+      toast("Subscription started", {
+        description:
+          "Your first subscription payment will be added after one month.",
+        timeout: 4000,
+      });
+    } catch (err: any) {
+      toast("Could not start subscription", {
+        description: err?.response?.data?.error || "Please try again.",
+        timeout: 4000,
+      });
+    } finally {
+      setIsSubscriptionUpdating(false);
+    }
+  };
+
+  const handleCancelSubscription = async () => {
+    try {
+      setIsSubscriptionUpdating(true);
+
+      const res = await cancelSubscription();
+      setContract(res.data.contract);
+
+      toast("Subscription cancelled", {
+        description:
+          "Your coach contract is still active, but monthly billing is off.",
+        timeout: 4000,
+      });
+    } catch (err: any) {
+      toast("Could not cancel subscription", {
+        description: err?.response?.data?.error || "Please try again.",
+        timeout: 4000,
+      });
+    } finally {
+      setIsSubscriptionUpdating(false);
+    }
   };
 
   return (
     <div className="px-38 py-8">
       <BillingHeader />
+
       <div className="flex mt-8 gap-5">
         <PaymentMethodCard
           payment_methods={payment_methods}
@@ -90,6 +164,7 @@ const Billing = () => {
           addCardToList={addCardToList}
           setDefault={setDefault}
         />
+
         <PaymentHistoryCard
           historyList={history_list}
           openInvoice={openInvoice}
@@ -97,8 +172,14 @@ const Billing = () => {
       </div>
 
       <div className="mt-8">
-        <SubscriptionCard contract={contract} />
+        <SubscriptionCard
+          contract={contract}
+          isUpdating={isSubscriptionUpdating}
+          onStartSubscription={handleStartSubscription}
+          onCancelSubscription={handleCancelSubscription}
+        />
       </div>
+
       <InvoiceModal
         isOpen={isOpen}
         setIsOpen={setIsOpen}

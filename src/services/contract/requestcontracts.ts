@@ -40,10 +40,22 @@ export interface ClientCoachStatus {
 
 export interface ContractRequestPayload {
   coach_id: number;
+  is_recurring: boolean;
   training_reason: string;
   goals: string;
   preferred_schedule: string;
   notes: string;
+  payment_method_id?: number;
+  card_number?: string;
+  card_brand?: string;
+  expiry_month?: number;
+  expiry_year?: number;
+}
+
+export interface ContractRequestResponse {
+  message: string;
+  contract_id?: number | null;
+  payment_method_id?: number | null;
 }
 
 export async function getCoachProfile(coach_id: number): Promise<CoachProfile> {
@@ -98,7 +110,9 @@ export async function getClientCoachStatus(
   };
 }
 
-export async function requestCoachContract(payload: ContractRequestPayload) {
+export async function requestCoachContract(
+  payload: ContractRequestPayload,
+): Promise<ContractRequestResponse> {
   console.log("[requestCoachContract] payload:", payload);
 
   const { data } = await api.post("/contract/requestContract", payload);

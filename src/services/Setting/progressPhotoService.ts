@@ -58,3 +58,17 @@ export const uploadProgressPhoto = async (params: {
 
   return response.data;
 };
+
+export const deleteProgressPhoto = async (params: {
+  progressPhotoId: number;
+  mode?: string;
+}) => {
+  const response = await api.delete("/client/progress-photo", {
+    params: {
+      progress_photo_id: params.progressPhotoId,
+      mode: params.mode ?? "client",
+    },
+  });
+
+  return response.data;
+};

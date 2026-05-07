@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button, Card, Input, Label, TextArea, TextField } from "@heroui/react";
 import MoodSelector from "./MoodSelector";
 import { File, Moon, Weight } from "lucide-react";
@@ -8,6 +8,10 @@ type WellnessFormProps = {
   setMoodScore: React.Dispatch<React.SetStateAction<number>>;
   notes: string;
   setNotes: React.Dispatch<React.SetStateAction<string>>;
+  weight: string;
+  setWeight: React.Dispatch<React.SetStateAction<string>>;
+  sleep: string;
+  setSleep: React.Dispatch<React.SetStateAction<string>>;
   onSubmit: () => Promise<void>;
   loading: boolean;
 };
@@ -17,12 +21,13 @@ const WellnessForm = ({
   setMoodScore,
   notes,
   setNotes,
+  weight,
+  setWeight,
+  sleep,
+  setSleep,
   onSubmit,
   loading,
 }: WellnessFormProps) => {
-  const [weight, setWeight] = useState("");
-  const [sleep, setSleep] = useState("");
-
   const handleWeightChange = (value: string) => {
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
       setWeight(value);

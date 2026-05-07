@@ -116,6 +116,10 @@ const ClientLayout = () => {
 
           <Route path="recommendation" element={<Recommendation />} />
           <Route path="billing" element={<Billing />} />
+          <Route
+            path="reports"
+            element={<Settings role="client" tab="reports" />}
+          />
         </Routes>
       </div>
     </section>

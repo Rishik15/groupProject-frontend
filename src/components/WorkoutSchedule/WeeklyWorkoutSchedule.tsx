@@ -149,7 +149,7 @@ export default function WeeklyWorkoutSchedule() {
   }
 
   return (
-    <>
+    <div className="px-12">
       {errorMessage ? (
         <div
           className="mb-4 rounded-2xl px-4 py-3 text-[11.25px] text-[#72728A]"
@@ -188,6 +188,6 @@ export default function WeeklyWorkoutSchedule() {
         onUpdate={handleUpdateSession}
         onDelete={handleDeleteSession}
       />
-    </>
+    </div>
   );
 }

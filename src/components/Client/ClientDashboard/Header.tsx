@@ -66,7 +66,7 @@ const DashboardHeader = ({ onActivityLogged }: DashboardHeaderProps) => {
             </div>
           </Button>
 
-          <WellnessCheck />
+          <WellnessCheck onSurveySubmitted={onActivityLogged} />
         </div>
       </section>
 

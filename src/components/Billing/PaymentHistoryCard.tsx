@@ -11,7 +11,7 @@ type Props = {
 const PaymentHistoryCard = ({ openInvoice, historyList }: Props) => {
   return (
     <Card className="w-full border rounded-xl p-5 flex flex-col">
-      <div className="flex items-center">
+      <div className="flex items-center gap-2">
         <div className="flex justify-center items-center bg-gray-100 rounded-lg w-8 h-8">
           <FileText />
         </div>
@@ -19,9 +19,8 @@ const PaymentHistoryCard = ({ openInvoice, historyList }: Props) => {
         <p className="font-bold">Payment History</p>
       </div>
 
-      <div className="grid grid-cols-5 items-center px-4 mt-3 pb-4 text-sm text-gray-500 border-b">
+      <div className="grid grid-cols-4 items-center px-4 mt-3 pb-4 text-sm text-gray-500 border-b">
         <p>Date</p>
-        <p>Description</p>
         <p>Coach</p>
         <p>Amount</p>
         <p>Status</p>
