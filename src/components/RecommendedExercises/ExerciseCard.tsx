@@ -10,9 +10,8 @@ type Prop = {
 };
 
 export type Exercise = {
-  day_label: string;
-  day_order: number;
   equipment: string;
+  exercise_id: number;
   exercise_name: string;
   order_in_workout: number;
   reps_goal: number;
@@ -21,10 +20,19 @@ export type Exercise = {
   weight_goal: number | null;
 };
 
-export type ExerciseResponse = {
-  exercise_count: number;
+export type Day = {
+  day_id: number;
+  day_label: string;
+  day_order: number;
   exercises: Exercise[];
-  plan_id: string;
+};
+
+export type ExerciseResponse = {
+  day_count: number;
+  exercise_count: number;
+  message: string;
+  plan_id: number;
+  days: Day[];
 };
 
 export default function ExerciseCard({ plan }: Prop) {
@@ -58,6 +66,7 @@ export default function ExerciseCard({ plan }: Prop) {
         },
       );
 
+      console.log(res.data)
       setExerciseData(res.data);
       setIsModalOpen(true);
     } catch (err) {

@@ -2,6 +2,7 @@ import { Modal, Button, ScrollShadow, Card } from "@heroui/react";
 import type { ExerciseResponse } from "./ExerciseCard";
 import { useState } from "react";
 import assign_plan from "../../services/RecommendationExercises/assignPlan";
+
 type Props = {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
@@ -25,24 +26,19 @@ const PlanDetailModal = ({
   days,
   duration,
 }: Props) => {
-  const grouped: Record<
-    number,
-    {
-      dayLabel: string;
-      exercises: ExerciseResponse["exercises"];
-    }
-  > = {};
+  const [submit, setSubmit] = useState(false);
 
-  exerciseData?.exercises.forEach((ex) => {
-    if (!grouped[ex.day_order]) {
-      grouped[ex.day_order] = {
-        dayLabel: ex.day_label,
-        exercises: [],
-      };
-    }
+  const groupedDays = (exerciseData?.days ?? [])
+    .slice()
+    .sort((a, b) => a.day_order - b.day_order)
+    .map((day) => ({
+      dayOrder: day.day_order,
+      dayLabel: day.day_label,
+      exercises: [...day.exercises].sort(
+        (a, b) => a.order_in_workout - b.order_in_workout,
+      ),
+    }));
 
-    grouped[ex.day_order].exercises.push(ex);
-  });
   const handleAssign = async () => {
     try {
       await assign_plan(plan_id);
@@ -51,17 +47,6 @@ const PlanDetailModal = ({
       console.error("Failed to assign plan:", err);
     }
   };
-
-  const groupedDays = Object.entries(grouped)
-    .sort((a, b) => Number(a[0]) - Number(b[0]))
-    .map(([dayOrder, value]) => ({
-      dayOrder: Number(dayOrder),
-      dayLabel: value.dayLabel,
-      exercises: value.exercises.sort(
-        (a, b) => a.order_in_workout - b.order_in_workout,
-      ),
-    }));
-  const [submit, setSubmit] = useState(false);
 
   return (
     <Modal>
@@ -88,22 +73,17 @@ const PlanDetailModal = ({
                         <p className="text-gray-500">Goal</p>
                         <p className="font-semibold text-gray-900">{goal}</p>
                       </div>
-
                       <div className="rounded-xl bg-gray-50 p-3">
                         <p className="text-gray-500">Level</p>
                         <p className="font-semibold text-gray-900">{level}</p>
                       </div>
-
                       <div className="rounded-xl bg-gray-50 p-3">
                         <p className="text-gray-500">Schedule</p>
                         <p className="font-semibold text-gray-900">{days}</p>
                       </div>
-
                       <div className="rounded-xl bg-gray-50 p-3">
                         <p className="text-gray-500">Duration</p>
-                        <p className="font-semibold text-gray-900">
-                          {duration}
-                        </p>
+                        <p className="font-semibold text-gray-900">{duration}</p>
                       </div>
                     </div>
                   </Card>
@@ -139,7 +119,6 @@ const PlanDetailModal = ({
                                 {ex.equipment}
                               </p>
                             </div>
-
                             <div className="shrink-0 text-sm font-semibold text-gray-700">
                               {ex.sets_goal} × {ex.reps_goal}
                             </div>
@@ -160,11 +139,11 @@ const PlanDetailModal = ({
                 Close
               </Button>
               <Button
-                className={`${
+                className={
                   submit
                     ? "h-11 rounded-xl border-green-500 bg-[#E4FBF0] text-[#5E8F7E]"
                     : "h-11 rounded-xl bg-indigo-500 font-bold text-white"
-                }`}
+                }
                 onPress={handleAssign}
               >
                 {submit ? "Assigned" : "Assign Plan"}
