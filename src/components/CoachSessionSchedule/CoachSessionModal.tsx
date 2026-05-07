@@ -69,7 +69,6 @@ export default function CoachSessionModal({
   onCreate,
   onUpdate,
   onDelete,
-  onStatusChange,
 }: CoachSessionModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");

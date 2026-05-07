@@ -67,7 +67,6 @@ export default function CoachSessionForm({
   date,
   startTime,
   endTime,
-  isEditing,
   onContractChange,
   onDescriptionChange,
   onNotesChange,
