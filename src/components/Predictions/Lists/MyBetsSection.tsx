@@ -49,37 +49,37 @@ const SectionBlock = ({
   onToggle,
   onViewResult,
 }: SectionBlockProps) => (
-  <section className="space-y-2 rounded-2xl border border-slate-200 bg-white p-4">
+  <section className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5">
     <button
       type="button"
       onClick={onToggle}
-      className="flex w-full items-start justify-between gap-3 text-left"
+      className="flex w-full items-start justify-between gap-4 text-left"
       aria-expanded={isOpen}
     >
-      <div>
+      <div className="min-w-0 space-y-1">
         <h3 className="text-base font-semibold text-slate-900">{title}</h3>
         <p className="text-[13.125px] text-slate-500">{description}</p>
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="rounded-full bg-slate-100 px-3 py-1 text-[11.25px] font-semibold text-slate-700">
+      <div className="flex shrink-0 items-center gap-3">
+        <div className="rounded-full bg-slate-100 px-3 py-1.5 text-[11.25px] font-semibold text-slate-700">
           {items.length}
         </div>
+
         <ChevronDown
-          className={`h-4 w-4 text-slate-500 transition-transform ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={`h-4 w-4 text-slate-500 transition-transform ${isOpen ? "rotate-180" : ""
+            }`}
         />
       </div>
     </button>
 
     {isOpen ? (
       items.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-[13.125px] text-slate-500">
+        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-5 text-[13.125px] text-slate-500">
           Nothing to show in this section yet.
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <div className="grid grid-cols-2 gap-4 [&>*]:!mx-0 [&>*]:!w-full [&>*]:!max-w-none">
           {items.map((bet) => (
             <MyBetCard
               key={bet.prediction_id}
@@ -113,7 +113,7 @@ export default function MyBetsSection({
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <SectionBlock
         title="Open Bets"
         description="Markets that are still open and actively running."
