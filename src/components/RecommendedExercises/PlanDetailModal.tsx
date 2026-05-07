@@ -50,7 +50,11 @@ const PlanDetailModal = ({
 
   return (
     <Modal>
-      <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal.Backdrop
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        variant="blur"
+      >
         <Modal.Container>
           <Modal.Dialog className="max-w-2xl">
             <Modal.Header>
@@ -65,7 +69,7 @@ const PlanDetailModal = ({
             </Modal.Header>
 
             <Modal.Body className="mt-5">
-              <ScrollShadow className="max-h-[420px] pr-2">
+              <ScrollShadow className="max-h-105 pr-2">
                 <div className="space-y-4">
                   <Card className="rounded-2xl border border-gray-200 p-4 shadow-none">
                     <div className="grid grid-cols-2 gap-3 text-sm">
@@ -83,7 +87,9 @@ const PlanDetailModal = ({
                       </div>
                       <div className="rounded-xl bg-gray-50 p-3">
                         <p className="text-gray-500">Duration</p>
-                        <p className="font-semibold text-gray-900">{duration}</p>
+                        <p className="font-semibold text-gray-900">
+                          {duration}
+                        </p>
                       </div>
                     </div>
                   </Card>
