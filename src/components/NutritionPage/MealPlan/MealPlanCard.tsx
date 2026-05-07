@@ -11,7 +11,6 @@ type Props = {
 const MealPlanCard = ({ mealPlan, onAssign }: Props) => {
   const totalMeals = mealPlan.meals.length;
 
-
   return (
     <Card className="h-[550px] w-full border border-[#E6E6EE] bg-white p-0 shadow-sm">
       <Card.Header className="flex flex-col gap-3 px-4 py-4 lg:flex-row lg:items-center lg:justify-between">

@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { Button, Pagination } from "@heroui/react";
 import { useAuth } from "../../utils/auth/AuthContext";
 import CategoryFilter from "../../components/CreateWorkoutPlan/CategoryFilter";
@@ -18,8 +17,8 @@ import DaySetup from "../../components/CreateWorkoutPlan/DaySetup";
 import DayTabs from "../../components/CreateWorkoutPlan/DayTabs";
 import CustomModal from "@/components/global/Modal";
 import { getExercises } from "../../services/workout/getExercises";
+import api from "../../services/api";
 
-const BASE_URL = "http://localhost:8080";
 const ITEMS_PER_PAGE = 6;
 
 interface WorkoutDay {
@@ -281,23 +280,19 @@ export default function CreateWorkoutPlan() {
     try {
       setSaving(true);
 
-      await axios.post(
-        `${BASE_URL}/workouts/create`,
-        {
-          name: planName,
-          days: days.map((day, index) => ({
-            day_number: index + 1,
-            day_label: day.label.trim(),
-            exercises: day.exercises.map(({ exercise, sets, reps }, order) => ({
-              exercise_id: exercise.exercise_id,
-              sets,
-              reps,
-              exercise_order: order + 1,
-            })),
+      await api.post("/workouts/create", {
+        name: planName,
+        days: days.map((day, index) => ({
+          day_number: index + 1,
+          day_label: day.label.trim(),
+          exercises: day.exercises.map(({ exercise, sets, reps }, order) => ({
+            exercise_id: exercise.exercise_id,
+            sets,
+            reps,
+            exercise_order: order + 1,
           })),
-        },
-        { withCredentials: true },
-      );
+        })),
+      });
 
       setDays(null);
       setPlanName("");

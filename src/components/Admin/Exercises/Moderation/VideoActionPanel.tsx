@@ -1,6 +1,6 @@
 import { Button, Card } from "@heroui/react";
 import { Check, Eraser, X } from "lucide-react";
-import { ADMIN_API_BASE } from "../../../../utils/Admin/adminApi";
+import api from "../../../../services/api";
 import type { AdminModeratedVideo } from "../../../../utils/Interfaces/Admin/adminVideoModeration";
 
 type VideoActionMode = "approve" | "reject" | "remove" | null;
@@ -17,20 +17,22 @@ interface VideoActionPanelProps {
 }
 
 const getBackendOrigin = () => {
-  if (
-    ADMIN_API_BASE.startsWith("http://") ||
-    ADMIN_API_BASE.startsWith("https://")
-  ) {
-    return ADMIN_API_BASE.replace(/\/admin$/, "");
+  const baseURL = api.defaults.baseURL;
+
+  if (!baseURL) {
+    return "";
   }
 
-  return "http://localhost:8080";
+  return baseURL.replace(/\/$/, "");
 };
 
 const getVideoSrc = (videoUrl: string | null) => {
   if (!videoUrl) return null;
-  if (videoUrl.startsWith("http://") || videoUrl.startsWith("https://"))
+
+  if (videoUrl.startsWith("http://") || videoUrl.startsWith("https://")) {
     return videoUrl;
+  }
+
   return `${getBackendOrigin()}${videoUrl.startsWith("/") ? videoUrl : `/${videoUrl}`}`;
 };
 
@@ -137,14 +139,14 @@ const VideoActionPanel = ({
 
             <div className="flex flex-wrap gap-2">
               <Button
-                className={"bg-[#5B5EF4]"}
+                className="bg-[#5B5EF4]"
                 onPress={onSubmit}
                 isDisabled={submitting}
               >
                 {submitting ? "Saving..." : "Confirm action"}
               </Button>
               <Button
-                className={"bg-[#5B5EF4]"}
+                className="bg-[#5B5EF4]"
                 onPress={onCancel}
                 isDisabled={submitting}
               >

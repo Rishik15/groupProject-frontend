@@ -1,11 +1,7 @@
-import axios from "axios";
+import api from "../api";
 import type { AddPaymentMethodPayload } from "../../components/Billing/type";
-import { BASE_URL, DIRECTORY } from "./constants";
 
 export const add_payment_method = async (card: AddPaymentMethodPayload) => {
-  const res = await axios.post(BASE_URL + DIRECTORY + "/add-card", card, {
-    withCredentials: true,
-  });
-
+  const res = await api.post("/payments/payment-methods/add-card", card);
   return res.data;
 };

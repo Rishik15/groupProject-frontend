@@ -303,7 +303,6 @@ function CoachSummaryStep({
           )}
         </div>
       </Card>
-
     </div>
   );
 }

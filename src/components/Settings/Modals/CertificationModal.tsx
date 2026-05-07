@@ -2,13 +2,14 @@ import { useMemo, useState } from "react";
 import { Modal, Button, Card } from "@heroui/react";
 import { parseDate, type CalendarDate } from "@internationalized/date";
 import type { User } from "../../../services/Setting/User";
-import axios from "axios";
 import CertificationCard from "../Components/CertificationCard";
 import { Plus } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 import { GetCoachInfo } from "../../../services/Setting/GetCoachInfo";
 import { GetUserInfo } from "../../../services/Setting/GetUserInfo";
 import { useEffect } from "react";
+import api from "../../../services/api";
+
 export type CertificationForm = {
   id?: number;
   name: string;
@@ -39,6 +40,10 @@ export default function CertificationModal({ form, setForm }: Props) {
 
   const [certs, setCerts] = useState<CertificationForm[]>(initialCerts);
 
+  useEffect(() => {
+    setCerts(initialCerts);
+  }, [initialCerts]);
+
   const updateField = (
     index: number,
     field: keyof CertificationForm,
@@ -48,9 +53,6 @@ export default function CertificationModal({ form, setForm }: Props) {
       prev.map((cert, i) => (i === index ? { ...cert, [field]: value } : cert)),
     );
   };
-  useEffect(() => {
-    setCerts(initialCerts);
-  }, [initialCerts]);
 
   const addCertificate = () => {
     setCerts((prev) => [
@@ -71,12 +73,11 @@ export default function CertificationModal({ form, setForm }: Props) {
     if (!cert) return;
 
     if (cert.id != null) {
-      await axios.delete("http://localhost:8080/coach/certifications/delete", {
+      await api.delete("/coach/certifications/delete", {
         data: {
           role: "coach",
           cert_id: cert.id,
         },
-        withCredentials: true,
       });
     }
 
@@ -97,32 +98,24 @@ export default function CertificationModal({ form, setForm }: Props) {
 
     for (const c of certs) {
       if (c.id != null) {
-        await axios.patch(
-          "http://localhost:8080/coach/certifications/update",
-          {
-            role: "coach",
-            cert_id: c.id,
-            cert_name: c.name,
-            provider_name: c.provider,
-            description: c.description,
-            issued_date: c.issued_date ? c.issued_date.toString() : null,
-            expires_date: c.expires_date ? c.expires_date.toString() : null,
-          },
-          { withCredentials: true },
-        );
+        await api.patch("/coach/certifications/update", {
+          role: "coach",
+          cert_id: c.id,
+          cert_name: c.name,
+          provider_name: c.provider,
+          description: c.description,
+          issued_date: c.issued_date ? c.issued_date.toString() : null,
+          expires_date: c.expires_date ? c.expires_date.toString() : null,
+        });
       } else {
-        await axios.post(
-          "http://localhost:8080/coach/certificates",
-          {
-            role: "coach",
-            cert_name: c.name,
-            provider_name: c.provider,
-            description: c.description,
-            issued_date: c.issued_date ? c.issued_date.toString() : null,
-            expires_date: c.expires_date ? c.expires_date.toString() : null,
-          },
-          { withCredentials: true },
-        );
+        await api.post("/coach/certificates", {
+          role: "coach",
+          cert_name: c.name,
+          provider_name: c.provider,
+          description: c.description,
+          issued_date: c.issued_date ? c.issued_date.toString() : null,
+          expires_date: c.expires_date ? c.expires_date.toString() : null,
+        });
       }
     }
 
