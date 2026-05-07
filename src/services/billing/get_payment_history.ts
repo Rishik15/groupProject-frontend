@@ -1,13 +1,6 @@
-import axios from "axios";
-import { BASE_URL, DIRECTORY } from "./constants";
+import api from "../api";
 
 export const get_PaymentHistory = async () => {
-    const res = await axios.get(
-        BASE_URL + DIRECTORY + "/history",
-        {
-            withCredentials: true,
-        }
-    );
-
-    return res;
+  const res = await api.get("/payments/history");
+  return res;
 };

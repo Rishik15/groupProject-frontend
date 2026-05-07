@@ -1,7 +1,9 @@
 import api from "../api";
 
 export const checkSurveyStatus = async () => {
-  const res = await api.get("/client/mental-survey/check");
+  const res = await api.get("/client/mental-survey/check", {
+    withCredentials: true,
+  });
 
   return res.data.taken_today;
 };

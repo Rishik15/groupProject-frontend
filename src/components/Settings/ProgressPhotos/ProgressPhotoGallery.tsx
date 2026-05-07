@@ -1,3 +1,4 @@
+import { Trash2 } from "lucide-react";
 import type { ProgressPhotoRecord } from "./types";
 import { formatDateTime } from "./utils";
 import { buildBackendMediaUrl } from "../../../services/Setting/progressPhotoService";
@@ -7,6 +8,8 @@ type Props = {
   isLoading: boolean;
   errorMessage: string;
   onOpenPhoto: (photo: ProgressPhotoRecord) => void;
+  onDeletePhoto: (photo: ProgressPhotoRecord) => void;
+  deletingPhotoId?: number | null;
 };
 
 const ProgressPhotoGallery = ({
@@ -14,6 +17,8 @@ const ProgressPhotoGallery = ({
   isLoading,
   errorMessage,
   onOpenPhoto,
+  onDeletePhoto,
+  deletingPhotoId = null,
 }: Props) => {
   return (
     <div className="border-t border-[#E8E8EF] pt-6">
@@ -45,20 +50,40 @@ const ProgressPhotoGallery = ({
             const dateLabel = formatDateTime(
               photo.taken_at || photo.created_at,
             );
+            const isDeleting = deletingPhotoId === photo.progress_photo_id;
 
             return (
-              <button
+              <div
                 key={photo.progress_photo_id}
-                type="button"
+                role="button"
+                tabIndex={0}
                 onClick={() => onOpenPhoto(photo)}
-                className="overflow-hidden rounded-2xl border border-[#E8E8EF] bg-white text-left transition hover:shadow-sm"
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    onOpenPhoto(photo);
+                  }
+                }}
+                className="group cursor-pointer overflow-hidden rounded-2xl border border-[#E8E8EF] bg-white text-left transition hover:shadow-sm"
               >
-                <div className="flex h-52 w-full items-center justify-center overflow-hidden bg-[#F7F7FB] p-3">
+                <div className="relative flex h-52 w-full items-center justify-center overflow-hidden bg-[#F7F7FB] p-3">
                   <img
                     src={imageSrc}
                     alt={photo.caption?.trim() || "Progress photo"}
                     className="max-h-full max-w-full object-contain"
                   />
+
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onDeletePhoto(photo);
+                    }}
+                    disabled={isDeleting}
+                    className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-red-500 shadow-sm transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+                    aria-label="Delete progress photo"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </div>
 
                 <div className="space-y-2 p-4">
@@ -70,11 +95,19 @@ const ProgressPhotoGallery = ({
                     <div className="text-xs text-[#72728A]">{dateLabel}</div>
                   )}
 
-                  <div className="text-xs font-medium text-indigo-500">
-                    Click to view full size
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-xs font-medium text-indigo-500">
+                      Click to view full size
+                    </div>
+
+                    {isDeleting && (
+                      <div className="text-xs font-medium text-red-500">
+                        Deleting...
+                      </div>
+                    )}
                   </div>
                 </div>
-              </button>
+              </div>
             );
           })}
         </div>

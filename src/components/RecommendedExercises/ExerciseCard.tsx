@@ -1,9 +1,9 @@
 import { Card, Button, Spinner } from "@heroui/react";
 import type { Plan } from "../../services/RecommendationExercises/types";
-import axios from "axios";
 import { useState } from "react";
 import assign_plan from "../../services/RecommendationExercises/assignPlan";
 import PlanDetailModal from "./PlanDetailModal";
+import api from "../../services/api";
 
 type Prop = {
   plan: Plan;
@@ -58,11 +58,10 @@ export default function ExerciseCard({ plan }: Prop) {
     try {
       setLoadingPlan(true);
 
-      const res = await axios.get<ExerciseResponse>(
-        "http://localhost:8080/workouts/workout-plan/exercises",
+      const res = await api.get<ExerciseResponse>(
+        "/workouts/workout-plan/exercises",
         {
           params: { plan_id: plan.plan_id },
-          withCredentials: true,
         },
       );
 

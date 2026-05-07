@@ -31,7 +31,7 @@ const getExercisePreviewSrc = (videoUrl: string) => {
     return trimmed;
   }
 
-  return `/src/assets/gifs/${trimmed}`;
+  return `/gifs/${trimmed}`;
 };
 
 const getMediaType = (src: string | null): "image" | "video" | null => {
@@ -219,7 +219,7 @@ const ExerciseActionPanel = ({
                       onFormChange({ video_url: event.target.value })
                     }
                     className="w-full rounded-[16px] border border-default-200 px-4 py-2.5 text-sm outline-none transition focus:border-default-400"
-                    placeholder="/uploads/exercise_videos/..."
+                    placeholder="pushup.gif or https://res.cloudinary.com/..."
                   />
                 </div>
 

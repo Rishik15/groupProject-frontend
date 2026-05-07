@@ -1,5 +1,5 @@
 import { Button } from "@heroui/react";
-import {  UserCheck, UserX } from "lucide-react";
+import { UserCheck, UserX } from "lucide-react";
 import {
   formatAccountStatusLabel,
   formatBooleanLabel,

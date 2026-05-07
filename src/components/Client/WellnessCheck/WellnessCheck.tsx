@@ -10,11 +10,17 @@ import { rewardDailySurvey } from "../../../services/WellnessSurvey/predictionSu
 import { useAuth } from "../../../utils/auth/AuthContext";
 import CustomModal from "../../global/Modal";
 
-const WellnessCheck = () => {
+type WellnessCheckProps = {
+  onSurveySubmitted?: () => void;
+};
+
+const WellnessCheck = ({ onSurveySubmitted }: WellnessCheckProps) => {
   const { status, hasCheckedAuth } = useAuth();
 
   const [moodScore, setMoodScore] = useState<number>(5);
   const [notes, setNotes] = useState<string>("");
+  const [weight, setWeight] = useState("");
+  const [sleep, setSleep] = useState("");
   const [loading, setLoading] = useState(false);
   const [surveyDone, setDone] = useState(false);
   const [open, setOpen] = useState(false);
@@ -55,6 +61,8 @@ const WellnessCheck = () => {
     const payload = {
       mood_score: moodScore,
       notes,
+      weight: weight ? Number(weight) : null,
+      sleep_hours: sleep ? Number(sleep) : null,
     };
 
     try {
@@ -67,7 +75,11 @@ const WellnessCheck = () => {
       setDone(true);
       setRewardOpen(true);
       setNotes("");
+      setWeight("");
+      setSleep("");
       setMoodScore(5);
+
+      onSurveySubmitted?.();
     } catch (error) {
       console.error("Failed to submit wellness survey:", error);
     } finally {
@@ -109,6 +121,10 @@ const WellnessCheck = () => {
                   setMoodScore={setMoodScore}
                   notes={notes}
                   setNotes={setNotes}
+                  weight={weight}
+                  setWeight={setWeight}
+                  sleep={sleep}
+                  setSleep={setSleep}
                   onSubmit={sendWellness}
                   loading={loading}
                 />

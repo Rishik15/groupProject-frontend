@@ -1,8 +1,8 @@
 import { Card, Button, Spinner } from "@heroui/react";
 import type { Plan } from "../../services/RecommendationExercises/types";
 import { useState } from "react";
-import axios from "axios";
 import PlanDetailModal from "./PlanDetailModal";
+import api from "../../services/api";
 
 type Prop = {
   plan: Plan;
@@ -39,13 +39,13 @@ const AllExerciseCard = ({ plan }: Prop) => {
     try {
       setLoadingPlan(true);
 
-      const res = await axios.get<ExerciseResponse>(
-        "http://localhost:8080/workouts/workout-plan/exercises",
+      const res = await api.get<ExerciseResponse>(
+        "/workouts/workout-plan/exercises",
         {
           params: { plan_id: plan.plan_id },
-          withCredentials: true,
         },
       );
+
       setExerciseData(res.data);
       console.log(res.data);
       setIsModalOpen(true);

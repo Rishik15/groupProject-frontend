@@ -14,6 +14,7 @@ import {
 import { logout } from "../../../services/auth/logout";
 import type { LucideIcon } from "lucide-react";
 import { useAuth } from "../../../utils/auth/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   role: string;
@@ -50,6 +51,7 @@ const SettingTab = ({
   selectedTab,
   setSelectedTab,
 }: Props) => {
+  const navigate = useNavigate();
   const { coachApplicationStatus, coachModeActivated } = useAuth();
 
   const coachApplicationOption: SettingOptionItem =
@@ -142,13 +144,41 @@ const SettingTab = ({
     admin: [],
   };
 
+  const routeByClientTab: Record<string, string> = {
+    info: "/client/profile",
+    photos: "/client/progress-photos",
+    reports: "/client/reports",
+    settings: "/client/settings",
+  };
+
+  const routeByCoachTab: Record<string, string> = {
+    info: "/coach/profile",
+    "profile-updates": "/coach/profile-updates",
+    settings: "/coach/settings",
+  };
+
+  const handleTabChange = (key: React.Key) => {
+    const nextTab = String(key);
+    setSelectedTab(nextTab);
+
+    if (role === "client") {
+      const route = routeByClientTab[nextTab];
+      if (route) navigate(route);
+    }
+
+    if (role === "coach") {
+      const route = routeByCoachTab[nextTab];
+      if (route) navigate(route);
+    }
+  };
+
   const tabs = tabsConfig[role] ?? [];
 
   return (
     <div className="flex w-full">
       <Tabs
         selectedKey={selectedTab}
-        onSelectionChange={(key) => setSelectedTab(String(key))}
+        onSelectionChange={handleTabChange}
         className="w-full"
       >
         <Tabs.List className="flex w-fit gap-4 bg-transparent p-0">
