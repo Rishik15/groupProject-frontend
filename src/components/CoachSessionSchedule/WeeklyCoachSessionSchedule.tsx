@@ -163,7 +163,7 @@ export default function WeeklyCoachSessionSchedule({
   }
 
   return (
-    <>
+    <div className="px-12">
       {errorMessage ? (
         <div className="mb-4 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-[13px] text-red-500">
           {errorMessage}
@@ -197,6 +197,6 @@ export default function WeeklyCoachSessionSchedule({
         onDelete={handleDeleteSession}
         onStatusChange={handleStatusChange}
       />
-    </>
+    </div>
   );
 }

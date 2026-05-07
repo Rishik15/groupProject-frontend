@@ -218,12 +218,6 @@ export default function CoachSessionForm({
           className="h-20 w-full font-primary text-[13px]"
         />
       </div>
-
-      {isEditing ? (
-        <p className="text-[11px] leading-5 text-[#72728A]">
-          Changing the client moves this session to that client's calendar.
-        </p>
-      ) : null}
     </Form>
   );
 }
