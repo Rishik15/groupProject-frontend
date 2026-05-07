@@ -36,8 +36,8 @@ export default function PredictionOptionCard({
     const Icon = isYes ? CheckCircle2 : CircleX;
     const label = isYes ? "Yes" : "No";
     const description = isYes
-        ? "Back the goal being achieved by the deadline."
-        : "Back the goal falling short by the deadline.";
+        ? "Back the goal being achieved"
+        : "Back the goal falling short";
 
     return (
         <div

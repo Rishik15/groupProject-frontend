@@ -31,21 +31,21 @@ export default function PredictionSummaryCards({
         value={formatNumber(summary?.total_markets_created)}
         description="Creator-side markets"
         icon={Flag}
-        tone="success"
+        tone="default"
       />
       <PredictionSummaryCard
         label="Open creator markets"
         value={formatNumber(summary?.open_markets_created)}
         description="Approved and running"
         icon={Activity}
-        tone="warning"
+        tone="default"
       />
       <PredictionSummaryCard
         label="Completed participation"
         value={formatNumber(summary?.completed_markets_participated)}
         description="Finished markets joined"
         icon={Trophy}
-        tone="danger"
+        tone="default"
       />
     </div>
   );

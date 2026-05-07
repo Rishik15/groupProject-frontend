@@ -38,9 +38,9 @@ export default function PredictionMarketCard({
     market.cancel_request_status !== "pending";
 
   return (
-    <Card className="border border-default-200 shadow-sm">
-      <div className="space-y-6">
-        <div className="flex flex-col lg:flex-row lg:items-start">
+    <Card className="border border-default-200 p-5 shadow-sm">
+      <div className="space-y-5">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="min-w-0 flex-1">
             <div className="mb-3 flex flex-wrap items-center gap-2">
               <PredictionStatusBadge
@@ -54,7 +54,7 @@ export default function PredictionMarketCard({
                 size="sm"
               />
               {market.cancel_request_status &&
-              market.cancel_request_status !== "none" ? (
+                market.cancel_request_status !== "none" ? (
                 <PredictionStatusBadge
                   kind="cancel"
                   value={market.cancel_request_status}
@@ -66,6 +66,7 @@ export default function PredictionMarketCard({
             <h3 className="text-[18.75px] font-semibold text-foreground">
               {market.title}
             </h3>
+
             <p className="mt-3 max-w-3xl text-[13.125px] leading-7 text-foreground/70">
               {market.goal_text}
             </p>
@@ -74,44 +75,44 @@ export default function PredictionMarketCard({
           <TimeLeftBadge endDate={market.end_date} status={market.status} />
         </div>
 
-        <div className="grid grid-cols-3 gap-1">
-          <div className="flex items-center gap-1 rounded-3xl border border-default-200 bg-content2/50 p-4">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+          <div className="flex items-center gap-3 rounded-3xl border border-default-200 bg-content2/50 p-4">
             <div className="rounded-2xl bg-[#5B5EF4]/10 p-2.5 text-[#5B5EF4]">
               <UserRound className="h-4 w-4" strokeWidth={2.2} />
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="text-[11.25px] font-medium uppercase tracking-wide text-foreground/55">
                 Creator
               </p>
-              <p className="text-[11.25px] font-semibold text-foreground">
+              <p className="truncate text-[11.25px] font-semibold text-foreground">
                 {market.creator_name || market.creator_email}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-1 rounded-3xl border border-default-200 bg-content2/50 p-4">
-            <div className="rounded-2xl bg-amber-500/10 p-2.5 text-amber-600">
+          <div className="flex items-center gap-3 rounded-3xl border border-default-200 bg-content2/50 p-4">
+            <div className="rounded-2xl bg-[#5B5EF4]/10 p-2.5 text-[#5B5EF4]">
               <CalendarDays className="h-4 w-4" strokeWidth={2.2} />
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="text-[11.25px] font-medium uppercase tracking-wide text-foreground/55">
                 Deadline
               </p>
-              <p className="text-[11.25px] font-semibold text-foreground">
+              <p className="truncate text-[11.25px] font-semibold text-foreground">
                 {formatDate(market.end_date)}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-1 rounded-3xl border border-default-200 bg-content2/50 p-4">
-            <div className="rounded-2xl bg-emerald-500/10 p-2.5 text-emerald-600">
+          <div className="flex items-center gap-3 rounded-3xl border border-default-200 bg-content2/50 p-4">
+            <div className="rounded-2xl bg-[#5B5EF4]/10 p-2.5 text-[#5B5EF4]">
               <Users className="h-4 w-4" strokeWidth={2.2} />
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="text-[11.25px] font-medium uppercase tracking-wide text-foreground/55">
                 Participation
               </p>
-              <p className="text-[11.25px] font-semibold text-foreground">
+              <p className="truncate text-[11.25px] font-semibold text-foreground">
                 {market.total_bets} total bets
               </p>
             </div>
@@ -125,14 +126,9 @@ export default function PredictionMarketCard({
 
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-[11.25px] font-semibold text-foreground">
-                Prediction sides
-              </p>
-              <p className="text-[11.25px] text-foreground/55">
-                Live yes/no participation based on current bets.
-              </p>
-            </div>
+            <p className="text-[11.25px] font-semibold text-foreground">
+              Prediction sides
+            </p>
 
             <Chip color="accent" variant="secondary" size="sm">
               <span className="inline-flex items-center gap-1.5">
@@ -142,7 +138,7 @@ export default function PredictionMarketCard({
             </Chip>
           </div>
 
-          <div className="grid gap-1 grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <PredictionOptionCard
               side="yes"
               points={market.yes_points}
@@ -151,6 +147,7 @@ export default function PredictionMarketCard({
               isDisabled={!canBet}
               onPress={(side) => onSelectSide?.(market, side)}
             />
+
             <PredictionOptionCard
               side="no"
               points={market.no_points}
