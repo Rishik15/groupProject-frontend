@@ -52,6 +52,8 @@ export function DraggableEvent({
   const isMultiDayEvent =
     isMultiDay || event.allDay || differenceInDays(eventEnd, eventStart) >= 1;
 
+  const shouldShowTime = showTime ?? view !== "month";
+
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: `${event.id}-${view}`,
@@ -63,7 +65,7 @@ export function DraggableEvent({
         isFirstDay,
         isLastDay,
         isMultiDay: isMultiDayEvent,
-        multiDayWidth: multiDayWidth,
+        multiDayWidth,
         view,
       },
     });
@@ -82,6 +84,24 @@ export function DraggableEvent({
     }
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isEventDraggable) {
+      return;
+    }
+
+    if (elementRef.current) {
+      const rect = elementRef.current.getBoundingClientRect();
+      const touch = e.touches[0];
+
+      if (touch) {
+        setDragHandlePosition({
+          x: touch.clientX - rect.left,
+          y: touch.clientY - rect.top,
+        });
+      }
+    }
+  };
+
   if (isDragging || activeId === `${event.id}-${view}`) {
     return (
       <div
@@ -94,33 +114,16 @@ export function DraggableEvent({
 
   const style = transform
     ? {
-      height: height || "auto",
-      transform: CSS.Translate.toString(transform),
-      width:
-        isMultiDayEvent && multiDayWidth ? `${multiDayWidth}%` : undefined,
-    }
-    : {
-      height: height || "auto",
-      width:
-        isMultiDayEvent && multiDayWidth ? `${multiDayWidth}%` : undefined,
-    };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!isEventDraggable) {
-      return;
-    }
-
-    if (elementRef.current) {
-      const rect = elementRef.current.getBoundingClientRect();
-      const touch = e.touches[0];
-      if (touch) {
-        setDragHandlePosition({
-          x: touch.clientX - rect.left,
-          y: touch.clientY - rect.top,
-        });
+        height: height || "auto",
+        transform: CSS.Translate.toString(transform),
+        width:
+          isMultiDayEvent && multiDayWidth ? `${multiDayWidth}%` : undefined,
       }
-    }
-  };
+    : {
+        height: height || "auto",
+        width:
+          isMultiDayEvent && multiDayWidth ? `${multiDayWidth}%` : undefined,
+      };
 
   return (
     <div
@@ -142,7 +145,7 @@ export function DraggableEvent({
         onClick={onClick}
         onMouseDown={isEventDraggable ? handleMouseDown : undefined}
         onTouchStart={isEventDraggable ? handleTouchStart : undefined}
-        showTime={showTime}
+        showTime={shouldShowTime}
         view={view}
       />
     </div>

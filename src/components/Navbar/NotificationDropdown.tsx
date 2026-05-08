@@ -45,9 +45,17 @@ export default function NotificationDropdown({
         return `${parent}/contracts`;
       case "report":
         return `${parent}/settings`;
+      case "daily_survey":
+        return "/client/dashboard";
       default:
         return parent;
     }
+  };
+
+  const openWellnessCheckAfterNavigation = () => {
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent("open-wellness-check"));
+    }, 250);
   };
 
   const handleClick = async (notif: Notification) => {
@@ -66,7 +74,8 @@ export default function NotificationDropdown({
       setNotifications((prev) => prev.filter((n) => n.id !== id));
 
       if (notif.type === "daily_survey") {
-        window.dispatchEvent(new CustomEvent("open-wellness-check"));
+        navigate("/client/dashboard");
+        openWellnessCheckAfterNavigation();
         return;
       }
 

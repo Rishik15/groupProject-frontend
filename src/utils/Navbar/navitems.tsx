@@ -16,7 +16,11 @@ import {
 export const getNavItems = (activeMode: string | null, parent: string) => {
   if (activeMode === "coach") {
     return [
-      { label: "Home", route: parent, icon: <House className="w-4 h-4" /> },
+      {
+        label: "Dashboard",
+        route: parent,
+        icon: <House className="w-4 h-4" />,
+      },
       {
         label: "Manage Clients",
         route: `${parent}/clients`,
@@ -74,7 +78,7 @@ export const getNavItems = (activeMode: string | null, parent: string) => {
   }
 
   return [
-    { label: "Home", route: parent, icon: <House className="w-4 h-4" /> },
+    { label: "Dashboard", route: parent, icon: <House className="w-4 h-4" /> },
     {
       label: "Calendar",
       route: `${parent}/workouts`,
