@@ -49,7 +49,7 @@ export default function ExerciseModal({
         {exercise.video_url ? (
           <div className="w-full rounded-xl aspect-video">
             <img
-              src={`/src/assets/gifs/${exercise.video_url}`}
+              src={`/gifs/${exercise.video_url}`}
               alt={exercise.exercise_name}
               className="w-full h-full object-cover"
             />

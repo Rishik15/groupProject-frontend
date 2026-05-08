@@ -11,15 +11,6 @@ type Props = {
 const MealPlanCard = ({ mealPlan, onAssign }: Props) => {
   const totalMeals = mealPlan.meals.length;
 
-  const totalProtein = mealPlan.meals.reduce(
-    (sum, meal) => sum + meal.protein,
-    0,
-  );
-
-  const totalCarbs = mealPlan.meals.reduce((sum, meal) => sum + meal.carbs, 0);
-
-  const totalFats = mealPlan.meals.reduce((sum, meal) => sum + meal.fats, 0);
-
   return (
     <Card className="h-[550px] w-full border border-[#E6E6EE] bg-white p-0 shadow-sm">
       <Card.Header className="flex flex-col gap-3 px-4 py-4 lg:flex-row lg:items-center lg:justify-between">

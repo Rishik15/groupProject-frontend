@@ -69,7 +69,6 @@ export default function CoachSessionModal({
   onCreate,
   onUpdate,
   onDelete,
-  onStatusChange,
 }: CoachSessionModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -160,21 +159,6 @@ export default function CoachSessionModal({
     }
   }
 
-  async function handleStatusChange(
-    status: "scheduled" | "completed" | "cancelled",
-  ) {
-    if (!editingEvent || isSubmitting) return;
-
-    setIsSubmitting(true);
-
-    try {
-      await onStatusChange(editingEvent.eventId, status);
-      onOpenChange(false);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
-
   return (
     <Modal>
       <Modal.Backdrop
@@ -259,37 +243,6 @@ export default function CoachSessionModal({
 
             <Modal.Footer className="border-t border-[#E5E7EB] bg-white px-5 pt-3">
               <div className="flex w-full flex-col gap-3">
-                {isEditing ? (
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant="outline"
-                      onPress={() => handleStatusChange("scheduled")}
-                      isDisabled={isSubmitting}
-                      className="h-8 rounded-xl border border-[#E5E7EB] bg-white px-3 text-[12px] font-semibold text-[#0F0F14]"
-                    >
-                      Scheduled
-                    </Button>
-
-                    <Button
-                      variant="outline"
-                      onPress={() => handleStatusChange("completed")}
-                      isDisabled={isSubmitting}
-                      className="h-8 rounded-xl border border-emerald-100 bg-white px-3 text-[12px] font-semibold text-emerald-600"
-                    >
-                      Completed
-                    </Button>
-
-                    <Button
-                      variant="outline"
-                      onPress={() => handleStatusChange("cancelled")}
-                      isDisabled={isSubmitting}
-                      className="h-8 rounded-xl border border-orange-100 bg-white px-3 text-[12px] font-semibold text-orange-500"
-                    >
-                      Cancelled
-                    </Button>
-                  </div>
-                ) : null}
-
                 <div className="flex w-full items-center justify-between gap-3">
                   <div>
                     {isEditing ? (

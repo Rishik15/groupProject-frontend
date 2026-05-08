@@ -8,6 +8,8 @@ import {
   type ContractStatus,
 } from "../../services/contract/requestcontracts";
 import RequestContractModal from "./RequestContractModal";
+import type { PaymentMethod } from "../Billing/type";
+import { get_PaymentMethods } from "@/services/billing/get_PaymentMethod";
 
 interface ProfileHeaderProps {
   coach: CoachProfile;
@@ -27,6 +29,8 @@ export default function ProfileHeader({
   const [activeCoachId, setActiveCoachId] = useState<number | null>(null);
   const [activeCoachName, setActiveCoachName] = useState<string | null>(null);
 
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+
   const [isCheckingStatus, setIsCheckingStatus] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
@@ -34,66 +38,74 @@ export default function ProfileHeader({
 
   const navigate = useNavigate();
 
+  const normalizePaymentMethods = (data: any): PaymentMethod[] => {
+    if (Array.isArray(data)) {
+      return data;
+    }
+
+    if (Array.isArray(data?.payment_methods)) {
+      return data.payment_methods;
+    }
+
+    if (Array.isArray(data?.paymentMethods)) {
+      return data.paymentMethods;
+    }
+
+    if (Array.isArray(data?.methods)) {
+      return data.methods;
+    }
+
+    return [];
+  };
+
+  const fetchPaymentMethods = async () => {
+    const res = await get_PaymentMethods();
+    const methods = normalizePaymentMethods(res.data);
+
+    setPaymentMethods(methods);
+
+    return methods;
+  };
+
   useEffect(() => {
-    console.log("[ProfileHeader] mounted/changed");
-    console.log("[ProfileHeader] mode:", mode);
-    console.log("[ProfileHeader] coachId:", coachId);
-    console.log("[ProfileHeader] coach:", coach);
-
     if (mode !== "app") {
-      console.log(
-        "[ProfileHeader] landing mode, skipping contract status check",
-      );
-
       setIsCheckingStatus(false);
       setContractStatus(null);
       setHasActiveContract(false);
       setActiveCoachId(null);
       setActiveCoachName(null);
+      setPaymentMethods([]);
       return;
     }
 
-    const loadStatus = async () => {
+    const loadData = async () => {
       try {
         setIsCheckingStatus(true);
         setError(null);
 
-        console.log(
-          "[ProfileHeader] loading client coach status for coachId:",
-          coachId,
-        );
-
-        const data = await getClientCoachStatus(coachId);
-
-        console.log("[ProfileHeader] client coach status data:", data);
+        const statusData = await getClientCoachStatus(coachId);
 
         const normalizedActiveCoachId =
-          data.active_coach_id === null ? null : Number(data.active_coach_id);
+          statusData.active_coach_id === null
+            ? null
+            : Number(statusData.active_coach_id);
 
-        console.log(
-          "[ProfileHeader] normalized active coach id:",
-          normalizedActiveCoachId,
-        );
-        console.log("[ProfileHeader] selected coach id:", Number(coachId));
-        console.log(
-          "[ProfileHeader] active id equals selected id:",
-          normalizedActiveCoachId === Number(coachId),
-        );
-
-        setContractStatus(data.status);
-        setHasActiveContract(Boolean(data.has_active_contract));
+        setContractStatus(statusData.status);
+        setHasActiveContract(Boolean(statusData.has_active_contract));
         setActiveCoachId(normalizedActiveCoachId);
-        setActiveCoachName(data.active_coach_name);
+        setActiveCoachName(statusData.active_coach_name);
+
+        await fetchPaymentMethods();
       } catch (err) {
-        console.error("[ProfileHeader] failed to load contract status:", err);
-        setError("Could not load contract status.");
+        console.error("[ProfileHeader] failed to load data:", err);
+        setError("Could not load coach request information.");
       } finally {
         setIsCheckingStatus(false);
       }
     };
 
     if (coachId) {
-      void loadStatus();
+      void loadData();
     }
   }, [coachId, mode]);
 
@@ -111,37 +123,24 @@ export default function ProfileHeader({
 
   const isPendingWithThisCoach = contractStatus === "pending";
 
-  const canRequest = !hasActiveContract && contractStatus === "none";
-
-  console.log("[ProfileHeader render] contractStatus:", contractStatus);
-  console.log("[ProfileHeader render] hasActiveContract:", hasActiveContract);
-  console.log("[ProfileHeader render] activeCoachId:", activeCoachId);
-  console.log("[ProfileHeader render] activeCoachName:", activeCoachName);
-  console.log("[ProfileHeader render] selectedCoachId:", selectedCoachId);
-  console.log(
-    "[ProfileHeader render] isActiveWithThisCoach:",
-    isActiveWithThisCoach,
-  );
-  console.log("[ProfileHeader render] hasSomeOtherCoach:", hasSomeOtherCoach);
-  console.log(
-    "[ProfileHeader render] isPendingWithThisCoach:",
-    isPendingWithThisCoach,
-  );
-  console.log("[ProfileHeader render] canRequest:", canRequest);
+  const canRequest =
+    !hasActiveContract &&
+    (contractStatus === "none" || contractStatus === "closed");
 
   const handleSubmitRequest = async (values: {
+    coach_id: number;
+    is_recurring: boolean;
     training_reason: string;
     goals: string;
     preferred_schedule: string;
     notes: string;
+    payment_method_id?: number;
+    card_number?: string;
+    card_brand?: string;
+    expiry_month?: number;
+    expiry_year?: number;
   }) => {
-    console.log("[ProfileHeader] submit request clicked");
-    console.log("[ProfileHeader] isSubmitting:", isSubmitting);
-    console.log("[ProfileHeader] canRequest:", canRequest);
-    console.log("[ProfileHeader] form values:", values);
-
     if (isSubmitting || !canRequest) {
-      console.log("[ProfileHeader] request blocked");
       return;
     }
 
@@ -149,18 +148,32 @@ export default function ProfileHeader({
       setIsSubmitting(true);
       setError(null);
 
-      await requestCoachContract({
+      const result = await requestCoachContract({
         coach_id: selectedCoachId,
-        ...values,
+        is_recurring: values.is_recurring,
+        training_reason: values.training_reason,
+        goals: values.goals,
+        preferred_schedule: values.preferred_schedule,
+        notes: values.notes,
+        payment_method_id: values.payment_method_id,
+        card_number: values.card_number,
+        card_brand: values.card_brand,
+        expiry_month: values.expiry_month,
+        expiry_year: values.expiry_year,
       });
 
-      console.log("[ProfileHeader] request successful, setting status pending");
+      if (result?.payment_method_id && !values.payment_method_id) {
+        await fetchPaymentMethods();
+      }
 
       setContractStatus("pending");
       setIsRequestModalOpen(false);
-    } catch (err) {
+    } catch (err: any) {
       console.error("[ProfileHeader] failed to request coaching:", err);
-      setError("Could not send request. Please try again.");
+      setError(
+        err?.response?.data?.error ||
+          "Could not send request. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -198,7 +211,7 @@ export default function ProfileHeader({
 
           <div className="shrink-0 text-right">
             <p className="text-xl font-bold text-[#5B5EF4]">${coach.price}</p>
-            <p className="text-xs text-default-400">per session</p>
+            <p className="text-xs text-default-400">per month</p>
           </div>
         </div>
 
@@ -232,7 +245,6 @@ export default function ProfileHeader({
               ) : canRequest ? (
                 <button
                   onClick={() => {
-                    console.log("[ProfileHeader] opening request modal");
                     setIsRequestModalOpen(true);
                   }}
                   className="flex w-full items-center justify-center rounded-xl bg-[#5B5EF4] px-5 py-3 text-sm font-medium text-white hover:bg-[#4B4EE4]"
@@ -253,10 +265,10 @@ export default function ProfileHeader({
       <RequestContractModal
         isOpen={isRequestModalOpen}
         coach={coach}
+        paymentMethods={paymentMethods}
         isSubmitting={isSubmitting}
         error={error}
         onClose={() => {
-          console.log("[ProfileHeader] closing request modal");
           if (!isSubmitting) setIsRequestModalOpen(false);
         }}
         onSubmit={handleSubmitRequest}

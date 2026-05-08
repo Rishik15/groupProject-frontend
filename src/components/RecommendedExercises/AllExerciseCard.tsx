@@ -1,33 +1,22 @@
-import { Card, Button, Spinner } from "@heroui/react";
-import type { Plan } from "../../services/RecommendationExercises/types";
+import { Button, Card, Spinner } from "@heroui/react";
 import { useState } from "react";
-import axios from "axios";
+
+import api from "../../services/api";
+import type { Plan } from "../../services/RecommendationExercises/types";
 import PlanDetailModal from "./PlanDetailModal";
+import type { ExerciseResponse } from "./ExerciseCard";
 
 type Prop = {
   plan: Plan;
 };
 
-type Exercise = {
-  day_label: string;
-  day_order: number;
-  equipment: string;
-  exercise_name: string;
-  order_in_workout: number;
-  reps_goal: number;
-  sets_goal: number;
-  video_url: string;
-  weight_goal: number | null;
-};
-
-type ExerciseResponse = {
-  exercise_count: number;
-  exercises: Exercise[];
-  plan_id: string;
-};
-
 const AllExerciseCard = ({ plan }: Prop) => {
-  const [goal, days, duration, level] = plan.description.split(" | ");
+  const descriptionParts = plan.description?.split(" | ") ?? [];
+
+  const goal = descriptionParts[0] || "General";
+  const days = descriptionParts[1] || "Flexible";
+  const duration = descriptionParts[2] || "Custom";
+  const level = descriptionParts[3] || "All Levels";
 
   const [exerciseData, setExerciseData] = useState<ExerciseResponse | null>(
     null,
@@ -39,15 +28,14 @@ const AllExerciseCard = ({ plan }: Prop) => {
     try {
       setLoadingPlan(true);
 
-      const res = await axios.get<ExerciseResponse>(
-        "http://localhost:8080/workouts/workout-plan/exercises",
+      const res = await api.get<ExerciseResponse>(
+        "/workouts/workout-plan/exercises",
         {
           params: { plan_id: plan.plan_id },
-          withCredentials: true,
         },
       );
+
       setExerciseData(res.data);
-      console.log(res.data);
       setIsModalOpen(true);
     } catch (err) {
       console.error("Failed to fetch exercises:", err);
@@ -65,6 +53,7 @@ const AllExerciseCard = ({ plan }: Prop) => {
               <div className="w-fit rounded-2xl bg-[#F0EFFF] px-3 py-1 font-bold text-indigo-500">
                 {goal}
               </div>
+
               <div className="w-fit rounded-2xl bg-[#F1F2F7] px-3 py-1 font-bold text-[#4C5469]">
                 {days}
               </div>
@@ -79,6 +68,7 @@ const AllExerciseCard = ({ plan }: Prop) => {
               <div className="w-fit rounded-2xl bg-[#F1F2F7] px-3 py-1 font-bold text-[#4C5469]">
                 {level}
               </div>
+
               <div className="w-fit rounded-2xl bg-[#F1F2F7] px-3 py-1 font-bold text-[#4C5469]">
                 {duration}
               </div>
@@ -88,7 +78,7 @@ const AllExerciseCard = ({ plan }: Prop) => {
           <Button
             className="ml-auto h-11 rounded-xl border-2 border-gray-300 bg-white font-bold text-black"
             onPress={handlePreview}
-            isPending={loadingPlan}
+            isDisabled={loadingPlan}
           >
             {loadingPlan ? <Spinner size="lg" color="accent" /> : "Preview"}
           </Button>

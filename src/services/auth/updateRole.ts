@@ -1,7 +1,16 @@
 import api from "../api";
 
-export async function updateRole(role: "coach" | "client") {
-  const { data } = await api.post("/auth/updateRole", { role });
+export const updateRole = async (
+  role: "client" | "coach",
+  timezone?: string,
+) => {
+  const res = await api.post("/auth/updateRole", {
+    role,
+    timezone:
+      timezone ||
+      Intl.DateTimeFormat().resolvedOptions().timeZone ||
+      "America/New_York",
+  });
 
-  return data;
-}
+  return res.data;
+};

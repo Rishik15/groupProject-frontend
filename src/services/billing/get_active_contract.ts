@@ -1,7 +1,5 @@
-import axios from "axios";
+import api from "../api";
 
 export const getClientContract = () => {
-  return axios.get("http://localhost:8080/contract/clientCoachStatus", {
-    withCredentials: true,
-  });
+  return api.get("/contract/clientCoachStatus");
 };

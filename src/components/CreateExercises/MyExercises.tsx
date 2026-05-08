@@ -2,11 +2,25 @@ import { useState, useEffect, useMemo } from "react";
 import { Pagination } from "@heroui/react";
 import type { Exercise } from "../CreateWorkoutPlan/ExerciseCard";
 import { getCreatedExercises } from "../../services/workout/getCreatedExercise";
+import api from "../../services/api";
 
 const ITEMS_PER_PAGE = 5;
 
+const getVideoSrc = (videoUrl: string | null | undefined) => {
+  if (!videoUrl) return null;
+
+  if (videoUrl.startsWith("http://") || videoUrl.startsWith("https://")) {
+    return videoUrl;
+  }
+
+  const baseURL = api.defaults.baseURL?.replace(/\/$/, "") ?? "";
+
+  return `${baseURL}${videoUrl.startsWith("/") ? videoUrl : `/${videoUrl}`}`;
+};
+
 function ExerciseCard({ exercise }: { exercise: Exercise }) {
   const [expanded, setExpanded] = useState(false);
+  const videoSrc = getVideoSrc(exercise.video_url);
 
   return (
     <div
@@ -44,12 +58,8 @@ function ExerciseCard({ exercise }: { exercise: Exercise }) {
           <p className="font-semibold text-black mt-2">Description:</p>
           <p className="text-[#72728A]">{exercise.description}</p>
 
-          {exercise.video_url ? (
-            <video
-              src={`http://localhost:8080${exercise.video_url}`}
-              controls
-              className="w-full rounded-xl mt-2"
-            />
+          {videoSrc ? (
+            <video src={videoSrc} controls className="w-full rounded-xl mt-2" />
           ) : (
             <p className="text-xs text-[#72728A]">No video available.</p>
           )}

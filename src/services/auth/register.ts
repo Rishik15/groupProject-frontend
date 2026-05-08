@@ -1,5 +1,9 @@
 import api from "../api";
 
+const getBrowserTimezone = () => {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York";
+};
+
 export async function register(
   name: string,
   email: string,
@@ -12,6 +16,7 @@ export async function register(
       email,
       password,
       role,
+      timezone: getBrowserTimezone(),
     });
 
     return response.data;

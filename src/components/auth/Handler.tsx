@@ -6,6 +6,10 @@ import RoleSelector from "../Register/RoleSelection";
 import { useAuth } from "../../utils/auth/AuthContext";
 import { getAuth } from "../../services/auth/checkAuth";
 
+const getBrowsertimezone = () => {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York";
+};
+
 const AuthComplete = () => {
   const navigate = useNavigate();
 
@@ -91,7 +95,10 @@ const AuthComplete = () => {
     try {
       setSubmittingRole(true);
 
-      const data = await updateRole(selectedRole as "coach" | "client");
+      const data = await updateRole(
+        selectedRole as "coach" | "client",
+        getBrowsertimezone(),
+      );
 
       const newRoles = data.roles ?? (data.role ? [data.role] : []);
 

@@ -11,12 +11,15 @@ import {
   terminateCoachContract,
 } from "../../../services/Contracts/coachContractService";
 import { toast } from "@heroui/react";
+import ContractActionModal from "./ContractActionModal";
 
 type ContractsState = {
   pending: Contract[];
   active: Contract[];
   history: Contract[];
 };
+
+type ModalAction = "accept" | "terminate" | null;
 
 export default function CoachContractsPanel() {
   const [contracts, setContracts] = useState<ContractsState>({
@@ -26,6 +29,12 @@ export default function CoachContractsPanel() {
   });
 
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
+
+  const [selectedContract, setSelectedContract] = useState<Contract | null>(
+    null,
+  );
+  const [modalAction, setModalAction] = useState<ModalAction>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,29 +56,67 @@ export default function CoachContractsPanel() {
     fetchData();
   }, []);
 
-  const handleAccept = async (id: number) => {
+  const getClientName = (contract: Contract | null) => {
+    if (!contract) return "";
+
+    const item = contract as Contract & {
+      name?: string;
+      first_name?: string;
+      last_name?: string;
+    };
+
+    if (item.name) return item.name;
+
+    return `${item.first_name || ""} ${item.last_name || ""}`.trim();
+  };
+
+  const closeModal = () => {
+    if (actionLoading) return;
+
+    setSelectedContract(null);
+    setModalAction(null);
+  };
+
+  const openAcceptModal = (contract: Contract) => {
+    setSelectedContract(contract);
+    setModalAction("accept");
+  };
+
+  const openTerminateModal = (contract: Contract) => {
+    setSelectedContract(contract);
+    setModalAction("terminate");
+  };
+
+  const handleAccept = async () => {
+    if (!selectedContract) return;
+
     try {
-      const res = await acceptCoachContract(id);
+      setActionLoading(true);
+
+      await acceptCoachContract(selectedContract.contract_id);
 
       toast.success("Contract accepted successfully!");
 
-      const contract = contracts.pending.find((c) => c.contract_id === id);
-      console.log(contract);
-      if (!contract) return;
-
       setContracts((prev) => ({
         ...prev,
-        pending: prev.pending.filter((c) => c.contract_id !== id),
-        active: [...prev.active, { ...contract, active: 1 }],
+        pending: prev.pending.filter(
+          (c) => c.contract_id !== selectedContract.contract_id,
+        ),
+        active: [...prev.active, { ...selectedContract, active: 1 }],
       }));
+
+      setSelectedContract(null);
+      setModalAction(null);
     } catch (err: any) {
       toast("Failed to accept contract", { variant: "danger" });
+    } finally {
+      setActionLoading(false);
     }
   };
 
   const handleReject = async (id: number) => {
     try {
-      const res = await rejectCoachContract(id);
+      await rejectCoachContract(id);
 
       toast.success("Contract rejected successfully!");
 
@@ -82,27 +129,36 @@ export default function CoachContractsPanel() {
     }
   };
 
-  const handleTerminate = async (id: number) => {
+  const handleTerminate = async () => {
+    if (!selectedContract) return;
+
     try {
-      const res = await terminateCoachContract(id);
+      setActionLoading(true);
+
+      await terminateCoachContract(selectedContract.contract_id);
 
       toast.success("Contract terminated successfully!");
 
-      const contract = contracts.active.find((c) => c.contract_id === id);
-      if (!contract) return;
-
       setContracts((prev) => ({
         ...prev,
-        active: prev.active.filter((c) => c.contract_id !== id),
+        active: prev.active.filter(
+          (c) => c.contract_id !== selectedContract.contract_id,
+        ),
         history: [
           ...prev.history,
-          { ...contract, end_date: new Date().toISOString() },
+          { ...selectedContract, end_date: new Date().toISOString() },
         ],
       }));
+
+      setSelectedContract(null);
+      setModalAction(null);
     } catch (err: any) {
       toast("Failed to terminate contract", { variant: "danger" });
+    } finally {
+      setActionLoading(false);
     }
   };
+
   if (loading) {
     return (
       <section className="flex justify-center items-center py-20 px-38">
@@ -112,67 +168,81 @@ export default function CoachContractsPanel() {
   }
 
   return (
-    <section className="flex flex-col px-38">
-      <div className="bg-white rounded-4xl shadow-sm p-4">
-        <Tabs defaultSelectedKey="pending">
-          <Tabs.List
-            aria-label="Contracts"
-            className="bg-transparent flex gap-12 w-full items-center justify-center"
-          >
-            <Tabs.Tab id="pending" className="w-48 px-2">
-              Pending Contracts ({contracts.pending.length})
-              <Tabs.Indicator />
-            </Tabs.Tab>
+    <>
+      <section className="flex flex-col px-38">
+        <div className="bg-white rounded-4xl shadow-sm p-4">
+          <Tabs defaultSelectedKey="pending">
+            <Tabs.List
+              aria-label="Contracts"
+              className="bg-transparent flex gap-12 w-full items-center justify-center"
+            >
+              <Tabs.Tab id="pending" className="w-48 px-2">
+                Pending Contracts ({contracts.pending.length})
+                <Tabs.Indicator />
+              </Tabs.Tab>
 
-            <Tabs.Tab id="active" className="w-48 px-2">
-              Active Contracts ({contracts.active.length})
-              <Tabs.Indicator />
-            </Tabs.Tab>
+              <Tabs.Tab id="active" className="w-48 px-2">
+                Active Contracts ({contracts.active.length})
+                <Tabs.Indicator />
+              </Tabs.Tab>
 
-            <Tabs.Tab id="history" className="w-48 px-2">
-              History Contracts ({contracts.history.length})
-              <Tabs.Indicator />
-            </Tabs.Tab>
-          </Tabs.List>
+              <Tabs.Tab id="history" className="w-48 px-2">
+                History Contracts ({contracts.history.length})
+                <Tabs.Indicator />
+              </Tabs.Tab>
+            </Tabs.List>
 
-          <Tabs.Panel id="pending" className="pt-4">
-            <List
-              data={contracts.pending}
-              renderActions={(c: Contract) => (
-                <>
+            <Tabs.Panel id="pending" className="pt-4">
+              <List
+                data={contracts.pending}
+                renderActions={(c: Contract) => (
+                  <>
+                    <ActionBtn
+                      color="green"
+                      onClick={() => openAcceptModal(c)}
+                      icon={<Check size={16} />}
+                    />
+
+                    <ActionBtn
+                      color="gray"
+                      onClick={() => handleReject(c.contract_id)}
+                      icon={<X size={16} />}
+                    />
+                  </>
+                )}
+              />
+            </Tabs.Panel>
+
+            <Tabs.Panel id="active" className="pt-4">
+              <List
+                data={contracts.active}
+                renderActions={(c: Contract) => (
                   <ActionBtn
-                    color="green"
-                    onClick={() => handleAccept(c.contract_id)}
-                    icon={<Check size={16} />}
+                    color="red"
+                    onClick={() => openTerminateModal(c)}
+                    icon={<Trash size={16} />}
                   />
-                  <ActionBtn
-                    color="gray"
-                    onClick={() => handleReject(c.contract_id)}
-                    icon={<X size={16} />}
-                  />
-                </>
-              )}
-            />
-          </Tabs.Panel>
+                )}
+              />
+            </Tabs.Panel>
 
-          <Tabs.Panel id="active" className="pt-4">
-            <List
-              data={contracts.active}
-              renderActions={(c: Contract) => (
-                <ActionBtn
-                  color="red"
-                  onClick={() => handleTerminate(c.contract_id)}
-                  icon={<Trash size={16} />}
-                />
-              )}
-            />
-          </Tabs.Panel>
+            <Tabs.Panel id="history" className="pt-4">
+              <List data={contracts.history} />
+            </Tabs.Panel>
+          </Tabs>
+        </div>
+      </section>
 
-          <Tabs.Panel id="history" className="pt-4">
-            <List data={contracts.history} />
-          </Tabs.Panel>
-        </Tabs>
-      </div>
-    </section>
+      {modalAction && (
+        <ContractActionModal
+          isOpen={Boolean(modalAction)}
+          actionType={modalAction}
+          clientName={getClientName(selectedContract)}
+          isLoading={actionLoading}
+          onClose={closeModal}
+          onConfirm={modalAction === "accept" ? handleAccept : handleTerminate}
+        />
+      )}
+    </>
   );
 }

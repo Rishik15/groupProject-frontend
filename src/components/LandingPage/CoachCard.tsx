@@ -76,7 +76,7 @@ export default function CoachCard({ coach }: { coach: Coach }) {
           <span className="text-[16px] font-semibold text-[#5B5EF4]">
             ${coach.price}
           </span>
-          <span className="text-[10px] text-default-400">per session</span>
+          <span className="text-[10px] text-default-400">per month</span>
         </div>
       </div>
 

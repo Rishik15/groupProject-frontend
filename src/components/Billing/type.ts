@@ -28,11 +28,10 @@ export type PaymentHistoryDetail = {
 
   amount: number;
   currency: string;
-  description: string | null;
   paid_at: string | null;
 
   payment_type: "subscription" | "coaching_fee" | "one_time";
-  status: "pending" | "completed" | "failed";
+  status: "pending" | "completed" | "failed" | "refunded";
 
   coach: {
     coach_id: number;
@@ -51,6 +50,12 @@ export type PaymentHistoryDetail = {
 export type Contract = {
   contract_id: number;
   coach_id: number;
+  user_id: number;
   agreed_price: number;
   coach_name: string;
+  is_recurring: number;
+  next_billing_date: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  active: number;
 };

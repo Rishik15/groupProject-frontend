@@ -1,4 +1,4 @@
-import { Modal, Button, Card, ScrollShadow } from "@heroui/react";
+import { Modal, ScrollShadow } from "@heroui/react";
 import type { Plan } from "../../services/RecommendationExercises/types";
 import AllExerciseCard from "./AllExerciseCard";
 
@@ -10,7 +10,7 @@ type Props = {
 
 const AllExercisesModal = ({ plans, isOpen, setIsOpen }: Props) => {
   return (
-    <Modal.Backdrop isOpen={isOpen} onOpenChange={setIsOpen}>
+    <Modal.Backdrop isOpen={isOpen} onOpenChange={setIsOpen} variant="blur">
       <Modal.Container>
         <Modal.Dialog className="sm:max-w-[800px] h-1000">
           <Modal.CloseTrigger />

@@ -4,12 +4,10 @@ import CoachCard, {
 } from "../../components/LandingPage/CoachCard.tsx";
 import type { Coach } from "../../utils/Interfaces/coachquery";
 import { top5 } from "../../services/landing/top5.ts";
-import { useNavigate } from "react-router-dom";
 
 export default function TopRatedCoaches() {
   const [coaches, setCoaches] = useState<Coach[]>([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     async function load() {

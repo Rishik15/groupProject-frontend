@@ -1,10 +1,16 @@
 import api from "../api";
 
-export const submitSurvey = async (payload: {
+export type SubmitSurveyPayload = {
   mood_score: number;
   notes: string;
-}) => {
-  const res = await api.post("/client/mental-survey", payload);
+  weight?: number | null;
+  sleep_hours?: number | null;
+};
+
+export const submitSurvey = async (payload: SubmitSurveyPayload) => {
+  const res = await api.post("/client/mental-survey", payload, {
+    withCredentials: true,
+  });
 
   return res.data;
 };

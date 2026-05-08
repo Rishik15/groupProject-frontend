@@ -15,6 +15,9 @@ type Prop = {
 const DEFAULT_AVATAR =
   "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
+
 const getSafeImage = (image?: string | null) => {
   if (!image) return DEFAULT_AVATAR;
 
@@ -23,7 +26,7 @@ const getSafeImage = (image?: string | null) => {
   }
 
   if (image.startsWith("/uploads")) {
-    return `http://localhost:8080${image}`;
+    return `${API_BASE_URL}${image}`;
   }
 
   return DEFAULT_AVATAR;
