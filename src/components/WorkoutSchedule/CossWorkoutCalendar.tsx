@@ -81,22 +81,19 @@ function getWorkoutEventColor(event: AppCalendarEvent) {
 }
 
 function getWorkoutEventTitle(event: AppCalendarEvent) {
-  const time = event.startTime ? event.startTime.slice(0, 5) : "";
-  const title = time ? `${time} ${event.title}` : event.title;
-
   if (event.workoutStatus === "completed") {
-    return `${title}`;
+    return event.title;
   }
 
   if (event.workoutStatus === "missed") {
-    return `Missed: ${title}`;
+    return `Missed: ${event.title}`;
   }
 
   if (event.workoutStatus === "active") {
-    return `Active: ${title}`;
+    return `Active: ${event.title}`;
   }
 
-  return title;
+  return event.title;
 }
 
 function getWorkoutEventClassName(event: AppCalendarEvent) {
