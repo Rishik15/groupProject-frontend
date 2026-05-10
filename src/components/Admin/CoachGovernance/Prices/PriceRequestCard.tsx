@@ -20,9 +20,9 @@ const PriceRequestCard = ({
 }: PriceRequestCardProps) => {
   const delta =
     request.current_price !== null &&
-    request.current_price !== undefined &&
-    request.proposed_price !== null &&
-    request.proposed_price !== undefined
+      request.current_price !== undefined &&
+      request.proposed_price !== null &&
+      request.proposed_price !== undefined
       ? request.proposed_price - request.current_price
       : null;
   return (
@@ -63,13 +63,20 @@ const PriceRequestCard = ({
         </div>
 
         <div className="mt-auto flex flex-wrap gap-2 border-t border-default-200 pt-4">
-          <Button onPress={() => onApprove(request)}>
+          <Button
+            className="bg-[#5B5EF4] text-white hover:bg-[#4A4DE0]"
+            onPress={() => onApprove(request)}
+          >
             <span className="inline-flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4" />
               Approve
             </span>
           </Button>
-          <Button onPress={() => onReject(request)}>
+
+          <Button
+            className="bg-[#5B5EF4] text-white hover:bg-[#4A4DE0]"
+            onPress={() => onReject(request)}
+          >
             <span className="inline-flex items-center gap-2">
               <XCircle className="h-4 w-4" />
               Reject
