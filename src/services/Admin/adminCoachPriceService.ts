@@ -5,32 +5,23 @@ import type {
   GetPendingCoachPriceRequestsResponse,
 } from "../../utils/Interfaces/Admin";
 
-export const getPendingCoachPriceRequests = (signal?: AbortSignal) => {
+export const getPendingCoachPriceRequests = () => {
   return adminGet<GetPendingCoachPriceRequestsResponse>(
     "/coach-prices/pending",
-    signal,
   );
 };
 
-export const approveCoachPriceRequest = (
-  payload: CoachPriceActionPayload,
-  signal?: AbortSignal,
-) => {
+export const approveCoachPriceRequest = (payload: CoachPriceActionPayload) => {
   return adminPatch<CoachPriceActionResponse, CoachPriceActionPayload>(
     "/coach-prices/approve",
     payload,
-    signal,
   );
 };
 
-export const rejectCoachPriceRequest = (
-  payload: CoachPriceActionPayload,
-  signal?: AbortSignal,
-) => {
+export const rejectCoachPriceRequest = (payload: CoachPriceActionPayload) => {
   return adminPatch<CoachPriceActionResponse, CoachPriceActionPayload>(
     "/coach-prices/reject",
     payload,
-    signal,
   );
 };
 

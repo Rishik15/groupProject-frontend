@@ -1,7 +1,3 @@
-// Shared landing-page data types.
-// Keep these separate from presentational components so multiple sections
-// can reuse the same shapes without importing from UI files.
-
 import type { LucideIcon } from "lucide-react";
 
 export type Feature = {
@@ -11,6 +7,14 @@ export type Feature = {
   description: string;
 };
 
+export type SuccessStory = {
+  id: number;
+  name: string;
+  result: string;
+  coachName: string;
+  imageUrl: string;
+};
+
 export type Coach = {
   id: number;
   name: string;
@@ -18,11 +22,4 @@ export type Coach = {
   rating: number;
   reviewCount: number;
   initials: string;
-};
-
-export type SuccessStory = {
-  id: number;
-  name: string;
-  result: string;
-  coachName: string;
 };

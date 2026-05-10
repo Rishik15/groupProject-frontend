@@ -14,33 +14,25 @@ const ActiveCoachesTab = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadCoaches = async (signal?: AbortSignal) => {
+  const loadCoaches = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await getActiveCoaches(signal);
+      const response = await getActiveCoaches();
       setCoaches(response.coaches ?? []);
     } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") {
-        return;
-      }
-
       setError(
         err instanceof Error ? err.message : "Failed to load active coaches.",
       );
       setCoaches([]);
     } finally {
-      if (!signal?.aborted) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const controller = new AbortController();
-    void loadCoaches(controller.signal);
-    return () => controller.abort();
+    void loadCoaches();
   }, []);
 
   const filteredCoaches = useMemo(() => {
@@ -88,10 +80,7 @@ const ActiveCoachesTab = () => {
               placeholder="Search coaches by name, email, certification, or specialty"
               className="min-w-[280px] rounded-[16px] border border-default-200 px-4 py-2.5 text-sm outline-none transition focus:border-default-400"
             />
-            <Button
-              className={"bg-[#5B5EF4]"}
-              onPress={() => void loadCoaches()}
-            >
+            <Button className="bg-[#5B5EF4]" onPress={() => void loadCoaches()}>
               <span className="inline-flex items-center gap-2">
                 <RefreshCw className="h-4 w-4" />
                 Refresh

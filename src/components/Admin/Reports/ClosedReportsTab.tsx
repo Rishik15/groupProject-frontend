@@ -16,33 +16,25 @@ const ClosedReportsTab = () => {
     null,
   );
 
-  const loadReports = async (signal?: AbortSignal) => {
+  const loadReports = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await getReports({ status: "closed" }, signal);
+      const response = await getReports({ status: "closed" });
       setReports(response.reports ?? []);
     } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") {
-        return;
-      }
-
       setError(
         err instanceof Error ? err.message : "Failed to load report history.",
       );
       setReports([]);
     } finally {
-      if (!signal?.aborted) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const controller = new AbortController();
-    void loadReports(controller.signal);
-    return () => controller.abort();
+    void loadReports();
   }, []);
 
   useEffect(() => {
@@ -224,7 +216,7 @@ const ClosedReportsTab = () => {
 
                   <div className="flex flex-wrap gap-2">
                     <Button
-                      className={"bg-[#5B5EF4]"}
+                      className="bg-[#5B5EF4]"
                       onPress={() => setSelectedReport(null)}
                     >
                       Clear selection

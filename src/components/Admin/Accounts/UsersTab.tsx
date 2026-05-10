@@ -41,31 +41,23 @@ const UsersTab = () => {
 
   const actionIsOpen = Boolean(selectedUser && mutationMode);
 
-  const loadUsers = async (signal?: AbortSignal) => {
+  const loadUsers = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await getUsers(signal);
+      const response = await getUsers();
       setUsers(response.users ?? []);
     } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") {
-        return;
-      }
-
       setError(err instanceof Error ? err.message : "Failed to load users.");
       setUsers([]);
     } finally {
-      if (!signal?.aborted) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const controller = new AbortController();
-    void loadUsers(controller.signal);
-    return () => controller.abort();
+    void loadUsers();
   }, []);
 
   const filteredUsers = useMemo(() => {
@@ -250,7 +242,7 @@ const UsersTab = () => {
 
                 {actionIsOpen ? (
                   <Button
-                    className={"bg-[#5B5EF4]"}
+                    className="bg-[#5B5EF4]"
                     onPress={closeAction}
                     isDisabled={submitting}
                   >

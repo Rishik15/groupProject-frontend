@@ -5,10 +5,16 @@ const getBrowserTimezone = () => {
 };
 
 export function startGoogleLogin() {
+  if (!API_BASE_URL) {
+    console.error("Missing VITE_API_BASE_URL");
+    return;
+  }
+
   const timezone = getBrowserTimezone();
+  const baseUrl = API_BASE_URL.replace(/\/$/, "");
 
   window.location.assign(
-    `${API_BASE_URL}/auth/googleLogin/start?timezone=${encodeURIComponent(
+    `${baseUrl}/auth/googleLogin/start?timezone=${encodeURIComponent(
       timezone,
     )}`,
   );

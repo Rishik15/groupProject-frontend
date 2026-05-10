@@ -35,18 +35,25 @@ export default function NotificationDropdown({
     switch (notif.type) {
       case "chat":
         return `${parent}/chat`;
+
       case "coach_session":
         return "/client/workouts";
+
       case "workout":
         return `${parent}/workouts`;
+
       case "nutrition":
         return `${parent}/nutrition`;
+
       case "contract":
         return `${parent}/contracts`;
+
       case "report":
         return `${parent}/settings`;
+
       case "daily_survey":
-        return "/client/dashboard";
+        return "/client";
+
       default:
         return parent;
     }
@@ -73,13 +80,11 @@ export default function NotificationDropdown({
 
       setNotifications((prev) => prev.filter((n) => n.id !== id));
 
-      if (notif.type === "daily_survey") {
-        navigate("/client/dashboard");
-        openWellnessCheckAfterNavigation();
-        return;
-      }
-
       navigate(getRoute(notif));
+
+      if (notif.type === "daily_survey") {
+        openWellnessCheckAfterNavigation();
+      }
     } catch (err) {
       console.error("Failed to mark as read", err);
     }

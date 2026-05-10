@@ -28,18 +28,14 @@ const CoachPricesTab = () => {
 
   const actionIsOpen = Boolean(selectedRequest && actionMode);
 
-  const loadRequests = async (signal?: AbortSignal) => {
+  const loadRequests = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await getPendingCoachPriceRequests(signal);
+      const response = await getPendingCoachPriceRequests();
       setRequests(response.requests ?? []);
     } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") {
-        return;
-      }
-
       setError(
         err instanceof Error
           ? err.message
@@ -47,16 +43,12 @@ const CoachPricesTab = () => {
       );
       setRequests([]);
     } finally {
-      if (!signal?.aborted) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const controller = new AbortController();
-    void loadRequests(controller.signal);
-    return () => controller.abort();
+    void loadRequests();
   }, []);
 
   const filteredRequests = useMemo(() => {
@@ -157,7 +149,7 @@ const CoachPricesTab = () => {
               <Button
                 onPress={() => void loadRequests()}
                 isDisabled={loading}
-                className={"bg-[#5B5EF4]"}
+                className="bg-[#5B5EF4]"
               >
                 <span className="inline-flex items-center gap-2">
                   <RefreshCw
