@@ -154,8 +154,12 @@ const Billing = () => {
   };
 
   return (
-    <div className="px-38 py-8">
-      <BillingHeader />
+    <div className="px-38 pt-4 pb-2">
+      <BillingHeader
+        onPaymentComplete={(payment) =>
+          setHistoryList((prev) => [payment, ...prev])
+        }
+      />
 
       <div className="flex mt-8 gap-5">
         <PaymentMethodCard
