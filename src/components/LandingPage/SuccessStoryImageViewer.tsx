@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type { SuccessStory } from "./Types";
 
 type Props = {
@@ -6,8 +7,35 @@ type Props = {
 };
 
 const SuccessStoryImageViewer = ({ story, onClose }: Props) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   const label = `${story.name}'s Transformation`;
   const description = `${story.result} with Coach ${story.coachName}`;
+
+  useEffect(() => {
+    setImageLoaded(false);
+
+    const image = new window.Image();
+
+    image.onload = () => {
+      setImageLoaded(true);
+    };
+
+    image.onerror = () => {
+      setImageLoaded(true);
+    };
+
+    image.src = story.imageUrl;
+
+    return () => {
+      image.onload = null;
+      image.onerror = null;
+    };
+  }, [story.imageUrl]);
+
+  if (!imageLoaded) {
+    return null;
+  }
 
   return (
     <div
