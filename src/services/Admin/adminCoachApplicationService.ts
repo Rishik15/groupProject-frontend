@@ -6,37 +6,29 @@ import type {
   GetCoachApplicationsResponse,
 } from "../../utils/Interfaces/Admin";
 
-export const getCoachApplications = (
-  payload: GetCoachApplicationsPayload,
-  signal?: AbortSignal,
-) => {
+export const getCoachApplications = (payload: GetCoachApplicationsPayload) => {
   return adminPost<GetCoachApplicationsResponse, GetCoachApplicationsPayload>(
     "/coach-applications/list",
     payload,
-    signal,
   );
 };
 
 export const approveCoachApplication = (
   payload: CoachApplicationActionPayload,
-  signal?: AbortSignal,
 ) => {
-  return adminPatch<CoachApplicationActionResponse, CoachApplicationActionPayload>(
-    "/coach-applications/approve",
-    payload,
-    signal,
-  );
+  return adminPatch<
+    CoachApplicationActionResponse,
+    CoachApplicationActionPayload
+  >("/coach-applications/approve", payload);
 };
 
 export const rejectCoachApplication = (
   payload: CoachApplicationActionPayload,
-  signal?: AbortSignal,
 ) => {
-  return adminPatch<CoachApplicationActionResponse, CoachApplicationActionPayload>(
-    "/coach-applications/reject",
-    payload,
-    signal,
-  );
+  return adminPatch<
+    CoachApplicationActionResponse,
+    CoachApplicationActionPayload
+  >("/coach-applications/reject", payload);
 };
 
 const adminCoachApplicationService = {

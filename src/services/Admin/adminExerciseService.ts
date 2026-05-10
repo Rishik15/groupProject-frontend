@@ -1,4 +1,9 @@
-import { adminDelete, adminGet, adminPatch, adminPost } from "../../utils/Admin/adminApi";
+import {
+  adminDelete,
+  adminGet,
+  adminPatch,
+  adminPost,
+} from "../../utils/Admin/adminApi";
 import type {
   CreateExercisePayload,
   DeleteExercisePayload,
@@ -7,40 +12,28 @@ import type {
   UpdateExercisePayload,
 } from "../../utils/Interfaces/Admin";
 
-export const getExercises = (signal?: AbortSignal) => {
-  return adminGet<GetExercisesResponse>("/exercises", signal);
+export const getExercises = () => {
+  return adminGet<GetExercisesResponse>("/exercises");
 };
 
-export const createExercise = (
-  payload: CreateExercisePayload,
-  signal?: AbortSignal,
-) => {
+export const createExercise = (payload: CreateExercisePayload) => {
   return adminPost<ExerciseMutationResponse, CreateExercisePayload>(
     "/exercises",
     payload,
-    signal,
   );
 };
 
-export const updateExercise = (
-  payload: UpdateExercisePayload,
-  signal?: AbortSignal,
-) => {
+export const updateExercise = (payload: UpdateExercisePayload) => {
   return adminPatch<ExerciseMutationResponse, UpdateExercisePayload>(
     "/exercises",
     payload,
-    signal,
   );
 };
 
-export const deleteExercise = (
-  payload: DeleteExercisePayload,
-  signal?: AbortSignal,
-) => {
+export const deleteExercise = (payload: DeleteExercisePayload) => {
   return adminDelete<{ message: string }, DeleteExercisePayload>(
     "/exercises",
     payload,
-    signal,
   );
 };
 

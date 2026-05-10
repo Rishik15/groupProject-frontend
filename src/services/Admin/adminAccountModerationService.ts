@@ -8,45 +8,33 @@ import type {
   UserStatusMutationResponse,
 } from "../../utils/Interfaces/Admin";
 
-export const getUsers = (signal?: AbortSignal) => {
-  return adminGet<GetUsersResponse>("/users", signal);
+export const getUsers = () => {
+  return adminGet<GetUsersResponse>("/users");
 };
 
-export const suspendUser = (
-  payload: SuspendUserPayload,
-  signal?: AbortSignal,
-) => {
+export const suspendUser = (payload: SuspendUserPayload) => {
   return adminPatch<UserStatusMutationResponse, SuspendUserPayload>(
     "/users/suspend",
     payload,
-    signal,
   );
 };
 
-export const deactivateUser = (
-  payload: DeactivateUserPayload,
-  signal?: AbortSignal,
-) => {
+export const deactivateUser = (payload: DeactivateUserPayload) => {
   return adminPatch<UserStatusMutationResponse, DeactivateUserPayload>(
     "/users/deactivate",
     payload,
-    signal,
   );
 };
 
-export const updateUserStatus = (
-  payload: UpdateUserStatusPayload,
-  signal?: AbortSignal,
-) => {
+export const updateUserStatus = (payload: UpdateUserStatusPayload) => {
   return adminPatch<UserStatusMutationResponse, UpdateUserStatusPayload>(
     "/users/status",
     payload,
-    signal,
   );
 };
 
-export const getActiveCoaches = (signal?: AbortSignal) => {
-  return adminGet<GetActiveCoachesResponse>("/coaches/active", signal);
+export const getActiveCoaches = () => {
+  return adminGet<GetActiveCoachesResponse>("/coaches/active");
 };
 
 const adminAccountModerationService = {

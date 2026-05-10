@@ -214,17 +214,21 @@ export default function Navbar({
                     </>
                   )}
 
-                  <Dropdownaction
-                    label="My Profile"
-                    route={`${parent}/profile`}
-                    onClick={() => setOpen(false)}
-                  />
+                  {mode !== "admin" && (
+                    <>
+                      <Dropdownaction
+                        label="My Profile"
+                        route={`${parent}/profile`}
+                        onClick={() => setOpen(false)}
+                      />
 
-                  <Dropdownaction
-                    label="Settings"
-                    route={`${parent}/settings`}
-                    onClick={() => setOpen(false)}
-                  />
+                      <Dropdownaction
+                        label="Settings"
+                        route={`${parent}/settings`}
+                        onClick={() => setOpen(false)}
+                      />
+                    </>
+                  )}
 
                   <Dropdownaction
                     label="Sign out"

@@ -2,14 +2,16 @@ import { useState } from "react";
 import Dashboard from "./dashboard/ManageDashboard";
 import Nutrition from "./nutrition/ManageNutrition";
 import Workouts from "./workouts/ManageWorkouts";
-import { X, Home, Dumbbell, Refrigerator } from "lucide-react";
+import ManageProgressPhotos from "./progressPhotos/ManageProgressPhotos";
+import { X, Home, Dumbbell, Refrigerator, Images } from "lucide-react";
 
-type Tab = "dashboard" | "workouts" | "nutrition";
+type Tab = "dashboard" | "workouts" | "nutrition" | "progressPhotos";
 
 const Icons = {
   dashboard: <Home className="h-5 w-5" />,
   workouts: <Dumbbell className="h-5 w-5" />,
   nutrition: <Refrigerator className="h-5 w-5" />,
+  progressPhotos: <Images className="h-5 w-5" />,
 };
 
 export default function ManageClientModal({
@@ -24,7 +26,9 @@ export default function ManageClientModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center gap-4 bg-black/40 py-6 backdrop-blur-sm">
       <div className="absolute left-22 top-12 flex flex-col gap-4 pt-6">
-        {(["dashboard", "workouts", "nutrition"] as Tab[]).map((tab) => (
+        {(
+          ["dashboard", "workouts", "nutrition", "progressPhotos"] as Tab[]
+        ).map((tab) => (
           <div
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -56,6 +60,10 @@ export default function ManageClientModal({
         {activeTab === "workouts" && <Workouts contractId={contractId} />}
 
         {activeTab === "nutrition" && <Nutrition contract_Id={contractId} />}
+
+        {activeTab === "progressPhotos" && (
+          <ManageProgressPhotos contractId={contractId} />
+        )}
       </div>
     </div>
   );

@@ -35,24 +35,14 @@ const CoachApplicationsTab = () => {
 
   const actionIsOpen = Boolean(selectedApplication && actionMode);
 
-  const loadApplications = async (
-    nextStatus: AdminCoachApplicationStatus,
-    signal?: AbortSignal,
-  ) => {
+  const loadApplications = async (nextStatus: AdminCoachApplicationStatus) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await getCoachApplications(
-        { status: nextStatus },
-        signal,
-      );
+      const response = await getCoachApplications({ status: nextStatus });
       setApplications(response.applications ?? []);
     } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") {
-        return;
-      }
-
       setError(
         err instanceof Error
           ? err.message
@@ -60,17 +50,12 @@ const CoachApplicationsTab = () => {
       );
       setApplications([]);
     } finally {
-      if (!signal?.aborted) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const controller = new AbortController();
-    void loadApplications(statusFilter, controller.signal);
-
-    return () => controller.abort();
+    void loadApplications(statusFilter);
   }, [statusFilter]);
 
   const filteredApplications = useMemo(() => {
@@ -216,7 +201,7 @@ const CoachApplicationsTab = () => {
 
                 {actionIsOpen ? (
                   <Button
-                    className={"bg-[#5B5EF4]"}
+                    className="bg-[#5B5EF4]"
                     onPress={closeAction}
                     isDisabled={submitting}
                   >

@@ -22,29 +22,16 @@ const JSON_HEADERS = {
   "Content-Type": "application/json",
 };
 
-const getConfig = (signal?: AbortSignal) => ({
-  withCredentials: true,
-  signal,
-});
-
-const getJsonConfig = (signal?: AbortSignal) => ({
-  withCredentials: true,
-  signal,
-  headers: JSON_HEADERS,
-});
-
 const throwIfError = (data: { error?: string }) => {
   if (data.error) {
     throw new Error(data.error);
   }
 };
 
-export const getMarketsInReview = async (
-  signal?: AbortSignal,
-): Promise<AdminPrediction[]> => {
+export const getMarketsInReview = async (): Promise<AdminPrediction[]> => {
   const { data } = await api.get<
     ApiEnvelope<{ markets?: unknown[]; review?: unknown[] }>
-  >("/admin/predictions/review", getConfig(signal));
+  >("/admin/predictions/review");
 
   throwIfError(data);
   return mapAdminPredictions(data.markets ?? data.review ?? []);
@@ -52,12 +39,13 @@ export const getMarketsInReview = async (
 
 export const approvePredictionMarket = async (
   payload: ApprovePredictionMarketPayload,
-  signal?: AbortSignal,
 ): Promise<PredictionMarket> => {
   const { data } = await api.patch<ApiEnvelope<{ market: unknown }>>(
     "/admin/predictions/approve",
     payload,
-    getJsonConfig(signal),
+    {
+      headers: JSON_HEADERS,
+    },
   );
 
   throwIfError(data);
@@ -66,24 +54,25 @@ export const approvePredictionMarket = async (
 
 export const rejectPredictionMarket = async (
   payload: RejectPredictionMarketPayload,
-  signal?: AbortSignal,
 ): Promise<PredictionMarket> => {
   const { data } = await api.patch<ApiEnvelope<{ market: unknown }>>(
     "/admin/predictions/reject",
     payload,
-    getJsonConfig(signal),
+    {
+      headers: JSON_HEADERS,
+    },
   );
 
   throwIfError(data);
   return mapPredictionMarket(data.market);
 };
 
-export const getPendingSettlementMarkets = async (
-  signal?: AbortSignal,
-): Promise<AdminPrediction[]> => {
+export const getPendingSettlementMarkets = async (): Promise<
+  AdminPrediction[]
+> => {
   const { data } = await api.get<
     ApiEnvelope<{ markets?: unknown[]; pending_settlement?: unknown[] }>
-  >("/admin/predictions/pending-settlement", getConfig(signal));
+  >("/admin/predictions/pending-settlement");
 
   throwIfError(data);
   return mapAdminPredictions(data.markets ?? data.pending_settlement ?? []);
@@ -91,28 +80,29 @@ export const getPendingSettlementMarkets = async (
 
 export const settlePredictionMarket = async (
   payload: SettlePredictionMarketPayload,
-  signal?: AbortSignal,
 ): Promise<PredictionMarket> => {
   const { data } = await api.patch<ApiEnvelope<{ market: unknown }>>(
     "/admin/predictions/settle",
     payload,
-    getJsonConfig(signal),
+    {
+      headers: JSON_HEADERS,
+    },
   );
 
   throwIfError(data);
   return mapPredictionMarket(data.market);
 };
 
-export const getCancellationReviewMarkets = async (
-  signal?: AbortSignal,
-): Promise<AdminPrediction[]> => {
+export const getCancellationReviewMarkets = async (): Promise<
+  AdminPrediction[]
+> => {
   const { data } = await api.get<
     ApiEnvelope<{
       requests?: unknown[];
       markets?: unknown[];
       cancel_review?: unknown[];
     }>
-  >("/admin/predictions/cancel-review", getConfig(signal));
+  >("/admin/predictions/cancel-review");
 
   throwIfError(data);
   return mapAdminPredictions(
@@ -122,12 +112,13 @@ export const getCancellationReviewMarkets = async (
 
 export const approvePredictionCancellation = async (
   payload: ApprovePredictionCancellationPayload,
-  signal?: AbortSignal,
 ): Promise<PredictionMarket> => {
   const { data } = await api.patch<ApiEnvelope<{ market: unknown }>>(
     "/admin/predictions/approve-cancel",
     payload,
-    getJsonConfig(signal),
+    {
+      headers: JSON_HEADERS,
+    },
   );
 
   throwIfError(data);
@@ -136,12 +127,13 @@ export const approvePredictionCancellation = async (
 
 export const rejectPredictionCancellation = async (
   payload: RejectPredictionCancellationPayload,
-  signal?: AbortSignal,
 ): Promise<PredictionMarket> => {
   const { data } = await api.patch<ApiEnvelope<{ market: unknown }>>(
     "/admin/predictions/reject-cancel",
     payload,
-    getJsonConfig(signal),
+    {
+      headers: JSON_HEADERS,
+    },
   );
 
   throwIfError(data);

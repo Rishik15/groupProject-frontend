@@ -28,31 +28,23 @@ const OpenReportsTab = () => {
 
   const actionIsOpen = Boolean(selectedReport);
 
-  const loadReports = async (signal?: AbortSignal) => {
+  const loadReports = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await getReports({ status: "open" }, signal);
+      const response = await getReports({ status: "open" });
       setReports(response.reports ?? []);
     } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") {
-        return;
-      }
-
       setError(err instanceof Error ? err.message : "Failed to load reports.");
       setReports([]);
     } finally {
-      if (!signal?.aborted) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const controller = new AbortController();
-    void loadReports(controller.signal);
-    return () => controller.abort();
+    void loadReports();
   }, []);
 
   const filteredReports = useMemo(() => {

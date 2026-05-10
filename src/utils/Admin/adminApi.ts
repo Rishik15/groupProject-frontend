@@ -4,7 +4,6 @@ import { isApiError } from "../Interfaces/Admin/api";
 export interface AdminRequestOptions<TBody = unknown> {
   method?: "GET" | "POST" | "PATCH" | "DELETE";
   body?: TBody;
-  signal?: AbortSignal;
 }
 
 export class AdminApiError extends Error {
@@ -29,14 +28,13 @@ export async function adminRequest<TResponse, TBody = unknown>(
   path: string,
   options: AdminRequestOptions<TBody> = {},
 ): Promise<TResponse> {
-  const { method = "GET", body, signal } = options;
+  const { method = "GET", body } = options;
 
   try {
     const response = await api.request<TResponse>({
       url: buildAdminUrl(path),
       method,
       data: body,
-      signal,
     });
 
     return response.data;
@@ -46,29 +44,20 @@ export async function adminRequest<TResponse, TBody = unknown>(
 
     const message = isApiError(payload)
       ? payload.error
-      : `Admin request failed with status ${status}`;
+      : error.message || `Admin request failed with status ${status}`;
 
     throw new AdminApiError(message, status);
   }
 }
 
-export const adminGet = <TResponse>(path: string, signal?: AbortSignal) =>
-  adminRequest<TResponse>(path, { method: "GET", signal });
+export const adminGet = <TResponse>(path: string) =>
+  adminRequest<TResponse>(path, { method: "GET" });
 
-export const adminPost = <TResponse, TBody>(
-  path: string,
-  body: TBody,
-  signal?: AbortSignal,
-) => adminRequest<TResponse, TBody>(path, { method: "POST", body, signal });
+export const adminPost = <TResponse, TBody>(path: string, body: TBody) =>
+  adminRequest<TResponse, TBody>(path, { method: "POST", body });
 
-export const adminPatch = <TResponse, TBody>(
-  path: string,
-  body: TBody,
-  signal?: AbortSignal,
-) => adminRequest<TResponse, TBody>(path, { method: "PATCH", body, signal });
+export const adminPatch = <TResponse, TBody>(path: string, body: TBody) =>
+  adminRequest<TResponse, TBody>(path, { method: "PATCH", body });
 
-export const adminDelete = <TResponse, TBody>(
-  path: string,
-  body: TBody,
-  signal?: AbortSignal,
-) => adminRequest<TResponse, TBody>(path, { method: "DELETE", body, signal });
+export const adminDelete = <TResponse, TBody>(path: string, body: TBody) =>
+  adminRequest<TResponse, TBody>(path, { method: "DELETE", body });

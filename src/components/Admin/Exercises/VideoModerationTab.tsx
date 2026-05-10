@@ -29,33 +29,25 @@ const VideoModerationTab = () => {
 
   const actionIsOpen = Boolean(selectedVideo && actionMode);
 
-  const loadVideos = async (signal?: AbortSignal) => {
+  const loadVideos = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await getPendingVideos(signal);
+      const response = await getPendingVideos();
       setVideos(response.videos ?? []);
     } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") {
-        return;
-      }
-
       setError(
         err instanceof Error ? err.message : "Failed to load pending videos.",
       );
       setVideos([]);
     } finally {
-      if (!signal?.aborted) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const controller = new AbortController();
-    void loadVideos(controller.signal);
-    return () => controller.abort();
+    void loadVideos();
   }, []);
 
   const filteredVideos = useMemo(() => {
@@ -125,6 +117,7 @@ const VideoModerationTab = () => {
           (video) => video.exercise_id !== selectedVideo.exercise_id,
         ),
       );
+
       closeAction();
     } catch (err) {
       setActionError(err instanceof Error ? err.message : "Action failed.");
@@ -159,7 +152,7 @@ const VideoModerationTab = () => {
               <Button
                 onPress={() => void loadVideos()}
                 isDisabled={loading}
-                className={"bg-[#5B5EF4]"}
+                className="bg-[#5B5EF4]"
               >
                 <span className="inline-flex items-center gap-2">
                   <RefreshCw

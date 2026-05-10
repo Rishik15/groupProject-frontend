@@ -6,25 +6,17 @@ import type {
   GetReportsResponse,
 } from "../../utils/Interfaces/Admin";
 
-export const getReports = (
-  payload: GetReportsPayload,
-  signal?: AbortSignal,
-) => {
+export const getReports = (payload: GetReportsPayload) => {
   return adminPost<GetReportsResponse, GetReportsPayload>(
     "/reports/list",
     payload,
-    signal,
   );
 };
 
-export const closeReport = (
-  payload: CloseReportPayload,
-  signal?: AbortSignal,
-) => {
+export const closeReport = (payload: CloseReportPayload) => {
   return adminPatch<CloseReportResponse, CloseReportPayload>(
     "/reports/close",
     payload,
-    signal,
   );
 };
 

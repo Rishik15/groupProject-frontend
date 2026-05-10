@@ -7,40 +7,28 @@ import type {
   VideoModerationMutationResponse,
 } from "../../utils/Interfaces/Admin";
 
-export const getPendingVideos = (signal?: AbortSignal) => {
-  return adminGet<GetPendingVideosResponse>("/videos/pending", signal);
+export const getPendingVideos = () => {
+  return adminGet<GetPendingVideosResponse>("/videos/pending");
 };
 
-export const approveVideo = (
-  payload: ApproveVideoPayload,
-  signal?: AbortSignal,
-) => {
+export const approveVideo = (payload: ApproveVideoPayload) => {
   return adminPatch<VideoModerationMutationResponse, ApproveVideoPayload>(
     "/videos/approve",
     payload,
-    signal,
   );
 };
 
-export const rejectVideo = (
-  payload: RejectVideoPayload,
-  signal?: AbortSignal,
-) => {
+export const rejectVideo = (payload: RejectVideoPayload) => {
   return adminPatch<VideoModerationMutationResponse, RejectVideoPayload>(
     "/videos/reject",
     payload,
-    signal,
   );
 };
 
-export const removeVideo = (
-  payload: RemoveVideoPayload,
-  signal?: AbortSignal,
-) => {
+export const removeVideo = (payload: RemoveVideoPayload) => {
   return adminPatch<VideoModerationMutationResponse, RemoveVideoPayload>(
     "/videos/remove",
     payload,
-    signal,
   );
 };
 

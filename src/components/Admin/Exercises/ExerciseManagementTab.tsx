@@ -44,33 +44,25 @@ const ExerciseManagementTab = () => {
 
   const actionIsOpen = Boolean(actionMode);
 
-  const loadExercises = async (signal?: AbortSignal) => {
+  const loadExercises = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await getExercises(signal);
+      const response = await getExercises();
       setExercises(response.exercises ?? []);
     } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") {
-        return;
-      }
-
       setError(
         err instanceof Error ? err.message : "Failed to load exercises.",
       );
       setExercises([]);
     } finally {
-      if (!signal?.aborted) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const controller = new AbortController();
-    void loadExercises(controller.signal);
-    return () => controller.abort();
+    void loadExercises();
   }, []);
 
   const filteredExercises = useMemo(() => {
@@ -261,7 +253,7 @@ const ExerciseManagementTab = () => {
 
                 {actionIsOpen ? (
                   <Button
-                    className={"bg-[#5B5EF4]"}
+                    className="bg-[#5B5EF4]"
                     onPress={closeAction}
                     isDisabled={submitting}
                   >

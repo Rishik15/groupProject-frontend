@@ -33,51 +33,26 @@ export const successStories: SuccessStory[] = [
   {
     id: 1,
     name: "John D.",
-    result: "Lost 30 lbs in 3 months",
+    result: "Built muscle and transformed his physique in 4 months",
     coachName: "Sarah",
+    imageUrl: "/successStories/john_before_after.png",
   },
   {
     id: 2,
     name: "Maria S.",
-    result: "Gained 10 lbs of muscle",
+    result: "Lost 18 lbs and built a leaner physique",
     coachName: "Mike",
+    imageUrl: "/successStories/maria_before_after.png",
   },
   {
     id: 3,
     name: "Alex T.",
-    result: "Completed first marathon",
+    result: "Completed his first marathon and improved endurance in 5 months",
     coachName: "Emily",
+    imageUrl: "/successStories/alex_marathon.png",
   },
 ];
 
-// Mock async function to mirror what a ervice call will look like.
+// Mock async function to mirror what a service call will look like.
 // Replace this with a service call later, for example:
 // return landingPageService.getTopRatedCoaches();
-export const fetchTopRatedCoaches = async (): Promise<Coach[]> => {
-  return [
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      specialty: "Strength Training",
-      rating: 4.9,
-      reviewCount: 127,
-      initials: "SJ",
-    },
-    {
-      id: 2,
-      name: "Mike Chen",
-      specialty: "HIIT & Cardio",
-      rating: 4.8,
-      reviewCount: 94,
-      initials: "MC",
-    },
-    {
-      id: 3,
-      name: "Emily Rodriguez",
-      specialty: "Yoga & Wellness",
-      rating: 4.9,
-      reviewCount: 156,
-      initials: "ER",
-    },
-  ];
-};
