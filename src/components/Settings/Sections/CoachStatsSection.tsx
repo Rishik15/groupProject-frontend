@@ -9,6 +9,10 @@ type CoachStatsSectionProps = {
   updateNumberField: (
     key: keyof User,
   ) => (e: ChangeEvent<HTMLInputElement>) => void;
+  getNumberError: (
+    key: keyof User,
+    value: string | number | null | undefined,
+  ) => string;
 };
 
 type StatCardProps = {
@@ -31,11 +35,22 @@ function StatCard({ label, value, subText }: StatCardProps) {
   );
 }
 
+const getValidationInputClass = (edit: boolean, error: string) => {
+  return [
+    getInputClass(edit),
+    "outline outline-2 -outline-offset-1",
+    error ? "outline-red-400" : "outline-transparent",
+  ].join(" ");
+};
+
 export default function CoachStatsSection({
   form,
   edit,
   updateNumberField,
+  getNumberError,
 }: CoachStatsSectionProps) {
+  const priceError = edit ? getNumberError("price", form.price) : "";
+
   return (
     <div className="flex w-full flex-col gap-4">
       <div className="flex w-full flex-col gap-2">
@@ -48,8 +63,11 @@ export default function CoachStatsSection({
           value={form.price != null ? String(form.price) : ""}
           readOnly={!edit}
           onChange={updateNumberField("price")}
-          className={getInputClass(edit)}
+          aria-invalid={Boolean(priceError)}
+          className={getValidationInputClass(edit, priceError)}
         />
+
+        <p className="h-2 text-[11px] leading-3 text-red-500">{priceError}</p>
 
         {!edit && (
           <p className="text-xs text-[#72728A]">

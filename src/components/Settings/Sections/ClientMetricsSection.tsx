@@ -9,13 +9,32 @@ type ClientMetricsSectionProps = {
   updateNumberField: (
     key: keyof User,
   ) => (e: ChangeEvent<HTMLInputElement>) => void;
+  getNumberError: (
+    key: keyof User,
+    value: string | number | null | undefined,
+  ) => string;
+};
+
+const getValidationInputClass = (edit: boolean, error: string) => {
+  return [
+    getInputClass(edit),
+    "outline outline-2 -outline-offset-1",
+    error ? "outline-red-400" : "outline-transparent",
+  ].join(" ");
 };
 
 export default function ClientMetricsSection({
   form,
   edit,
   updateNumberField,
+  getNumberError,
 }: ClientMetricsSectionProps) {
+  const weightError = edit ? getNumberError("weight", form.weight) : "";
+  const goalWeightError = edit
+    ? getNumberError("goal_weight", form.goal_weight)
+    : "";
+  const heightError = edit ? getNumberError("height", form.height) : "";
+
   return (
     <div className="grid w-full grid-cols-3 gap-4">
       <div className="flex flex-col gap-2">
@@ -25,8 +44,13 @@ export default function ClientMetricsSection({
           value={form.weight != null ? String(form.weight) : ""}
           readOnly={!edit}
           onChange={updateNumberField("weight")}
-          className={getInputClass(edit)}
+          aria-invalid={Boolean(weightError)}
+          className={getValidationInputClass(edit, weightError)}
         />
+
+        <p className="h-2 text-[11px] leading-3 text-red-500">
+          {weightError}
+        </p>
       </div>
 
       <div className="flex flex-col gap-2">
@@ -36,8 +60,13 @@ export default function ClientMetricsSection({
           value={form.goal_weight != null ? String(form.goal_weight) : ""}
           readOnly={!edit}
           onChange={updateNumberField("goal_weight")}
-          className={getInputClass(edit)}
+          aria-invalid={Boolean(goalWeightError)}
+          className={getValidationInputClass(edit, goalWeightError)}
         />
+
+        <p className="h-2 text-[11px] leading-3 text-red-500">
+          {goalWeightError}
+        </p>
       </div>
 
       <div className="flex flex-col gap-2">
@@ -47,8 +76,13 @@ export default function ClientMetricsSection({
           value={form.height != null ? String(form.height) : ""}
           readOnly={!edit}
           onChange={updateNumberField("height")}
-          className={getInputClass(edit)}
+          aria-invalid={Boolean(heightError)}
+          className={getValidationInputClass(edit, heightError)}
         />
+
+        <p className="h-2 text-[11px] leading-3 text-red-500">
+          {heightError}
+        </p>
       </div>
     </div>
   );

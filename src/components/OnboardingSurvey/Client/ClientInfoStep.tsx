@@ -20,29 +20,119 @@ interface ClientInfoStepProps {
   onFitnessLevelChange: (value: ClientFitnessLevel) => void;
 }
 
+type NumberFieldName = "height" | "weight" | "goalWeight";
+
+const NUMBER_LIMITS: Record<
+  NumberFieldName,
+  {
+    min: number;
+    max: number;
+    shortLabel: string;
+  }
+> = {
+  height: {
+    min: 24,
+    max: 96,
+    shortLabel: "24-96 in",
+  },
+  weight: {
+    min: 50,
+    max: 700,
+    shortLabel: "50-700 lb",
+  },
+  goalWeight: {
+    min: 50,
+    max: 700,
+    shortLabel: "50-700 lb",
+  },
+};
+
 function ClientInfoStep({
   values,
   fitnessLevel,
   onFieldChange,
   onFitnessLevelChange,
 }: ClientInfoStepProps) {
-  // Reuse one handler factory for number inputs so the non-negative rule stays
-  // consistent without repeating the same check in every field.
-  const handleNonNegativeChange =
-    (fieldName: "height" | "weight" | "goalWeight") =>
-    (event: ChangeEvent<HTMLInputElement>) => {
-      const value = event.target.value;
-
-      // Allow an empty string while the user is editing, but block negatives
-      // from entering state.
-      if (value === "" || Number(value) >= 0) {
-        onFieldChange(fieldName, value);
-      }
-    };
+  const currentDate = today(getLocalTimeZone());
+  const minDateOfBirth = currentDate.subtract({ years: 120 });
+  const maxDateOfBirth = currentDate.subtract({ years: 13 });
 
   const dateValue: DateValue | null = values.dateOfBirth
     ? parseDate(values.dateOfBirth)
     : null;
+
+  const getInputClass = (error: string) =>
+    [
+      "w-full outline outline-2 -outline-offset-1",
+      error ? "outline-red-400" : "outline-transparent",
+    ].join(" ");
+
+  const isValidNumberInput = (value: string) => {
+    return /^\d{0,3}(\.\d{0,1})?$/.test(value);
+  };
+
+  const getNumberError = (fieldName: NumberFieldName) => {
+    const value = values[fieldName];
+    const rules = NUMBER_LIMITS[fieldName];
+
+    if (value.trim() === "") {
+      return "";
+    }
+
+    const numericValue = Number(value);
+
+    if (!Number.isFinite(numericValue)) {
+      return "Invalid";
+    }
+
+    if (numericValue < rules.min || numericValue > rules.max) {
+      return rules.shortLabel;
+    }
+
+    return "";
+  };
+
+  const getDateOfBirthError = () => {
+    if (!dateValue) {
+      return "";
+    }
+
+    if (dateValue.compare(currentDate) > 0) {
+      return "No future dates";
+    }
+
+    if (dateValue.compare(maxDateOfBirth) > 0) {
+      return "Must be 13+";
+    }
+
+    if (dateValue.compare(minDateOfBirth) < 0) {
+      return "Invalid date";
+    }
+
+    return "";
+  };
+
+  const handleNumberChange =
+    (fieldName: NumberFieldName) => (event: ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+
+      if (value === "") {
+        onFieldChange(fieldName, value);
+        return;
+      }
+
+      if (!isValidNumberInput(value)) {
+        return;
+      }
+
+      const numericValue = Number(value);
+
+      if (!Number.isFinite(numericValue) || numericValue < 0) {
+        return;
+      }
+
+      onFieldChange(fieldName, value);
+    };
 
   const handleDateChange = (value: DateValue | null) => {
     if (!value) {
@@ -50,11 +140,16 @@ function ClientInfoStep({
       return;
     }
 
-    onFieldChange("dateOfBirth", value.toString()); // YYYY-MM-DD
+    onFieldChange("dateOfBirth", value.toString());
   };
 
+  const heightError = getNumberError("height");
+  const weightError = getNumberError("weight");
+  const goalWeightError = getNumberError("goalWeight");
+  const dateOfBirthError = getDateOfBirthError();
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div>
         <h2 className="mb-3 text-[13.125px] font-semibold text-black">
           Current Fitness Level
@@ -93,26 +188,44 @@ function ClientInfoStep({
           <label className="mb-2 block text-[13.125px] font-semibold text-black">
             Height (in)
           </label>
+
           <Input
             type="number"
             value={values.height}
             placeholder="68"
-            onChange={handleNonNegativeChange("height")}
-            className="w-full"
+            min={NUMBER_LIMITS.height.min}
+            max={NUMBER_LIMITS.height.max}
+            step="0.1"
+            aria-invalid={Boolean(heightError)}
+            onChange={handleNumberChange("height")}
+            className={getInputClass(heightError)}
           />
+
+          <p className="mt-1 h-4 text-[11px] leading-4 text-red-500">
+            {heightError}
+          </p>
         </div>
 
         <div>
           <label className="mb-2 block text-[13.125px] font-semibold text-black">
             Weight (lb)
           </label>
+
           <Input
             type="number"
             value={values.weight}
             placeholder="155"
-            onChange={handleNonNegativeChange("weight")}
-            className="w-full"
+            min={NUMBER_LIMITS.weight.min}
+            max={NUMBER_LIMITS.weight.max}
+            step="0.1"
+            aria-invalid={Boolean(weightError)}
+            onChange={handleNumberChange("weight")}
+            className={getInputClass(weightError)}
           />
+
+          <p className="mt-1 h-4 text-[11px] leading-4 text-red-500">
+            {weightError}
+          </p>
         </div>
 
         <div>
@@ -122,18 +235,27 @@ function ClientInfoStep({
               Optional
             </span>
           </label>
+
           <Input
             type="number"
             value={values.goalWeight}
             placeholder="145"
-            onChange={handleNonNegativeChange("goalWeight")}
-            className="w-full"
+            min={NUMBER_LIMITS.goalWeight.min}
+            max={NUMBER_LIMITS.goalWeight.max}
+            step="0.1"
+            aria-invalid={Boolean(goalWeightError)}
+            onChange={handleNumberChange("goalWeight")}
+            className={getInputClass(goalWeightError)}
           />
+
+          <p className="mt-1 h-4 text-[11px] leading-4 text-red-500">
+            {goalWeightError}
+          </p>
         </div>
       </div>
 
       <div>
-        <label className="mb-4 block text-[13.125px] font-semibold text-black">
+        <label className="mb-3 block text-[13.125px] font-semibold text-black">
           Date of Birth
         </label>
 
@@ -141,7 +263,8 @@ function ClientInfoStep({
           className="w-full"
           value={dateValue}
           onChange={handleDateChange}
-          maxValue={today(getLocalTimeZone())}
+          minValue={minDateOfBirth}
+          maxValue={maxDateOfBirth}
         >
           <DateField.Group fullWidth>
             <DateField.Input>
@@ -154,7 +277,16 @@ function ClientInfoStep({
               </DatePicker.Trigger>
             </DateField.Suffix>
           </DateField.Group>
-          <FieldError>Date must be today or in the future.</FieldError>
+
+          <div className="h-2">
+            {dateOfBirthError && (
+              <FieldError>
+                <span className="text-[11px] leading-4 text-red-500">
+                  {dateOfBirthError}
+                </span>
+              </FieldError>
+            )}
+          </div>
 
           <DatePicker.Popover>
             <Calendar aria-label="Date of birth">
