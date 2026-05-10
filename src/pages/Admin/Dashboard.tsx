@@ -37,7 +37,7 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadDashboard = async (signal?: AbortSignal) => {
+  const loadDashboard = async () => {
     setIsLoading(true);
     setError(null);
 
@@ -49,16 +49,12 @@ const Dashboard = () => {
         settlementQueueResult,
         cancelQueueResult,
       ] = await Promise.allSettled([
-        getDashboardStats(signal),
-        getEngagementAnalytics(signal),
-        getMarketsInReview(signal),
-        getPendingSettlementMarkets(signal),
-        getCancellationReviewMarkets(signal),
+        getDashboardStats(),
+        getEngagementAnalytics(),
+        getMarketsInReview(),
+        getPendingSettlementMarkets(),
+        getCancellationReviewMarkets(),
       ]);
-
-      if (signal?.aborted) {
-        return;
-      }
 
       if (statsResult.status !== "fulfilled" || !statsResult.value?.stats) {
         throw new Error("Dashboard stats response was empty.");
@@ -92,10 +88,6 @@ const Dashboard = () => {
 
       setPredictionPendingReviews(reviewCount + settlementCount + cancelCount);
     } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") {
-        return;
-      }
-
       const message =
         err instanceof Error ? err.message : "Failed to load dashboard data.";
 
@@ -104,9 +96,7 @@ const Dashboard = () => {
       setAnalytics(null);
       setPredictionPendingReviews(0);
     } finally {
-      if (!signal?.aborted) {
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     }
   };
 
@@ -115,17 +105,13 @@ const Dashboard = () => {
     if (status !== "authenticated") return;
     if (activeMode !== "admin") return;
 
-    const controller = new AbortController();
-    void loadDashboard(controller.signal);
-
-    return () => controller.abort();
+    void loadDashboard();
   }, [hasCheckedAuth, status, activeMode]);
 
   const handleRetry = () => {
     if (status !== "authenticated" || activeMode !== "admin") return;
 
-    const controller = new AbortController();
-    void loadDashboard(controller.signal);
+    void loadDashboard();
   };
 
   const scrollToSection = (element: HTMLDivElement | null) => {

@@ -1,4 +1,4 @@
-import type { Coach, Feature, SuccessStory } from "./Types";
+import type { Feature, SuccessStory } from "./Types";
 import { Users, TrendingUp, Award } from "lucide-react";
 
 // Temporary landing page data used until backend integration is ready.
