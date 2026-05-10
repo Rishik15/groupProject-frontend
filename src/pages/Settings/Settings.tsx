@@ -11,6 +11,7 @@ import type { User } from "../../services/Setting/User";
 import type { Coach } from "../../services/Setting/Coach";
 import { updateCoachProfile } from "../../services/Setting/UpdateCoachInfo";
 import { updateCoachAvailability } from "../../services/Setting/saveTime";
+import { hasSettingsNumberErrors } from "../../components/Settings/Components/InfoTab";
 
 type SettingsForm = User & Coach;
 
@@ -34,6 +35,8 @@ const Settings = ({ role, tab }: SettingsProps) => {
   const [priceModalOpen, setPriceModalOpen] = useState(false);
   const [priceModalTitle, setPriceModalTitle] = useState("");
   const [priceModalBody, setPriceModalBody] = useState("");
+
+  const hasValidationErrors = hasSettingsNumberErrors(form);
 
   useEffect(() => {
     if (!showAlert) return;
@@ -72,7 +75,6 @@ const Settings = ({ role, tab }: SettingsProps) => {
 
       setUser(userData.user);
       setForm(mergedForm);
-      console.log(mergedForm);
     };
 
     fetchData();
@@ -101,6 +103,14 @@ const Settings = ({ role, tab }: SettingsProps) => {
     }
 
     if (!form) return;
+
+    if (hasSettingsNumberErrors(form)) {
+      showPriceModal(
+        "Invalid profile values",
+        "Please fix the highlighted values before saving.",
+      );
+      return;
+    }
 
     try {
       let message = "Profile updated successfully";
@@ -182,6 +192,7 @@ const Settings = ({ role, tab }: SettingsProps) => {
           onClick={handleSave}
           setEdit={setEdit}
           selectedTab={selectedTab}
+          disabled={hasValidationErrors}
         />
 
         <div

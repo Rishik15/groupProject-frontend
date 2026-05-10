@@ -2,7 +2,7 @@ import { Button, Card, Label, TimeField } from "@heroui/react";
 import { Clock, X } from "lucide-react";
 import type { Time } from "@internationalized/date";
 import type { AvailabilitySlot } from "../../../services/Setting/User";
-import { parseBackendTime, formatTime, getTimeBoxClass } from "../utils";
+import { parseBackendTime, formatTime } from "../utils";
 import DayListBox from "./DayListBox";
 
 type Props = {
@@ -32,6 +32,20 @@ const formatDisplayTime = (value?: string) => {
   return `${displayHour}:${minute} ${period}`;
 };
 
+const toMinutes = (value?: string) => {
+  if (!value) return null;
+
+  const [hourValue, minuteValue] = value.split(":");
+  const hour = Number(hourValue);
+  const minute = Number(minuteValue);
+
+  if (!Number.isFinite(hour) || !Number.isFinite(minute)) {
+    return null;
+  }
+
+  return hour * 60 + minute;
+};
+
 export default function AvailabilityCard({
   slot,
   index,
@@ -39,7 +53,20 @@ export default function AvailabilityCard({
   updateAvailabilityField,
   removeAvailability,
 }: Props) {
-  const timeBoxClass = getTimeBoxClass(edit);
+  const startMinutes = toMinutes(slot.start_time);
+  const endMinutes = toMinutes(slot.end_time);
+
+  const timeError =
+    startMinutes !== null && endMinutes !== null && endMinutes <= startMinutes
+      ? "End must be after start"
+      : "";
+
+  const timeBoxClass = (hasError = false) =>
+    [
+      "flex h-11 items-center rounded-xl bg-[#F4F4F7] px-3 text-sm text-[#0F0F14]",
+      "outline outline-2 -outline-offset-1",
+      hasError ? "outline-red-400" : "outline-transparent",
+    ].join(" ");
 
   if (!edit) {
     return (
@@ -81,6 +108,7 @@ export default function AvailabilityCard({
               updateAvailabilityField(index, "day_of_week", value)
             }
           />
+          <p className="h-2 text-[11px] leading-3 text-red-500" />
         </div>
 
         <div className="flex flex-col gap-2">
@@ -88,7 +116,7 @@ export default function AvailabilityCard({
             Start Time
           </Label>
 
-          <div className={timeBoxClass}>
+          <div className={timeBoxClass(Boolean(timeError))}>
             <TimeField
               className="flex w-full flex-row items-center"
               value={parseBackendTime(slot.start_time)}
@@ -110,6 +138,8 @@ export default function AvailabilityCard({
               <Clock size={18} className="text-[#72728A]" />
             </TimeField>
           </div>
+
+          <p className="h-2 text-[11px] leading-3 text-red-500">{timeError}</p>
         </div>
 
         <div className="flex flex-col gap-2">
@@ -117,7 +147,7 @@ export default function AvailabilityCard({
             End Time
           </Label>
 
-          <div className={timeBoxClass}>
+          <div className={timeBoxClass(Boolean(timeError))}>
             <TimeField
               className="flex w-full flex-row items-center"
               value={parseBackendTime(slot.end_time)}
@@ -139,6 +169,8 @@ export default function AvailabilityCard({
               <Clock size={18} className="text-[#72728A]" />
             </TimeField>
           </div>
+
+          <p className="h-2 text-[11px] leading-3 text-red-500" />
         </div>
 
         <Button

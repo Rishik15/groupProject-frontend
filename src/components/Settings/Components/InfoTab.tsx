@@ -16,6 +16,101 @@ type InfoTabProps = {
   role: string;
 };
 
+type SettingsNumberField = "height" | "weight" | "goal_weight" | "price";
+
+const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+const NUMBER_LIMITS: Record<
+  SettingsNumberField,
+  {
+    min: number;
+    max: number;
+    decimals: number;
+    shortLabel: string;
+  }
+> = {
+  height: {
+    min: 24,
+    max: 96,
+    decimals: 1,
+    shortLabel: "24-96 in",
+  },
+  weight: {
+    min: 50,
+    max: 700,
+    decimals: 1,
+    shortLabel: "50-700 lb",
+  },
+  goal_weight: {
+    min: 50,
+    max: 700,
+    decimals: 1,
+    shortLabel: "50-700 lb",
+  },
+  price: {
+    min: 1,
+    max: 1000,
+    decimals: 2,
+    shortLabel: "$1-$1000",
+  },
+};
+
+const isSettingsNumberField = (key: keyof User): key is SettingsNumberField => {
+  return key in NUMBER_LIMITS;
+};
+
+const isValidNumberInput = (value: string, decimals: number) => {
+  if (value === "") return true;
+
+  if (decimals === 0) {
+    return /^\d*$/.test(value);
+  }
+
+  return new RegExp(`^\\d{0,4}(\\.\\d{0,${decimals}})?$`).test(value);
+};
+
+export const getSettingsNumberError = (
+  key: keyof User,
+  value: string | number | null | undefined,
+) => {
+  if (!isSettingsNumberField(key)) {
+    return "";
+  }
+
+  const rules = NUMBER_LIMITS[key];
+  const stringValue =
+    value === null || value === undefined ? "" : String(value);
+
+  if (stringValue.trim() === "") {
+    return "";
+  }
+
+  const numericValue = Number(stringValue);
+
+  if (!Number.isFinite(numericValue)) {
+    return "Invalid";
+  }
+
+  if (numericValue < rules.min || numericValue > rules.max) {
+    return rules.shortLabel;
+  }
+
+  return "";
+};
+
+export const hasSettingsNumberErrors = (form: User | null) => {
+  if (!form) {
+    return false;
+  }
+
+  return (
+    Boolean(getSettingsNumberError("height", form.height)) ||
+    Boolean(getSettingsNumberError("weight", form.weight)) ||
+    Boolean(getSettingsNumberError("goal_weight", form.goal_weight)) ||
+    Boolean(getSettingsNumberError("price", form.price))
+  );
+};
+
 export function InfoTab({ form, setForm, edit, role }: InfoTabProps) {
   if (!form) return null;
 
@@ -26,6 +121,18 @@ export function InfoTab({ form, setForm, edit, role }: InfoTabProps) {
   const updateNumberField =
     (key: keyof User) => (e: ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
+
+      if (isSettingsNumberField(key)) {
+        const rules = NUMBER_LIMITS[key];
+
+        if (!isValidNumberInput(value, rules.decimals)) {
+          return;
+        }
+
+        updateField(key, value === "" ? "" : Number(value));
+        return;
+      }
+
       updateField(key, value === "" ? "" : Number(value));
     };
 
@@ -34,28 +141,37 @@ export function InfoTab({ form, setForm, edit, role }: InfoTabProps) {
     key: keyof AvailabilitySlot,
     value: string,
   ) => {
-    setForm((prev) =>
-      prev
-        ? {
-            ...prev,
-            availability:
-              prev.availability?.map((slot, i) =>
-                i === index ? { ...slot, [key]: value } : slot,
-              ) ?? [],
-          }
-        : prev,
-    );
+    setForm((prev) => {
+      if (!prev) return prev;
 
-    console.log(form?.availability?.[index]);
+      const currentAvailability = prev.availability ?? [];
+
+      if (key === "day_of_week") {
+        if (!DAYS.includes(value)) {
+          return prev;
+        }
+
+        const duplicateDay = currentAvailability.some(
+          (slot, i) => i !== index && slot.day_of_week === value,
+        );
+
+        if (duplicateDay) {
+          return prev;
+        }
+      }
+
+      return {
+        ...prev,
+        availability: currentAvailability.map((slot, i) =>
+          i === index ? { ...slot, [key]: value } : slot,
+        ),
+      };
+    });
   };
 
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
   const addAvailability = () => {
-    if (!form) return;
-
     const existingDays = form.availability?.map((a) => a.day_of_week) ?? [];
-    const nextDay = days.find((day) => !existingDays.includes(day));
+    const nextDay = DAYS.find((day) => !existingDays.includes(day));
 
     if (!nextDay) return;
 
@@ -108,6 +224,7 @@ export function InfoTab({ form, setForm, edit, role }: InfoTabProps) {
               form={form}
               edit={edit}
               updateNumberField={updateNumberField}
+              getNumberError={getSettingsNumberError}
             />
           </section>
         )}
@@ -128,6 +245,7 @@ export function InfoTab({ form, setForm, edit, role }: InfoTabProps) {
                 form={form}
                 edit={edit}
                 updateNumberField={updateNumberField}
+                getNumberError={getSettingsNumberError}
               />
             </section>
 
